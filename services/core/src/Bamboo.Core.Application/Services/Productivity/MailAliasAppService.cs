@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailAliasAppService : GenericApplicationService<MailAlias>, IMailAliasAppService
+    public partial class MailAliasAppService : GenericAppService<MailAlias>, IMailAliasAppService
     {
 
         public MailAliasAppService(IRepository<MailAlias, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -423,6 +423,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailAlias> IsEncodableInternalAsync(object alias_name, object charset)
         {
             /*
@@ -441,7 +442,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailAlias> OpenDocumentAsync(Guid id)
+        public async Task<MailAlias> OpenDocumentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_alias.py) ---
@@ -455,10 +456,12 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_window',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailAlias> OpenParentDocumentAsync(Guid id)
+        public async Task<MailAlias> OpenParentDocumentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_alias.py) ---
@@ -472,9 +475,12 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_window',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<MailAlias> SanitizeAliasNameInternalAsync(object name, object is_email)
         {
             /*
@@ -511,6 +517,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailAlias> SanitizeAllowedDomainsInternalAsync(object allowed_domains)
         {
             /*

@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/open-edit-form")]
-        public async Task<IActionResult> OpenEditFormAsync(Guid id)
+        [Route("open-edit-form")]
+        public async Task<IActionResult> OpenEditFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEditFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEditFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/post-message")]
-        public async Task<IActionResult> PostMessageAsync(Guid id)
+        [Route("post-message")]
+        public async Task<IActionResult> PostMessageAsync(Guid[] ids)
         {
-            var result = await _appService.PostMessageAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PostMessageAsync(ids);
             return Ok(result);
         }
     }

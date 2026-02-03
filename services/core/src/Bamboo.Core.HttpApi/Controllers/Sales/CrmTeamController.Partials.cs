@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-assign-leads")]
-        public async Task<IActionResult> ActionAssignLeadsAsync(Guid id)
+        [Route("action-assign-leads")]
+        public async Task<IActionResult> ActionAssignLeadsAsync(Guid[] ids)
         {
-            var result = await _appService.AssignLeadsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AssignLeadsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-leads")]
-        public async Task<IActionResult> ActionOpenLeadsAsync(Guid id)
+        [Route("action-open-leads")]
+        public async Task<IActionResult> ActionOpenLeadsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLeadsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLeadsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-unassigned-leads")]
-        public async Task<IActionResult> ActionOpenUnassignedLeadsAsync(Guid id)
+        [Route("action-open-unassigned-leads")]
+        public async Task<IActionResult> ActionOpenUnassignedLeadsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenUnassignedLeadsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenUnassignedLeadsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-opportunity-forecast")]
-        public async Task<IActionResult> ActionOpportunityForecastAsync(Guid id)
+        [Route("action-opportunity-forecast")]
+        public async Task<IActionResult> ActionOpportunityForecastAsync(Guid[] ids)
         {
-            var result = await _appService.OpportunityForecastAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpportunityForecastAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-primary-channel-button")]
-        public async Task<IActionResult> ActionPrimaryChannelButtonAsync(Guid id)
+        [Route("action-primary-channel-button")]
+        public async Task<IActionResult> ActionPrimaryChannelButtonAsync(Guid[] ids)
         {
-            var result = await _appService.PrimaryChannelButtonAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PrimaryChannelButtonAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-your-pipeline")]
-        public async Task<IActionResult> ActionYourPipelineAsync(Guid id)
+        [Route("action-your-pipeline")]
+        public async Task<IActionResult> ActionYourPipelineAsync(Guid[] ids)
         {
-            var result = await _appService.YourPipelineAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.YourPipelineAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-abandoned-carts")]
-        public async Task<IActionResult> GetAbandonedCartsAsync(Guid id)
+        [Route("get-abandoned-carts")]
+        public async Task<IActionResult> GetAbandonedCartsAsync(Guid[] ids)
         {
-            var result = await _appService.GetAbandonedCartsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAbandonedCartsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-invoiced-target")]
-        public async Task<IActionResult> UpdateInvoicedTargetAsync(Guid id, [FromBody] CrmTeamUpdateInvoicedTargetRequestDto input)
+        [Route("update-invoiced-target")]
+        public async Task<IActionResult> UpdateInvoicedTargetAsync(CrmTeamUpdateInvoicedTargetRequestDto input)
         {
-            var result = await _appService.UpdateInvoicedTargetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdateInvoicedTargetAsync(input);
             return Ok(result);
         }
     }

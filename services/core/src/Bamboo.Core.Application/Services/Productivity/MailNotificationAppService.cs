@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailNotificationAppService : GenericApplicationService<MailNotification>, IMailNotificationAppService
+    public partial class MailNotificationAppService : GenericAppService<MailNotification>, IMailNotificationAppService
     {
 
         public MailNotificationAppService(IRepository<MailNotification, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -45,7 +45,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
+        [ApiModel]
+        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(FieldsGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: mail_notification.py) ---
@@ -76,7 +77,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            return await base.FieldsGetAsync(fields, attributes);
+            return await base.FieldsGetAsync(input);
         }
 
         protected async Task<MailNotification> FilteredForWebClientInternalAsync()
@@ -97,7 +98,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailNotification> FormatFailureReasonAsync(Guid id)
+        public async Task<MailNotification> FormatFailureReasonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_notification.py) ---
@@ -110,9 +111,12 @@ namespace Bamboo.Core.Application.Services
             //         return _("Unknown error: %(error)s", error=self.failure_reason)
             //     return _("Unknown error")
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<MailNotification> GcNotificationsInternalAsync(object max_age_days)
         {
             /*

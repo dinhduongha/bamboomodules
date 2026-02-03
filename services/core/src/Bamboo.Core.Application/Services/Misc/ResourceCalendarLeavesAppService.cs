@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Resource", Category = "Misc", Depends = new[] { "base", "web" })]
-    public partial class ResourceCalendarLeavesAppService : GenericApplicationService<ResourceCalendarLeaves>, IResourceCalendarLeavesAppService
+    public partial class ResourceCalendarLeavesAppService : GenericAppService<ResourceCalendarLeaves>, IResourceCalendarLeavesAppService
     {
 
         public ResourceCalendarLeavesAppService(IRepository<ResourceCalendarLeaves, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -53,7 +53,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceCalendarLeaves> CheckDatesAsync(Guid id)
+        public async Task<ResourceCalendarLeaves> CheckDatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar_leaves.py) ---
@@ -61,7 +61,9 @@ namespace Bamboo.Core.Application.Services
             // if self.filtered(lambda leave: leave.date_from > leave.date_to):
             //     raise ValidationError(_('The start date of the time off must be earlier than the end date.'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResourceCalendarLeaves> ComputeCalendarIdInternalAsync()
@@ -174,7 +176,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<ResourceCalendarLeaves> CreateAsync(ResourceCalendarLeaves entity, List<string> fields)
+        public override async Task<ResourceCalendarLeaves> CreateAsync(CreateRequestDto<ResourceCalendarLeaves> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: resource.py) ---
@@ -190,7 +192,7 @@ namespace Bamboo.Core.Application.Services
             // results._generate_timesheeets()
             // return results
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<ResourceCalendarLeaves> EnsureDatetimeInternalAsync(object datetime_representation, object date_format)
@@ -630,7 +632,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ResourceCalendarLeaves entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ResourceCalendarLeaves> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: resource.py) ---
@@ -662,7 +664,7 @@ namespace Bamboo.Core.Application.Services
             //     overlapping_leaves.sudo()._generate_timesheets()
             // return result
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

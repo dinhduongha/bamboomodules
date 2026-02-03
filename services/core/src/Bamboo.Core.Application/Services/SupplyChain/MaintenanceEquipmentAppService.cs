@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Maintenance", Category = "SupplyChain", Depends = new[] { "mail" })]
-    public partial class MaintenanceEquipmentAppService : GenericApplicationService<MaintenanceEquipment>, IMaintenanceEquipmentAppService
+    public partial class MaintenanceEquipmentAppService : GenericAppService<MaintenanceEquipment>, IMaintenanceEquipmentAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -100,7 +100,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<MaintenanceEquipment> CreateAsync(MaintenanceEquipment entity, List<string> fields)
+        public override async Task<MaintenanceEquipment> CreateAsync(CreateRequestDto<MaintenanceEquipment> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_maintenance, FILE: equipment.py) ---
@@ -125,7 +125,7 @@ namespace Bamboo.Core.Application.Services
             //         equipment.message_subscribe(partner_ids=[equipment.owner_user_id.partner_id.id])
             // return equipments
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<MaintenanceEquipment> OnchangeCategoryIdInternalAsync()
@@ -138,7 +138,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MaintenanceEquipment> OpenMatchedSerialAsync(Guid id)
+        public async Task<MaintenanceEquipment> OpenMatchedSerialAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_maintenance, FILE: maintenance.py) ---
@@ -162,9 +162,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action_dict
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<MaintenanceEquipment> ReadGroupCategoryIdsInternalAsync(object categories, object domain)
         {
             /*
@@ -200,7 +203,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, MaintenanceEquipment entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<MaintenanceEquipment> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_maintenance, FILE: equipment.py) ---
@@ -224,7 +227,7 @@ namespace Bamboo.Core.Application.Services
             //     self.message_subscribe(partner_ids=self.env['res.users'].browse(vals['owner_user_id']).partner_id.ids)
             // return super(MaintenanceEquipment, self).write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

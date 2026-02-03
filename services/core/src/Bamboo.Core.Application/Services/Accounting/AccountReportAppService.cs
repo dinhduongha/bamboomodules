@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountReportAppService : GenericApplicationService<AccountReport>, IAccountReportAppService
+    public partial class AccountReportAppService : GenericAppService<AccountReport>, IAccountReportAppService
     {
 
         public AccountReportAppService(IRepository<AccountReport, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -91,7 +91,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountReport> CopyDataAsync(Guid id, AccountReportCopyDataRequestDto input)
+        public async Task<AccountReport> CopyDataAsync(AccountReportCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_report.py) ---
@@ -99,7 +99,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=report._get_copied_name()) for report, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountReport> GetCopiedNameInternalAsync()

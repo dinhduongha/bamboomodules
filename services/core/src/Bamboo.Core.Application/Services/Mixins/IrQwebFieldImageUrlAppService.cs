@@ -35,6 +35,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ValueToHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object @value, object options) where TEntity : IEntity<Guid>, IIrQwebFieldImageUrlable
         {
             /*

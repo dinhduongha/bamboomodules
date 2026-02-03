@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Onboarding", Category = "Base", Depends = new[] { "web" })]
-    public partial class OnboardingProgressAppService : GenericApplicationService<OnboardingProgress>, IOnboardingProgressAppService
+    public partial class OnboardingProgressAppService : GenericAppService<OnboardingProgress>, IOnboardingProgressAppService
     {
 
         public OnboardingProgressAppService(IRepository<OnboardingProgress, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,14 +26,16 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<OnboardingProgress> CloseAsync(Guid id)
+        public async Task<OnboardingProgress> CloseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py) ---
             // def action_close(self):
             // self.is_onboarding_closed = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<OnboardingProgress> ComputeOnboardingStateInternalAsync()
@@ -99,7 +101,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<OnboardingProgress> ToggleVisibilityAsync(Guid id)
+        public async Task<OnboardingProgress> ToggleVisibilityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py) ---
@@ -107,7 +109,9 @@ namespace Bamboo.Core.Application.Services
             // for progress in self:
             //     progress.is_onboarding_closed = not progress.is_onboarding_closed
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

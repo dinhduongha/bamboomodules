@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrModelAppService : IGenericApplicationService<IrModel>
     {
-        Task<IrModel> DisplayNameForAsync(Guid id, IrModelDisplayNameForRequestDto input);
-        Task<IrModel> GetAuthorizedFieldsAsync(Guid id, IrModelGetAuthorizedFieldsRequestDto input);
-        Task<IrModel> GetAvailableModelsAsync(Guid id);
-        Task<IrModel> GetCompatibleFormModelsAsync(Guid id);
-        Task<IrModel> HasSearchableParentRelationAsync(Guid id, IrModelHasSearchableParentRelationRequestDto input);
+        Task<IrModel> DisplayNameForAsync(IrModelDisplayNameForRequestDto input);
+        Task<IrModel> GetAuthorizedFieldsAsync(IrModelGetAuthorizedFieldsRequestDto input);
+        Task<IrModel> GetAvailableModelsAsync(Guid[] ids);
+        Task<IrModel> GetCompatibleFormModelsAsync(Guid[] ids);
+        Task<IrModel> HasSearchableParentRelationAsync(IrModelHasSearchableParentRelationRequestDto input);
     }
 }

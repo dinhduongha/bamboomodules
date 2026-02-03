@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrLeaveAccrualLevelAppService : IGenericApplicationService<HrLeaveAccrualLevel>
     {
-        Task<HrLeaveAccrualLevel> SaveNewAsync(Guid id);
+        Task<HrLeaveAccrualLevel> SaveNewAsync(Guid[] ids);
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResDeviceLogAppService : GenericApplicationService<ResDeviceLog>, IResDeviceLogAppService
+    public partial class ResDeviceLogAppService : GenericAppService<ResDeviceLog>, IResDeviceLogAppService
     {
 
         public ResDeviceLogAppService(IRepository<ResDeviceLog, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -73,6 +73,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResDeviceLog> FromInternalAsync()
         {
             /*
@@ -107,7 +108,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResDeviceLog> InitAsync(Guid id)
+        public async Task<ResDeviceLog> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_device.py) ---
@@ -120,7 +121,9 @@ namespace Bamboo.Core.Application.Services
             //     SQL(self._query)
             // ))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResDeviceLog> IsMobileInternalAsync(object platform)
@@ -158,14 +161,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResDeviceLog> RevokeAsync(Guid id)
+        public async Task<ResDeviceLog> RevokeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_device.py) ---
             // def revoke(self):
             // return self._revoke()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResDeviceLog> RevokeInternalAsync()
@@ -187,6 +192,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResDeviceLog> SelectInternalAsync()
         {
             /*
@@ -197,6 +203,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResDeviceLog> UpdateDeviceInternalAsync(object request)
         {
             /*
@@ -243,6 +250,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResDeviceLog> WhereInternalAsync()
         {
             /*

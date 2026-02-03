@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("AccountEdi", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class AccountEdiDocumentAppService : GenericApplicationService<AccountEdiDocument>, IAccountEdiDocumentAppService
+    public partial class AccountEdiDocumentAppService : GenericAppService<AccountEdiDocument>, IAccountEdiDocumentAppService
     {
 
         public AccountEdiDocumentAppService(IRepository<AccountEdiDocument, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -47,6 +47,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountEdiDocument> CronProcessDocumentsWebServicesInternalAsync(object job_count)
         {
             /*
@@ -70,7 +71,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountEdiDocument> ExportXmlAsync(Guid id)
+        public async Task<AccountEdiDocument> ExportXmlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_edi, FILE: account_edi_document.py) ---
@@ -81,7 +82,9 @@ namespace Bamboo.Core.Application.Services
             //     'url':  '/web/content/account.edi.document/%s/edi_content' % self.id
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountEdiDocument> FilterEdiAttachmentsForMailingInternalAsync()
@@ -213,6 +216,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountEdiDocument> ProcessJobInternalAsync(object job)
         {
             /*

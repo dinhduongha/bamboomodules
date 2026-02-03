@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PosRestaurant", Category = "Sales", Depends = new[] { "point_of_sale" })]
-    public partial class RestaurantFloorAppService : GenericApplicationService<RestaurantFloor>, IRestaurantFloorAppService
+    public partial class RestaurantFloorAppService : GenericAppService<RestaurantFloor>, IRestaurantFloorAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public RestaurantFloorAppService(IRepository<RestaurantFloor, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<RestaurantFloor> DeactivateFloorAsync(Guid id, RestaurantFloorDeactivateFloorRequestDto input)
+        public async Task<RestaurantFloor> DeactivateFloorAsync(RestaurantFloorDeactivateFloorRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---
@@ -41,9 +41,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantFloor> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -54,6 +57,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantFloor> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -64,6 +68,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantFloor> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -74,6 +79,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantFloor> LoadPosSelfDataFieldsInternalAsync(object config)
         {
             /*
@@ -84,7 +90,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RestaurantFloor> RenameFloorAsync(Guid id, RestaurantFloorRenameFloorRequestDto input)
+        public async Task<RestaurantFloor> RenameFloorAsync(RestaurantFloorRenameFloorRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---
@@ -92,10 +98,13 @@ namespace Bamboo.Core.Application.Services
             // for floor in self:
             //     floor.name = new_name
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RestaurantFloor> SyncFromUiAsync(Guid id, RestaurantFloorSyncFromUiRequestDto input)
+        [ApiModel]
+        public async Task<RestaurantFloor> SyncFromUiAsync(RestaurantFloorSyncFromUiRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---
@@ -115,7 +124,9 @@ namespace Bamboo.Core.Application.Services
             //     'tables': [],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RestaurantFloor> UnlinkExceptActivePosSessionInternalAsync()

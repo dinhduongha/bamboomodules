@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBaseImportModuleAppService : IGenericApplicationService<BaseImportModule>
     {
-        Task<BaseImportModule> GetDependenciesToInstallNamesAsync(Guid id);
-        Task<BaseImportModule> ImportModuleAsync(Guid id);
-        Task<BaseImportModule> ModuleOpenAsync(Guid id);
+        Task<BaseImportModule> GetDependenciesToInstallNamesAsync(Guid[] ids);
+        Task<BaseImportModule> ImportModuleAsync(Guid[] ids);
+        Task<BaseImportModule> ModuleOpenAsync(Guid[] ids);
     }
 }

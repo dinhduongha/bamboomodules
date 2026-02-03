@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailMessageScheduleAppService : GenericApplicationService<MailMessageSchedule>, IMailMessageScheduleAppService
+    public partial class MailMessageScheduleAppService : GenericAppService<MailMessageSchedule>, IMailMessageScheduleAppService
     {
 
         public MailMessageScheduleAppService(IRepository<MailMessageSchedule, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<MailMessageSchedule> ForceSendAsync(Guid id)
+        public async Task<MailMessageSchedule> ForceSendAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message_schedule.py) ---
@@ -34,7 +34,9 @@ namespace Bamboo.Core.Application.Services
             // """ Launch notification process independently from the expected date. """
             // return self._send_notifications()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessageSchedule> GroupByModelInternalAsync()
@@ -54,6 +56,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessageSchedule> SendMessageNotificationsInternalAsync(object messages, object default_notify_kwargs)
         {
             /*
@@ -82,6 +85,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessageSchedule> SendNotificationsCronInternalAsync()
         {
             /*
@@ -132,6 +136,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessageSchedule> UpdateMessageScheduledDatetimeInternalAsync(object messages, object new_datetime)
         {
             /*

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-lost-leads")]
-        public async Task<IActionResult> ActionLostLeadsAsync(Guid id)
+        [Route("action-lost-leads")]
+        public async Task<IActionResult> ActionLostLeadsAsync(Guid[] ids)
         {
-            var result = await _appService.LostLeadsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LostLeadsAsync(ids);
             return Ok(result);
         }
     }

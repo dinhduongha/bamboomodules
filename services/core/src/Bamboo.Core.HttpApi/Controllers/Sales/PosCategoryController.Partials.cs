@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-default-color")]
-        public async Task<IActionResult> GetDefaultColorAsync(Guid id)
+        [Route("get-default-color")]
+        public async Task<IActionResult> GetDefaultColorAsync(Guid[] ids)
         {
-            var result = await _appService.GetDefaultColorAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetDefaultColorAsync(ids);
             return Ok(result);
         }
     }

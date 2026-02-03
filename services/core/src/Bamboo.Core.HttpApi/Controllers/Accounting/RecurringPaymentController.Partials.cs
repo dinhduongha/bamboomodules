@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-create-lines")]
-        public async Task<IActionResult> ActionCreateLinesAsync(Guid id, [FromBody] RecurringPaymentCreateLinesRequestDto input)
+        [Route("action-create-lines")]
+        public async Task<IActionResult> ActionCreateLinesAsync(RecurringPaymentCreateLinesRequestDto input)
         {
-            var result = await _appService.CreateLinesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateLinesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-done")]
-        public async Task<IActionResult> ActionDoneAsync(Guid id)
+        [Route("action-done")]
+        public async Task<IActionResult> ActionDoneAsync(Guid[] ids)
         {
-            var result = await _appService.DoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-draft")]
-        public async Task<IActionResult> ActionDraftAsync(Guid id)
+        [Route("action-draft")]
+        public async Task<IActionResult> ActionDraftAsync(Guid[] ids)
         {
-            var result = await _appService.DraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DraftAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-generate-payment")]
-        public async Task<IActionResult> ActionGeneratePaymentAsync(Guid id)
+        [Route("action-generate-payment")]
+        public async Task<IActionResult> ActionGeneratePaymentAsync(Guid[] ids)
         {
-            var result = await _appService.GeneratePaymentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GeneratePaymentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compute-next-date")]
-        public async Task<IActionResult> ComputeNextDateAsync(Guid id, [FromBody] RecurringPaymentComputeNextDateRequestDto input)
+        [Route("compute-next-date")]
+        public async Task<IActionResult> ComputeNextDateAsync(RecurringPaymentComputeNextDateRequestDto input)
         {
-            var result = await _appService.ComputeNextDateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ComputeNextDateAsync(input);
             return Ok(result);
         }
     }

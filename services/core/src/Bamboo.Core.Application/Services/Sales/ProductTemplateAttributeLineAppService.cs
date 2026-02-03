@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductTemplateAttributeLineAppService : GenericApplicationService<ProductTemplateAttributeLine>, IProductTemplateAttributeLineAppService
+    public partial class ProductTemplateAttributeLineAppService : GenericAppService<ProductTemplateAttributeLine>, IProductTemplateAttributeLineAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public ProductTemplateAttributeLineAppService(IRepository<ProductTemplateAttributeLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -79,6 +79,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductTemplateAttributeLine> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -90,6 +91,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductTemplateAttributeLine> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -117,7 +119,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductTemplateAttributeLine> OpenAttributeValuesAsync(Guid id)
+        public async Task<ProductTemplateAttributeLine> OpenAttributeValuesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template_attribute_line.py) ---
@@ -138,7 +140,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductTemplateAttributeLine> PrepareCategoriesForDisplayInternalAsync()

@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-to-po")]
-        public async Task<IActionResult> ActionAddToPoAsync(Guid id)
+        [Route("action-add-to-po")]
+        public async Task<IActionResult> ActionAddToPoAsync(Guid[] ids)
         {
-            var result = await _appService.AddToPoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddToPoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-match-lines")]
-        public async Task<IActionResult> ActionMatchLinesAsync(Guid id)
+        [Route("action-match-lines")]
+        public async Task<IActionResult> ActionMatchLinesAsync(Guid[] ids)
         {
-            var result = await _appService.MatchLinesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MatchLinesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-line")]
-        public async Task<IActionResult> ActionOpenLineAsync(Guid id)
+        [Route("action-open-line")]
+        public async Task<IActionResult> ActionOpenLineAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLineAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLineAsync(ids);
             return Ok(result);
         }
     }

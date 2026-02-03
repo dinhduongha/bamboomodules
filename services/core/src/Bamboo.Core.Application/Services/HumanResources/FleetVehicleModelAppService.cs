@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Fleet", Category = "HumanResources", Depends = new[] { "base", "mail" })]
-    public partial class FleetVehicleModelAppService : GenericApplicationService<FleetVehicleModel>, IFleetVehicleModelAppService
+    public partial class FleetVehicleModelAppService : GenericAppService<FleetVehicleModel>, IFleetVehicleModelAppService
     {
         private readonly IAvatarMixinAppService _avatarMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -85,7 +85,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicleModel> ModelVehicleAsync(Guid id)
+        public async Task<FleetVehicleModel> ModelVehicleAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
@@ -109,9 +109,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return view
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<FleetVehicleModel> SearchDisplayNameInternalAsync(object @operator, object @value)
         {
             /*
@@ -124,6 +127,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<FleetVehicleModel> SearchVehicleCountInternalAsync(object @operator, object @value)
         {
             /*

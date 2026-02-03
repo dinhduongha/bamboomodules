@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailMailAppService : IGenericApplicationService<MailMail>
     {
-        Task<MailMail> CancelAsync(Guid id);
-        Task<MailMail> MarkOutgoingAsync(Guid id);
-        Task<MailMail> OpenDocumentAsync(Guid id);
-        Task<MailMail> ProcessEmailQueueAsync(Guid id, MailMailProcessEmailQueueRequestDto input);
-        Task<MailMail> RetryAsync(Guid id);
-        Task<MailMail> SendAfterCommitAsync(Guid id);
-        Task<MailMail> SendAndCloseAsync(Guid id);
-        Task<MailMail> SendAsync(Guid id, MailMailSendRequestDto input);
+        Task<MailMail> CancelAsync(Guid[] ids);
+        Task<MailMail> MarkOutgoingAsync(Guid[] ids);
+        Task<MailMail> OpenDocumentAsync(Guid[] ids);
+        Task<MailMail> ProcessEmailQueueAsync(MailMailProcessEmailQueueRequestDto input);
+        Task<MailMail> RetryAsync(Guid[] ids);
+        Task<MailMail> SendAfterCommitAsync(Guid[] ids);
+        Task<MailMail> SendAndCloseAsync(Guid[] ids);
+        Task<MailMail> SendAsync(MailMailSendRequestDto input);
     }
 }

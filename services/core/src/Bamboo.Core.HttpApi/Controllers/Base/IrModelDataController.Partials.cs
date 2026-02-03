@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/check-object-reference")]
-        public async Task<IActionResult> CheckObjectReferenceAsync(Guid id, [FromBody] IrModelDataCheckObjectReferenceRequestDto input)
+        [Route("check-object-reference")]
+        public async Task<IActionResult> CheckObjectReferenceAsync(IrModelDataCheckObjectReferenceRequestDto input)
         {
-            var result = await _appService.CheckObjectReferenceAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckObjectReferenceAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] IrModelDataCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(IrModelDataCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-noupdate")]
-        public async Task<IActionResult> ToggleNoupdateAsync(Guid id, [FromBody] IrModelDataToggleNoupdateRequestDto input)
+        [Route("toggle-noupdate")]
+        public async Task<IActionResult> ToggleNoupdateAsync(IrModelDataToggleNoupdateRequestDto input)
         {
-            var result = await _appService.ToggleNoupdateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToggleNoupdateAsync(input);
             return Ok(result);
         }
     }

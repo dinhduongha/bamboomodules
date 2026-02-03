@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/check-parent-id")]
-        public async Task<IActionResult> CheckParentIdAsync(Guid id)
+        [Route("check-parent-id")]
+        public async Task<IActionResult> CheckParentIdAsync(Guid[] ids)
         {
-            var result = await _appService.CheckParentIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckParentIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-available-snippet-categories")]
-        public async Task<IActionResult> GetAvailableSnippetCategoriesAsync(Guid id, [FromBody] ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input)
+        [Route("get-available-snippet-categories")]
+        public async Task<IActionResult> GetAvailableSnippetCategoriesAsync(ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input)
         {
-            var result = await _appService.GetAvailableSnippetCategoriesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAvailableSnippetCategoriesAsync(input);
             return Ok(result);
         }
     }

@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICrmRevealRuleAppService : IGenericApplicationService<CrmRevealRule>
     {
-        Task<CrmRevealRule> GetLeadTreeViewAsync(Guid id);
-        Task<CrmRevealRule> GetOpportunityTreeViewAsync(Guid id);
+        Task<CrmRevealRule> GetLeadTreeViewAsync(Guid[] ids);
+        Task<CrmRevealRule> GetOpportunityTreeViewAsync(Guid[] ids);
     }
 }

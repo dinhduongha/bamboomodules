@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-pricelist-report")]
-        public async Task<IActionResult> ActionOpenPricelistReportAsync(Guid id)
+        [Route("action-open-pricelist-report")]
+        public async Task<IActionResult> ActionOpenPricelistReportAsync(Guid[] ids)
         {
-            var result = await _appService.OpenPricelistReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenPricelistReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProductPricelistCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ProductPricelistCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
     }

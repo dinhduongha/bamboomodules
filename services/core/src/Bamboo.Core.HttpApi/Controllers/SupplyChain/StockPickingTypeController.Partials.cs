@@ -11,106 +11,119 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-batch")]
-        public async Task<IActionResult> ActionBatchAsync(Guid id)
+        [Route("action-batch")]
+        public async Task<IActionResult> ActionBatchAsync(Guid[] ids)
         {
-            var result = await _appService.BatchAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BatchAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-barcode-installation")]
-        public async Task<IActionResult> ActionRedirectToBarcodeInstallationAsync(Guid id)
+        [Route("action-redirect-to-barcode-installation")]
+        public async Task<IActionResult> ActionRedirectToBarcodeInstallationAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToBarcodeInstallationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToBarcodeInstallationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-wave")]
-        public async Task<IActionResult> ActionWaveAsync(Guid id)
+        [Route("action-wave")]
+        public async Task<IActionResult> ActionWaveAsync(Guid[] ids)
         {
-            var result = await _appService.WaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockPickingTypeCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(StockPickingTypeCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-action-picking-tree-backorder")]
-        public async Task<IActionResult> GetActionPickingTreeBackorderAsync(Guid id)
+        [Route("get-action-picking-tree-backorder")]
+        public async Task<IActionResult> GetActionPickingTreeBackorderAsync(Guid[] ids)
         {
-            var result = await _appService.GetPickingTreeBackorderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPickingTreeBackorderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-action-picking-tree-late")]
-        public async Task<IActionResult> GetActionPickingTreeLateAsync(Guid id)
+        [Route("get-action-picking-tree-late")]
+        public async Task<IActionResult> GetActionPickingTreeLateAsync(Guid[] ids)
         {
-            var result = await _appService.GetPickingTreeLateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPickingTreeLateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-action-picking-tree-ready")]
-        public async Task<IActionResult> GetActionPickingTreeReadyAsync(Guid id)
+        [Route("get-action-picking-tree-ready")]
+        public async Task<IActionResult> GetActionPickingTreeReadyAsync(Guid[] ids)
         {
-            var result = await _appService.GetPickingTreeReadyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPickingTreeReadyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-action-picking-tree-waiting")]
-        public async Task<IActionResult> GetActionPickingTreeWaitingAsync(Guid id)
+        [Route("get-action-picking-tree-waiting")]
+        public async Task<IActionResult> GetActionPickingTreeWaitingAsync(Guid[] ids)
         {
-            var result = await _appService.GetPickingTreeWaitingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPickingTreeWaitingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-action-picking-type-moves-analysis")]
-        public async Task<IActionResult> GetActionPickingTypeMovesAnalysisAsync(Guid id)
+        [Route("get-action-picking-type-moves-analysis")]
+        public async Task<IActionResult> GetActionPickingTypeMovesAnalysisAsync(Guid[] ids)
         {
-            var result = await _appService.GetPickingTypeMovesAnalysisAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPickingTypeMovesAnalysisAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-action-picking-type-ready-moves")]
-        public async Task<IActionResult> GetActionPickingTypeReadyMovesAsync(Guid id)
+        [Route("get-action-picking-type-ready-moves")]
+        public async Task<IActionResult> GetActionPickingTypeReadyMovesAsync(Guid[] ids)
         {
-            var result = await _appService.GetPickingTypeReadyMovesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPickingTypeReadyMovesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-mrp-stock-picking-action-picking-type")]
-        public async Task<IActionResult> GetMrpStockPickingActionPickingTypeAsync(Guid id)
+        [Route("get-mrp-stock-picking-action-picking-type")]
+        public async Task<IActionResult> GetMrpStockPickingActionPickingTypeAsync(Guid[] ids)
         {
-            var result = await _appService.GetMrpStockPickingPickingTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetMrpStockPickingPickingTypeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-repair-stock-picking-action-picking-type")]
-        public async Task<IActionResult> GetRepairStockPickingActionPickingTypeAsync(Guid id)
+        [Route("get-repair-stock-picking-action-picking-type")]
+        public async Task<IActionResult> GetRepairStockPickingActionPickingTypeAsync(Guid[] ids)
         {
-            var result = await _appService.GetRepairStockPickingPickingTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetRepairStockPickingPickingTypeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-stock-picking-action-picking-type")]
-        public async Task<IActionResult> GetStockPickingActionPickingTypeAsync(Guid id)
+        [Route("get-stock-picking-action-picking-type")]
+        public async Task<IActionResult> GetStockPickingActionPickingTypeAsync(Guid[] ids)
         {
-            var result = await _appService.GetStockPickingPickingTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetStockPickingPickingTypeAsync(ids);
             return Ok(result);
         }
     }

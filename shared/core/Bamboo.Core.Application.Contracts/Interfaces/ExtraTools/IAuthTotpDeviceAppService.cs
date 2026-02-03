@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAuthTotpDeviceAppService : IGenericApplicationService<AuthTotpDevice>
     {
-        Task<AuthTotpDevice> InitAsync(Guid id);
-        Task<AuthTotpDevice> RemoveAsync(Guid id);
+        Task<AuthTotpDevice> InitAsync(Guid[] ids);
+        Task<AuthTotpDevice> RemoveAsync(Guid[] ids);
     }
 }

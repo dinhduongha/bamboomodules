@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-param")]
-        public async Task<IActionResult> GetParamAsync(Guid id, [FromBody] IrConfigParameterGetParamRequestDto input)
+        [Route("get-param")]
+        public async Task<IActionResult> GetParamAsync(IrConfigParameterGetParamRequestDto input)
         {
-            var result = await _appService.GetParamAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetParamAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id, [FromBody] IrConfigParameterInitRequestDto input)
+        [Route("init")]
+        public async Task<IActionResult> InitAsync(IrConfigParameterInitRequestDto input)
         {
-            var result = await _appService.InitAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.InitAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-param")]
-        public async Task<IActionResult> SetParamAsync(Guid id, [FromBody] IrConfigParameterSetParamRequestDto input)
+        [Route("set-param")]
+        public async Task<IActionResult> SetParamAsync(IrConfigParameterSetParamRequestDto input)
         {
-            var result = await _appService.SetParamAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetParamAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unlink-default-parameters")]
-        public async Task<IActionResult> UnlinkDefaultParametersAsync(Guid id)
+        [Route("unlink-default-parameters")]
+        public async Task<IActionResult> UnlinkDefaultParametersAsync(Guid[] ids)
         {
-            var result = await _appService.UnlinkDefaultParametersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnlinkDefaultParametersAsync(ids);
             return Ok(result);
         }
     }

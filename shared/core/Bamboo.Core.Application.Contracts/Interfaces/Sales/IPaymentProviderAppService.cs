@@ -10,18 +10,18 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPaymentProviderAppService : IGenericApplicationService<PaymentProvider>
     {
-        Task<PaymentProvider> ButtonImmediateInstallAsync(Guid id);
-        Task<PaymentProvider> GetBaseUrlAsync(Guid id);
-        Task<PaymentProvider> PaypalCreateWebhookAsync(Guid id);
-        Task<PaymentProvider> RazorpayCreateWebhookAsync(Guid id);
-        Task<PaymentProvider> RecomputePendingMsgAsync(Guid id);
-        Task<PaymentProvider> ResetCredentialsAsync(Guid id);
-        Task<PaymentProvider> StartOnboardingAsync(Guid id, PaymentProviderStartOnboardingRequestDto input);
-        Task<PaymentProvider> StripeCreateWebhookAsync(Guid id);
-        Task<PaymentProvider> StripeVerifyApplePayDomainAsync(Guid id);
-        Task<PaymentProvider> SyncPaymobPaymentMethodsAsync(Guid id);
-        Task<PaymentProvider> ToggleIsPublishedAsync(Guid id);
-        Task<PaymentProvider> UpdateMerchantDetailsAsync(Guid id);
-        Task<PaymentProvider> ViewPaymentMethodsAsync(Guid id);
+        Task<PaymentProvider> ButtonImmediateInstallAsync(Guid[] ids);
+        Task<PaymentProvider> GetBaseUrlAsync(Guid[] ids);
+        Task<PaymentProvider> PaypalCreateWebhookAsync(Guid[] ids);
+        Task<PaymentProvider> RazorpayCreateWebhookAsync(Guid[] ids);
+        Task<PaymentProvider> RecomputePendingMsgAsync(Guid[] ids);
+        Task<PaymentProvider> ResetCredentialsAsync(Guid[] ids);
+        Task<PaymentProvider> StartOnboardingAsync(PaymentProviderStartOnboardingRequestDto input);
+        Task<PaymentProvider> StripeCreateWebhookAsync(Guid[] ids);
+        Task<PaymentProvider> StripeVerifyApplePayDomainAsync(Guid[] ids);
+        Task<PaymentProvider> SyncPaymobPaymentMethodsAsync(Guid[] ids);
+        Task<PaymentProvider> ToggleIsPublishedAsync(Guid[] ids);
+        Task<PaymentProvider> UpdateMerchantDetailsAsync(Guid[] ids);
+        Task<PaymentProvider> ViewPaymentMethodsAsync(Guid[] ids);
     }
 }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountBankStatementAppService : GenericApplicationService<AccountBankStatement>, IAccountBankStatementAppService
+    public partial class AccountBankStatementAppService : GenericAppService<AccountBankStatement>, IAccountBankStatementAppService
     {
 
         public AccountBankStatementAppService(IRepository<AccountBankStatement, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -262,7 +262,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountBankStatement> InitAsync(Guid id)
+        public async Task<AccountBankStatement> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_bank_statement.py) ---
@@ -279,7 +279,9 @@ namespace Bamboo.Core.Application.Services
             //     expressions=['journal_id', 'first_line_index'],
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountBankStatement> SearchIsValidInternalAsync(object @operator, object @value)

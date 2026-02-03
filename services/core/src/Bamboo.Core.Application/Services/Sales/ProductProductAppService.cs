@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductProductAppService : GenericApplicationService<ProductProduct>, IProductProductAppService
+    public partial class ProductProductAppService : GenericAppService<ProductProduct>, IProductProductAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<ProductProduct> ArchiveAsync(Guid id)
+        public async Task<ProductProduct> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
@@ -64,10 +64,12 @@ namespace Bamboo.Core.Application.Services
             //     lambda product_tmpl: product_tmpl.active and not product_tmpl.product_variant_ids
             // ).action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> BomCostAsync(Guid id)
+        public async Task<ProductProduct> BomCostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: product.py) ---
@@ -76,10 +78,12 @@ namespace Bamboo.Core.Application.Services
             // for product in self:
             //     product._set_price_from_bom(boms_to_recompute)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ButtonBomCostAsync(Guid id)
+        public async Task<ProductProduct> ButtonBomCostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: product.py) ---
@@ -87,7 +91,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self._set_price_from_bom()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> CanReturnContentInternalAsync(object field_name, object access_token)
@@ -1462,6 +1468,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> CountReturnedSnProductsDomainInternalAsync(object sn_lot, object or_domains)
         {
             /*
@@ -1493,6 +1500,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> CountReturnedSnProductsInternalAsync(object sn_lot)
         {
             /*
@@ -1506,7 +1514,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<ProductProduct> CreateAsync(ProductProduct entity, List<string> fields)
+        public override async Task<ProductProduct> CreateAsync(CreateRequestDto<ProductProduct> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -1521,10 +1529,11 @@ namespace Bamboo.Core.Application.Services
             // products._change_standard_price({product: 0 for product in products if product.standard_price})
             // return products
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
+        [ApiModel]
+        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(FieldsGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -1558,7 +1567,7 @@ namespace Bamboo.Core.Application.Services
             //             res['qty_available']['string'] = _('Produced Qty')
             // return res
             */
-            return await base.FieldsGetAsync(fields, attributes);
+            return await base.FieldsGetAsync(input);
         }
 
         protected async Task<List<Dictionary<string, object>>> FilterApplicableAttributesInternalAsync(Guid attributes_by_ptal_id)
@@ -1581,7 +1590,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> FilterHasRoutesAsync(Guid id)
+        public async Task<ProductProduct> FilterHasRoutesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -1596,7 +1605,9 @@ namespace Bamboo.Core.Application.Services
             // products_with_routes += self.search([('id', 'in', (self - products_with_routes).ids), ('categ_id.total_route_ids', '!=', False)])
             // return products_with_routes
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> FilterToUnlinkInternalAsync()
@@ -1703,7 +1714,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> GetComponentsAsync(Guid id)
+        public async Task<ProductProduct> GetComponentsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
@@ -1722,7 +1733,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.ids
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> GetContextualDiscountInternalAsync()
@@ -1751,14 +1764,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> GetContextualPriceAsync(Guid id)
+        public async Task<ProductProduct> GetContextualPriceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def get_contextual_price(self):
             // return self._get_contextual_price()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> GetContextualPriceInternalAsync()
@@ -1923,7 +1938,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> GetEmptyListHelpAsync(Guid id, ProductProductGetEmptyListHelpRequestDto input)
+        [ApiModel]
+        public async Task<ProductProduct> GetEmptyListHelpAsync(ProductProductGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -1933,7 +1949,9 @@ namespace Bamboo.Core.Application.Services
             // )
             // return super(ProductProduct, self).get_empty_list_help(help_message)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> GetExtraImage1920UrlsInternalAsync()
@@ -2140,6 +2158,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> GetMonthlyDemandMovesLocationDomainInternalAsync()
         {
             /*
@@ -2341,7 +2360,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> GetProductMultilineDescriptionSaleAsync(Guid id)
+        public async Task<ProductProduct> GetProductMultilineDescriptionSaleAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -2365,7 +2384,9 @@ namespace Bamboo.Core.Application.Services
             // new_line = '' if len(payment_channels) == 1 else '\n'
             // return _('Access to: %(new_line)s%(channel_list)s', new_line=new_line, channel_list='\n'.join(payment_channels.mapped('name')))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> GetProductPlaceholderFilenameInternalAsync()
@@ -2602,7 +2623,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> GetTotalRoutesAsync(Guid id)
+        public async Task<ProductProduct> GetTotalRoutesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
@@ -2624,7 +2645,9 @@ namespace Bamboo.Core.Application.Services
             // # Extend the total routes in other modules
             // return self.env['stock.route']
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> GetValueFromLotsInternalAsync()
@@ -2809,6 +2832,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -2819,6 +2843,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -2851,6 +2876,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
@@ -3043,7 +3069,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> OpenDocumentsAsync(Guid id)
+        public async Task<ProductProduct> OpenDocumentsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -3056,10 +3082,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> OpenLabelLayoutAsync(Guid id)
+        public async Task<ProductProduct> OpenLabelLayoutAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -3070,10 +3098,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'default_product_ids': self.ids}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> OpenProductLotAsync(Guid id)
+        public async Task<ProductProduct> OpenProductLotAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -3092,10 +3122,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> OpenProductTemplateAsync(Guid id)
+        public async Task<ProductProduct> OpenProductTemplateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -3110,10 +3142,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new'
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> OpenQuantsAsync(Guid id)
+        public async Task<ProductProduct> OpenQuantsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
@@ -3162,10 +3196,12 @@ namespace Bamboo.Core.Application.Services
             //     action["name"] = _('Update Quantity')
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> OpenWebsiteUrlAsync(Guid id)
+        public async Task<ProductProduct> OpenWebsiteUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
@@ -3175,7 +3211,9 @@ namespace Bamboo.Core.Application.Services
             // res['url'] = self.website_url
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> PrepareCategoriesForDisplayInternalAsync()
@@ -3289,7 +3327,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> ProductForecastReportAsync(Guid id)
+        public async Task<ProductProduct> ProductForecastReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -3298,9 +3336,12 @@ namespace Bamboo.Core.Application.Services
             // action = self.env["ir.actions.actions"]._for_xml_id("stock.stock_forecasted_product_product_action")
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> ReadGroupInternalAsync(object domain, object groupby, object aggregates, object having, object offset, object limit, object order)
         {
             /*
@@ -3644,6 +3685,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> SearchDisplayNameInternalAsync(object @operator, object @value)
         {
             /*
@@ -3728,6 +3770,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductProduct> SearchInternalAsync(object domain)
         {
             /*
@@ -4261,7 +4304,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> UnarchiveAsync(Guid id)
+        public async Task<ProductProduct> UnarchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -4273,7 +4316,9 @@ namespace Bamboo.Core.Application.Services
             //     lambda product_tmpl: not product_tmpl.active and product_tmpl.product_variant_ids
             // ).action_unarchive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> UnlinkExceptActivePosSessionInternalAsync()
@@ -4513,7 +4558,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> UsedInBomAsync(Guid id)
+        public async Task<ProductProduct> UsedInBomAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
@@ -4523,10 +4568,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('bom_line_ids.product_id', '=', self.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewBomAsync(Guid id)
+        public async Task<ProductProduct> ViewBomAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
@@ -4541,10 +4588,13 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = ['|', '|', ('byproduct_ids.product_id', 'in', self.ids), ('product_id', 'in', self.ids), '&', ('product_id', '=', False), ('product_tmpl_id', 'in', template_ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewHeaderGetAsync(Guid id, ProductProductViewHeaderGetRequestDto input)
+        [ApiModel]
+        public async Task<ProductProduct> ViewHeaderGetAsync(ProductProductViewHeaderGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -4565,10 +4615,12 @@ namespace Bamboo.Core.Application.Services
             //     )
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewMosAsync(Guid id)
+        public async Task<ProductProduct> ViewMosAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
@@ -4577,10 +4629,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('state', '=', 'done'), ('product_id', 'in', self.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewOrderpointsAsync(Guid id)
+        public async Task<ProductProduct> ViewOrderpointsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -4600,10 +4654,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = Domain(action.get('domain') or Domain.TRUE) & Domain('product_id', 'in', self.ids)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewPoAsync(Guid id)
+        public async Task<ProductProduct> ViewPoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: product.py) ---
@@ -4613,10 +4669,12 @@ namespace Bamboo.Core.Application.Services
             // action['display_name'] = _("Purchase History for %s", self.display_name)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewRelatedPutawayRulesAsync(Guid id)
+        public async Task<ProductProduct> ViewRelatedPutawayRulesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -4629,20 +4687,24 @@ namespace Bamboo.Core.Application.Services
             // ]
             // return self.env['product.template']._get_action_view_related_putaway_rules(domain)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewRoutesAsync(Guid id)
+        public async Task<ProductProduct> ViewRoutesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def action_view_routes(self):
             // return self.mapped('product_tmpl_id').action_view_routes()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewSalesAsync(Guid id)
+        public async Task<ProductProduct> ViewSalesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: product_product.py) ---
@@ -4658,10 +4720,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewStockMoveLinesAsync(Guid id)
+        public async Task<ProductProduct> ViewStockMoveLinesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -4671,10 +4735,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('product_id', '=', self.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> ViewStorageCategoryCapacityAsync(Guid id)
+        public async Task<ProductProduct> ViewStorageCategoryCapacityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -4690,10 +4756,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('product_id', 'in', self.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductProduct> WebsitePublishButtonAsync(Guid id)
+        public async Task<ProductProduct> WebsitePublishButtonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
@@ -4701,7 +4769,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.product_tmpl_id.website_publish_button()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductProduct> WebsiteShowQuickAddInternalAsync()
@@ -4738,7 +4808,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ProductProduct entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ProductProduct> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: product_product.py) ---
@@ -4853,7 +4923,7 @@ namespace Bamboo.Core.Application.Services
             //     ]).unlink()
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

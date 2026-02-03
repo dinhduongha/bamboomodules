@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockPackageLevelAppService : IGenericApplicationService<StockPackageLevel>
     {
-        Task<StockPackageLevel> ShowPackageDetailsAsync(Guid id);
+        Task<StockPackageLevel> ShowPackageDetailsAsync(Guid[] ids);
     }
 }

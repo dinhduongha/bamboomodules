@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAssetDepreciationLineAppService : IGenericApplicationService<AccountAssetDepreciationLine>
     {
-        Task<AccountAssetDepreciationLine> CreateGroupedMoveAsync(Guid id, AccountAssetDepreciationLineCreateGroupedMoveRequestDto input);
-        Task<AccountAssetDepreciationLine> CreateMoveAsync(Guid id, AccountAssetDepreciationLineCreateMoveRequestDto input);
-        Task<AccountAssetDepreciationLine> LogMessageWhenPostedAsync(Guid id);
-        Task<AccountAssetDepreciationLine> PostLinesAndCloseAssetAsync(Guid id);
+        Task<AccountAssetDepreciationLine> CreateGroupedMoveAsync(AccountAssetDepreciationLineCreateGroupedMoveRequestDto input);
+        Task<AccountAssetDepreciationLine> CreateMoveAsync(AccountAssetDepreciationLineCreateMoveRequestDto input);
+        Task<AccountAssetDepreciationLine> LogMessageWhenPostedAsync(Guid[] ids);
+        Task<AccountAssetDepreciationLine> PostLinesAndCloseAssetAsync(Guid[] ids);
     }
 }

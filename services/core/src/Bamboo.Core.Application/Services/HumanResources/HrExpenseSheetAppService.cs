@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrExpenseModule", Category = "HumanResources", Depends = new[] { "account", "web_tour", "hr" })]
-    public partial class HrExpenseSheetAppService : GenericApplicationService<HrExpenseSheet>, IHrExpenseSheetAppService
+    public partial class HrExpenseSheetAppService : GenericAppService<HrExpenseSheet>, IHrExpenseSheetAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadMainAttachmentAppService _mailThreadMainAttachmentAppService;
@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadMainAttachmentAppService = mailThreadMainAttachmentAppService;
         }
 
-        public async Task<HrExpenseSheet> ActivityUpdateAsync(Guid id)
+        public async Task<HrExpenseSheet> ActivityUpdateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -50,10 +50,12 @@ namespace Bamboo.Core.Application.Services
             // if reports_activity_unlink:
             //     reports_activity_unlink.activity_unlink(['hr_expense.mail_act_expense_approval'])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrExpenseSheet> ApproveExpenseSheetsAsync(Guid id)
+        public async Task<HrExpenseSheet> ApproveExpenseSheetsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -67,7 +69,9 @@ namespace Bamboo.Core.Application.Services
             //     return action
             // self._do_approve()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrExpenseSheet> CalculateDefaultAccountingDateInternalAsync()
@@ -498,6 +502,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrExpenseSheet> DefaultEmployeeIdInternalAsync()
         {
             /*
@@ -508,6 +513,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrExpenseSheet> DefaultJournalIdInternalAsync()
         {
             /*
@@ -687,6 +693,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrExpenseSheet> GetDefaultSheetNameInternalAsync(object expenses_to_report)
         {
             /*
@@ -841,7 +848,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrExpenseSheet> OpenAccountMovesAsync(Guid id)
+        public async Task<HrExpenseSheet> OpenAccountMovesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -871,10 +878,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrExpenseSheet> OpenExpenseViewAsync(Guid id)
+        public async Task<HrExpenseSheet> OpenExpenseViewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -896,10 +905,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('id', 'in', self.expense_line_ids.ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrExpenseSheet> OpenSaleOrdersAsync(Guid id)
+        public async Task<HrExpenseSheet> OpenSaleOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_expense, FILE: hr_expense_sheet.py) ---
@@ -925,7 +936,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('id', 'in', self.expense_line_ids.sale_order_id.ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrExpenseSheet> PrepareBillsValsInternalAsync()
@@ -981,7 +994,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrExpenseSheet> RefuseExpenseSheetsAsync(Guid id)
+        public async Task<HrExpenseSheet> RefuseExpenseSheetsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -989,10 +1002,12 @@ namespace Bamboo.Core.Application.Services
             // self._check_can_refuse()
             // return self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_refuse_wizard_action')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrExpenseSheet> RegisterPaymentAsync(Guid id)
+        public async Task<HrExpenseSheet> RegisterPaymentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -1006,10 +1021,12 @@ namespace Bamboo.Core.Application.Services
             //     self.account_move_ids.partner_bank_id.id if len(self.account_move_ids.partner_bank_id.ids) <= 1 else None
             // )).action_register_payment()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrExpenseSheet> ResetExpenseSheetsAsync(Guid id)
+        public async Task<HrExpenseSheet> ResetExpenseSheetsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -1023,7 +1040,9 @@ namespace Bamboo.Core.Application.Services
             // super().action_reset_expense_sheets()
             // self.sudo()._sale_expense_reset_sol_quantities()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrExpenseSheet> SaleExpenseResetSolQuantitiesInternalAsync()
@@ -1037,6 +1056,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrExpenseSheet> SearchProductIdsInternalAsync(object @operator, object @value)
         {
             /*
@@ -1049,7 +1069,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrExpenseSheet> SetToPaidAsync(Guid id)
+        public async Task<HrExpenseSheet> SetToPaidAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -1057,10 +1077,12 @@ namespace Bamboo.Core.Application.Services
             // # hook used in other modules to bypass payment registration
             // self.write({'state': 'done'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrExpenseSheet> SetToPostedAsync(Guid id)
+        public async Task<HrExpenseSheet> SetToPostedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -1068,10 +1090,12 @@ namespace Bamboo.Core.Application.Services
             // # hook used in other modules to bypass move creation
             // self.write({'state': 'post'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrExpenseSheet> SheetMovePostAsync(Guid id)
+        public async Task<HrExpenseSheet> SheetMovePostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
@@ -1088,17 +1112,21 @@ namespace Bamboo.Core.Application.Services
             // # Post the company-paid expense through the payment instead, to post both at the same time
             // company_sheets.account_move_ids.origin_payment_id.action_post()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrExpenseSheet> SubmitSheetAsync(Guid id)
+        public async Task<HrExpenseSheet> SubmitSheetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense_sheet.py) ---
             // def action_submit_sheet(self):
             // self._do_submit()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrExpenseSheet> TrackSubtypeInternalAsync(object init_values)

@@ -11,346 +11,389 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-dashboard-redirect")]
-        public async Task<IActionResult> ActionDashboardRedirectAsync(Guid id)
+        [Route("action-dashboard-redirect")]
+        public async Task<IActionResult> ActionDashboardRedirectAsync(Guid[] ids)
         {
-            var result = await _appService.DashboardRedirectAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DashboardRedirectAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-go-website")]
-        public async Task<IActionResult> ButtonGoWebsiteAsync(Guid id, [FromBody] WebsiteButtonGoWebsiteRequestDto input)
+        [Route("button-go-website")]
+        public async Task<IActionResult> ButtonGoWebsiteAsync(WebsiteButtonGoWebsiteRequestDto input)
         {
-            var result = await _appService.ButtonGoWebsiteAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ButtonGoWebsiteAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-existing-page")]
-        public async Task<IActionResult> CheckExistingPageAsync(Guid id, [FromBody] WebsiteCheckExistingPageRequestDto input)
+        [Route("check-existing-page")]
+        public async Task<IActionResult> CheckExistingPageAsync(WebsiteCheckExistingPageRequestDto input)
         {
-            var result = await _appService.CheckExistingPageAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckExistingPageAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/configurator-addons-apply")]
-        public async Task<IActionResult> ConfiguratorAddonsApplyAsync(Guid id, [FromBody] WebsiteConfiguratorAddonsApplyRequestDto input)
+        [Route("configurator-addons-apply")]
+        public async Task<IActionResult> ConfiguratorAddonsApplyAsync(WebsiteConfiguratorAddonsApplyRequestDto input)
         {
-            var result = await _appService.ConfiguratorAddonsApplyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConfiguratorAddonsApplyAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/configurator-apply")]
-        public async Task<IActionResult> ConfiguratorApplyAsync(Guid id)
+        [Route("configurator-apply")]
+        public async Task<IActionResult> ConfiguratorApplyAsync(Guid[] ids)
         {
-            var result = await _appService.ConfiguratorApplyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfiguratorApplyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/configurator-get-footer-links")]
-        public async Task<IActionResult> ConfiguratorGetFooterLinksAsync(Guid id)
+        [Route("configurator-get-footer-links")]
+        public async Task<IActionResult> ConfiguratorGetFooterLinksAsync(Guid[] ids)
         {
-            var result = await _appService.ConfiguratorGetFooterLinksAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfiguratorGetFooterLinksAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/configurator-init")]
-        public async Task<IActionResult> ConfiguratorInitAsync(Guid id)
+        [Route("configurator-init")]
+        public async Task<IActionResult> ConfiguratorInitAsync(Guid[] ids)
         {
-            var result = await _appService.ConfiguratorInitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfiguratorInitAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/configurator-missing-industry")]
-        public async Task<IActionResult> ConfiguratorMissingIndustryAsync(Guid id, [FromBody] WebsiteConfiguratorMissingIndustryRequestDto input)
+        [Route("configurator-missing-industry")]
+        public async Task<IActionResult> ConfiguratorMissingIndustryAsync(WebsiteConfiguratorMissingIndustryRequestDto input)
         {
-            var result = await _appService.ConfiguratorMissingIndustryAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConfiguratorMissingIndustryAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/configurator-recommended-themes")]
-        public async Task<IActionResult> ConfiguratorRecommendedThemesAsync(Guid id, [FromBody] WebsiteConfiguratorRecommendedThemesRequestDto input)
+        [Route("configurator-recommended-themes")]
+        public async Task<IActionResult> ConfiguratorRecommendedThemesAsync(WebsiteConfiguratorRecommendedThemesRequestDto input)
         {
-            var result = await _appService.ConfiguratorRecommendedThemesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConfiguratorRecommendedThemesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/configurator-set-menu-links")]
-        public async Task<IActionResult> ConfiguratorSetMenuLinksAsync(Guid id, [FromBody] WebsiteConfiguratorSetMenuLinksRequestDto input)
+        [Route("configurator-set-menu-links")]
+        public async Task<IActionResult> ConfiguratorSetMenuLinksAsync(WebsiteConfiguratorSetMenuLinksRequestDto input)
         {
-            var result = await _appService.ConfiguratorSetMenuLinksAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConfiguratorSetMenuLinksAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/configurator-skip")]
-        public async Task<IActionResult> ConfiguratorSkipAsync(Guid id)
+        [Route("configurator-skip")]
+        public async Task<IActionResult> ConfiguratorSkipAsync(Guid[] ids)
         {
-            var result = await _appService.ConfiguratorSkipAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfiguratorSkipAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-menu-hierarchy")]
-        public async Task<IActionResult> CopyMenuHierarchyAsync(Guid id, [FromBody] WebsiteCopyMenuHierarchyRequestDto input)
+        [Route("copy-menu-hierarchy")]
+        public async Task<IActionResult> CopyMenuHierarchyAsync(WebsiteCopyMenuHierarchyRequestDto input)
         {
-            var result = await _appService.CopyMenuHierarchyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyMenuHierarchyAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-and-redirect-configurator")]
-        public async Task<IActionResult> CreateAndRedirectConfiguratorAsync(Guid id)
+        [Route("create-and-redirect-configurator")]
+        public async Task<IActionResult> CreateAndRedirectConfiguratorAsync(Guid[] ids)
         {
-            var result = await _appService.CreateAndRedirectConfiguratorAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateAndRedirectConfiguratorAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-cdn-url")]
-        public async Task<IActionResult> GetCdnUrlAsync(Guid id, [FromBody] WebsiteGetCdnUrlRequestDto input)
+        [Route("get-cdn-url")]
+        public async Task<IActionResult> GetCdnUrlAsync(WebsiteGetCdnUrlRequestDto input)
         {
-            var result = await _appService.GetCdnUrlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetCdnUrlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-client-action")]
-        public async Task<IActionResult> GetClientActionAsync(Guid id, [FromBody] WebsiteGetClientActionRequestDto input)
+        [Route("get-client-action")]
+        public async Task<IActionResult> GetClientActionAsync(WebsiteGetClientActionRequestDto input)
         {
-            var result = await _appService.GetClientActionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetClientActionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-client-action-url")]
-        public async Task<IActionResult> GetClientActionUrlAsync(Guid id, [FromBody] WebsiteGetClientUrlRequestDto input)
+        [Route("get-client-action-url")]
+        public async Task<IActionResult> GetClientActionUrlAsync(WebsiteGetClientUrlRequestDto input)
         {
-            var result = await _appService.GetClientUrlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetClientUrlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-configurator-product-page-styles")]
-        public async Task<IActionResult> GetConfiguratorProductPageStylesAsync(Guid id)
+        [Route("get-configurator-product-page-styles")]
+        public async Task<IActionResult> GetConfiguratorProductPageStylesAsync(Guid[] ids)
         {
-            var result = await _appService.GetConfiguratorProductPageStylesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetConfiguratorProductPageStylesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-configurator-shop-page-styles")]
-        public async Task<IActionResult> GetConfiguratorShopPageStylesAsync(Guid id)
+        [Route("get-configurator-shop-page-styles")]
+        public async Task<IActionResult> GetConfiguratorShopPageStylesAsync(Guid[] ids)
         {
-            var result = await _appService.GetConfiguratorShopPageStylesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetConfiguratorShopPageStylesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-cta-data")]
-        public async Task<IActionResult> GetCtaDataAsync(Guid id, [FromBody] WebsiteGetCtaDataRequestDto input)
+        [Route("get-cta-data")]
+        public async Task<IActionResult> GetCtaDataAsync(WebsiteGetCtaDataRequestDto input)
         {
-            var result = await _appService.GetCtaDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetCtaDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-current-website")]
-        public async Task<IActionResult> GetCurrentWebsiteAsync(Guid id, [FromBody] WebsiteGetCurrentWebsiteRequestDto input)
+        [Route("get-current-website")]
+        public async Task<IActionResult> GetCurrentWebsiteAsync(WebsiteGetCurrentWebsiteRequestDto input)
         {
-            var result = await _appService.GetCurrentWebsiteAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetCurrentWebsiteAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-pricelist-available")]
-        public async Task<IActionResult> GetPricelistAvailableAsync(Guid id, [FromBody] WebsiteGetPricelistAvailableRequestDto input)
+        [Route("get-pricelist-available")]
+        public async Task<IActionResult> GetPricelistAvailableAsync(WebsiteGetPricelistAvailableRequestDto input)
         {
-            var result = await _appService.GetPricelistAvailableAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetPricelistAvailableAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-suggested-controllers")]
-        public async Task<IActionResult> GetSuggestedControllersAsync(Guid id)
+        [Route("get-suggested-controllers")]
+        public async Task<IActionResult> GetSuggestedControllersAsync(Guid[] ids)
         {
-            var result = await _appService.GetSuggestedControllersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetSuggestedControllersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-template")]
-        public async Task<IActionResult> GetTemplateAsync(Guid id, [FromBody] WebsiteGetTemplateRequestDto input)
+        [Route("get-template")]
+        public async Task<IActionResult> GetTemplateAsync(WebsiteGetTemplateRequestDto input)
         {
-            var result = await _appService.GetTemplateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetTemplateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-theme-configurator-snippets")]
-        public async Task<IActionResult> GetThemeConfiguratorSnippetsAsync(Guid id, [FromBody] WebsiteGetThemeConfiguratorSnippetsRequestDto input)
+        [Route("get-theme-configurator-snippets")]
+        public async Task<IActionResult> GetThemeConfiguratorSnippetsAsync(WebsiteGetThemeConfiguratorSnippetsRequestDto input)
         {
-            var result = await _appService.GetThemeConfiguratorSnippetsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetThemeConfiguratorSnippetsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-unique-key")]
-        public async Task<IActionResult> GetUniqueKeyAsync(Guid id, [FromBody] WebsiteGetUniqueKeyRequestDto input)
+        [Route("get-unique-key")]
+        public async Task<IActionResult> GetUniqueKeyAsync(WebsiteGetUniqueKeyRequestDto input)
         {
-            var result = await _appService.GetUniqueKeyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetUniqueKeyAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-unique-path")]
-        public async Task<IActionResult> GetUniquePathAsync(Guid id, [FromBody] WebsiteGetUniquePathRequestDto input)
+        [Route("get-unique-path")]
+        public async Task<IActionResult> GetUniquePathAsync(WebsiteGetUniquePathRequestDto input)
         {
-            var result = await _appService.GetUniquePathAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetUniquePathAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-website-page-ids")]
-        public async Task<IActionResult> GetWebsitePageIdsAsync(Guid id)
+        [Route("get-website-page-ids")]
+        public async Task<IActionResult> GetWebsitePageIdsAsync(Guid[] ids)
         {
-            var result = await _appService.GetWebsitePageIdsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetWebsitePageIdsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-ecommerce-access")]
-        public async Task<IActionResult> HasEcommerceAccessAsync(Guid id)
+        [Route("has-ecommerce-access")]
+        public async Task<IActionResult> HasEcommerceAccessAsync(Guid[] ids)
         {
-            var result = await _appService.HasEcommerceAccessAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.HasEcommerceAccessAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-google-places-api-key")]
-        public async Task<IActionResult> HasGooglePlacesApiKeyAsync(Guid id)
+        [Route("has-google-places-api-key")]
+        public async Task<IActionResult> HasGooglePlacesApiKeyAsync(Guid[] ids)
         {
-            var result = await _appService.HasGooglePlacesApiKeyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.HasGooglePlacesApiKeyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/image-url")]
-        public async Task<IActionResult> ImageUrlAsync(Guid id, [FromBody] WebsiteImageUrlRequestDto input)
+        [Route("image-url")]
+        public async Task<IActionResult> ImageUrlAsync(WebsiteImageUrlRequestDto input)
         {
-            var result = await _appService.ImageUrlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ImageUrlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-menu-cache-disabled")]
-        public async Task<IActionResult> IsMenuCacheDisabledAsync(Guid id)
+        [Route("is-menu-cache-disabled")]
+        public async Task<IActionResult> IsMenuCacheDisabledAsync(Guid[] ids)
         {
-            var result = await _appService.IsMenuCacheDisabledAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.IsMenuCacheDisabledAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-pricelist-available")]
-        public async Task<IActionResult> IsPricelistAvailableAsync(Guid id, [FromBody] WebsiteIsPricelistAvailableRequestDto input)
+        [Route("is-pricelist-available")]
+        public async Task<IActionResult> IsPricelistAvailableAsync(WebsiteIsPricelistAvailableRequestDto input)
         {
-            var result = await _appService.IsPricelistAvailableAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.IsPricelistAvailableAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-public-user")]
-        public async Task<IActionResult> IsPublicUserAsync(Guid id)
+        [Route("is-public-user")]
+        public async Task<IActionResult> IsPublicUserAsync(Guid[] ids)
         {
-            var result = await _appService.IsPublicUserAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.IsPublicUserAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-view-active")]
-        public async Task<IActionResult> IsViewActiveAsync(Guid id, [FromBody] WebsiteIsViewActiveRequestDto input)
+        [Route("is-view-active")]
+        public async Task<IActionResult> IsViewActiveAsync(WebsiteIsViewActiveRequestDto input)
         {
-            var result = await _appService.IsViewActiveAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.IsViewActiveAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/new-page")]
-        public async Task<IActionResult> NewPageAsync(Guid id, [FromBody] WebsiteNewPageRequestDto input)
+        [Route("new-page")]
+        public async Task<IActionResult> NewPageAsync(WebsiteNewPageRequestDto input)
         {
-            var result = await _appService.NewPageAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.NewPageAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pager")]
-        public async Task<IActionResult> PagerAsync(Guid id, [FromBody] WebsitePagerRequestDto input)
+        [Route("pager")]
+        public async Task<IActionResult> PagerAsync(WebsitePagerRequestDto input)
         {
-            var result = await _appService.PagerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PagerAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/rule-is-enumerable")]
-        public async Task<IActionResult> RuleIsEnumerableAsync(Guid id, [FromBody] WebsiteRuleIsEnumerableRequestDto input)
+        [Route("rule-is-enumerable")]
+        public async Task<IActionResult> RuleIsEnumerableAsync(WebsiteRuleIsEnumerableRequestDto input)
         {
-            var result = await _appService.RuleIsEnumerableAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RuleIsEnumerableAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/sale-product-domain")]
-        public async Task<IActionResult> SaleProductDomainAsync(Guid id)
+        [Route("sale-product-domain")]
+        public async Task<IActionResult> SaleProductDomainAsync(Guid[] ids)
         {
-            var result = await _appService.SaleProductDomainAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SaleProductDomainAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/sale-reset")]
-        public async Task<IActionResult> SaleResetAsync(Guid id)
+        [Route("sale-reset")]
+        public async Task<IActionResult> SaleResetAsync(Guid[] ids)
         {
-            var result = await _appService.SaleResetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SaleResetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-pages")]
-        public async Task<IActionResult> SearchPagesAsync(Guid id, [FromBody] WebsiteSearchPagesRequestDto input)
+        [Route("search-pages")]
+        public async Task<IActionResult> SearchPagesAsync(WebsiteSearchPagesRequestDto input)
         {
-            var result = await _appService.SearchPagesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchPagesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-url-dependencies")]
-        public async Task<IActionResult> SearchUrlDependenciesAsync(Guid id, [FromBody] WebsiteSearchUrlDependenciesRequestDto input)
+        [Route("search-url-dependencies")]
+        public async Task<IActionResult> SearchUrlDependenciesAsync(WebsiteSearchUrlDependenciesRequestDto input)
         {
-            var result = await _appService.SearchUrlDependenciesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchUrlDependenciesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/viewref")]
-        public async Task<IActionResult> ViewrefAsync(Guid id, [FromBody] WebsiteViewrefRequestDto input)
+        [Route("viewref")]
+        public async Task<IActionResult> ViewrefAsync(WebsiteViewrefRequestDto input)
         {
-            var result = await _appService.ViewrefAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ViewrefAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/website-domain")]
-        public async Task<IActionResult> WebsiteDomainAsync(Guid id)
+        [Route("website-domain")]
+        public async Task<IActionResult> WebsiteDomainAsync(Guid[] ids)
         {
-            var result = await _appService.WebsiteDomainAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WebsiteDomainAsync(ids);
             return Ok(result);
         }
     }

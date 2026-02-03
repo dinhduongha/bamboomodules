@@ -10,17 +10,17 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrExpenseSheetAppService : IGenericApplicationService<HrExpenseSheet>
     {
-        Task<HrExpenseSheet> ActivityUpdateAsync(Guid id);
-        Task<HrExpenseSheet> ApproveExpenseSheetsAsync(Guid id);
-        Task<HrExpenseSheet> OpenAccountMovesAsync(Guid id);
-        Task<HrExpenseSheet> OpenExpenseViewAsync(Guid id);
-        Task<HrExpenseSheet> OpenSaleOrdersAsync(Guid id);
-        Task<HrExpenseSheet> RefuseExpenseSheetsAsync(Guid id);
-        Task<HrExpenseSheet> RegisterPaymentAsync(Guid id);
-        Task<HrExpenseSheet> ResetExpenseSheetsAsync(Guid id);
-        Task<HrExpenseSheet> SetToPaidAsync(Guid id);
-        Task<HrExpenseSheet> SetToPostedAsync(Guid id);
-        Task<HrExpenseSheet> SheetMovePostAsync(Guid id);
-        Task<HrExpenseSheet> SubmitSheetAsync(Guid id);
+        Task<HrExpenseSheet> ActivityUpdateAsync(Guid[] ids);
+        Task<HrExpenseSheet> ApproveExpenseSheetsAsync(Guid[] ids);
+        Task<HrExpenseSheet> OpenAccountMovesAsync(Guid[] ids);
+        Task<HrExpenseSheet> OpenExpenseViewAsync(Guid[] ids);
+        Task<HrExpenseSheet> OpenSaleOrdersAsync(Guid[] ids);
+        Task<HrExpenseSheet> RefuseExpenseSheetsAsync(Guid[] ids);
+        Task<HrExpenseSheet> RegisterPaymentAsync(Guid[] ids);
+        Task<HrExpenseSheet> ResetExpenseSheetsAsync(Guid[] ids);
+        Task<HrExpenseSheet> SetToPaidAsync(Guid[] ids);
+        Task<HrExpenseSheet> SetToPostedAsync(Guid[] ids);
+        Task<HrExpenseSheet> SheetMovePostAsync(Guid[] ids);
+        Task<HrExpenseSheet> SubmitSheetAsync(Guid[] ids);
     }
 }

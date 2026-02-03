@@ -12,7 +12,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Models;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsAchievementLogAppService : IGenericApplicationService<DmsAchievementLog>
+    public interface IDmsAchievementLogAppService : IGenericAppService<DmsAchievementLog>
     {
         Task LogDailyAchievementAsync(Guid userId, decimal sales, int visits);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsAchievementLogAppService : GenericApplicationService<DmsAchievementLog>, IDmsAchievementLogAppService
+    public class DmsAchievementLogAppService : GenericAppService<DmsAchievementLog>, IDmsAchievementLogAppService
     {
         public DmsAchievementLogAppService(
             IRepository<DmsAchievementLog, Guid> repository,

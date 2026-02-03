@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-approve")]
-        public async Task<IActionResult> ActionApproveAsync(Guid id)
+        [Route("action-approve")]
+        public async Task<IActionResult> ActionApproveAsync(Guid[] ids)
         {
-            var result = await _appService.ApproveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ApproveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-refuse")]
-        public async Task<IActionResult> ActionRefuseAsync(Guid id)
+        [Route("action-refuse")]
+        public async Task<IActionResult> ActionRefuseAsync(Guid[] ids)
         {
-            var result = await _appService.RefuseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RefuseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/activity-update")]
-        public async Task<IActionResult> ActivityUpdateAsync(Guid id)
+        [Route("activity-update")]
+        public async Task<IActionResult> ActivityUpdateAsync(Guid[] ids)
         {
-            var result = await _appService.ActivityUpdateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ActivityUpdateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/add-follower")]
-        public async Task<IActionResult> AddFollowerAsync(Guid id, [FromBody] HrLeaveAllocationAddFollowerRequestDto input)
+        [Route("add-follower")]
+        public async Task<IActionResult> AddFollowerAsync(HrLeaveAllocationAddFollowerRequestDto input)
         {
-            var result = await _appService.AddFollowerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AddFollowerAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-subscribe")]
-        public async Task<IActionResult> MessageSubscribeAsync(Guid id, [FromBody] HrLeaveAllocationMessageSubscribeRequestDto input)
+        [Route("message-subscribe")]
+        public async Task<IActionResult> MessageSubscribeAsync(HrLeaveAllocationMessageSubscribeRequestDto input)
         {
-            var result = await _appService.MessageSubscribeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageSubscribeAsync(input);
             return Ok(result);
         }
     }

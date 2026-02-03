@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("ImLivechat", Category = "Website", Depends = new[] { "mail", "rating", "digest", "utm" })]
-    public partial class ImLivechatChannelAppService : GenericApplicationService<ImLivechatChannel>, IImLivechatChannelAppService
+    public partial class ImLivechatChannelAppService : GenericAppService<ImLivechatChannel>, IImLivechatChannelAppService
     {
         private readonly IRatingParentMixinAppService _ratingParentMixinAppService;
         public ImLivechatChannelAppService(IRepository<ImLivechatChannel, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IRatingParentMixinAppService ratingParentMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -154,7 +154,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<ImLivechatChannel> CreateAsync(ImLivechatChannel entity, List<string> fields)
+        public override async Task<ImLivechatChannel> CreateAsync(CreateRequestDto<ImLivechatChannel> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: im_livechat_channel.py) ---
@@ -184,7 +184,7 @@ namespace Bamboo.Core.Application.Services
             //         self.env["im_livechat.channel.rule"].create(channel_rule_vals)
             // return channels
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<ImLivechatChannel> DefaultButtonTextInternalAsync()
@@ -450,7 +450,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ImLivechatChannel> GetLivechatInfoAsync(Guid id, ImLivechatChannelGetLivechatInfoRequestDto input)
+        public async Task<ImLivechatChannel> GetLivechatInfoAsync(ImLivechatChannelGetLivechatInfoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
@@ -468,7 +468,9 @@ namespace Bamboo.Core.Application.Services
             //     info['options']["default_username"] = username
             // return info
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ImLivechatChannel> GetOngoingSessionCountByAgentLivechatChannelInternalAsync(object users, object filter_online)
@@ -691,7 +693,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ImLivechatChannel> JoinAsync(Guid id)
+        public async Task<ImLivechatChannel> JoinAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
@@ -703,10 +705,12 @@ namespace Bamboo.Core.Application.Services
             // self.sudo().user_ids = [Command.link(self.env.user.id)]
             // Store(bus_channel=self.env.user).add(self, ["are_you_inside", "name"]).bus_send()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ImLivechatChannel> QuitAsync(Guid id)
+        public async Task<ImLivechatChannel> QuitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
@@ -716,10 +720,12 @@ namespace Bamboo.Core.Application.Services
             // self.sudo().user_ids = [Command.unlink(self.env.user.id)]
             // Store(bus_channel=self.env.user).add(self.sudo(), ["are_you_inside", "name"]).bus_send()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ImLivechatChannel> ViewChatbotScriptsAsync(Guid id)
+        public async Task<ImLivechatChannel> ViewChatbotScriptsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
@@ -735,10 +741,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('id', 'in', chatbot_script_ids.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ImLivechatChannel> ViewRatingAsync(Guid id)
+        public async Task<ImLivechatChannel> ViewRatingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
@@ -757,10 +765,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<List<Dictionary<string, object>>> WebReadAsync(Guid id, ImLivechatChannelWebReadRequestDto input)
+        public async Task<List<Dictionary<string, object>>> WebReadAsync(ImLivechatChannelWebReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
@@ -770,7 +780,9 @@ namespace Bamboo.Core.Application.Services
             //     user_context["im_livechat_channel_id"] = self.id
             // return super().web_read(specification)
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

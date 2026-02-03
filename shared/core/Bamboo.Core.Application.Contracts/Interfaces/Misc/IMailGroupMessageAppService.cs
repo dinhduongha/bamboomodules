@@ -10,12 +10,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailGroupMessageAppService : IGenericApplicationService<MailGroupMessage>
     {
-        Task<MailGroupMessage> CopyDataAsync(Guid id, MailGroupMessageCopyDataRequestDto input);
-        Task<MailGroupMessage> ModerateAcceptAsync(Guid id);
-        Task<MailGroupMessage> ModerateAllowAsync(Guid id);
-        Task<MailGroupMessage> ModerateBanAsync(Guid id);
-        Task<MailGroupMessage> ModerateBanWithCommentAsync(Guid id, MailGroupMessageModerateBanWithCommentRequestDto input);
-        Task<MailGroupMessage> ModerateRejectAsync(Guid id);
-        Task<MailGroupMessage> ModerateRejectWithCommentAsync(Guid id, MailGroupMessageModerateRejectWithCommentRequestDto input);
+        Task<MailGroupMessage> CopyDataAsync(MailGroupMessageCopyDataRequestDto input);
+        Task<MailGroupMessage> ModerateAcceptAsync(Guid[] ids);
+        Task<MailGroupMessage> ModerateAllowAsync(Guid[] ids);
+        Task<MailGroupMessage> ModerateBanAsync(Guid[] ids);
+        Task<MailGroupMessage> ModerateBanWithCommentAsync(MailGroupMessageModerateBanWithCommentRequestDto input);
+        Task<MailGroupMessage> ModerateRejectAsync(Guid[] ids);
+        Task<MailGroupMessage> ModerateRejectWithCommentAsync(MailGroupMessageModerateRejectWithCommentRequestDto input);
     }
 }

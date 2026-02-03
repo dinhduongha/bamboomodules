@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrRecruitment", Category = "HumanResources", Depends = new[] { "hr", "calendar", "utm", "attachment_indexation", "web_tour", "digest" })]
-    public partial class HrRecruitmentSourceAppService : GenericApplicationService<HrRecruitmentSource>, IHrRecruitmentSourceAppService
+    public partial class HrRecruitmentSourceAppService : GenericAppService<HrRecruitmentSource>, IHrRecruitmentSourceAppService
     {
         private readonly IUtmSourceMixinAppService _utmSourceMixinAppService;
         public HrRecruitmentSourceAppService(IRepository<HrRecruitmentSource, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IUtmSourceMixinAppService utmSourceMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -60,7 +60,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrRecruitmentSource> CreateAliasAsync(Guid id)
+        public async Task<HrRecruitmentSource> CreateAliasAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_recruitment_source.py) ---
@@ -86,10 +86,12 @@ namespace Bamboo.Core.Application.Services
             //     source.check_access('create')
             //     source.alias_id = self.env['mail.alias'].sudo().create(vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrRecruitmentSource> CreateAndGetAliasAsync(Guid id)
+        public async Task<HrRecruitmentSource> CreateAndGetAliasAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_recruitment_source.py) ---
@@ -98,7 +100,9 @@ namespace Bamboo.Core.Application.Services
             // self.create_alias()
             // return self.email
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

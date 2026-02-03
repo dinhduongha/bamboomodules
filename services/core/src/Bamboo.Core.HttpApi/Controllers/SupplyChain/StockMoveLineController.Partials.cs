@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-add-to-wave")]
-        public async Task<IActionResult> ActionOpenAddToWaveAsync(Guid id)
+        [Route("action-open-add-to-wave")]
+        public async Task<IActionResult> ActionOpenAddToWaveAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAddToWaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAddToWaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-reference")]
-        public async Task<IActionResult> ActionOpenReferenceAsync(Guid id)
+        [Route("action-open-reference")]
+        public async Task<IActionResult> ActionOpenReferenceAsync(Guid[] ids)
         {
-            var result = await _appService.OpenReferenceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenReferenceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-put-in-pack")]
-        public async Task<IActionResult> ActionPutInPackAsync(Guid id)
+        [Route("action-put-in-pack")]
+        public async Task<IActionResult> ActionPutInPackAsync(Guid[] ids)
         {
-            var result = await _appService.PutInPackAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PutInPackAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-revert-inventory")]
-        public async Task<IActionResult> ActionRevertInventoryAsync(Guid id)
+        [Route("action-revert-inventory")]
+        public async Task<IActionResult> ActionRevertInventoryAsync(Guid[] ids)
         {
-            var result = await _appService.RevertInventoryAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RevertInventoryAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-move-line-quant-match")]
-        public async Task<IActionResult> GetMoveLineQuantMatchAsync(Guid id, [FromBody] StockMoveLineGetMoveLineQuantMatchRequestDto input)
+        [Route("get-move-line-quant-match")]
+        public async Task<IActionResult> GetMoveLineQuantMatchAsync(StockMoveLineGetMoveLineQuantMatchRequestDto input)
         {
-            var result = await _appService.GetMoveLineQuantMatchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetMoveLineQuantMatchAsync(input);
             return Ok(result);
         }
     }

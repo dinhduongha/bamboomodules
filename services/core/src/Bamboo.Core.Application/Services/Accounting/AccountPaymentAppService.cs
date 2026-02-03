@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountPaymentAppService : GenericApplicationService<AccountPayment>, IAccountPaymentAppService
+    public partial class AccountPaymentAppService : GenericAppService<AccountPayment>, IAccountPaymentAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadMainAttachmentAppService _mailThreadMainAttachmentAppService;
@@ -46,7 +46,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> ButtonOpenBillsAsync(Guid id)
+        public async Task<AccountPayment> ButtonOpenBillsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -74,10 +74,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> ButtonOpenInvoicesAsync(Guid id)
+        public async Task<AccountPayment> ButtonOpenInvoicesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -92,10 +94,12 @@ namespace Bamboo.Core.Application.Services
             //     name=_("Paid Invoices"),
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> ButtonOpenJournalEntryAsync(Guid id)
+        public async Task<AccountPayment> ButtonOpenJournalEntryAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -113,10 +117,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.move_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> ButtonOpenStatementLinesAsync(Guid id)
+        public async Task<AccountPayment> ButtonOpenStatementLinesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -144,20 +150,24 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> ButtonRequestCancelAsync(Guid id)
+        public async Task<AccountPayment> ButtonRequestCancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
             // def button_request_cancel(self):
             // return self.move_id.button_request_cancel()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> CancelAsync(Guid id)
+        public async Task<AccountPayment> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -167,7 +177,9 @@ namespace Bamboo.Core.Application.Services
             // draft_moves.unlink()
             // (self.move_id - draft_moves).button_cancel()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPayment> CheckBuildPageInfoInternalAsync(object i, object p)
@@ -1034,7 +1046,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> CopyDataAsync(Guid id, AccountPaymentCopyDataRequestDto input)
+        public async Task<AccountPayment> CopyDataAsync(AccountPaymentCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -1049,7 +1061,9 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPayment> CreatePaymentTransactionInternalAsync()
@@ -1091,7 +1105,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> DoPrintChecksAsync(Guid id)
+        public async Task<AccountPayment> DoPrintChecksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_check_printing, FILE: account_payment.py) ---
@@ -1108,10 +1122,12 @@ namespace Bamboo.Core.Application.Services
             // self.write({'is_sent': 'True'})
             // return report_action.report_action(self)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> DraftAsync(Guid id)
+        public async Task<AccountPayment> DraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -1119,7 +1135,9 @@ namespace Bamboo.Core.Application.Services
             // self.state = 'draft'
             // self.move_id.button_draft()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPayment> FetchDuplicateReferenceInternalAsync(object matching_states)
@@ -1189,7 +1207,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
+        [ApiModel]
+        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(FieldsGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_check_printing, FILE: account_payment.py) ---
@@ -1201,7 +1220,7 @@ namespace Bamboo.Core.Application.Services
             //     field_desc['readonly'] = True
             // return result
             */
-            return await base.FieldsGetAsync(fields, attributes);
+            return await base.FieldsGetAsync(input);
         }
 
         protected async Task<AccountPayment> GenerateJournalEntryInternalAsync(object write_off_line_vals, object force_balance, List<Guid> line_ids)
@@ -1303,6 +1322,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountPayment> GetMethodCodesNeedingBankAccountInternalAsync()
         {
             /*
@@ -1313,6 +1333,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountPayment> GetMethodCodesUsingBankAccountInternalAsync()
         {
             /*
@@ -1403,6 +1424,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountPayment> GetTriggerFieldsToSynchronizeInternalAsync()
         {
             /*
@@ -1435,6 +1457,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountPayment> GetValidPaymentAccountTypesInternalAsync()
         {
             /*
@@ -1471,14 +1494,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> MarkAsSentAsync(Guid id)
+        public async Task<AccountPayment> MarkAsSentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
             // def mark_as_sent(self):
             // self.write({'is_sent': True})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPayment> MessageMailAfterHookInternalAsync(object mails)
@@ -1517,7 +1542,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> OpenBusinessDocAsync(Guid id)
+        public async Task<AccountPayment> OpenBusinessDocAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -1530,10 +1555,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> OpenExpenseAsync(Guid id)
+        public async Task<AccountPayment> OpenExpenseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: account_payment.py) ---
@@ -1548,10 +1575,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.expense_ids.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> PostAsync(Guid id)
+        public async Task<AccountPayment> PostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -1611,7 +1640,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPayment> PrepareMoveLineDefaultValsInternalAsync(object write_off_line_vals, object force_balance)
@@ -1726,7 +1757,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> PrintChecksAsync(Guid id)
+        public async Task<AccountPayment> PrintChecksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_check_printing, FILE: account_payment.py) ---
@@ -1773,10 +1804,12 @@ namespace Bamboo.Core.Application.Services
             //     valid_payments.filtered(lambda r: r.state == 'draft').action_post()
             //     return valid_payments.do_print_checks()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> RefundWizardAsync(Guid id)
+        public async Task<AccountPayment> RefundWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_payment.py) ---
@@ -1790,17 +1823,21 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> RejectAsync(Guid id)
+        public async Task<AccountPayment> RejectAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
             // def action_reject(self):
             // self.state = 'rejected'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPayment> SearchReconciledInvoiceIdsInternalAsync(object @operator, object @value)
@@ -1909,14 +1946,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> UnmarkAsSentAsync(Guid id)
+        public async Task<AccountPayment> UnmarkAsSentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
             // def unmark_as_sent(self):
             // self.write({'is_sent': False})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPayment> ValidPaymentStatesInternalAsync()
@@ -1932,17 +1971,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPayment> ValidateAsync(Guid id)
+        public async Task<AccountPayment> ValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
             // def action_validate(self):
             // self.state = 'paid'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> ViewPosOrderAsync(Guid id)
+        public async Task<AccountPayment> ViewPosOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: account_payment.py) ---
@@ -1961,10 +2002,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> ViewRefundsAsync(Guid id)
+        public async Task<AccountPayment> ViewRefundsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_payment.py) ---
@@ -1986,10 +2029,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('source_payment_id', '=', self.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountPayment> VoidCheckAsync(Guid id)
+        public async Task<AccountPayment> VoidCheckAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_check_printing, FILE: account_payment.py) ---
@@ -1997,10 +2042,12 @@ namespace Bamboo.Core.Application.Services
             // self.action_draft()
             // self.action_cancel()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, AccountPayment entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<AccountPayment> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment.py) ---
@@ -2024,7 +2071,7 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("You cannot do this modification since the payment is linked to an expense."))
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSlides", Category = "Website", Depends = new[] { "portal_rating", "website", "website_mail", "website_profile" })]
-    public partial class SlideSlideAppService : GenericApplicationService<SlideSlide>, ISlideSlideAppService
+    public partial class SlideSlideAppService : GenericAppService<SlideSlide>, ISlideSlideAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -743,7 +743,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> CopyDataAsync(Guid id, SlideSlideCopyDataRequestDto input)
+        public async Task<SlideSlide> CopyDataAsync(SlideSlideCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -755,10 +755,12 @@ namespace Bamboo.Core.Application.Services
             //     default['sequence'] = 0
             // return super().copy_data(default=default)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<SlideSlide> CreateAsync(SlideSlide entity, List<string> fields)
+        public override async Task<SlideSlide> CreateAsync(CreateRequestDto<SlideSlide> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -805,7 +807,7 @@ namespace Bamboo.Core.Application.Services
             // slides_with_survey._ensure_challenge_category()
             // return slides
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<SlideSlide> DefaultWebsiteMetaInternalAsync()
@@ -823,7 +825,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> DislikeAsync(Guid id)
+        public async Task<SlideSlide> DislikeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -831,7 +833,9 @@ namespace Bamboo.Core.Application.Services
             // self.check_access('read')
             // return self._action_vote(upvote=False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideSlide> EmbedIncrementInternalAsync(object url)
@@ -1273,17 +1277,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> GetBackendMenuIdAsync(Guid id)
+        public async Task<SlideSlide> GetBackendMenuIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
             // def get_backend_menu_id(self):
             // return self.env.ref('website_slides.website_slides_menu_root').id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideSlide> GetBaseUrlAsync(Guid id)
+        public async Task<SlideSlide> GetBaseUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1291,9 +1297,12 @@ namespace Bamboo.Core.Application.Services
             // """As website_id is not defined on this record, we rely on channel website_id for base URL."""
             // return self.channel_id.get_base_url()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<SlideSlide> GetCanPublishErrorMessageInternalAsync()
         {
             /*
@@ -1355,7 +1364,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> LikeAsync(Guid id)
+        public async Task<SlideSlide> LikeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1363,7 +1372,9 @@ namespace Bamboo.Core.Application.Services
             // self.check_access('read')
             // return self._action_vote(upvote=True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideSlide> MailGetPartnerFieldsInternalAsync(object introspect_fields)
@@ -1376,7 +1387,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> MarkCompletedAsync(Guid id)
+        public async Task<SlideSlide> MarkCompletedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1386,10 +1397,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self._action_mark_completed()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideSlide> MarkUncompletedAsync(Guid id)
+        public async Task<SlideSlide> MarkUncompletedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1407,10 +1420,12 @@ namespace Bamboo.Core.Application.Services
             //     ('partner_id', '=', self.env.user.partner_id.id),
             // ]).completed = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideSlide> MessagePostAsync(Guid id)
+        public async Task<SlideSlide> MessagePostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1420,7 +1435,9 @@ namespace Bamboo.Core.Application.Services
             //     raise AccessError(_('Not enough karma to comment'))
             // return super().message_post(message_type=message_type, **kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideSlide> NotifyGetRecipientsGroupsInternalAsync(object message, object model_description, object msg_vals)
@@ -1522,6 +1539,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SlideSlide> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*
@@ -1606,7 +1624,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> SetViewedAsync(Guid id, SlideSlideSetViewedRequestDto input)
+        public async Task<SlideSlide> SetViewedAsync(SlideSlideSetViewedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1616,7 +1634,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return bool(self._action_set_viewed(self.env.user.partner_id, quiz_attempts_inc=quiz_attempts_inc))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         public override async Task<object> UnlinkAsync(List<Guid> ids)
@@ -1640,7 +1660,7 @@ namespace Bamboo.Core.Application.Services
             return await base.UnlinkAsync(ids);
         }
 
-        public async Task<SlideSlide> ViewEmbedsAsync(Guid id)
+        public async Task<SlideSlide> ViewEmbedsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1651,10 +1671,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'search_default_slide_id': self.id}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, SlideSlide entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<SlideSlide> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1708,7 +1730,7 @@ namespace Bamboo.Core.Application.Services
             //     self._ensure_challenge_category(old_surveys=old_surveys - self.mapped('survey_id'))
             // return result
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

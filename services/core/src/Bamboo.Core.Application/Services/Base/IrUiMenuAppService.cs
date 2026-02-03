@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrUiMenuAppService : GenericApplicationService<IrUiMenu>, IIrUiMenuAppService
+    public partial class IrUiMenuAppService : GenericAppService<IrUiMenu>, IIrUiMenuAppService
     {
 
         public IrUiMenuAppService(IRepository<IrUiMenu, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -96,6 +96,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiMenu> GetBestBackendRootMenuIdForModelInternalAsync(object res_model)
         {
             /*
@@ -189,7 +190,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiMenu> GetUserRootsAsync(Guid id)
+        [ApiModel]
+        public async Task<IrUiMenu> GetUserRootsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
@@ -201,10 +203,13 @@ namespace Bamboo.Core.Application.Services
             // """
             // return self.search([('parent_id', '=', False)])._filter_visible_menus()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiMenu> LoadMenusAsync(Guid id, IrUiMenuLoadMenusRequestDto input)
+        [ApiModel]
+        public async Task<IrUiMenu> LoadMenusAsync(IrUiMenuLoadMenusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
@@ -287,7 +292,9 @@ namespace Bamboo.Core.Application.Services
             // }
             // return menus_dict
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiMenu> LoadMenusBlacklistInternalAsync()
@@ -357,7 +364,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiMenu> LoadMenusRootAsync(Guid id)
+        [ApiModel]
+        public async Task<IrUiMenu> LoadMenusRootAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_ui_menu.py) ---
@@ -395,10 +403,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return menu_root
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiMenu> LoadWebMenusAsync(Guid id, IrUiMenuLoadWebMenusRequestDto input)
+        public async Task<IrUiMenu> LoadWebMenusAsync(IrUiMenuLoadWebMenusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_ui_menu.py) ---
@@ -479,7 +489,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return web_menus
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiMenu> ReadImageInternalAsync(object path)
@@ -500,6 +512,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiMenu> VisibleMenuIdsInternalAsync(object debug)
         {
             /*

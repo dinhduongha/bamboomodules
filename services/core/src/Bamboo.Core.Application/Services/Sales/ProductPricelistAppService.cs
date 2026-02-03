@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductPricelistAppService : GenericApplicationService<ProductPricelist>, IProductPricelistAppService
+    public partial class ProductPricelistAppService : GenericAppService<ProductPricelist>, IProductPricelistAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<ProductPricelist> ArchiveAsync(Guid id)
+        public async Task<ProductPricelist> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: product_pricelist.py) ---
@@ -48,7 +48,9 @@ namespace Bamboo.Core.Application.Services
             //     ))
             // return super().action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductPricelist> BaseDomainItemIdsInternalAsync()
@@ -210,7 +212,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductPricelist> CopyDataAsync(Guid id, ProductPricelistCopyDataRequestDto input)
+        public async Task<ProductPricelist> CopyDataAsync(ProductPricelistCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
@@ -222,10 +224,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", pricelist.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<ProductPricelist> CreateAsync(ProductPricelist entity, List<string> fields)
+        public override async Task<ProductPricelist> CreateAsync(CreateRequestDto<ProductPricelist> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_pricelist.py) ---
@@ -243,7 +247,7 @@ namespace Bamboo.Core.Application.Services
             //     self.env.registry.clear_cache()
             // return pricelists
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<ProductPricelist> DefaultCurrencyIdInternalAsync()
@@ -324,7 +328,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductPricelist> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<ProductPricelist> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
@@ -334,7 +339,9 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/product/static/xls/product_pricelist.xls'
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductPricelist> GetPartnerPricelistMultiFilterHookInternalAsync()
@@ -354,6 +361,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductPricelist> GetPartnerPricelistMultiInternalAsync(List<Guid> partner_ids)
         {
             /*
@@ -611,6 +619,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductPricelist> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -622,6 +631,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductPricelist> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -632,7 +642,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductPricelist> OpenPricelistReportAsync(Guid id)
+        public async Task<ProductPricelist> OpenPricelistReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
@@ -644,7 +654,9 @@ namespace Bamboo.Core.Application.Services
             //     'tag': 'generate_pricelist_report',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductPricelist> PriceGetInternalAsync(object product, object quantity)
@@ -692,7 +704,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ProductPricelist entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ProductPricelist> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
@@ -711,7 +723,7 @@ namespace Bamboo.Core.Application.Services
             // self and self.env.registry.clear_cache()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

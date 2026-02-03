@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailMessageTranslationAppService : IGenericApplicationService<MailMessageTranslation>
     {
-        Task<MailMessageTranslation> InitAsync(Guid id);
+        Task<MailMessageTranslation> InitAsync(Guid[] ids);
     }
 }

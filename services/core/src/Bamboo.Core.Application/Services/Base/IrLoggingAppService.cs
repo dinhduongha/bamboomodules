@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrLoggingAppService : GenericApplicationService<IrLogging>, IIrLoggingAppService
+    public partial class IrLoggingAppService : GenericAppService<IrLogging>, IIrLoggingAppService
     {
 
         public IrLoggingAppService(IRepository<IrLogging, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<IrLogging> InitAsync(Guid id)
+        public async Task<IrLogging> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_logging.py) ---
@@ -40,7 +40,9 @@ namespace Bamboo.Core.Application.Services
             //     # still conflicts with the ROW EXCLUSIVE needed for an insert
             //     self.env.cr.execute("ALTER TABLE ir_logging DROP CONSTRAINT ir_logging_write_uid_fkey")
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

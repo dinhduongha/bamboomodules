@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountReconcileModelAppService : IGenericApplicationService<AccountReconcileModel>
     {
-        Task<AccountReconcileModel> CopyDataAsync(Guid id, AccountReconcileModelCopyDataRequestDto input);
-        Task<AccountReconcileModel> ReconcileStatAsync(Guid id);
-        Task<AccountReconcileModel> SetAutoReconcileAsync(Guid id);
-        Task<AccountReconcileModel> SetManualAsync(Guid id);
+        Task<AccountReconcileModel> CopyDataAsync(AccountReconcileModelCopyDataRequestDto input);
+        Task<AccountReconcileModel> ReconcileStatAsync(Guid[] ids);
+        Task<AccountReconcileModel> SetAutoReconcileAsync(Guid[] ids);
+        Task<AccountReconcileModel> SetManualAsync(Guid[] ids);
     }
 }

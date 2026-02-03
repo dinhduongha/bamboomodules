@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
-    public partial class MailingTraceAppService : GenericApplicationService<MailingTrace>, IMailingTraceAppService
+    public partial class MailingTraceAppService : GenericAppService<MailingTrace>, IMailingTraceAppService
     {
 
         public MailingTraceAppService(IRepository<MailingTrace, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -56,7 +56,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<MailingTrace> CreateAsync(MailingTrace entity, List<string> fields)
+        public override async Task<MailingTrace> CreateAsync(CreateRequestDto<MailingTrace> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -72,10 +72,11 @@ namespace Bamboo.Core.Application.Services
             //         values['sms_code'] = self._get_random_code()
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
+        [ApiModel]
+        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(FieldsGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_trace.py) ---
@@ -106,7 +107,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            return await base.FieldsGetAsync(fields, attributes);
+            return await base.FieldsGetAsync(input);
         }
 
         protected async Task<MailingTrace> GetRandomCodeInternalAsync()
@@ -122,7 +123,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingTrace> SetBouncedAsync(Guid id, MailingTraceSetBouncedRequestDto input)
+        public async Task<MailingTrace> SetBouncedAsync(MailingTraceSetBouncedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -135,10 +136,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // return traces
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingTrace> SetCanceledAsync(Guid id, MailingTraceSetCanceledRequestDto input)
+        public async Task<MailingTrace> SetCanceledAsync(MailingTraceSetCanceledRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -147,10 +150,12 @@ namespace Bamboo.Core.Application.Services
             // traces.write({'trace_status': 'cancel'})
             // return traces
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingTrace> SetClickedAsync(Guid id, MailingTraceSetClickedRequestDto input)
+        public async Task<MailingTrace> SetClickedAsync(MailingTraceSetClickedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -159,10 +164,12 @@ namespace Bamboo.Core.Application.Services
             // traces.write({'links_click_datetime': fields.Datetime.now()})
             // return traces
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingTrace> SetFailedAsync(Guid id, MailingTraceSetFailedRequestDto input)
+        public async Task<MailingTrace> SetFailedAsync(MailingTraceSetFailedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -171,10 +178,12 @@ namespace Bamboo.Core.Application.Services
             // traces.write({'trace_status': 'error', 'failure_type': failure_type})
             // return traces
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingTrace> SetOpenedAsync(Guid id, MailingTraceSetOpenedRequestDto input)
+        public async Task<MailingTrace> SetOpenedAsync(MailingTraceSetOpenedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -186,10 +195,12 @@ namespace Bamboo.Core.Application.Services
             // traces.filtered(lambda t: t.trace_status not in ('open', 'reply')).write({'trace_status': 'open', 'open_datetime': fields.Datetime.now()})
             // return traces
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingTrace> SetRepliedAsync(Guid id, MailingTraceSetRepliedRequestDto input)
+        public async Task<MailingTrace> SetRepliedAsync(MailingTraceSetRepliedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -198,10 +209,12 @@ namespace Bamboo.Core.Application.Services
             // traces.write({'trace_status': 'reply', 'reply_datetime': fields.Datetime.now()})
             // return traces
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingTrace> SetSentAsync(Guid id, MailingTraceSetSentRequestDto input)
+        public async Task<MailingTrace> SetSentAsync(MailingTraceSetSentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -210,10 +223,12 @@ namespace Bamboo.Core.Application.Services
             // traces.write({'trace_status': 'sent', 'sent_datetime': fields.Datetime.now(), 'failure_type': False})
             // return traces
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingTrace> ViewContactAsync(Guid id)
+        public async Task<MailingTrace> ViewContactAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -227,7 +242,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.res_id
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

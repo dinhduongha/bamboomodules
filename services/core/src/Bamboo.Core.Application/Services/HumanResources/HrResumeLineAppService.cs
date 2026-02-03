@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrSkills", Category = "HumanResources", Depends = new[] { "hr" })]
-    public partial class HrResumeLineAppService : GenericApplicationService<HrResumeLine>, IHrResumeLineAppService
+    public partial class HrResumeLineAppService : GenericAppService<HrResumeLine>, IHrResumeLineAppService
     {
 
         public HrResumeLineAppService(IRepository<HrResumeLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -114,7 +114,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrResumeLine> CopyDataAsync(Guid id, HrResumeLineCopyDataRequestDto input)
+        public async Task<HrResumeLine> CopyDataAsync(HrResumeLineCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills_survey, FILE: hr_resume_line.py) ---
@@ -122,7 +122,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", resume_line.name)) for resume_line, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrResumeLine> OnchangeChannelIdInternalAsync()

@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IFleetVehicleAppService : IGenericApplicationService<FleetVehicle>
     {
-        Task<FleetVehicle> AcceptDriverChangeAsync(Guid id);
-        Task<FleetVehicle> ActShowLogCostAsync(Guid id);
-        Task<FleetVehicle> CreateDriverHistoryAsync(Guid id, FleetVehicleCreateDriverHistoryRequestDto input);
-        Task<FleetVehicle> OpenAssignationLogsAsync(Guid id);
-        Task<FleetVehicle> OpenEmployeeAsync(Guid id);
-        Task<FleetVehicle> OpenOdometerReportAsync(Guid id);
-        Task<FleetVehicle> ReturnToOpenAsync(Guid id);
-        Task<FleetVehicle> SendEmailAsync(Guid id);
-        Task<FleetVehicle> ViewBillsAsync(Guid id);
+        Task<FleetVehicle> AcceptDriverChangeAsync(Guid[] ids);
+        Task<FleetVehicle> ActShowLogCostAsync(Guid[] ids);
+        Task<FleetVehicle> CreateDriverHistoryAsync(FleetVehicleCreateDriverHistoryRequestDto input);
+        Task<FleetVehicle> OpenAssignationLogsAsync(Guid[] ids);
+        Task<FleetVehicle> OpenEmployeeAsync(Guid[] ids);
+        Task<FleetVehicle> OpenOdometerReportAsync(Guid[] ids);
+        Task<FleetVehicle> ReturnToOpenAsync(Guid[] ids);
+        Task<FleetVehicle> SendEmailAsync(Guid[] ids);
+        Task<FleetVehicle> ViewBillsAsync(Guid[] ids);
     }
 }

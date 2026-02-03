@@ -11,106 +11,119 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-assign")]
-        public async Task<IActionResult> ActionAssignAsync(Guid id)
+        [Route("action-assign")]
+        public async Task<IActionResult> ActionAssignAsync(Guid[] ids)
         {
-            var result = await _appService.AssignAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AssignAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-batch-detailed-operations")]
-        public async Task<IActionResult> ActionBatchDetailedOperationsAsync(Guid id)
+        [Route("action-batch-detailed-operations")]
+        public async Task<IActionResult> ActionBatchDetailedOperationsAsync(Guid[] ids)
         {
-            var result = await _appService.BatchDetailedOperationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BatchDetailedOperationsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-confirm")]
-        public async Task<IActionResult> ActionConfirmAsync(Guid id)
+        [Route("action-confirm")]
+        public async Task<IActionResult> ActionConfirmAsync(Guid[] ids)
         {
-            var result = await _appService.ConfirmAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfirmAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-done")]
-        public async Task<IActionResult> ActionDoneAsync(Guid id)
+        [Route("action-done")]
+        public async Task<IActionResult> ActionDoneAsync(Guid[] ids)
         {
-            var result = await _appService.DoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-merge")]
-        public async Task<IActionResult> ActionMergeAsync(Guid id)
+        [Route("action-merge")]
+        public async Task<IActionResult> ActionMergeAsync(Guid[] ids)
         {
-            var result = await _appService.MergeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MergeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-label-layout")]
-        public async Task<IActionResult> ActionOpenLabelLayoutAsync(Guid id)
+        [Route("action-open-label-layout")]
+        public async Task<IActionResult> ActionOpenLabelLayoutAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLabelLayoutAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLabelLayoutAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-print")]
-        public async Task<IActionResult> ActionPrintAsync(Guid id)
+        [Route("action-print")]
+        public async Task<IActionResult> ActionPrintAsync(Guid[] ids)
         {
-            var result = await _appService.PrintAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PrintAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-put-in-pack")]
-        public async Task<IActionResult> ActionPutInPackAsync(Guid id)
+        [Route("action-put-in-pack")]
+        public async Task<IActionResult> ActionPutInPackAsync(Guid[] ids)
         {
-            var result = await _appService.PutInPackAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PutInPackAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-see-packages")]
-        public async Task<IActionResult> ActionSeePackagesAsync(Guid id)
+        [Route("action-see-packages")]
+        public async Task<IActionResult> ActionSeePackagesAsync(Guid[] ids)
         {
-            var result = await _appService.SeePackagesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SeePackagesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-reception-report")]
-        public async Task<IActionResult> ActionViewReceptionReportAsync(Guid id)
+        [Route("action-view-reception-report")]
+        public async Task<IActionResult> ActionViewReceptionReportAsync(Guid[] ids)
         {
-            var result = await _appService.ViewReceptionReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewReceptionReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-scheduled-date")]
-        public async Task<IActionResult> OnchangeScheduledDateAsync(Guid id)
+        [Route("onchange-scheduled-date")]
+        public async Task<IActionResult> OnchangeScheduledDateAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeScheduledDateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeScheduledDateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/order-on-zip")]
-        public async Task<IActionResult> OrderOnZipAsync(Guid id)
+        [Route("order-on-zip")]
+        public async Task<IActionResult> OrderOnZipAsync(Guid[] ids)
         {
-            var result = await _appService.OrderOnZipAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OrderOnZipAsync(ids);
             return Ok(result);
         }
     }

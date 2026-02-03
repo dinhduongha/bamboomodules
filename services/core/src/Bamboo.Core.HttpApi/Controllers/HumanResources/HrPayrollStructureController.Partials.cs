@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-all-rules")]
-        public async Task<IActionResult> GetAllRulesAsync(Guid id)
+        [Route("get-all-rules")]
+        public async Task<IActionResult> GetAllRulesAsync(Guid[] ids)
         {
-            var result = await _appService.GetAllRulesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAllRulesAsync(ids);
             return Ok(result);
         }
     }

@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-next")]
-        public async Task<IActionResult> ActionNextAsync(Guid id)
+        [Route("action-next")]
+        public async Task<IActionResult> ActionNextAsync(Guid[] ids)
         {
-            var result = await _appService.NextAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.NextAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-skip")]
-        public async Task<IActionResult> ActionSkipAsync(Guid id)
+        [Route("action-skip")]
+        public async Task<IActionResult> ActionSkipAsync(Guid[] ids)
         {
-            var result = await _appService.SkipAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SkipAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/cancel")]
-        public async Task<IActionResult> CancelAsync(Guid id)
+        [Route("cancel")]
+        public async Task<IActionResult> CancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/execute")]
-        public async Task<IActionResult> ExecuteAsync(Guid id)
+        [Route("execute")]
+        public async Task<IActionResult> ExecuteAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/next")]
-        public async Task<IActionResult> NextAsync(Guid id)
+        [Route("next")]
+        public async Task<IActionResult> NextAsync(Guid[] ids)
         {
-            var result = await _appService.NextAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.NextAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/start")]
-        public async Task<IActionResult> StartAsync(Guid id)
+        [Route("start")]
+        public async Task<IActionResult> StartAsync(Guid[] ids)
         {
-            var result = await _appService.StartAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StartAsync(ids);
             return Ok(result);
         }
     }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailMessageReactionAppService : GenericApplicationService<MailMessageReaction>, IMailMessageReactionAppService
+    public partial class MailMessageReactionAppService : GenericAppService<MailMessageReaction>, IMailMessageReactionAppService
     {
 
         public MailMessageReactionAppService(IRepository<MailMessageReaction, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<MailMessageReaction> InitAsync(Guid id)
+        public async Task<MailMessageReaction> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message_reaction.py) ---
@@ -34,7 +34,9 @@ namespace Bamboo.Core.Application.Services
             // self.env.cr.execute("CREATE UNIQUE INDEX IF NOT EXISTS mail_message_reaction_partner_unique ON %s (message_id, content, partner_id) WHERE partner_id IS NOT NULL" % self._table)
             // self.env.cr.execute("CREATE UNIQUE INDEX IF NOT EXISTS mail_message_reaction_guest_unique ON %s (message_id, content, guest_id) WHERE guest_id IS NOT NULL" % self._table)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessageReaction> ToStoreInternalAsync(object store)

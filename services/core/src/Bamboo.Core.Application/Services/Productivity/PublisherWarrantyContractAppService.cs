@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class PublisherWarrantyContractAppService : GenericApplicationService<PublisherWarrantyContract>, IPublisherWarrantyContractAppService
+    public partial class PublisherWarrantyContractAppService : GenericAppService<PublisherWarrantyContract>, IPublisherWarrantyContractAppService
     {
 
         public PublisherWarrantyContractAppService(IRepository<PublisherWarrantyContract, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,6 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<PublisherWarrantyContract> GetMessageInternalAsync()
         {
             /*
@@ -79,6 +80,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PublisherWarrantyContract> GetSysLogsInternalAsync()
         {
             /*
@@ -99,7 +101,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PublisherWarrantyContract> UpdateNotificationAsync(Guid id, PublisherWarrantyContractUpdateNotificationRequestDto input)
+        public async Task<PublisherWarrantyContract> UpdateNotificationAsync(PublisherWarrantyContractUpdateNotificationRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: update.py) ---
@@ -144,7 +146,9 @@ namespace Bamboo.Core.Application.Services
             //         raise
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

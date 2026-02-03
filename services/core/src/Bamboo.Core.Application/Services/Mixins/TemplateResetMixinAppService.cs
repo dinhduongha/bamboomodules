@@ -313,6 +313,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, ITemplateResetMixinable
         {
             /*
@@ -881,6 +882,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchTemplateCategoryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, ITemplateResetMixinable
         {
             /*

@@ -11,146 +11,164 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-generate-leads")]
-        public async Task<IActionResult> ActionGenerateLeadsAsync(Guid id, [FromBody] EventEventGenerateLeadsRequestDto input)
+        [Route("action-generate-leads")]
+        public async Task<IActionResult> ActionGenerateLeadsAsync(EventEventGenerateLeadsRequestDto input)
         {
-            var result = await _appService.GenerateLeadsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GenerateLeadsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-invite-contacts")]
-        public async Task<IActionResult> ActionInviteContactsAsync(Guid id)
+        [Route("action-invite-contacts")]
+        public async Task<IActionResult> ActionInviteContactsAsync(Guid[] ids)
         {
-            var result = await _appService.InviteContactsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InviteContactsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-mass-mailing-attendees")]
-        public async Task<IActionResult> ActionMassMailingAttendeesAsync(Guid id)
+        [Route("action-mass-mailing-attendees")]
+        public async Task<IActionResult> ActionMassMailingAttendeesAsync(Guid[] ids)
         {
-            var result = await _appService.MassMailingAttendeesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MassMailingAttendeesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-mass-mailing-track-speakers")]
-        public async Task<IActionResult> ActionMassMailingTrackSpeakersAsync(Guid id)
+        [Route("action-mass-mailing-track-speakers")]
+        public async Task<IActionResult> ActionMassMailingTrackSpeakersAsync(Guid[] ids)
         {
-            var result = await _appService.MassMailingTrackSpeakersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MassMailingTrackSpeakersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-slot-calendar")]
-        public async Task<IActionResult> ActionOpenSlotCalendarAsync(Guid id)
+        [Route("action-open-slot-calendar")]
+        public async Task<IActionResult> ActionOpenSlotCalendarAsync(Guid[] ids)
         {
-            var result = await _appService.OpenSlotCalendarAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenSlotCalendarAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-done")]
-        public async Task<IActionResult> ActionSetDoneAsync(Guid id)
+        [Route("action-set-done")]
+        public async Task<IActionResult> ActionSetDoneAsync(Guid[] ids)
         {
-            var result = await _appService.SetDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-linked-orders")]
-        public async Task<IActionResult> ActionViewLinkedOrdersAsync(Guid id)
+        [Route("action-view-linked-orders")]
+        public async Task<IActionResult> ActionViewLinkedOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewLinkedOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewLinkedOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] EventEventCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(EventEventCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-event-menus")]
-        public async Task<IActionResult> CopyEventMenusAsync(Guid id, [FromBody] EventEventCopyEventMenusRequestDto input)
+        [Route("copy-event-menus")]
+        public async Task<IActionResult> CopyEventMenusAsync(EventEventCopyEventMenusRequestDto input)
         {
-            var result = await _appService.CopyEventMenusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyEventMenusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-backend-menu-id")]
-        public async Task<IActionResult> GetBackendMenuIdAsync(Guid id)
+        [Route("get-backend-menu-id")]
+        public async Task<IActionResult> GetBackendMenuIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetBackendMenuIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBackendMenuIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-kiosk-url")]
-        public async Task<IActionResult> GetKioskUrlAsync(Guid id)
+        [Route("get-kiosk-url")]
+        public async Task<IActionResult> GetKioskUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetKioskUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetKioskUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-slot-tickets-availability-pos")]
-        public async Task<IActionResult> GetSlotTicketsAvailabilityPosAsync(Guid id, [FromBody] EventEventGetSlotTicketsAvailabilityPosRequestDto input)
+        [Route("get-slot-tickets-availability-pos")]
+        public async Task<IActionResult> GetSlotTicketsAvailabilityPosAsync(EventEventGetSlotTicketsAvailabilityPosRequestDto input)
         {
-            var result = await _appService.GetSlotTicketsAvailabilityPosAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetSlotTicketsAvailabilityPosAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/google-map-link")]
-        public async Task<IActionResult> GoogleMapLinkAsync(Guid id, [FromBody] EventEventGoogleMapLinkRequestDto input)
+        [Route("google-map-link")]
+        public async Task<IActionResult> GoogleMapLinkAsync(EventEventGoogleMapLinkRequestDto input)
         {
-            var result = await _appService.GoogleMapLinkAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GoogleMapLinkAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-booth-menu")]
-        public async Task<IActionResult> ToggleBoothMenuAsync(Guid id, [FromBody] EventEventToggleBoothMenuRequestDto input)
+        [Route("toggle-booth-menu")]
+        public async Task<IActionResult> ToggleBoothMenuAsync(EventEventToggleBoothMenuRequestDto input)
         {
-            var result = await _appService.ToggleBoothMenuAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToggleBoothMenuAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-exhibitor-menu")]
-        public async Task<IActionResult> ToggleExhibitorMenuAsync(Guid id, [FromBody] EventEventToggleExhibitorMenuRequestDto input)
+        [Route("toggle-exhibitor-menu")]
+        public async Task<IActionResult> ToggleExhibitorMenuAsync(EventEventToggleExhibitorMenuRequestDto input)
         {
-            var result = await _appService.ToggleExhibitorMenuAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToggleExhibitorMenuAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-website-menu")]
-        public async Task<IActionResult> ToggleWebsiteMenuAsync(Guid id, [FromBody] EventEventToggleWebsiteMenuRequestDto input)
+        [Route("toggle-website-menu")]
+        public async Task<IActionResult> ToggleWebsiteMenuAsync(EventEventToggleWebsiteMenuRequestDto input)
         {
-            var result = await _appService.ToggleWebsiteMenuAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToggleWebsiteMenuAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-website-track")]
-        public async Task<IActionResult> ToggleWebsiteTrackAsync(Guid id, [FromBody] EventEventToggleWebsiteTrackRequestDto input)
+        [Route("toggle-website-track")]
+        public async Task<IActionResult> ToggleWebsiteTrackAsync(EventEventToggleWebsiteTrackRequestDto input)
         {
-            var result = await _appService.ToggleWebsiteTrackAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToggleWebsiteTrackAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-website-track-proposal")]
-        public async Task<IActionResult> ToggleWebsiteTrackProposalAsync(Guid id, [FromBody] EventEventToggleWebsiteTrackProposalRequestDto input)
+        [Route("toggle-website-track-proposal")]
+        public async Task<IActionResult> ToggleWebsiteTrackProposalAsync(EventEventToggleWebsiteTrackProposalRequestDto input)
         {
-            var result = await _appService.ToggleWebsiteTrackProposalAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToggleWebsiteTrackProposalAsync(input);
             return Ok(result);
         }
     }

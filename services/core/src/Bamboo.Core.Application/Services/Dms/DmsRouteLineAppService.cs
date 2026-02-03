@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsRouteLineAppService : IGenericApplicationService<DmsRouteLine>
+    public interface IDmsRouteLineAppService : IGenericAppService<DmsRouteLine>
     {
         Task UpdateSequenceAsync(Guid lineId, int newSequence);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsRouteLineAppService : GenericApplicationService<DmsRouteLine>, IDmsRouteLineAppService
+    public class DmsRouteLineAppService : GenericAppService<DmsRouteLine>, IDmsRouteLineAppService
     {
         public DmsRouteLineAppService(
             IRepository<DmsRouteLine, Guid> repository,

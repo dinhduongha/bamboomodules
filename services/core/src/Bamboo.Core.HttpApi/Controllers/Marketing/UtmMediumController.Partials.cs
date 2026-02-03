@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/s-e-l-f-r-e-q-u-i-r-e-d-u-t-m-m-e-d-i-u-m-s-r-e-f")]
-        public async Task<IActionResult> SELFREQUIREDUTMMEDIUMSREFAsync(Guid id)
+        [Route("s-e-l-f-r-e-q-u-i-r-e-d-u-t-m-m-e-d-i-u-m-s-r-e-f")]
+        public async Task<IActionResult> SELFREQUIREDUTMMEDIUMSREFAsync(Guid[] ids)
         {
-            var result = await _appService.SELFREQUIREDUTMMEDIUMSREFAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SELFREQUIREDUTMMEDIUMSREFAsync(ids);
             return Ok(result);
         }
     }

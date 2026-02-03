@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/amount-to-text")]
-        public async Task<IActionResult> AmountToTextAsync(Guid id, [FromBody] ResCurrencyAmountToTextRequestDto input)
+        [Route("amount-to-text")]
+        public async Task<IActionResult> AmountToTextAsync(ResCurrencyAmountToTextRequestDto input)
         {
-            var result = await _appService.AmountToTextAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AmountToTextAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compare-amounts")]
-        public async Task<IActionResult> CompareAmountsAsync(Guid id, [FromBody] ResCurrencyCompareAmountsRequestDto input)
+        [Route("compare-amounts")]
+        public async Task<IActionResult> CompareAmountsAsync(ResCurrencyCompareAmountsRequestDto input)
         {
-            var result = await _appService.CompareAmountsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CompareAmountsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format")]
-        public async Task<IActionResult> FormatAsync(Guid id, [FromBody] ResCurrencyFormatRequestDto input)
+        [Route("format")]
+        public async Task<IActionResult> FormatAsync(ResCurrencyFormatRequestDto input)
         {
-            var result = await _appService.FormatAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-all-currencies")]
-        public async Task<IActionResult> GetAllCurrenciesAsync(Guid id)
+        [Route("get-all-currencies")]
+        public async Task<IActionResult> GetAllCurrenciesAsync(Guid[] ids)
         {
-            var result = await _appService.GetAllCurrenciesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAllCurrenciesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-company-currency-for-spreadsheet")]
-        public async Task<IActionResult> GetCompanyCurrencyForSpreadsheetAsync(Guid id, [FromBody] ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input)
+        [Route("get-company-currency-for-spreadsheet")]
+        public async Task<IActionResult> GetCompanyCurrencyForSpreadsheetAsync(ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input)
         {
-            var result = await _appService.GetCompanyCurrencyForSpreadsheetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetCompanyCurrencyForSpreadsheetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-zero")]
-        public async Task<IActionResult> IsZeroAsync(Guid id, [FromBody] ResCurrencyIsZeroRequestDto input)
+        [Route("is-zero")]
+        public async Task<IActionResult> IsZeroAsync(ResCurrencyIsZeroRequestDto input)
         {
-            var result = await _appService.IsZeroAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.IsZeroAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/round")]
-        public async Task<IActionResult> RoundAsync(Guid id, [FromBody] ResCurrencyRoundRequestDto input)
+        [Route("round")]
+        public async Task<IActionResult> RoundAsync(ResCurrencyRoundRequestDto input)
         {
-            var result = await _appService.RoundAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RoundAsync(input);
             return Ok(result);
         }
     }

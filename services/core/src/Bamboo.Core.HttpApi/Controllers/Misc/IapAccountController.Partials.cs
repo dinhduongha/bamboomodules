@@ -11,90 +11,101 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-buy-credits")]
-        public async Task<IActionResult> ActionBuyCreditsAsync(Guid id)
+        [Route("action-buy-credits")]
+        public async Task<IActionResult> ActionBuyCreditsAsync(Guid[] ids)
         {
-            var result = await _appService.BuyCreditsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BuyCreditsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-registration-wizard")]
-        public async Task<IActionResult> ActionOpenRegistrationWizardAsync(Guid id)
+        [Route("action-open-registration-wizard")]
+        public async Task<IActionResult> ActionOpenRegistrationWizardAsync(Guid[] ids)
         {
-            var result = await _appService.OpenRegistrationWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenRegistrationWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-sender-name-wizard")]
-        public async Task<IActionResult> ActionOpenSenderNameWizardAsync(Guid id)
+        [Route("action-open-sender-name-wizard")]
+        public async Task<IActionResult> ActionOpenSenderNameWizardAsync(Guid[] ids)
         {
-            var result = await _appService.OpenSenderNameWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenSenderNameWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get")]
-        public async Task<IActionResult> GetAsync(Guid id, [FromBody] IapAccountGetRequestDto input)
+        [Route("get")]
+        public async Task<IActionResult> GetAsync(IapAccountGetRequestDto input)
         {
-            var result = await _appService.GetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-account-id")]
-        public async Task<IActionResult> GetAccountIdAsync(Guid id, [FromBody] IapAccountGetAccountIdRequestDto input)
+        [Route("get-account-id")]
+        public async Task<IActionResult> GetAccountIdAsync(IapAccountGetAccountIdRequestDto input)
         {
-            var result = await _appService.GetAccountIdAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAccountIdAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-config-account-url")]
-        public async Task<IActionResult> GetConfigAccountUrlAsync(Guid id)
+        [Route("get-config-account-url")]
+        public async Task<IActionResult> GetConfigAccountUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetConfigAccountUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetConfigAccountUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-credits")]
-        public async Task<IActionResult> GetCreditsAsync(Guid id, [FromBody] IapAccountGetCreditsRequestDto input)
+        [Route("get-credits")]
+        public async Task<IActionResult> GetCreditsAsync(IapAccountGetCreditsRequestDto input)
         {
-            var result = await _appService.GetCreditsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetCreditsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-credits-url")]
-        public async Task<IActionResult> GetCreditsUrlAsync(Guid id, [FromBody] IapAccountGetCreditsUrlRequestDto input)
+        [Route("get-credits-url")]
+        public async Task<IActionResult> GetCreditsUrlAsync(IapAccountGetCreditsUrlRequestDto input)
         {
-            var result = await _appService.GetCreditsUrlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetCreditsUrlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/validate-warning-alerts")]
-        public async Task<IActionResult> ValidateWarningAlertsAsync(Guid id)
+        [Route("validate-warning-alerts")]
+        public async Task<IActionResult> ValidateWarningAlertsAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateWarningAlertsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateWarningAlertsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/web-read")]
-        public async Task<IActionResult> WebReadAsync(Guid id)
+        [Route("web-read")]
+        public async Task<IActionResult> WebReadAsync(Guid[] ids)
         {
-            var result = await _appService.WebReadAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WebReadAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/web-save")]
-        public async Task<IActionResult> WebSaveAsync(Guid id)
+        [Route("web-save")]
+        public async Task<IActionResult> WebSaveAsync(Guid[] ids)
         {
-            var result = await _appService.WebSaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WebSaveAsync(ids);
             return Ok(result);
         }
     }

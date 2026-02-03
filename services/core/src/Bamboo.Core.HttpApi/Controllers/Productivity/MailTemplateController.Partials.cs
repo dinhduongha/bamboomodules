@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-mail-preview")]
-        public async Task<IActionResult> ActionOpenMailPreviewAsync(Guid id)
+        [Route("action-open-mail-preview")]
+        public async Task<IActionResult> ActionOpenMailPreviewAsync(Guid[] ids)
         {
-            var result = await _appService.OpenMailPreviewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenMailPreviewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] MailTemplateCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(MailTemplateCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-action")]
-        public async Task<IActionResult> CreateActionAsync(Guid id)
+        [Route("create-action")]
+        public async Task<IActionResult> CreateActionAsync(Guid[] ids)
         {
-            var result = await _appService.CreateActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send-mail")]
-        public async Task<IActionResult> SendMailAsync(Guid id, [FromBody] MailTemplateSendMailRequestDto input)
+        [Route("send-mail")]
+        public async Task<IActionResult> SendMailAsync(MailTemplateSendMailRequestDto input)
         {
-            var result = await _appService.SendMailAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SendMailAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send-mail-batch")]
-        public async Task<IActionResult> SendMailBatchAsync(Guid id, [FromBody] MailTemplateSendMailBatchRequestDto input)
+        [Route("send-mail-batch")]
+        public async Task<IActionResult> SendMailBatchAsync(MailTemplateSendMailBatchRequestDto input)
         {
-            var result = await _appService.SendMailBatchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SendMailBatchAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unlink-action")]
-        public async Task<IActionResult> UnlinkActionAsync(Guid id)
+        [Route("unlink-action")]
+        public async Task<IActionResult> UnlinkActionAsync(Guid[] ids)
         {
-            var result = await _appService.UnlinkActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnlinkActionAsync(ids);
             return Ok(result);
         }
     }

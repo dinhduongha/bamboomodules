@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public partial class ProjectTaskTypeAppService : GenericApplicationService<ProjectTaskType>, IProjectTaskTypeAppService
+    public partial class ProjectTaskTypeAppService : GenericAppService<ProjectTaskType>, IProjectTaskTypeAppService
     {
 
         public ProjectTaskTypeAppService(IRepository<ProjectTaskType, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -75,7 +75,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTaskType> CopyDataAsync(Guid id, ProjectTaskTypeCopyDataRequestDto input)
+        public async Task<ProjectTaskType> CopyDataAsync(ProjectTaskTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task_type.py) ---
@@ -83,7 +83,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", task_type.name)) for task_type, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTaskType> DefaultUserIdInternalAsync()
@@ -155,6 +157,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTaskType> SendRatingAllInternalAsync()
         {
             /*
@@ -173,7 +176,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTaskType> UnarchiveAsync(Guid id)
+        public async Task<ProjectTaskType> UnarchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task_type.py) ---
@@ -198,7 +201,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTaskType> UnlinkIfRemainingPersonalStagesInternalAsync()
@@ -236,7 +241,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTaskType> UnlinkWizardAsync(Guid id, ProjectTaskTypeUnlinkWizardRequestDto input)
+        public async Task<ProjectTaskType> UnlinkWizardAsync(ProjectTaskTypeUnlinkWizardRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task_type.py) ---
@@ -265,7 +270,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': context,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

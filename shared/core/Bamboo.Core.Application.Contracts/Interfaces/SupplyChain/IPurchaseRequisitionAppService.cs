@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPurchaseRequisitionAppService : IGenericApplicationService<PurchaseRequisition>
     {
-        Task<PurchaseRequisition> CancelAsync(Guid id);
-        Task<PurchaseRequisition> ConfirmAsync(Guid id);
-        Task<PurchaseRequisition> DoneAsync(Guid id);
-        Task<PurchaseRequisition> DraftAsync(Guid id);
+        Task<PurchaseRequisition> CancelAsync(Guid[] ids);
+        Task<PurchaseRequisition> ConfirmAsync(Guid[] ids);
+        Task<PurchaseRequisition> DoneAsync(Guid[] ids);
+        Task<PurchaseRequisition> DraftAsync(Guid[] ids);
     }
 }

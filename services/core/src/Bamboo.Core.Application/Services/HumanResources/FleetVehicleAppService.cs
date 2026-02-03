@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Fleet", Category = "HumanResources", Depends = new[] { "base", "mail" })]
-    public partial class FleetVehicleAppService : GenericApplicationService<FleetVehicle>, IFleetVehicleAppService
+    public partial class FleetVehicleAppService : GenericAppService<FleetVehicle>, IFleetVehicleAppService
     {
         private readonly IAvatarMixinAppService _avatarMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<FleetVehicle> AcceptDriverChangeAsync(Guid id)
+        public async Task<FleetVehicle> AcceptDriverChangeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -51,10 +51,12 @@ namespace Bamboo.Core.Application.Services
             //     vehicle.driver_id = vehicle.future_driver_id
             //     vehicle.future_driver_id = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicle> ActShowLogCostAsync(Guid id)
+        public async Task<FleetVehicle> ActShowLogCostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -72,7 +74,9 @@ namespace Bamboo.Core.Application.Services
             // )
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FleetVehicle> ComputeCategoryInternalAsync()
@@ -432,7 +436,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<FleetVehicle> CreateAsync(FleetVehicle entity, List<string> fields)
+        public override async Task<FleetVehicle> CreateAsync(CreateRequestDto<FleetVehicle> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -472,10 +476,10 @@ namespace Bamboo.Core.Application.Services
             //     self._update_create_write_vals(vals)
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<FleetVehicle> CreateDriverHistoryAsync(Guid id, FleetVehicleCreateDriverHistoryRequestDto input)
+        public async Task<FleetVehicle> CreateDriverHistoryAsync(FleetVehicleCreateDriverHistoryRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -485,7 +489,9 @@ namespace Bamboo.Core.Application.Services
             //         vehicle._get_driver_history_data(vals),
             //     )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FleetVehicle> GetAnalyticNameInternalAsync()
@@ -577,7 +583,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicle> OpenAssignationLogsAsync(Guid id)
+        public async Task<FleetVehicle> OpenAssignationLogsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -597,10 +603,12 @@ namespace Bamboo.Core.Application.Services
             // action['views'] = [[self.env.ref('hr_fleet.fleet_vehicle_assignation_log_view_list').id, 'list']]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicle> OpenEmployeeAsync(Guid id)
+        public async Task<FleetVehicle> OpenEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: fleet_vehicle.py) ---
@@ -614,10 +622,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.driver_employee_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicle> OpenOdometerReportAsync(Guid id)
+        public async Task<FleetVehicle> OpenOdometerReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -630,10 +640,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicle> ReturnToOpenAsync(Guid id)
+        public async Task<FleetVehicle> ReturnToOpenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -651,7 +663,9 @@ namespace Bamboo.Core.Application.Services
             //     return res
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FleetVehicle> SearchContractRenewalDueSoonInternalAsync(object @operator, object @value)
@@ -702,7 +716,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicle> SendEmailAsync(Guid id)
+        public async Task<FleetVehicle> SendEmailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -718,7 +732,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FleetVehicle> SetOdometerInternalAsync()
@@ -796,7 +812,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicle> ViewBillsAsync(Guid id)
+        public async Task<FleetVehicle> ViewBillsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_fleet, FILE: fleet_vehicle.py) ---
@@ -813,10 +829,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, FleetVehicle entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<FleetVehicle> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -870,7 +888,7 @@ namespace Bamboo.Core.Application.Services
             //             vehicle.message_unsubscribe(partner_ids=partners_to_unsubscribe)
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

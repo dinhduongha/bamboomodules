@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/compute-difference")]
-        public async Task<IActionResult> ComputeDifferenceAsync(Guid id, [FromBody] AccountCashRoundingComputeDifferenceRequestDto input)
+        [Route("compute-difference")]
+        public async Task<IActionResult> ComputeDifferenceAsync(AccountCashRoundingComputeDifferenceRequestDto input)
         {
-            var result = await _appService.ComputeDifferenceAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ComputeDifferenceAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/round")]
-        public async Task<IActionResult> RoundAsync(Guid id, [FromBody] AccountCashRoundingRoundRequestDto input)
+        [Route("round")]
+        public async Task<IActionResult> RoundAsync(AccountCashRoundingRoundRequestDto input)
         {
-            var result = await _appService.RoundAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RoundAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/validate-rounding")]
-        public async Task<IActionResult> ValidateRoundingAsync(Guid id)
+        [Route("validate-rounding")]
+        public async Task<IActionResult> ValidateRoundingAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateRoundingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateRoundingAsync(ids);
             return Ok(result);
         }
     }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrConfigParameterAppService : GenericApplicationService<IrConfigParameter>, IIrConfigParameterAppService
+    public partial class IrConfigParameterAppService : GenericAppService<IrConfigParameter>, IIrConfigParameterAppService
     {
 
         public IrConfigParameterAppService(IRepository<IrConfigParameter, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public override async Task<IrConfigParameter> CreateAsync(IrConfigParameter entity, List<string> fields)
+        public override async Task<IrConfigParameter> CreateAsync(CreateRequestDto<IrConfigParameter> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: ir_config_parameter.py) ---
@@ -47,10 +47,11 @@ namespace Bamboo.Core.Application.Services
             // self.env.registry.clear_cache('stable')
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<IrConfigParameter> GetParamAsync(Guid id, IrConfigParameterGetParamRequestDto input)
+        [ApiModel]
+        public async Task<IrConfigParameter> GetParamAsync(IrConfigParameterGetParamRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_config_parameter.py) ---
@@ -65,7 +66,9 @@ namespace Bamboo.Core.Application.Services
             // self.browse().check_access('read')
             // return self._get_param(key) or default
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrConfigParameter> GetParamCronMappingInternalAsync()
@@ -83,6 +86,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrConfigParameter> GetParamInternalAsync(object key)
         {
             /*
@@ -98,7 +102,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrConfigParameter> InitAsync(Guid id, IrConfigParameterInitRequestDto input)
+        public async Task<IrConfigParameter> InitAsync(IrConfigParameterInitRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: ir_config_parameter.py) ---
@@ -125,7 +129,9 @@ namespace Bamboo.Core.Application.Services
             //     if force or not params:
             //         params.set_param(key, func())
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrConfigParameter> SaleSyncLinkedCronsInternalAsync(object unlink)
@@ -147,7 +153,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrConfigParameter> SetParamAsync(Guid id, IrConfigParameterSetParamRequestDto input)
+        [ApiModel]
+        public async Task<IrConfigParameter> SetParamAsync(IrConfigParameterSetParamRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_config_parameter.py) ---
@@ -192,7 +199,9 @@ namespace Bamboo.Core.Application.Services
             //         self.create({'key': key, 'value': value})
             //     return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         public override async Task<object> UnlinkAsync(List<Guid> ids)
@@ -218,7 +227,7 @@ namespace Bamboo.Core.Application.Services
             return await base.UnlinkAsync(ids);
         }
 
-        public async Task<IrConfigParameter> UnlinkDefaultParametersAsync(Guid id)
+        public async Task<IrConfigParameter> UnlinkDefaultParametersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_config_parameter.py) ---
@@ -226,10 +235,12 @@ namespace Bamboo.Core.Application.Services
             // for record in self.filtered(lambda p: p.key in _default_parameters.keys()):
             //     raise ValidationError(self.env._("You cannot delete the %s record.", record.key))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrConfigParameter entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<IrConfigParameter> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: ir_config_parameter.py) ---
@@ -272,7 +283,7 @@ namespace Bamboo.Core.Application.Services
             // self.env.registry.clear_cache('stable')
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

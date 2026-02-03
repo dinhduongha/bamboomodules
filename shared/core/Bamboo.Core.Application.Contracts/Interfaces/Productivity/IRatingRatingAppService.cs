@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IRatingRatingAppService : IGenericApplicationService<RatingRating>
     {
-        Task<RatingRating> OpenRatedObjectAsync(Guid id);
-        Task<RatingRating> ResetAsync(Guid id);
+        Task<RatingRating> OpenRatedObjectAsync(Guid[] ids);
+        Task<RatingRating> ResetAsync(Guid[] ids);
     }
 }

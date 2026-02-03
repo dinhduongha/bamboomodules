@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
-    public partial class EventMailAppService : GenericApplicationService<EventMail>, IEventMailAppService
+    public partial class EventMailAppService : GenericAppService<EventMail>, IEventMailAppService
     {
 
         public EventMailAppService(IRepository<EventMail, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -106,7 +106,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventMail> ExecuteAsync(Guid id)
+        public async Task<EventMail> ExecuteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_mail.py) ---
@@ -127,7 +127,9 @@ namespace Bamboo.Core.Application.Services
             //     scheduler.error_datetime = False
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventMail> ExecuteAttendeeBasedInternalAsync()
@@ -417,7 +419,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventMail> RunAsync(Guid id, EventMailRunRequestDto input)
+        [ApiModel]
+        public async Task<EventMail> RunAsync(EventMailRunRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_mail.py) ---
@@ -426,10 +429,13 @@ namespace Bamboo.Core.Application.Services
             // migrating for some reason. """
             // return self.schedule_communications(autocommit=autocommit)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventMail> ScheduleCommunicationsAsync(Guid id, EventMailScheduleCommunicationsRequestDto input)
+        [ApiModel]
+        public async Task<EventMail> ScheduleCommunicationsAsync(EventMailScheduleCommunicationsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_mail.py) ---
@@ -459,7 +465,9 @@ namespace Bamboo.Core.Application.Services
             //             self.env.cr.commit()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventMail> SendMailInternalAsync(object registrations)

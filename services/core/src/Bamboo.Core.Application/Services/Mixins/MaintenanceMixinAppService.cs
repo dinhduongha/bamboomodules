@@ -101,6 +101,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReadGroupCategoryIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object categories, object domain) where TEntity : IEntity<Guid>, IMaintenanceMixinable
         {
             /*

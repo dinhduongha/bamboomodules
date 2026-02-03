@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockWarehouseOrderpointAppService : GenericApplicationService<StockWarehouseOrderpoint>, IStockWarehouseOrderpointAppService
+    public partial class StockWarehouseOrderpointAppService : GenericAppService<StockWarehouseOrderpoint>, IStockWarehouseOrderpointAppService
     {
 
         public StockWarehouseOrderpointAppService(IRepository<StockWarehouseOrderpoint, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -38,7 +38,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> CheckProductIsNotKitAsync(Guid id)
+        public async Task<StockWarehouseOrderpoint> CheckProductIsNotKitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_warehouse.py) ---
@@ -56,7 +56,9 @@ namespace Bamboo.Core.Application.Services
             // if self.env['mrp.bom'].search_count(domain, limit=1):
             //     raise ValidationError(_("A product with a kit-type bill of materials can not have a reordering rule."))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouseOrderpoint> ComputeAllowedLocationIdsInternalAsync()
@@ -595,7 +597,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> GetHorizonDaysAsync(Guid id)
+        public async Task<StockWarehouseOrderpoint> GetHorizonDaysAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
@@ -607,7 +609,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // return self.env.context.get('global_horizon_days', (self.company_id or self.env.company).horizon_days)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouseOrderpoint> GetLeadDaysValuesInternalAsync()
@@ -834,6 +838,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockWarehouseOrderpoint> GetOrderpointValuesInternalAsync(object product, object location)
         {
             /*
@@ -1081,14 +1086,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> OpenOrderpointsAsync(Guid id)
+        [ApiModel]
+        public async Task<StockWarehouseOrderpoint> OpenOrderpointsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def action_open_orderpoints(self):
             // return self._get_orderpoint_action()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouseOrderpoint> PostProcessSchedulerInternalAsync()
@@ -1245,7 +1253,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> ProductForecastReportAsync(Guid id)
+        public async Task<StockWarehouseOrderpoint> ProductForecastReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
@@ -1263,7 +1271,9 @@ namespace Bamboo.Core.Application.Services
             //     action['context']['warehouse_id'] = warehouse.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouseOrderpoint> QuantityInProgressInternalAsync()
@@ -1351,17 +1361,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> RemoveManualQtyToOrderAsync(Guid id)
+        public async Task<StockWarehouseOrderpoint> RemoveManualQtyToOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
             // def action_remove_manual_qty_to_order(self):
             // self.qty_to_order_manual = 0
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> ReplenishAsync(Guid id, StockWarehouseOrderpointReplenishRequestDto input)
+        public async Task<StockWarehouseOrderpoint> ReplenishAsync(StockWarehouseOrderpointReplenishRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
@@ -1391,10 +1403,12 @@ namespace Bamboo.Core.Application.Services
             // self.filtered(lambda o: o.create_uid.id == SUPERUSER_ID and o.qty_to_order <= 0.0 and o.trigger == 'manual').unlink()
             // return notification
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> ReplenishAutoAsync(Guid id)
+        public async Task<StockWarehouseOrderpoint> ReplenishAutoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
@@ -1402,7 +1416,9 @@ namespace Bamboo.Core.Application.Services
             // self.trigger = 'auto'
             // return self.action_replenish()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouseOrderpoint> SearchAvailableVendorInternalAsync(object @operator, object @value)
@@ -1476,7 +1492,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> StockReplenishmentInfoAsync(Guid id)
+        public async Task<StockWarehouseOrderpoint> StockReplenishmentInfoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---
@@ -1494,7 +1510,9 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = res.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouseOrderpoint> UnlinkProcessedOrderpointsInternalAsync()
@@ -1517,7 +1535,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouseOrderpoint> ViewPurchaseAsync(Guid id)
+        public async Task<StockWarehouseOrderpoint> ViewPurchaseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: stock.py) ---
@@ -1536,7 +1554,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

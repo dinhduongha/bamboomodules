@@ -10,21 +10,21 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailActivityAppService : IGenericApplicationService<MailActivity>
     {
-        Task<MailActivity> ActivityFormatAsync(Guid id);
-        Task<MailActivity> CancelAsync(Guid id);
-        Task<MailActivity> CloseDialogAsync(Guid id);
-        Task<MailActivity> CreateCalendarEventAsync(Guid id);
-        Task<MailActivity> DoneAsync(Guid id);
-        Task<MailActivity> DoneRedirectToOtherAsync(Guid id);
-        Task<MailActivity> DoneScheduleNextAsync(Guid id);
-        Task<MailActivity> FeedbackAsync(Guid id, MailActivityFeedbackRequestDto input);
-        Task<MailActivity> FeedbackScheduleNextAsync(Guid id, MailActivityFeedbackScheduleNextRequestDto input);
-        Task<MailActivity> GetActivityDataAsync(Guid id, MailActivityGetActivityDataRequestDto input);
-        Task<MailActivity> NotifyAsync(Guid id);
-        Task<MailActivity> OpenDocumentAsync(Guid id);
-        Task<MailActivity> RescheduleNextweekAsync(Guid id);
-        Task<MailActivity> RescheduleTodayAsync(Guid id);
-        Task<MailActivity> RescheduleTomorrowAsync(Guid id);
-        Task<MailActivity> UnlinkWMeetingAsync(Guid id);
+        Task<MailActivity> ActivityFormatAsync(Guid[] ids);
+        Task<MailActivity> CancelAsync(Guid[] ids);
+        Task<MailActivity> CloseDialogAsync(Guid[] ids);
+        Task<MailActivity> CreateCalendarEventAsync(Guid[] ids);
+        Task<MailActivity> DoneAsync(Guid[] ids);
+        Task<MailActivity> DoneRedirectToOtherAsync(Guid[] ids);
+        Task<MailActivity> DoneScheduleNextAsync(Guid[] ids);
+        Task<MailActivity> FeedbackAsync(MailActivityFeedbackRequestDto input);
+        Task<MailActivity> FeedbackScheduleNextAsync(MailActivityFeedbackScheduleNextRequestDto input);
+        Task<MailActivity> GetActivityDataAsync(MailActivityGetActivityDataRequestDto input);
+        Task<MailActivity> NotifyAsync(Guid[] ids);
+        Task<MailActivity> OpenDocumentAsync(Guid[] ids);
+        Task<MailActivity> RescheduleNextweekAsync(Guid[] ids);
+        Task<MailActivity> RescheduleTodayAsync(Guid[] ids);
+        Task<MailActivity> RescheduleTomorrowAsync(Guid[] ids);
+        Task<MailActivity> UnlinkWMeetingAsync(Guid[] ids);
     }
 }

@@ -19,6 +19,9 @@ public static partial class ModelBuilderExtensions
             entity.HasIndex(e => e.TenantId);
             entity.HasIndex(e => e.OrganizationUnitId);
 
+            entity.HasIndex(e => e.GeomPolygon).HasMethod("GIST");
+            entity.HasIndex(e => e.H3Indexes);
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("uuidv7()")
                 .HasColumnName("id");
@@ -29,7 +32,12 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Type).HasColumnName("type");
             entity.Property(e => e.RadiusMeters).HasColumnName("radius_meters");
-            entity.Property(e => e.PolygonGeoJson).HasColumnName("polygon_geo_json");
+            entity.Property(e => e.H3Indexes)
+                    .HasColumnName("h3_indexes")
+                    .HasColumnType("text[]");
+            entity.Property(e => e.GeomCenterPoint).HasColumnType("geography(Point,4326)");
+            entity.Property(e => e.GeomPolygon).HasColumnType("geography(Polygon,4326)");
+            entity.Property(e => e.GeoJsonPolygon);
             entity.Property(e => e.CenterLatitude).HasColumnName("center_latitude");
             entity.Property(e => e.CenterLongitude).HasColumnName("center_longitude");
             entity.Property(e => e.IsActive).HasColumnName("is_active");

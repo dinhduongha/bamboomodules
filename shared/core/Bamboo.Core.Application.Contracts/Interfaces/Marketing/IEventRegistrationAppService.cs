@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventRegistrationAppService : IGenericApplicationService<EventRegistration>
     {
-        Task<EventRegistration> CancelAsync(Guid id);
-        Task<EventRegistration> ConfirmAsync(Guid id);
-        Task<EventRegistration> RegisterAttendeeAsync(Guid id, EventRegistrationRegisterAttendeeRequestDto input);
-        Task<EventRegistration> SendBadgeEmailAsync(Guid id);
-        Task<EventRegistration> SetDoneAsync(Guid id);
-        Task<EventRegistration> SetDraftAsync(Guid id);
-        Task<EventRegistration> ViewPosOrderAsync(Guid id);
-        Task<EventRegistration> ViewSaleOrderAsync(Guid id);
+        Task<EventRegistration> CancelAsync(Guid[] ids);
+        Task<EventRegistration> ConfirmAsync(Guid[] ids);
+        Task<EventRegistration> RegisterAttendeeAsync(EventRegistrationRegisterAttendeeRequestDto input);
+        Task<EventRegistration> SendBadgeEmailAsync(Guid[] ids);
+        Task<EventRegistration> SetDoneAsync(Guid[] ids);
+        Task<EventRegistration> SetDraftAsync(Guid[] ids);
+        Task<EventRegistration> ViewPosOrderAsync(Guid[] ids);
+        Task<EventRegistration> ViewSaleOrderAsync(Guid[] ids);
     }
 }

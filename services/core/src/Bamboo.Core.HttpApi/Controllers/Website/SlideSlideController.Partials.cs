@@ -11,82 +11,92 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-dislike")]
-        public async Task<IActionResult> ActionDislikeAsync(Guid id)
+        [Route("action-dislike")]
+        public async Task<IActionResult> ActionDislikeAsync(Guid[] ids)
         {
-            var result = await _appService.DislikeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DislikeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-like")]
-        public async Task<IActionResult> ActionLikeAsync(Guid id)
+        [Route("action-like")]
+        public async Task<IActionResult> ActionLikeAsync(Guid[] ids)
         {
-            var result = await _appService.LikeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LikeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-mark-completed")]
-        public async Task<IActionResult> ActionMarkCompletedAsync(Guid id)
+        [Route("action-mark-completed")]
+        public async Task<IActionResult> ActionMarkCompletedAsync(Guid[] ids)
         {
-            var result = await _appService.MarkCompletedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MarkCompletedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-mark-uncompleted")]
-        public async Task<IActionResult> ActionMarkUncompletedAsync(Guid id)
+        [Route("action-mark-uncompleted")]
+        public async Task<IActionResult> ActionMarkUncompletedAsync(Guid[] ids)
         {
-            var result = await _appService.MarkUncompletedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MarkUncompletedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-viewed")]
-        public async Task<IActionResult> ActionSetViewedAsync(Guid id, [FromBody] SlideSlideSetViewedRequestDto input)
+        [Route("action-set-viewed")]
+        public async Task<IActionResult> ActionSetViewedAsync(SlideSlideSetViewedRequestDto input)
         {
-            var result = await _appService.SetViewedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetViewedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-embeds")]
-        public async Task<IActionResult> ActionViewEmbedsAsync(Guid id)
+        [Route("action-view-embeds")]
+        public async Task<IActionResult> ActionViewEmbedsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewEmbedsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewEmbedsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SlideSlideCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(SlideSlideCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-backend-menu-id")]
-        public async Task<IActionResult> GetBackendMenuIdAsync(Guid id)
+        [Route("get-backend-menu-id")]
+        public async Task<IActionResult> GetBackendMenuIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetBackendMenuIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBackendMenuIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-base-url")]
-        public async Task<IActionResult> GetBaseUrlAsync(Guid id)
+        [Route("get-base-url")]
+        public async Task<IActionResult> GetBaseUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetBaseUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBaseUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-post")]
-        public async Task<IActionResult> MessagePostAsync(Guid id)
+        [Route("message-post")]
+        public async Task<IActionResult> MessagePostAsync(Guid[] ids)
         {
-            var result = await _appService.MessagePostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MessagePostAsync(ids);
             return Ok(result);
         }
     }

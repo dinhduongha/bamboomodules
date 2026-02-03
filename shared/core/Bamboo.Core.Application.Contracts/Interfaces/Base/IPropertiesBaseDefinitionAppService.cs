@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPropertiesBaseDefinitionAppService : IGenericApplicationService<PropertiesBaseDefinition>
     {
-        Task<PropertiesBaseDefinition> GetPropertiesBaseDefinitionAsync(Guid id, PropertiesBaseDefinitionGetPropertiesBaseDefinitionRequestDto input);
+        Task<PropertiesBaseDefinition> GetPropertiesBaseDefinitionAsync(PropertiesBaseDefinitionGetPropertiesBaseDefinitionRequestDto input);
     }
 }

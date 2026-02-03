@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailGatewayAllowedAppService : IGenericApplicationService<MailGatewayAllowed>
     {
-        Task<MailGatewayAllowed> GetEmptyListHelpAsync(Guid id, MailGatewayAllowedGetEmptyListHelpRequestDto input);
+        Task<MailGatewayAllowed> GetEmptyListHelpAsync(MailGatewayAllowedGetEmptyListHelpRequestDto input);
     }
 }

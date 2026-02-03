@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IRestaurantFloorAppService : IGenericApplicationService<RestaurantFloor>
     {
-        Task<RestaurantFloor> DeactivateFloorAsync(Guid id, RestaurantFloorDeactivateFloorRequestDto input);
-        Task<RestaurantFloor> RenameFloorAsync(Guid id, RestaurantFloorRenameFloorRequestDto input);
-        Task<RestaurantFloor> SyncFromUiAsync(Guid id, RestaurantFloorSyncFromUiRequestDto input);
+        Task<RestaurantFloor> DeactivateFloorAsync(RestaurantFloorDeactivateFloorRequestDto input);
+        Task<RestaurantFloor> RenameFloorAsync(RestaurantFloorRenameFloorRequestDto input);
+        Task<RestaurantFloor> SyncFromUiAsync(RestaurantFloorSyncFromUiRequestDto input);
     }
 }

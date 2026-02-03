@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
-    public partial class PosPaymentMethodAppService : GenericApplicationService<PosPaymentMethod>, IPosPaymentMethodAppService
+    public partial class PosPaymentMethodAppService : GenericAppService<PosPaymentMethod>, IPosPaymentMethodAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public PosPaymentMethodAppService(IRepository<PosPaymentMethod, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -324,7 +324,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> CopyDataAsync(Guid id, PosPaymentMethodCopyDataRequestDto input)
+        public async Task<PosPaymentMethod> CopyDataAsync(PosPaymentMethodCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
@@ -338,10 +338,12 @@ namespace Bamboo.Core.Application.Services
             //             vals['journal_id'] = False
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<PosPaymentMethod> CreateAsync(PosPaymentMethod entity, List<string> fields)
+        public override async Task<PosPaymentMethod> CreateAsync(CreateRequestDto<PosPaymentMethod> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
@@ -381,7 +383,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return records
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<PosPaymentMethod> DpopayHeadersInternalAsync(object token_expired)
@@ -515,7 +517,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> ForcePdvAsync(Guid id)
+        public async Task<PosPaymentMethod> ForcePdvAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_mercado_pago, FILE: pos_payment_method.py) ---
@@ -536,7 +538,9 @@ namespace Bamboo.Core.Application.Services
             // _logger.debug("Successfully set the terminal mode to 'PDV'.")
             // return None
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> GenerateDpopayTokenInternalAsync()
@@ -649,6 +653,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPaymentMethod> GetHmacInternalAsync(Guid sale_id, Guid service_id, Guid poi_id, Guid sale_transaction_id)
         {
             /*
@@ -663,7 +668,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> GetLatestAdyenStatusAsync(Guid id)
+        public async Task<PosPaymentMethod> GetLatestAdyenStatusAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_adyen, FILE: pos_payment_method.py) ---
@@ -676,10 +681,12 @@ namespace Bamboo.Core.Application.Services
             // latest_response = json.loads(latest_response) if latest_response else False
             // return latest_response
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> GetLatestVivaComStatusAsync(Guid id)
+        public async Task<PosPaymentMethod> GetLatestVivaComStatusAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
@@ -687,7 +694,9 @@ namespace Bamboo.Core.Application.Services
             // # Not used anymore, to remove in master
             // return {'error': 'Your POS is out of date, please refresh the page.'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> GetOnlinePaymentProvidersInternalAsync(Guid pos_config_id, object error_if_invalid)
@@ -712,6 +721,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPaymentMethod> GetOrCreateOnlinePaymentMethodInternalAsync(Guid company_id, Guid pos_config_id)
         {
             /*
@@ -795,7 +805,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> GetProviderStatusAsync(Guid id, PosPaymentMethodGetProviderStatusRequestDto input)
+        [ApiModel]
+        public async Task<PosPaymentMethod> GetProviderStatusAsync(PosPaymentMethodGetProviderStatusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
@@ -804,10 +815,12 @@ namespace Bamboo.Core.Application.Services
             //     'state': self.env['ir.module.module'].search_read([('name', 'in', modules_list)], ['name', 'state']),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> GetQrCodeAsync(Guid id, PosPaymentMethodGetQrCodeRequestDto input)
+        public async Task<PosPaymentMethod> GetQrCodeAsync(PosPaymentMethodGetQrCodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
@@ -824,7 +837,9 @@ namespace Bamboo.Core.Application.Services
             // return payment_bank.with_context(is_online_qr=True).build_qr_code_base64(
             //     float(amount), free_communication, structured_communication, currency, debtor_partner, self.qr_code_method, silent_errors=False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> GetStripePaymentProviderInternalAsync()
@@ -857,6 +872,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPaymentMethod> GetValidAcquirerDataInternalAsync()
         {
             /*
@@ -875,6 +891,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPaymentMethod> IsValidAdyenRequestDataInternalAsync(object provided_data, object expected_data)
         {
             /*
@@ -928,6 +945,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPaymentMethod> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -979,6 +997,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPaymentMethod> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -1036,7 +1055,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> MpGetPaymentStatusAsync(Guid id, PosPaymentMethodMpGetPaymentStatusRequestDto input)
+        public async Task<PosPaymentMethod> MpGetPaymentStatusAsync(PosPaymentMethodMpGetPaymentStatusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_mercado_pago, FILE: pos_payment_method.py) ---
@@ -1052,10 +1071,12 @@ namespace Bamboo.Core.Application.Services
             // _logger.debug("mp_get_payment_status(), response from Mercado Pago: %s", resp)
             // return resp
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> MpPaymentIntentCancelAsync(Guid id, PosPaymentMethodMpPaymentIntentCancelRequestDto input)
+        public async Task<PosPaymentMethod> MpPaymentIntentCancelAsync(PosPaymentMethodMpPaymentIntentCancelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_mercado_pago, FILE: pos_payment_method.py) ---
@@ -1071,10 +1092,12 @@ namespace Bamboo.Core.Application.Services
             // _logger.debug("mp_payment_intent_cancel(), response from Mercado Pago: %s", resp)
             // return resp
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> MpPaymentIntentCreateAsync(Guid id, PosPaymentMethodMpPaymentIntentCreateRequestDto input)
+        public async Task<PosPaymentMethod> MpPaymentIntentCreateAsync(PosPaymentMethodMpPaymentIntentCreateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_mercado_pago, FILE: pos_payment_method.py) ---
@@ -1090,10 +1113,12 @@ namespace Bamboo.Core.Application.Services
             // _logger.debug("mp_payment_intent_create(), response from Mercado Pago: %s", resp)
             // return resp
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> MpPaymentIntentGetAsync(Guid id, PosPaymentMethodMpPaymentIntentGetRequestDto input)
+        public async Task<PosPaymentMethod> MpPaymentIntentGetAsync(PosPaymentMethodMpPaymentIntentGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_mercado_pago, FILE: pos_payment_method.py) ---
@@ -1109,7 +1134,9 @@ namespace Bamboo.Core.Application.Services
             // _logger.debug("mp_payment_intent_get(), response from Mercado Pago: %s", resp)
             // return resp
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> OnchangeIsOnlinePaymentInternalAsync()
@@ -1249,7 +1276,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> PineLabsCancelPaymentRequestAsync(Guid id, PosPaymentMethodPineLabsCancelPaymentRequestRequestDto input)
+        public async Task<PosPaymentMethod> PineLabsCancelPaymentRequestAsync(PosPaymentMethodPineLabsCancelPaymentRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_pine_labs, FILE: pos_payment_method.py) ---
@@ -1277,10 +1304,12 @@ namespace Bamboo.Core.Application.Services
             // error = response.get('ResponseMessage') or response.get('errorMessage') or default_error
             // return { 'error': error }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> PineLabsFetchPaymentStatusAsync(Guid id, PosPaymentMethodPineLabsFetchPaymentStatusRequestDto input)
+        public async Task<PosPaymentMethod> PineLabsFetchPaymentStatusAsync(PosPaymentMethodPineLabsFetchPaymentStatusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_pine_labs, FILE: pos_payment_method.py) ---
@@ -1307,10 +1336,12 @@ namespace Bamboo.Core.Application.Services
             // error = response.get('ResponseMessage') or response.get('errorMessage') or default_error
             // return {'error': error}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> PineLabsMakePaymentRequestAsync(Guid id, PosPaymentMethodPineLabsMakePaymentRequestRequestDto input)
+        public async Task<PosPaymentMethod> PineLabsMakePaymentRequestAsync(PosPaymentMethodPineLabsMakePaymentRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_pine_labs, FILE: pos_payment_method.py) ---
@@ -1339,10 +1370,12 @@ namespace Bamboo.Core.Application.Services
             // error = response.get('ResponseMessage') or response.get('errorMessage') or default_error
             // return {"error": error}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> ProxyAdyenRequestAsync(Guid id, PosPaymentMethodProxyAdyenRequestRequestDto input)
+        public async Task<PosPaymentMethod> ProxyAdyenRequestAsync(PosPaymentMethodProxyAdyenRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_adyen, FILE: pos_payment_method.py) ---
@@ -1430,7 +1463,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self._proxy_adyen_request_direct(data, operation)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> ProxyAdyenRequestDirectInternalAsync(object data, object operation)
@@ -1467,6 +1502,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPaymentMethod> QfpayHandleWebhookInternalAsync(object config, object data, object uuid)
         {
             /*
@@ -1504,7 +1540,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> QfpaySignRequestAsync(Guid id, PosPaymentMethodQfpaySignRequestRequestDto input)
+        public async Task<PosPaymentMethod> QfpaySignRequestAsync(PosPaymentMethodQfpaySignRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_qfpay, FILE: pos_payment_method.py) ---
@@ -1541,10 +1577,12 @@ namespace Bamboo.Core.Application.Services
             // encrypted = encryptor.update(padded_data) + encryptor.finalize()
             // return base64.b64encode(encrypted).decode('utf-8')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> RazorpayCancelPaymentRequestAsync(Guid id, PosPaymentMethodRazorpayCancelPaymentRequestRequestDto input)
+        public async Task<PosPaymentMethod> RazorpayCancelPaymentRequestAsync(PosPaymentMethodRazorpayCancelPaymentRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_razorpay, FILE: pos_payment_method.py) ---
@@ -1559,10 +1597,12 @@ namespace Bamboo.Core.Application.Services
             // errorMessage = response.get('errorMessage') or default_error_msg
             // return {'errorMessage': str(errorMessage)}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> RazorpayFetchPaymentStatusAsync(Guid id, PosPaymentMethodRazorpayFetchPaymentStatusRequestDto input)
+        public async Task<PosPaymentMethod> RazorpayFetchPaymentStatusAsync(PosPaymentMethodRazorpayFetchPaymentStatusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_razorpay, FILE: pos_payment_method.py) ---
@@ -1605,10 +1645,12 @@ namespace Bamboo.Core.Application.Services
             // error = response.get('errorMessage') or default_error_msg
             // return {'error': str(error)}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> RazorpayMakePaymentRequestAsync(Guid id, PosPaymentMethodRazorpayMakePaymentRequestRequestDto input)
+        public async Task<PosPaymentMethod> RazorpayMakePaymentRequestAsync(PosPaymentMethodRazorpayMakePaymentRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_razorpay, FILE: pos_payment_method.py) ---
@@ -1629,10 +1671,12 @@ namespace Bamboo.Core.Application.Services
             // error = response.get('errorMessage') or default_error_msg
             // return {'error': str(error)}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> RazorpayMakeRefundRequestAsync(Guid id, PosPaymentMethodRazorpayMakeRefundRequestRequestDto input)
+        public async Task<PosPaymentMethod> RazorpayMakeRefundRequestAsync(PosPaymentMethodRazorpayMakeRefundRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_razorpay, FILE: pos_payment_method.py) ---
@@ -1670,7 +1714,9 @@ namespace Bamboo.Core.Application.Services
             // error = response.get('errorMessage') or default_error_msg
             // return {'error': str(error)}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> RetrieveSessionIdInternalAsync(object data_webhook)
@@ -1701,7 +1747,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> SendDpopayRequestAsync(Guid id, PosPaymentMethodSendDpopayRequestRequestDto input)
+        public async Task<PosPaymentMethod> SendDpopayRequestAsync(PosPaymentMethodSendDpopayRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_dpopay, FILE: pos_payment_method.py) ---
@@ -1711,7 +1757,9 @@ namespace Bamboo.Core.Application.Services
             //     data['transactionType'] = self._get_transaction_type()
             // return self._execute_dpopay_api_request(data, endpoint)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> SendNotificationInternalAsync(object data)
@@ -1745,7 +1793,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> StripeCapturePaymentAsync(Guid id, PosPaymentMethodStripeCapturePaymentRequestDto input)
+        [ApiModel]
+        public async Task<PosPaymentMethod> StripeCapturePaymentAsync(PosPaymentMethodStripeCapturePaymentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_stripe, FILE: pos_payment_method.py) ---
@@ -1772,10 +1821,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self.sudo()._get_stripe_payment_provider()._send_api_request('POST', endpoint, data=data)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> StripeConnectionTokenAsync(Guid id)
+        [ApiModel]
+        public async Task<PosPaymentMethod> StripeConnectionTokenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_stripe, FILE: pos_payment_method.py) ---
@@ -1785,10 +1837,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self.sudo()._get_stripe_payment_provider()._send_api_request('POST', 'terminal/connection_tokens')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> StripeKeyAsync(Guid id)
+        public async Task<PosPaymentMethod> StripeKeyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_stripe, FILE: pos_payment_method.py) ---
@@ -1803,10 +1857,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': res_id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> StripePaymentIntentAsync(Guid id, PosPaymentMethodStripePaymentIntentRequestDto input)
+        public async Task<PosPaymentMethod> StripePaymentIntentAsync(PosPaymentMethodStripePaymentIntentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_stripe, FILE: pos_payment_method.py) ---
@@ -1834,7 +1890,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self.sudo()._get_stripe_payment_provider()._send_api_request('POST', 'payment_intents', data=params)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> VivaComAccountGetEndpointInternalAsync()
@@ -1861,7 +1919,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPaymentMethod> VivaComGetPaymentStatusAsync(Guid id, PosPaymentMethodVivaComGetPaymentStatusRequestDto input)
+        public async Task<PosPaymentMethod> VivaComGetPaymentStatusAsync(PosPaymentMethodVivaComGetPaymentStatusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
@@ -1872,10 +1930,12 @@ namespace Bamboo.Core.Application.Services
             // endpoint = f"sessions/{session_id}"
             // return self._call_viva_com(endpoint, 'get', should_retry=False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> VivaComSendPaymentCancelAsync(Guid id, PosPaymentMethodVivaComSendPaymentCancelRequestDto input)
+        public async Task<PosPaymentMethod> VivaComSendPaymentCancelAsync(PosPaymentMethodVivaComSendPaymentCancelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
@@ -1888,10 +1948,12 @@ namespace Bamboo.Core.Application.Services
             // endpoint = f"sessions/{session_id}?cashRegisterId={cash_register_id}"
             // return self._call_viva_com(endpoint, 'delete')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> VivaComSendPaymentRequestAsync(Guid id, PosPaymentMethodVivaComSendPaymentRequestRequestDto input)
+        public async Task<PosPaymentMethod> VivaComSendPaymentRequestAsync(PosPaymentMethodVivaComSendPaymentRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
@@ -1902,10 +1964,12 @@ namespace Bamboo.Core.Application.Services
             // endpoint = "transactions:sale"
             // return self._call_viva_com(endpoint, 'post', data)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPaymentMethod> VivaComSendRefundRequestAsync(Guid id, PosPaymentMethodVivaComSendRefundRequestRequestDto input)
+        public async Task<PosPaymentMethod> VivaComSendRefundRequestAsync(PosPaymentMethodVivaComSendRefundRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_viva_com, FILE: pos_payment_method.py) ---
@@ -1916,7 +1980,9 @@ namespace Bamboo.Core.Application.Services
             // endpoint = "transactions:refund" if data.get("parentSessionId") else "transactions:unreferenced-refund"
             // return self._call_viva_com(endpoint, 'post', data)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPaymentMethod> VivaComWebhookGetEndpointInternalAsync()
@@ -1931,7 +1997,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, PosPaymentMethod entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<PosPaymentMethod> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_payment_method.py) ---
@@ -2002,7 +2068,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return record
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-coupon-send")]
-        public async Task<IActionResult> ActionCouponSendAsync(Guid id)
+        [Route("action-coupon-send")]
+        public async Task<IActionResult> ActionCouponSendAsync(Guid[] ids)
         {
-            var result = await _appService.CouponSendAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CouponSendAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-coupon-share")]
-        public async Task<IActionResult> ActionCouponShareAsync(Guid id)
+        [Route("action-coupon-share")]
+        public async Task<IActionResult> ActionCouponShareAsync(Guid[] ids)
         {
-            var result = await _appService.CouponShareAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CouponShareAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-loyalty-update-balance")]
-        public async Task<IActionResult> ActionLoyaltyUpdateBalanceAsync(Guid id)
+        [Route("action-loyalty-update-balance")]
+        public async Task<IActionResult> ActionLoyaltyUpdateBalanceAsync(Guid[] ids)
         {
-            var result = await _appService.LoyaltyUpdateBalanceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LoyaltyUpdateBalanceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-gift-card-status")]
-        public async Task<IActionResult> GetGiftCardStatusAsync(Guid id, [FromBody] LoyaltyCardGetGiftCardStatusRequestDto input)
+        [Route("get-gift-card-status")]
+        public async Task<IActionResult> GetGiftCardStatusAsync(LoyaltyCardGetGiftCardStatusRequestDto input)
         {
-            var result = await _appService.GetGiftCardStatusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetGiftCardStatusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-loyalty-card-partner-by-code")]
-        public async Task<IActionResult> GetLoyaltyCardPartnerByCodeAsync(Guid id, [FromBody] LoyaltyCardGetLoyaltyCardPartnerByCodeRequestDto input)
+        [Route("get-loyalty-card-partner-by-code")]
+        public async Task<IActionResult> GetLoyaltyCardPartnerByCodeAsync(LoyaltyCardGetLoyaltyCardPartnerByCodeRequestDto input)
         {
-            var result = await _appService.GetLoyaltyCardPartnerByCodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetLoyaltyCardPartnerByCodeAsync(input);
             return Ok(result);
         }
     }

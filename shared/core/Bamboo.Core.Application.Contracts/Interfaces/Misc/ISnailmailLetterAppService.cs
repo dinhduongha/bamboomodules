@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISnailmailLetterAppService : IGenericApplicationService<SnailmailLetter>
     {
-        Task<SnailmailLetter> CancelAsync(Guid id);
-        Task<SnailmailLetter> SnailmailPrintAsync(Guid id);
+        Task<SnailmailLetter> CancelAsync(Guid[] ids);
+        Task<SnailmailLetter> SnailmailPrintAsync(Guid[] ids);
     }
 }

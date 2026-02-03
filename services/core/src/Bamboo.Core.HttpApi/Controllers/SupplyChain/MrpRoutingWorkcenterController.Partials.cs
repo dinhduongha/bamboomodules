@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-operation-form")]
-        public async Task<IActionResult> ActionOpenOperationFormAsync(Guid id)
+        [Route("action-open-operation-form")]
+        public async Task<IActionResult> ActionOpenOperationFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenOperationFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenOperationFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-existing-operations")]
-        public async Task<IActionResult> CopyExistingOperationsAsync(Guid id)
+        [Route("copy-existing-operations")]
+        public async Task<IActionResult> CopyExistingOperationsAsync(Guid[] ids)
         {
-            var result = await _appService.CopyExistingOperationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CopyExistingOperationsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-to-bom")]
-        public async Task<IActionResult> CopyToBomAsync(Guid id)
+        [Route("copy-to-bom")]
+        public async Task<IActionResult> CopyToBomAsync(Guid[] ids)
         {
-            var result = await _appService.CopyToBomAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CopyToBomAsync(ids);
             return Ok(result);
         }
     }

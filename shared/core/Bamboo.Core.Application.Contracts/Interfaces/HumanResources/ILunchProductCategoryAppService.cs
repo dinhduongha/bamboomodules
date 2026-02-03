@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ILunchProductCategoryAppService : IGenericApplicationService<LunchProductCategory>
     {
-        Task<LunchProductCategory> ArchiveAsync(Guid id);
-        Task<LunchProductCategory> UnarchiveAsync(Guid id);
+        Task<LunchProductCategory> ArchiveAsync(Guid[] ids);
+        Task<LunchProductCategory> UnarchiveAsync(Guid[] ids);
     }
 }

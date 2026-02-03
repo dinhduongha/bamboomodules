@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBusPresenceAppService : IGenericApplicationService<BusPresence>
     {
-        Task<BusPresence> InitAsync(Guid id);
-        Task<BusPresence> UpdatePresenceAsync(Guid id, BusPresenceUpdatePresenceRequestDto input);
+        Task<BusPresence> InitAsync(Guid[] ids);
+        Task<BusPresence> UpdatePresenceAsync(BusPresenceUpdatePresenceRequestDto input);
     }
 }

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-disconnect")]
-        public async Task<IActionResult> ActionDisconnectAsync(Guid id)
+        [Route("action-disconnect")]
+        public async Task<IActionResult> ActionDisconnectAsync(Guid[] ids)
         {
-            var result = await _appService.DisconnectAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DisconnectAsync(ids);
             return Ok(result);
         }
     }

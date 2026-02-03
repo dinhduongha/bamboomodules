@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventMeetingRoomAppService : IGenericApplicationService<EventMeetingRoom>
     {
-        Task<EventMeetingRoom> OpenWebsiteUrlAsync(Guid id);
+        Task<EventMeetingRoom> OpenWebsiteUrlAsync(Guid[] ids);
     }
 }

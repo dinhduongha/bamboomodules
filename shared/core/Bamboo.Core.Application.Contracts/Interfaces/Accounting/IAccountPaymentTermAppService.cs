@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountPaymentTermAppService : IGenericApplicationService<AccountPaymentTerm>
     {
-        Task<AccountPaymentTerm> CopyDataAsync(Guid id, AccountPaymentTermCopyDataRequestDto input);
+        Task<AccountPaymentTerm> CopyDataAsync(AccountPaymentTermCopyDataRequestDto input);
     }
 }

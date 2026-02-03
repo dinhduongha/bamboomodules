@@ -10,16 +10,16 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAccountAppService : IGenericApplicationService<AccountAccount>
     {
-        Task<AccountAccount> CopyDataAsync(Guid id, AccountAccountCopyDataRequestDto input);
-        Task<AccountAccount> CopyTranslationsAsync(Guid id, AccountAccountCopyTranslationsRequestDto input);
-        Task<AccountAccount> GetAccountGroupAsync(Guid id, AccountAccountGetAccountGroupRequestDto input);
-        Task<AccountAccount> GetImportTemplatesAsync(Guid id);
-        Task<AccountAccount> OpenRelatedTaxesAsync(Guid id);
-        Task<AccountAccount> SpreadsheetFetchBalanceTagAsync(Guid id, AccountAccountSpreadsheetFetchBalanceTagRequestDto input);
-        Task<AccountAccount> SpreadsheetFetchDebitCreditAsync(Guid id, AccountAccountSpreadsheetFetchDebitCreditRequestDto input);
-        Task<AccountAccount> SpreadsheetFetchPartnerBalanceAsync(Guid id, AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input);
-        Task<AccountAccount> SpreadsheetFetchResidualAmountAsync(Guid id, AccountAccountSpreadsheetFetchResidualAmountRequestDto input);
-        Task<AccountAccount> SpreadsheetMoveLineActionAsync(Guid id, AccountAccountSpreadsheetMoveLineActionRequestDto input);
-        Task<AccountAccount> UnmergeAsync(Guid id);
+        Task<AccountAccount> CopyDataAsync(AccountAccountCopyDataRequestDto input);
+        Task<AccountAccount> CopyTranslationsAsync(AccountAccountCopyTranslationsRequestDto input);
+        Task<AccountAccount> GetAccountGroupAsync(AccountAccountGetAccountGroupRequestDto input);
+        Task<AccountAccount> GetImportTemplatesAsync(Guid[] ids);
+        Task<AccountAccount> OpenRelatedTaxesAsync(Guid[] ids);
+        Task<AccountAccount> SpreadsheetFetchBalanceTagAsync(AccountAccountSpreadsheetFetchBalanceTagRequestDto input);
+        Task<AccountAccount> SpreadsheetFetchDebitCreditAsync(AccountAccountSpreadsheetFetchDebitCreditRequestDto input);
+        Task<AccountAccount> SpreadsheetFetchPartnerBalanceAsync(AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input);
+        Task<AccountAccount> SpreadsheetFetchResidualAmountAsync(AccountAccountSpreadsheetFetchResidualAmountRequestDto input);
+        Task<AccountAccount> SpreadsheetMoveLineActionAsync(AccountAccountSpreadsheetMoveLineActionRequestDto input);
+        Task<AccountAccount> UnmergeAsync(Guid[] ids);
     }
 }

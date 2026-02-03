@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("StockAccount", Category = "Misc", Depends = new[] { "stock", "account" })]
-    public partial class StockValuationLayerAppService : GenericApplicationService<StockValuationLayer>, IStockValuationLayerAppService
+    public partial class StockValuationLayerAppService : GenericAppService<StockValuationLayer>, IStockValuationLayerAppService
     {
 
         public StockValuationLayerAppService(IRepository<StockValuationLayer, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -241,7 +241,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockValuationLayer> InitAsync(Guid id)
+        public async Task<StockValuationLayer> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_valuation_layer.py) ---
@@ -255,10 +255,12 @@ namespace Bamboo.Core.Application.Services
             //     self._table, ['product_id', 'company_id', 'id', 'value', 'quantity']
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockValuationLayer> OpenJournalEntryAsync(Guid id)
+        public async Task<StockValuationLayer> OpenJournalEntryAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_valuation_layer.py) ---
@@ -273,10 +275,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.account_move_id.id
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockValuationLayer> OpenReferenceAsync(Guid id)
+        public async Task<StockValuationLayer> OpenReferenceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_valuation_layer.py) ---
@@ -293,7 +297,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockValuationLayer> SearchWarehouseIdInternalAsync(object @operator, object @value)
@@ -386,7 +392,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockValuationLayer> ValuationAtDateAsync(Guid id)
+        public async Task<StockValuationLayer> ValuationAtDateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_valuation_layer.py) ---
@@ -408,7 +414,9 @@ namespace Bamboo.Core.Application.Services
             //     "context": context,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrConfigParameterAppService : IGenericApplicationService<IrConfigParameter>
     {
-        Task<IrConfigParameter> GetParamAsync(Guid id, IrConfigParameterGetParamRequestDto input);
-        Task<IrConfigParameter> InitAsync(Guid id, IrConfigParameterInitRequestDto input);
-        Task<IrConfigParameter> SetParamAsync(Guid id, IrConfigParameterSetParamRequestDto input);
-        Task<IrConfigParameter> UnlinkDefaultParametersAsync(Guid id);
+        Task<IrConfigParameter> GetParamAsync(IrConfigParameterGetParamRequestDto input);
+        Task<IrConfigParameter> InitAsync(IrConfigParameterInitRequestDto input);
+        Task<IrConfigParameter> SetParamAsync(IrConfigParameterSetParamRequestDto input);
+        Task<IrConfigParameter> UnlinkDefaultParametersAsync(Guid[] ids);
     }
 }

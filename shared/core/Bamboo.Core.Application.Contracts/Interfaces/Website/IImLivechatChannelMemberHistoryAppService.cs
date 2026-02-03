@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IImLivechatChannelMemberHistoryAppService : IGenericApplicationService<ImLivechatChannelMemberHistory>
     {
-        Task<ImLivechatChannelMemberHistory> OpenDiscussChannelViewAsync(Guid id, ImLivechatChannelMemberHistoryOpenDiscussChannelViewRequestDto input);
+        Task<ImLivechatChannelMemberHistory> OpenDiscussChannelViewAsync(ImLivechatChannelMemberHistoryOpenDiscussChannelViewRequestDto input);
     }
 }

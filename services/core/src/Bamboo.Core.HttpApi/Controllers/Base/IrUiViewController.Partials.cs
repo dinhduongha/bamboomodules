@@ -11,218 +11,245 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/apply-inheritance-specs")]
-        public async Task<IActionResult> ApplyInheritanceSpecsAsync(Guid id, [FromBody] IrUiViewApplyInheritanceSpecsRequestDto input)
+        [Route("apply-inheritance-specs")]
+        public async Task<IActionResult> ApplyInheritanceSpecsAsync(IrUiViewApplyInheritanceSpecsRequestDto input)
         {
-            var result = await _appService.ApplyInheritanceSpecsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ApplyInheritanceSpecsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] IrUiViewCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(IrUiViewCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/default-view")]
-        public async Task<IActionResult> DefaultViewAsync(Guid id, [FromBody] IrUiViewDefaultViewRequestDto input)
+        [Route("default-view")]
+        public async Task<IActionResult> DefaultViewAsync(IrUiViewDefaultViewRequestDto input)
         {
-            var result = await _appService.DefaultViewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DefaultViewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/delete-snippet")]
-        public async Task<IActionResult> DeleteSnippetAsync(Guid id, [FromBody] IrUiViewDeleteSnippetRequestDto input)
+        [Route("delete-snippet")]
+        public async Task<IActionResult> DeleteSnippetAsync(IrUiViewDeleteSnippetRequestDto input)
         {
-            var result = await _appService.DeleteSnippetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DeleteSnippetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/distribute-branding")]
-        public async Task<IActionResult> DistributeBrandingAsync(Guid id, [FromBody] IrUiViewDistributeBrandingRequestDto input)
+        [Route("distribute-branding")]
+        public async Task<IActionResult> DistributeBrandingAsync(IrUiViewDistributeBrandingRequestDto input)
         {
-            var result = await _appService.DistributeBrandingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DistributeBrandingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/extract-embedded-fields")]
-        public async Task<IActionResult> ExtractEmbeddedFieldsAsync(Guid id, [FromBody] IrUiViewExtractEmbeddedFieldsRequestDto input)
+        [Route("extract-embedded-fields")]
+        public async Task<IActionResult> ExtractEmbeddedFieldsAsync(IrUiViewExtractEmbeddedFieldsRequestDto input)
         {
-            var result = await _appService.ExtractEmbeddedFieldsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ExtractEmbeddedFieldsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/extract-oe-structures")]
-        public async Task<IActionResult> ExtractOeStructuresAsync(Guid id, [FromBody] IrUiViewExtractOeStructuresRequestDto input)
+        [Route("extract-oe-structures")]
+        public async Task<IActionResult> ExtractOeStructuresAsync(IrUiViewExtractOeStructuresRequestDto input)
         {
-            var result = await _appService.ExtractOeStructuresAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ExtractOeStructuresAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/filter-duplicate")]
-        public async Task<IActionResult> FilterDuplicateAsync(Guid id)
+        [Route("filter-duplicate")]
+        public async Task<IActionResult> FilterDuplicateAsync(Guid[] ids)
         {
-            var result = await _appService.FilterDuplicateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.FilterDuplicateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-combined-arch")]
-        public async Task<IActionResult> GetCombinedArchAsync(Guid id)
+        [Route("get-combined-arch")]
+        public async Task<IActionResult> GetCombinedArchAsync(Guid[] ids)
         {
-            var result = await _appService.GetCombinedArchAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetCombinedArchAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-default-lang-code")]
-        public async Task<IActionResult> GetDefaultLangCodeAsync(Guid id)
+        [Route("get-default-lang-code")]
+        public async Task<IActionResult> GetDefaultLangCodeAsync(Guid[] ids)
         {
-            var result = await _appService.GetDefaultLangCodeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetDefaultLangCodeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-related-views")]
-        public async Task<IActionResult> GetRelatedViewsAsync(Guid id, [FromBody] IrUiViewGetRelatedViewsRequestDto input)
+        [Route("get-related-views")]
+        public async Task<IActionResult> GetRelatedViewsAsync(IrUiViewGetRelatedViewsRequestDto input)
         {
-            var result = await _appService.GetRelatedViewsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetRelatedViewsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-view-hierarchy")]
-        public async Task<IActionResult> GetViewHierarchyAsync(Guid id)
+        [Route("get-view-hierarchy")]
+        public async Task<IActionResult> GetViewHierarchyAsync(Guid[] ids)
         {
-            var result = await _appService.GetViewHierarchyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetViewHierarchyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-view-info")]
-        public async Task<IActionResult> GetViewInfoAsync(Guid id)
+        [Route("get-view-info")]
+        public async Task<IActionResult> GetViewInfoAsync(Guid[] ids)
         {
-            var result = await _appService.GetViewInfoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetViewInfoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/inherit-branding")]
-        public async Task<IActionResult> InheritBrandingAsync(Guid id, [FromBody] IrUiViewInheritBrandingRequestDto input)
+        [Route("inherit-branding")]
+        public async Task<IActionResult> InheritBrandingAsync(IrUiViewInheritBrandingRequestDto input)
         {
-            var result = await _appService.InheritBrandingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.InheritBrandingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-node-branded")]
-        public async Task<IActionResult> IsNodeBrandedAsync(Guid id, [FromBody] IrUiViewIsNodeBrandedRequestDto input)
+        [Route("is-node-branded")]
+        public async Task<IActionResult> IsNodeBrandedAsync(IrUiViewIsNodeBrandedRequestDto input)
         {
-            var result = await _appService.IsNodeBrandedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.IsNodeBrandedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/locate-node")]
-        public async Task<IActionResult> LocateNodeAsync(Guid id, [FromBody] IrUiViewLocateNodeRequestDto input)
+        [Route("locate-node")]
+        public async Task<IActionResult> LocateNodeAsync(IrUiViewLocateNodeRequestDto input)
         {
-            var result = await _appService.LocateNodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LocateNodeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/postprocess-and-fields")]
-        public async Task<IActionResult> PostprocessAndFieldsAsync(Guid id, [FromBody] IrUiViewPostprocessAndFieldsRequestDto input)
+        [Route("postprocess-and-fields")]
+        public async Task<IActionResult> PostprocessAndFieldsAsync(IrUiViewPostprocessAndFieldsRequestDto input)
         {
-            var result = await _appService.PostprocessAndFieldsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PostprocessAndFieldsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/rename-snippet")]
-        public async Task<IActionResult> RenameSnippetAsync(Guid id, [FromBody] IrUiViewRenameSnippetRequestDto input)
+        [Route("rename-snippet")]
+        public async Task<IActionResult> RenameSnippetAsync(IrUiViewRenameSnippetRequestDto input)
         {
-            var result = await _appService.RenameSnippetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RenameSnippetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/render-public-asset")]
-        public async Task<IActionResult> RenderPublicAssetAsync(Guid id, [FromBody] IrUiViewRenderPublicAssetRequestDto input)
+        [Route("render-public-asset")]
+        public async Task<IActionResult> RenderPublicAssetAsync(IrUiViewRenderPublicAssetRequestDto input)
         {
-            var result = await _appService.RenderPublicAssetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RenderPublicAssetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/replace-arch-section")]
-        public async Task<IActionResult> ReplaceArchSectionAsync(Guid id, [FromBody] IrUiViewReplaceArchSectionRequestDto input)
+        [Route("replace-arch-section")]
+        public async Task<IActionResult> ReplaceArchSectionAsync(IrUiViewReplaceArchSectionRequestDto input)
         {
-            var result = await _appService.ReplaceArchSectionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ReplaceArchSectionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/reset-arch")]
-        public async Task<IActionResult> ResetArchAsync(Guid id, [FromBody] IrUiViewResetArchRequestDto input)
+        [Route("reset-arch")]
+        public async Task<IActionResult> ResetArchAsync(IrUiViewResetArchRequestDto input)
         {
-            var result = await _appService.ResetArchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ResetArchAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/save")]
-        public async Task<IActionResult> SaveAsync(Guid id, [FromBody] IrUiViewSaveRequestDto input)
+        [Route("save")]
+        public async Task<IActionResult> SaveAsync(IrUiViewSaveRequestDto input)
         {
-            var result = await _appService.SaveAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SaveAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/save-embedded-field")]
-        public async Task<IActionResult> SaveEmbeddedFieldAsync(Guid id, [FromBody] IrUiViewSaveEmbeddedFieldRequestDto input)
+        [Route("save-embedded-field")]
+        public async Task<IActionResult> SaveEmbeddedFieldAsync(IrUiViewSaveEmbeddedFieldRequestDto input)
         {
-            var result = await _appService.SaveEmbeddedFieldAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SaveEmbeddedFieldAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/save-oe-structure")]
-        public async Task<IActionResult> SaveOeStructureAsync(Guid id, [FromBody] IrUiViewSaveOeStructureRequestDto input)
+        [Route("save-oe-structure")]
+        public async Task<IActionResult> SaveOeStructureAsync(IrUiViewSaveOeStructureRequestDto input)
         {
-            var result = await _appService.SaveOeStructureAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SaveOeStructureAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/save-snippet")]
-        public async Task<IActionResult> SaveSnippetAsync(Guid id, [FromBody] IrUiViewSaveSnippetRequestDto input)
+        [Route("save-snippet")]
+        public async Task<IActionResult> SaveSnippetAsync(IrUiViewSaveSnippetRequestDto input)
         {
-            var result = await _appService.SaveSnippetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SaveSnippetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/to-empty-oe-structure")]
-        public async Task<IActionResult> ToEmptyOeStructureAsync(Guid id, [FromBody] IrUiViewToEmptyOeStructureRequestDto input)
+        [Route("to-empty-oe-structure")]
+        public async Task<IActionResult> ToEmptyOeStructureAsync(IrUiViewToEmptyOeStructureRequestDto input)
         {
-            var result = await _appService.ToEmptyOeStructureAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToEmptyOeStructureAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/to-field-ref")]
-        public async Task<IActionResult> ToFieldRefAsync(Guid id, [FromBody] IrUiViewToFieldRefRequestDto input)
+        [Route("to-field-ref")]
+        public async Task<IActionResult> ToFieldRefAsync(IrUiViewToFieldRefRequestDto input)
         {
-            var result = await _appService.ToFieldRefAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToFieldRefAsync(input);
             return Ok(result);
         }
     }

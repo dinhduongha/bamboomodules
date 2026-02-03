@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountReportAppService : IGenericApplicationService<AccountReport>
     {
-        Task<AccountReport> CopyDataAsync(Guid id, AccountReportCopyDataRequestDto input);
+        Task<AccountReport> CopyDataAsync(AccountReportCopyDataRequestDto input);
     }
 }

@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-close")]
-        public async Task<IActionResult> ActionCloseAsync(Guid id)
+        [Route("action-close")]
+        public async Task<IActionResult> ActionCloseAsync(Guid[] ids)
         {
-            var result = await _appService.CloseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CloseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-go-to-website")]
-        public async Task<IActionResult> ActionGoToWebsiteAsync(Guid id)
+        [Route("action-go-to-website")]
+        public async Task<IActionResult> ActionGoToWebsiteAsync(Guid[] ids)
         {
-            var result = await _appService.GoToWebsiteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GoToWebsiteAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-join")]
-        public async Task<IActionResult> ActionJoinAsync(Guid id)
+        [Route("action-join")]
+        public async Task<IActionResult> ActionJoinAsync(Guid[] ids)
         {
-            var result = await _appService.JoinAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.JoinAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-leave")]
-        public async Task<IActionResult> ActionLeaveAsync(Guid id)
+        [Route("action-leave")]
+        public async Task<IActionResult> ActionLeaveAsync(Guid[] ids)
         {
-            var result = await _appService.LeaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LeaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open")]
-        public async Task<IActionResult> ActionOpenAsync(Guid id)
+        [Route("action-open")]
+        public async Task<IActionResult> ActionOpenAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-guidelines")]
-        public async Task<IActionResult> ActionSendGuidelinesAsync(Guid id, [FromBody] MailGroupSendGuidelinesRequestDto input)
+        [Route("action-send-guidelines")]
+        public async Task<IActionResult> ActionSendGuidelinesAsync(MailGroupSendGuidelinesRequestDto input)
         {
-            var result = await _appService.SendGuidelinesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SendGuidelinesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-new")]
-        public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] MailGroupMessageNewRequestDto input)
+        [Route("message-new")]
+        public async Task<IActionResult> MessageNewAsync(MailGroupMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageNewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-post")]
-        public async Task<IActionResult> MessagePostAsync(Guid id, [FromBody] MailGroupMessagePostRequestDto input)
+        [Route("message-post")]
+        public async Task<IActionResult> MessagePostAsync(MailGroupMessagePostRequestDto input)
         {
-            var result = await _appService.MessagePostAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessagePostAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-update")]
-        public async Task<IActionResult> MessageUpdateAsync(Guid id, [FromBody] MailGroupMessageUpdateRequestDto input)
+        [Route("message-update")]
+        public async Task<IActionResult> MessageUpdateAsync(MailGroupMessageUpdateRequestDto input)
         {
-            var result = await _appService.MessageUpdateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageUpdateAsync(input);
             return Ok(result);
         }
     }

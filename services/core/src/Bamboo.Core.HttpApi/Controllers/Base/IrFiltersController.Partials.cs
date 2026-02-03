@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] IrFiltersCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(IrFiltersCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-filter")]
-        public async Task<IActionResult> CreateFilterAsync(Guid id, [FromBody] IrFiltersCreateFilterRequestDto input)
+        [Route("create-filter")]
+        public async Task<IActionResult> CreateFilterAsync(IrFiltersCreateFilterRequestDto input)
         {
-            var result = await _appService.CreateFilterAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateFilterAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-filters")]
-        public async Task<IActionResult> GetFiltersAsync(Guid id, [FromBody] IrFiltersGetFiltersRequestDto input)
+        [Route("get-filters")]
+        public async Task<IActionResult> GetFiltersAsync(IrFiltersGetFiltersRequestDto input)
         {
-            var result = await _appService.GetFiltersAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFiltersAsync(input);
             return Ok(result);
         }
     }

@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/do-accept")]
-        public async Task<IActionResult> DoAcceptAsync(Guid id)
+        [Route("do-accept")]
+        public async Task<IActionResult> DoAcceptAsync(Guid[] ids)
         {
-            var result = await _appService.DoAcceptAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoAcceptAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-decline")]
-        public async Task<IActionResult> DoDeclineAsync(Guid id)
+        [Route("do-decline")]
+        public async Task<IActionResult> DoDeclineAsync(Guid[] ids)
         {
-            var result = await _appService.DoDeclineAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoDeclineAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-tentative")]
-        public async Task<IActionResult> DoTentativeAsync(Guid id)
+        [Route("do-tentative")]
+        public async Task<IActionResult> DoTentativeAsync(Guid[] ids)
         {
-            var result = await _appService.DoTentativeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoTentativeAsync(ids);
             return Ok(result);
         }
     }

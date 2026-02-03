@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-pdf-form-fields")]
-        public async Task<IActionResult> ActionOpenPdfFormFieldsAsync(Guid id)
+        [Route("action-open-pdf-form-fields")]
+        public async Task<IActionResult> ActionOpenPdfFormFieldsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenPdfFormFieldsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenPdfFormFieldsAsync(ids);
             return Ok(result);
         }
     }

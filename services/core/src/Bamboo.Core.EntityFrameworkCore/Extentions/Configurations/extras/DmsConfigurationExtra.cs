@@ -60,7 +60,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.UserId).HasColumnName("user_id");
                 entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                 entity.Property(e => e.GeofenceRadiusMeters).HasColumnName("geofence_radius_meters");
-                entity.Property(e => e.GeofencePolygonJson).HasColumnName("geofence_polygon_json");
+                entity.Property(e => e.GeoJsonGeofencePolygon);
                 entity.Property(e => e.LastInventoryCheckDate).HasColumnName("last_inventory_check_date");
 
                 entity.HasOne(d => d.Vehicle)
@@ -95,7 +95,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.ActualDeliveryTime).HasColumnName("actual_delivery_time");
                 entity.Property(e => e.DeliveryStatus).HasColumnName("delivery_status");
                 entity.Property(e => e.VMIOrderFlag).HasColumnName("vmi_order_flag").HasDefaultValue(false);
-                entity.Property(e => e.PromotionAppliedJson).HasColumnName("promotion_applied_json");
+                entity.Property(e => e.PromotionApplied);
 
                 entity.HasOne(d => d.DmsRoute)
                     .WithMany()
@@ -139,11 +139,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.VisitFrequencyDays).HasColumnName("visit_frequency_days");
                 entity.Property(e => e.LastVisitDate).HasColumnName("last_visit_date");
                 entity.Property(e => e.DeliveryZoneId).HasColumnName("delivery_zone_id");
-                entity.Property(e => e.NoSaleReasonsJson).HasColumnName("no_sale_reasons_json");
+                entity.Property(e => e.NoSaleReasons);
                 entity.Property(e => e.LastNoSaleDate).HasColumnName("last_no_sale_date");
                 entity.Property(e => e.IsKeyAccount).HasColumnName("is_key_account").HasDefaultValue(false);
-                entity.Property(e => e.LastInventoryQtyJson).HasColumnName("last_inventory_qty_json");
-                entity.Property(e => e.POSMPhotosJson).HasColumnName("posm_photos_json");
+                entity.Property(e => e.LastInventoryQty);
+                entity.Property(e => e.POSMPhotos);
                 entity.Property(e => e.ExpiryDateTracking).HasColumnName("expiry_date_tracking").HasDefaultValue(false);
                 entity.Property(e => e.LastPOSMCheckDate).HasColumnName("last_posm_check_date");
                 entity.Property(e => e.GeofenceRadiusMeters).HasColumnName("geofence_radius_meters");
@@ -176,11 +176,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.RouteOptimizationScore).HasColumnName("route_optimization_score");
                 entity.Property(e => e.POSMCapacity).HasColumnName("posm_capacity");
 
-                entity.HasOne(d => d.CurrentLocation)
+                entity.HasOne(d => d.CurrentStockLocation)
                     .WithMany()
                     .HasForeignKey(d => d.CurrentLocationId)
                     .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("fleet_vehicle_current_location_id_fkey");
+                    .HasConstraintName("fleet_vehicle_current_stock_location_id_fkey");
 
                 entity.HasOne(d => d.CurrentDriver)
                     .WithMany()

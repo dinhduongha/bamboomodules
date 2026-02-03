@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/current")]
-        public async Task<IActionResult> CurrentAsync(Guid id)
+        [Route("current")]
+        public async Task<IActionResult> CurrentAsync(Guid[] ids)
         {
-            var result = await _appService.CurrentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CurrentAsync(ids);
             return Ok(result);
         }
     }

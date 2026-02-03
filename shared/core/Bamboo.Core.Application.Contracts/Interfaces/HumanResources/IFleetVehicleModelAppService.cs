@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IFleetVehicleModelAppService : IGenericApplicationService<FleetVehicleModel>
     {
-        Task<FleetVehicleModel> ModelVehicleAsync(Guid id);
+        Task<FleetVehicleModel> ModelVehicleAsync(Guid[] ids);
     }
 }

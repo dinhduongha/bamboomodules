@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add")]
-        public async Task<IActionResult> ActionAddAsync(Guid id)
+        [Route("action-add")]
+        public async Task<IActionResult> ActionAddAsync(Guid[] ids)
         {
-            var result = await _appService.AddAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mail-action-blacklist-remove")]
-        public async Task<IActionResult> MailActionBlacklistRemoveAsync(Guid id)
+        [Route("mail-action-blacklist-remove")]
+        public async Task<IActionResult> MailActionBlacklistRemoveAsync(Guid[] ids)
         {
-            var result = await _appService.MailBlacklistRemoveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MailBlacklistRemoveAsync(ids);
             return Ok(result);
         }
     }

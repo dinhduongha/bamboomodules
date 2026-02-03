@@ -10,28 +10,28 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountMoveLineAppService : IGenericApplicationService<AccountMoveLine>
     {
-        Task<AccountMoveLine> AddFromCatalogAsync(Guid id);
-        Task<AccountMoveLine> AssetCreateAsync(Guid id);
-        Task<AccountMoveLine> AutomaticEntryAsync(Guid id, AccountMoveLineAutomaticEntryRequestDto input);
-        Task<AccountMoveLine> CopyDataAsync(Guid id, AccountMoveLineCopyDataRequestDto input);
-        Task<AccountMoveLine> FlushModelAsync(Guid id, AccountMoveLineFlushModelRequestDto input);
-        Task<AccountMoveLine> FlushRecordsetAsync(Guid id, AccountMoveLineFlushRecordsetRequestDto input);
-        Task<AccountMoveLine> GetColumnToExcludeForColspanCalculationAsync(Guid id, AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto input);
-        Task<AccountMoveLine> GetImportTemplatesAsync(Guid id);
-        Task<AccountMoveLine> GetInvoiceLineAccountAsync(Guid id, AccountMoveLineGetInvoiceLineAccountRequestDto input);
-        Task<AccountMoveLine> GetParentSectionLineAsync(Guid id);
-        Task<AccountMoveLine> GetSectionSubtotalAsync(Guid id);
-        Task<AccountMoveLine> GetViewsAsync(Guid id, AccountMoveLineGetViewsRequestDto input);
-        Task<AccountMoveLine> InvalidateModelAsync(Guid id, AccountMoveLineInvalidateModelRequestDto input);
-        Task<AccountMoveLine> InvalidateRecordsetAsync(Guid id, AccountMoveLineInvalidateRecordsetRequestDto input);
-        Task<AccountMoveLine> OnchangeAssetCategoryIdAsync(Guid id);
-        Task<AccountMoveLine> OpenBusinessDocAsync(Guid id);
-        Task<AccountMoveLine> OpenReconcileViewAsync(Guid id);
-        Task<AccountMoveLine> PaymentItemsRegisterPaymentAsync(Guid id);
-        Task<AccountMoveLine> ReconcileAsync(Guid id);
-        Task<AccountMoveLine> RegisterPaymentAsync(Guid id, AccountMoveLineRegisterPaymentRequestDto input);
-        Task<AccountMoveLine> RemoveMoveReconcileAsync(Guid id);
-        Task<AccountMoveLine> SearchFetchAsync(Guid id, AccountMoveLineSearchFetchRequestDto input);
-        Task<AccountMoveLine> UnreconcileMatchEntriesAsync(Guid id);
+        Task<AccountMoveLine> AddFromCatalogAsync(Guid[] ids);
+        Task<AccountMoveLine> AssetCreateAsync(Guid[] ids);
+        Task<AccountMoveLine> AutomaticEntryAsync(AccountMoveLineAutomaticEntryRequestDto input);
+        Task<AccountMoveLine> CopyDataAsync(AccountMoveLineCopyDataRequestDto input);
+        Task<AccountMoveLine> FlushModelAsync(AccountMoveLineFlushModelRequestDto input);
+        Task<AccountMoveLine> FlushRecordsetAsync(AccountMoveLineFlushRecordsetRequestDto input);
+        Task<AccountMoveLine> GetColumnToExcludeForColspanCalculationAsync(AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto input);
+        Task<AccountMoveLine> GetImportTemplatesAsync(Guid[] ids);
+        Task<AccountMoveLine> GetInvoiceLineAccountAsync(AccountMoveLineGetInvoiceLineAccountRequestDto input);
+        Task<AccountMoveLine> GetParentSectionLineAsync(Guid[] ids);
+        Task<AccountMoveLine> GetSectionSubtotalAsync(Guid[] ids);
+        Task<AccountMoveLine> GetViewsAsync(AccountMoveLineGetViewsRequestDto input);
+        Task<AccountMoveLine> InvalidateModelAsync(AccountMoveLineInvalidateModelRequestDto input);
+        Task<AccountMoveLine> InvalidateRecordsetAsync(AccountMoveLineInvalidateRecordsetRequestDto input);
+        Task<AccountMoveLine> OnchangeAssetCategoryIdAsync(Guid[] ids);
+        Task<AccountMoveLine> OpenBusinessDocAsync(Guid[] ids);
+        Task<AccountMoveLine> OpenReconcileViewAsync(Guid[] ids);
+        Task<AccountMoveLine> PaymentItemsRegisterPaymentAsync(Guid[] ids);
+        Task<AccountMoveLine> ReconcileAsync(Guid[] ids);
+        Task<AccountMoveLine> RegisterPaymentAsync(AccountMoveLineRegisterPaymentRequestDto input);
+        Task<AccountMoveLine> RemoveMoveReconcileAsync(Guid[] ids);
+        Task<AccountMoveLine> SearchFetchAsync(AccountMoveLineSearchFetchRequestDto input);
+        Task<AccountMoveLine> UnreconcileMatchEntriesAsync(Guid[] ids);
     }
 }

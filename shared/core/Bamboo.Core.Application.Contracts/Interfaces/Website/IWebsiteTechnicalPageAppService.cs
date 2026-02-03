@@ -9,7 +9,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWebsiteTechnicalPageAppService : IApplicationService
     {
-        Task<WebsiteTechnicalPage> GetStaticRoutesAsync(Guid id);
-        Task<WebsiteTechnicalPage> OpenWebsiteUrlAsync(Guid id);
+        Task<WebsiteTechnicalPage> GetStaticRoutesAsync(Guid[] ids);
+        Task<WebsiteTechnicalPage> OpenWebsiteUrlAsync(Guid[] ids);
     }
 }

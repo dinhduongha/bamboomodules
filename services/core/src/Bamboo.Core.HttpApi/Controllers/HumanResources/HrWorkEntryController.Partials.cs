@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-approve-leave")]
-        public async Task<IActionResult> ActionApproveLeaveAsync(Guid id)
+        [Route("action-approve-leave")]
+        public async Task<IActionResult> ActionApproveLeaveAsync(Guid[] ids)
         {
-            var result = await _appService.ApproveLeaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ApproveLeaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-refuse-leave")]
-        public async Task<IActionResult> ActionRefuseLeaveAsync(Guid id)
+        [Route("action-refuse-leave")]
+        public async Task<IActionResult> ActionRefuseLeaveAsync(Guid[] ids)
         {
-            var result = await _appService.RefuseLeaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RefuseLeaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-split")]
-        public async Task<IActionResult> ActionSplitAsync(Guid id, [FromBody] HrWorkEntrySplitRequestDto input)
+        [Route("action-split")]
+        public async Task<IActionResult> ActionSplitAsync(HrWorkEntrySplitRequestDto input)
         {
-            var result = await _appService.SplitAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SplitAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-validate")]
-        public async Task<IActionResult> ActionValidateAsync(Guid id)
+        [Route("action-validate")]
+        public async Task<IActionResult> ActionValidateAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-unusual-days")]
-        public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] HrWorkEntryGetUnusualDaysRequestDto input)
+        [Route("get-unusual-days")]
+        public async Task<IActionResult> GetUnusualDaysAsync(HrWorkEntryGetUnusualDaysRequestDto input)
         {
-            var result = await _appService.GetUnusualDaysAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetUnusualDaysAsync(input);
             return Ok(result);
         }
     }

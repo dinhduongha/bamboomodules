@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResourceResourceCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ResourceResourceCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-avatar-card-data")]
-        public async Task<IActionResult> GetAvatarCardDataAsync(Guid id, [FromBody] ResourceResourceGetAvatarCardDataRequestDto input)
+        [Route("get-avatar-card-data")]
+        public async Task<IActionResult> GetAvatarCardDataAsync(ResourceResourceGetAvatarCardDataRequestDto input)
         {
-            var result = await _appService.GetAvatarCardDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAvatarCardDataAsync(input);
             return Ok(result);
         }
     }

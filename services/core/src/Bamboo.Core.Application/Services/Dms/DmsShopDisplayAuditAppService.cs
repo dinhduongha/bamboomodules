@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsShopDisplayAuditAppService : IGenericApplicationService<DmsShopDisplayAudit>
+    public interface IDmsShopDisplayAuditAppService : IGenericAppService<DmsShopDisplayAudit>
     {
         Task UpdateScoreAsync(Guid auditId, decimal score);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsShopDisplayAuditAppService : GenericApplicationService<DmsShopDisplayAudit>, IDmsShopDisplayAuditAppService
+    public class DmsShopDisplayAuditAppService : GenericAppService<DmsShopDisplayAudit>, IDmsShopDisplayAuditAppService
     {
         public DmsShopDisplayAuditAppService(
             IRepository<DmsShopDisplayAudit, Guid> repository,

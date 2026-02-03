@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrModelConstraintAppService : IGenericApplicationService<IrModelConstraint>
     {
-        Task<IrModelConstraint> CopyDataAsync(Guid id, IrModelConstraintCopyDataRequestDto input);
+        Task<IrModelConstraint> CopyDataAsync(IrModelConstraintCopyDataRequestDto input);
     }
 }

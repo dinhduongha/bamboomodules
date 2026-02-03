@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/add-option-to-order")]
-        public async Task<IActionResult> AddOptionToOrderAsync(Guid id)
+        [Route("add-option-to-order")]
+        public async Task<IActionResult> AddOptionToOrderAsync(Guid[] ids)
         {
-            var result = await _appService.AddOptionToOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddOptionToOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-add-to-order")]
-        public async Task<IActionResult> ButtonAddToOrderAsync(Guid id)
+        [Route("button-add-to-order")]
+        public async Task<IActionResult> ButtonAddToOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonAddToOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonAddToOrderAsync(ids);
             return Ok(result);
         }
     }

@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailingSubscriptionAppService : IGenericApplicationService<MailingSubscription>
     {
-        Task<MailingSubscription> OpenMailingContactAsync(Guid id);
+        Task<MailingSubscription> OpenMailingContactAsync(Guid[] ids);
     }
 }

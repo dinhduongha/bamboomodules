@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventTypeBoothAppService : IGenericApplicationService<EventTypeBooth>
     {
-        Task<EventTypeBooth> ConfirmAsync(Guid id, EventTypeBoothConfirmRequestDto input);
+        Task<EventTypeBooth> ConfirmAsync(EventTypeBoothConfirmRequestDto input);
     }
 }

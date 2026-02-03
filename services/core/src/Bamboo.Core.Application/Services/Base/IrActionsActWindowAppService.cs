@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrActionsActWindowAppService : GenericApplicationService<IrActWindow>, IIrActionsActWindowAppService
+    public partial class IrActionsActWindowAppService : GenericAppService<IrActWindow>, IIrActionsActWindowAppService
     {
         private readonly IIrActionsActionsAppService _irActionsActionsAppService;
         public IrActionsActWindowAppService(IRepository<IrActWindow, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IIrActionsActionsAppService irActionsActionsAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -96,6 +96,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrActWindow> ExistingInternalAsync()
         {
             /*
@@ -107,7 +108,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActWindow> ExistsAsync(Guid id)
+        public async Task<IrActWindow> ExistsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -116,7 +117,9 @@ namespace Bamboo.Core.Application.Services
             // existing = self.filtered(lambda rec: rec.id in ids)
             // return existing
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrActWindow> GetActionDictInternalAsync()

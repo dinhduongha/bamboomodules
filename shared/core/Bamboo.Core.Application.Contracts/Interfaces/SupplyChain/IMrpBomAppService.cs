@@ -10,15 +10,15 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMrpBomAppService : IGenericApplicationService<MrpBom>
     {
-        Task<MrpBom> ArchiveAsync(Guid id);
-        Task<MrpBom> CheckKitHasNotOrderpointAsync(Guid id);
-        Task<MrpBom> ComputeBomDaysAsync(Guid id);
-        Task<MrpBom> ExplodeAsync(Guid id, MrpBomExplodeRequestDto input);
-        Task<MrpBom> GetImportTemplatesAsync(Guid id);
-        Task<MrpBom> OnchangeBomStructureAsync(Guid id);
-        Task<MrpBom> OnchangeProductTmplIdAsync(Guid id);
-        Task<MrpBom> OpenOperationFormAsync(Guid id);
-        Task<MrpBom> SetBomOnOrderpointAsync(Guid id);
-        Task<MrpBom> UnarchiveAsync(Guid id);
+        Task<MrpBom> ArchiveAsync(Guid[] ids);
+        Task<MrpBom> CheckKitHasNotOrderpointAsync(Guid[] ids);
+        Task<MrpBom> ComputeBomDaysAsync(Guid[] ids);
+        Task<MrpBom> ExplodeAsync(MrpBomExplodeRequestDto input);
+        Task<MrpBom> GetImportTemplatesAsync(Guid[] ids);
+        Task<MrpBom> OnchangeBomStructureAsync(Guid[] ids);
+        Task<MrpBom> OnchangeProductTmplIdAsync(Guid[] ids);
+        Task<MrpBom> OpenOperationFormAsync(Guid[] ids);
+        Task<MrpBom> SetBomOnOrderpointAsync(Guid[] ids);
+        Task<MrpBom> UnarchiveAsync(Guid[] ids);
     }
 }

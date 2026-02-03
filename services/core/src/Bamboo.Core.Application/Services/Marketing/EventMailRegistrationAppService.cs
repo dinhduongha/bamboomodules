@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
-    public partial class EventMailRegistrationAppService : GenericApplicationService<EventMailRegistration>, IEventMailRegistrationAppService
+    public partial class EventMailRegistrationAppService : GenericAppService<EventMailRegistration>, IEventMailRegistrationAppService
     {
 
         public EventMailRegistrationAppService(IRepository<EventMailRegistration, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -41,7 +41,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventMailRegistration> ExecuteAsync(Guid id)
+        public async Task<EventMailRegistration> ExecuteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_mail_registration.py) ---
@@ -50,7 +50,9 @@ namespace Bamboo.Core.Application.Services
             // skip_domain = self._get_skip_domain() + [("registration_id.state", "in", ("open", "done"))]
             // self.filtered_domain(skip_domain)._execute_on_registrations()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventMailRegistration> ExecuteOnRegistrationsInternalAsync()

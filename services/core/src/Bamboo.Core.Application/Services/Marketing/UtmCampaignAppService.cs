@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Utm", Category = "Marketing", Depends = new[] { "base", "web" })]
-    public partial class UtmCampaignAppService : GenericApplicationService<UtmCampaign>, IUtmCampaignAppService
+    public partial class UtmCampaignAppService : GenericAppService<UtmCampaign>, IUtmCampaignAppService
     {
 
         public UtmCampaignAppService(IRepository<UtmCampaign, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -261,7 +261,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<UtmCampaign> CreateMassSmsAsync(Guid id)
+        public async Task<UtmCampaign> CreateMassSmsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: utm.py) ---
@@ -276,9 +276,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<UtmCampaign> CronProcessMassMailingAbTestingInternalAsync()
         {
             /*
@@ -330,6 +333,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<UtmCampaign> GroupExpandStageIdsInternalAsync(object stages, object domain)
         {
             /*
@@ -344,7 +348,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<UtmCampaign> RedirectToInvoicedAsync(Guid id)
+        public async Task<UtmCampaign> RedirectToInvoicedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: utm_campaign.py) ---
@@ -363,10 +367,12 @@ namespace Bamboo.Core.Application.Services
             // ]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<UtmCampaign> RedirectToLeadsOpportunitiesAsync(Guid id)
+        public async Task<UtmCampaign> RedirectToLeadsOpportunitiesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: utm.py) ---
@@ -378,10 +384,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'active_test': False, 'create': False}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<UtmCampaign> RedirectToMailingSmsAsync(Guid id)
+        public async Task<UtmCampaign> RedirectToMailingSmsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: utm.py) ---
@@ -397,10 +405,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('mailing_type', '=', 'sms')]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<UtmCampaign> RedirectToQuotationsAsync(Guid id)
+        public async Task<UtmCampaign> RedirectToQuotationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: utm_campaign.py) ---
@@ -410,7 +420,9 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'default_campaign_id': self.id}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<UtmCampaign> UnlinkExceptUtmCampaignJobInternalAsync()

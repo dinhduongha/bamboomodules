@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWebTourTourAppService : IGenericApplicationService<WebTourTour>
     {
-        Task<WebTourTour> ConsumeAsync(Guid id, WebTourTourConsumeRequestDto input);
-        Task<WebTourTour> ExportJsFileAsync(Guid id);
-        Task<WebTourTour> GetCurrentTourAsync(Guid id);
-        Task<WebTourTour> GetTourJsonByNameAsync(Guid id, WebTourTourGetTourJsonByNameRequestDto input);
+        Task<WebTourTour> ConsumeAsync(WebTourTourConsumeRequestDto input);
+        Task<WebTourTour> ExportJsFileAsync(Guid[] ids);
+        Task<WebTourTour> GetCurrentTourAsync(Guid[] ids);
+        Task<WebTourTour> GetTourJsonByNameAsync(WebTourTourGetTourJsonByNameRequestDto input);
     }
 }

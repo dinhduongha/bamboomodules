@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Digest", Category = "Marketing", Depends = new[] { "mail", "portal", "resource" })]
-    public partial class DigestDigestAppService : GenericApplicationService<DigestDigest>, IDigestDigestAppService
+    public partial class DigestDigestAppService : GenericAppService<DigestDigest>, IDigestDigestAppService
     {
 
         public DigestDigestAppService(IRepository<DigestDigest, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -150,14 +150,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DigestDigest> ActivateAsync(Guid id)
+        public async Task<DigestDigest> ActivateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: digest, FILE: digest.py) ---
             // def action_activate(self):
             // self.state = 'activated'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DigestDigest> CalculateCompanyBasedKpiInternalAsync(object model, object digest_kpi_field, object date_field, object additional_domain, object sum_field)
@@ -703,6 +705,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DigestDigest> CronSendDigestEmailInternalAsync()
         {
             /*
@@ -718,14 +721,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DigestDigest> DeactivateAsync(Guid id)
+        public async Task<DigestDigest> DeactivateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: digest, FILE: digest.py) ---
             // def action_deactivate(self):
             // self.state = 'deactivated'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DigestDigest> FormatCurrencyAmountInternalAsync(object amount, Guid currency_id)
@@ -843,7 +848,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DigestDigest> SendAsync(Guid id)
+        public async Task<DigestDigest> SendAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: digest, FILE: digest.py) ---
@@ -851,10 +856,12 @@ namespace Bamboo.Core.Application.Services
             // """ Send digests emails to all the registered users. """
             // return self._action_send(update_periodicity=True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DigestDigest> SendManualAsync(Guid id)
+        public async Task<DigestDigest> SendManualAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: digest, FILE: digest.py) ---
@@ -864,20 +871,24 @@ namespace Bamboo.Core.Application.Services
             // be considered as unwanted spam. """
             // return self._action_send(update_periodicity=False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DigestDigest> SetPeriodicityAsync(Guid id, DigestDigestSetPeriodicityRequestDto input)
+        public async Task<DigestDigest> SetPeriodicityAsync(DigestDigestSetPeriodicityRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: digest, FILE: digest.py) ---
             // def action_set_periodicity(self, periodicity):
             // self.periodicity = periodicity
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DigestDigest> SubscribeAsync(Guid id)
+        public async Task<DigestDigest> SubscribeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: digest, FILE: digest.py) ---
@@ -885,10 +896,12 @@ namespace Bamboo.Core.Application.Services
             // if self.env.user._is_internal() and self.env.user not in self.user_ids:
             //     self._action_subscribe_users(self.env.user)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DigestDigest> UnsubscribeAsync(Guid id)
+        public async Task<DigestDigest> UnsubscribeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: digest, FILE: digest.py) ---
@@ -896,7 +909,9 @@ namespace Bamboo.Core.Application.Services
             // if self.env.user._is_internal() and self.env.user in self.user_ids:
             //     self._action_unsubscribe_users(self.env.user)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

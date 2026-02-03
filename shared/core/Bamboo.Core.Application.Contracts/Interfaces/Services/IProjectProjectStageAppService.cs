@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProjectProjectStageAppService : IGenericApplicationService<ProjectProjectStage>
     {
-        Task<ProjectProjectStage> CopyDataAsync(Guid id, ProjectProjectStageCopyDataRequestDto input);
-        Task<ProjectProjectStage> UnarchiveAsync(Guid id);
-        Task<ProjectProjectStage> UnlinkWizardAsync(Guid id, ProjectProjectStageUnlinkWizardRequestDto input);
+        Task<ProjectProjectStage> CopyDataAsync(ProjectProjectStageCopyDataRequestDto input);
+        Task<ProjectProjectStage> UnarchiveAsync(Guid[] ids);
+        Task<ProjectProjectStage> UnlinkWizardAsync(ProjectProjectStageUnlinkWizardRequestDto input);
     }
 }

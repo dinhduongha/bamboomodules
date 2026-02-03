@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-regenerate-overtimes")]
-        public async Task<IActionResult> ActionRegenerateOvertimesAsync(Guid id)
+        [Route("action-regenerate-overtimes")]
+        public async Task<IActionResult> ActionRegenerateOvertimesAsync(Guid[] ids)
         {
-            var result = await _appService.RegenerateOvertimesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RegenerateOvertimesAsync(ids);
             return Ok(result);
         }
     }

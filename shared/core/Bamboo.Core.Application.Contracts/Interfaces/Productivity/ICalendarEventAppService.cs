@@ -10,24 +10,24 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICalendarEventAppService : IGenericApplicationService<CalendarEvent>
     {
-        Task<CalendarEvent> ChangeAttendeeStatusAsync(Guid id, CalendarEventChangeAttendeeStatusRequestDto input);
-        Task<CalendarEvent> ClearVideocallLocationAsync(Guid id);
-        Task<CalendarEvent> FindPartnerCustomerAsync(Guid id);
-        Task<CalendarEvent> GetDefaultDurationAsync(Guid id);
-        Task<CalendarEvent> GetDiscussVideocallLocationAsync(Guid id);
-        Task<CalendarEvent> GetDisplayTimeTzAsync(Guid id, CalendarEventGetDisplayTimeTzRequestDto input);
-        Task<CalendarEvent> GetNextAlarmDateAsync(Guid id, CalendarEventGetNextAlarmDateRequestDto input);
-        Task<CalendarEvent> GetStateSelectionsAsync(Guid id);
-        Task<CalendarEvent> GetUnusualDaysAsync(Guid id, CalendarEventGetUnusualDaysRequestDto input);
-        Task<CalendarEvent> JoinMeetingAsync(Guid id, CalendarEventJoinMeetingRequestDto input);
-        Task<CalendarEvent> JoinVideoCallAsync(Guid id);
-        Task<CalendarEvent> MassArchiveAsync(Guid id, CalendarEventMassArchiveRequestDto input);
-        Task<CalendarEvent> MassDeletionAsync(Guid id, CalendarEventMassDeletionRequestDto input);
-        Task<CalendarEvent> OpenCalendarEventAsync(Guid id);
-        Task<CalendarEvent> OpenComposerAsync(Guid id);
-        Task<CalendarEvent> SendSmsAsync(Guid id);
-        Task<CalendarEvent> SendmailAsync(Guid id);
-        Task<CalendarEvent> SetDiscussVideocallLocationAsync(Guid id);
-        Task<CalendarEvent> UnlinkEventAsync(Guid id, CalendarEventUnlinkEventRequestDto input);
+        Task<CalendarEvent> ChangeAttendeeStatusAsync(CalendarEventChangeAttendeeStatusRequestDto input);
+        Task<CalendarEvent> ClearVideocallLocationAsync(Guid[] ids);
+        Task<CalendarEvent> FindPartnerCustomerAsync(Guid[] ids);
+        Task<CalendarEvent> GetDefaultDurationAsync(Guid[] ids);
+        Task<CalendarEvent> GetDiscussVideocallLocationAsync(Guid[] ids);
+        Task<CalendarEvent> GetDisplayTimeTzAsync(CalendarEventGetDisplayTimeTzRequestDto input);
+        Task<CalendarEvent> GetNextAlarmDateAsync(CalendarEventGetNextAlarmDateRequestDto input);
+        Task<CalendarEvent> GetStateSelectionsAsync(Guid[] ids);
+        Task<CalendarEvent> GetUnusualDaysAsync(CalendarEventGetUnusualDaysRequestDto input);
+        Task<CalendarEvent> JoinMeetingAsync(CalendarEventJoinMeetingRequestDto input);
+        Task<CalendarEvent> JoinVideoCallAsync(Guid[] ids);
+        Task<CalendarEvent> MassArchiveAsync(CalendarEventMassArchiveRequestDto input);
+        Task<CalendarEvent> MassDeletionAsync(CalendarEventMassDeletionRequestDto input);
+        Task<CalendarEvent> OpenCalendarEventAsync(Guid[] ids);
+        Task<CalendarEvent> OpenComposerAsync(Guid[] ids);
+        Task<CalendarEvent> SendSmsAsync(Guid[] ids);
+        Task<CalendarEvent> SendmailAsync(Guid[] ids);
+        Task<CalendarEvent> SetDiscussVideocallLocationAsync(Guid[] ids);
+        Task<CalendarEvent> UnlinkEventAsync(CalendarEventUnlinkEventRequestDto input);
     }
 }

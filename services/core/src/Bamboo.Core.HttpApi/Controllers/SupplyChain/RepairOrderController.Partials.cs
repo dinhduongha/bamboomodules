@@ -11,162 +11,182 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-from-catalog")]
-        public async Task<IActionResult> ActionAddFromCatalogAsync(Guid id)
+        [Route("action-add-from-catalog")]
+        public async Task<IActionResult> ActionAddFromCatalogAsync(Guid[] ids)
         {
-            var result = await _appService.AddFromCatalogAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddFromCatalogAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-assign")]
-        public async Task<IActionResult> ActionAssignAsync(Guid id)
+        [Route("action-assign")]
+        public async Task<IActionResult> ActionAssignAsync(Guid[] ids)
         {
-            var result = await _appService.AssignAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AssignAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-sale-order")]
-        public async Task<IActionResult> ActionCreateSaleOrderAsync(Guid id)
+        [Route("action-create-sale-order")]
+        public async Task<IActionResult> ActionCreateSaleOrderAsync(Guid[] ids)
         {
-            var result = await _appService.CreateSaleOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateSaleOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-explode")]
-        public async Task<IActionResult> ActionExplodeAsync(Guid id)
+        [Route("action-explode")]
+        public async Task<IActionResult> ActionExplodeAsync(Guid[] ids)
         {
-            var result = await _appService.ExplodeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExplodeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-generate-serial")]
-        public async Task<IActionResult> ActionGenerateSerialAsync(Guid id)
+        [Route("action-generate-serial")]
+        public async Task<IActionResult> ActionGenerateSerialAsync(Guid[] ids)
         {
-            var result = await _appService.GenerateSerialAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GenerateSerialAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-repair-cancel")]
-        public async Task<IActionResult> ActionRepairCancelAsync(Guid id)
+        [Route("action-repair-cancel")]
+        public async Task<IActionResult> ActionRepairCancelAsync(Guid[] ids)
         {
-            var result = await _appService.RepairCancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RepairCancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-repair-cancel-draft")]
-        public async Task<IActionResult> ActionRepairCancelDraftAsync(Guid id)
+        [Route("action-repair-cancel-draft")]
+        public async Task<IActionResult> ActionRepairCancelDraftAsync(Guid[] ids)
         {
-            var result = await _appService.RepairCancelDraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RepairCancelDraftAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-repair-done")]
-        public async Task<IActionResult> ActionRepairDoneAsync(Guid id)
+        [Route("action-repair-done")]
+        public async Task<IActionResult> ActionRepairDoneAsync(Guid[] ids)
         {
-            var result = await _appService.RepairDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RepairDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-repair-end")]
-        public async Task<IActionResult> ActionRepairEndAsync(Guid id)
+        [Route("action-repair-end")]
+        public async Task<IActionResult> ActionRepairEndAsync(Guid[] ids)
         {
-            var result = await _appService.RepairEndAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RepairEndAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-repair-start")]
-        public async Task<IActionResult> ActionRepairStartAsync(Guid id)
+        [Route("action-repair-start")]
+        public async Task<IActionResult> ActionRepairStartAsync(Guid[] ids)
         {
-            var result = await _appService.RepairStartAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RepairStartAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unreserve")]
-        public async Task<IActionResult> ActionUnreserveAsync(Guid id)
+        [Route("action-unreserve")]
+        public async Task<IActionResult> ActionUnreserveAsync(Guid[] ids)
         {
-            var result = await _appService.UnreserveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnreserveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-validate")]
-        public async Task<IActionResult> ActionValidateAsync(Guid id)
+        [Route("action-validate")]
+        public async Task<IActionResult> ActionValidateAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mrp-productions")]
-        public async Task<IActionResult> ActionViewMrpProductionsAsync(Guid id)
+        [Route("action-view-mrp-productions")]
+        public async Task<IActionResult> ActionViewMrpProductionsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMrpProductionsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMrpProductionsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-purchase-orders")]
-        public async Task<IActionResult> ActionViewPurchaseOrdersAsync(Guid id)
+        [Route("action-view-purchase-orders")]
+        public async Task<IActionResult> ActionViewPurchaseOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPurchaseOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPurchaseOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sale-order")]
-        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid id)
+        [Route("action-view-sale-order")]
+        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSaleOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSaleOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compute-lot-id")]
-        public async Task<IActionResult> ComputeLotIdAsync(Guid id)
+        [Route("compute-lot-id")]
+        public async Task<IActionResult> ComputeLotIdAsync(Guid[] ids)
         {
-            var result = await _appService.ComputeLotIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ComputeLotIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compute-product-uom")]
-        public async Task<IActionResult> ComputeProductUomAsync(Guid id)
+        [Route("compute-product-uom")]
+        public async Task<IActionResult> ComputeProductUomAsync(Guid[] ids)
         {
-            var result = await _appService.ComputeProductUomAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ComputeProductUomAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-post")]
-        public async Task<IActionResult> MessagePostAsync(Guid id)
+        [Route("message-post")]
+        public async Task<IActionResult> MessagePostAsync(Guid[] ids)
         {
-            var result = await _appService.MessagePostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MessagePostAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-product-uom")]
-        public async Task<IActionResult> OnchangeProductUomAsync(Guid id)
+        [Route("onchange-product-uom")]
+        public async Task<IActionResult> OnchangeProductUomAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeProductUomAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeProductUomAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/print-repair-order")]
-        public async Task<IActionResult> PrintRepairOrderAsync(Guid id)
+        [Route("print-repair-order")]
+        public async Task<IActionResult> PrintRepairOrderAsync(Guid[] ids)
         {
-            var result = await _appService.PrintRepairOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PrintRepairOrderAsync(ids);
             return Ok(result);
         }
     }

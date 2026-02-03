@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("StockPickingBatchModule", Category = "SupplyChain", Depends = new[] { "stock" })]
-    public partial class StockPickingBatchAppService : GenericApplicationService<StockPickingBatch>, IStockPickingBatchAppService
+    public partial class StockPickingBatchAppService : GenericAppService<StockPickingBatch>, IStockPickingBatchAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -57,7 +57,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingBatch> AssignAsync(Guid id)
+        public async Task<StockPickingBatch> AssignAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -65,10 +65,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.picking_ids.action_assign()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingBatch> BatchDetailedOperationsAsync(Guid id)
+        public async Task<StockPickingBatch> BatchDetailedOperationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -92,10 +94,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingBatch> CancelAsync(Guid id)
+        public async Task<StockPickingBatch> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -104,7 +108,9 @@ namespace Bamboo.Core.Application.Services
             // self.picking_ids = False
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPickingBatch> ComputeAllowedPickingIdsInternalAsync()
@@ -336,7 +342,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingBatch> ConfirmAsync(Guid id)
+        public async Task<StockPickingBatch> ConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -350,10 +356,12 @@ namespace Bamboo.Core.Application.Services
             // self.state = 'in_progress'
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<StockPickingBatch> CreateAsync(StockPickingBatch entity, List<string> fields)
+        public override async Task<StockPickingBatch> CreateAsync(CreateRequestDto<StockPickingBatch> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_fleet, FILE: stock_picking_batch.py) ---
@@ -373,10 +381,10 @@ namespace Bamboo.Core.Application.Services
             //             vals['name'] = self._prepare_name(picking_type, sequence_code, company_id)
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<StockPickingBatch> DoneAsync(Guid id)
+        public async Task<StockPickingBatch> DoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -421,7 +429,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return pickings.with_context(**context).button_validate()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPickingBatch> GetMergedBatchValsInternalAsync()
@@ -499,7 +509,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingBatch> MergeAsync(Guid id)
+        public async Task<StockPickingBatch> MergeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -540,10 +550,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingBatch> OnchangeScheduledDateAsync(Guid id)
+        public async Task<StockPickingBatch> OnchangeScheduledDateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -551,10 +563,12 @@ namespace Bamboo.Core.Application.Services
             // if self.scheduled_date:
             //     self.picking_ids.scheduled_date = self.scheduled_date
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingBatch> OpenLabelLayoutAsync(Guid id)
+        public async Task<StockPickingBatch> OpenLabelLayoutAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -584,10 +598,12 @@ namespace Bamboo.Core.Application.Services
             //         'default_move_quantity': 'move'},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingBatch> OrderOnZipAsync(Guid id)
+        public async Task<StockPickingBatch> OrderOnZipAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_fleet, FILE: stock_picking_batch.py) ---
@@ -596,9 +612,12 @@ namespace Bamboo.Core.Application.Services
             // for idx, record in enumerate(sorted_records):
             //     record.batch_sequence = idx
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingBatch> PrepareNameInternalAsync(object picking_type, object sequence_code, Guid company_id)
         {
             /*
@@ -610,7 +629,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingBatch> PrintAsync(Guid id)
+        public async Task<StockPickingBatch> PrintAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -618,10 +637,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.env.ref('stock_picking_batch.action_report_picking_batch').report_action(self)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingBatch> PutInPackAsync(Guid id)
+        public async Task<StockPickingBatch> PutInPackAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -633,7 +654,9 @@ namespace Bamboo.Core.Application.Services
             // if self.state not in ('done', 'cancel'):
             //     return self.move_line_ids.action_put_in_pack(package_id=package_id, package_type_id=package_type_id, package_name=package_name)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPickingBatch> SanityCheckInternalAsync()
@@ -664,7 +687,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingBatch> SeePackagesAsync(Guid id)
+        public async Task<StockPickingBatch> SeePackagesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -698,7 +721,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPickingBatch> SetMoveLineIdsInternalAsync()
@@ -756,7 +781,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingBatch> ViewReceptionReportAsync(Guid id)
+        public async Task<StockPickingBatch> ViewReceptionReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking_batch.py) ---
@@ -765,10 +790,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'default_picking_ids': self.picking_ids.ids}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, StockPickingBatch entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<StockPickingBatch> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_fleet, FILE: stock_picking_batch.py) ---
@@ -800,7 +827,7 @@ namespace Bamboo.Core.Application.Services
             //     self.picking_ids.assign_batch_user(vals['user_id'])
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

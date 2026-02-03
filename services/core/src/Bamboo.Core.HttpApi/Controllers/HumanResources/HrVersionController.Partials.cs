@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-version")]
-        public async Task<IActionResult> ActionOpenVersionAsync(Guid id)
+        [Route("action-open-version")]
+        public async Task<IActionResult> ActionOpenVersionAsync(Guid[] ids)
         {
-            var result = await _appService.OpenVersionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenVersionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-contract-finished")]
-        public async Task<IActionResult> CheckContractFinishedAsync(Guid id)
+        [Route("check-contract-finished")]
+        public async Task<IActionResult> CheckContractFinishedAsync(Guid[] ids)
         {
-            var result = await _appService.CheckContractFinishedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckContractFinishedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/generate-work-entries")]
-        public async Task<IActionResult> GenerateWorkEntriesAsync(Guid id, [FromBody] HrVersionGenerateWorkEntriesRequestDto input)
+        [Route("generate-work-entries")]
+        public async Task<IActionResult> GenerateWorkEntriesAsync(HrVersionGenerateWorkEntriesRequestDto input)
         {
-            var result = await _appService.GenerateWorkEntriesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GenerateWorkEntriesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-formview-action")]
-        public async Task<IActionResult> GetFormviewActionAsync(Guid id, [FromBody] HrVersionGetFormviewActionRequestDto input)
+        [Route("get-formview-action")]
+        public async Task<IActionResult> GetFormviewActionAsync(HrVersionGetFormviewActionRequestDto input)
         {
-            var result = await _appService.GetFormviewActionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFormviewActionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-values-from-contract-template")]
-        public async Task<IActionResult> GetValuesFromContractTemplateAsync(Guid id, [FromBody] HrVersionGetValuesFromContractTemplateRequestDto input)
+        [Route("get-values-from-contract-template")]
+        public async Task<IActionResult> GetValuesFromContractTemplateAsync(HrVersionGetValuesFromContractTemplateRequestDto input)
         {
-            var result = await _appService.GetValuesFromContractTemplateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetValuesFromContractTemplateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-static-work-entries")]
-        public async Task<IActionResult> HasStaticWorkEntriesAsync(Guid id)
+        [Route("has-static-work-entries")]
+        public async Task<IActionResult> HasStaticWorkEntriesAsync(Guid[] ids)
         {
-            var result = await _appService.HasStaticWorkEntriesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.HasStaticWorkEntriesAsync(ids);
             return Ok(result);
         }
     }

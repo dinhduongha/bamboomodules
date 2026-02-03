@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResUsersSettingsVolumesAppService : IGenericApplicationService<ResUsersSettingsVolumes>
     {
-        Task<ResUsersSettingsVolumes> InitAsync(Guid id);
+        Task<ResUsersSettingsVolumes> InitAsync(Guid[] ids);
     }
 }

@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-show-all-users")]
-        public async Task<IActionResult> ActionShowAllUsersAsync(Guid id)
+        [Route("action-show-all-users")]
+        public async Task<IActionResult> ActionShowAllUsersAsync(Guid[] ids)
         {
-            var result = await _appService.ShowAllUsersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowAllUsersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResGroupsCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ResGroupsCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-application-groups")]
-        public async Task<IActionResult> GetApplicationGroupsAsync(Guid id, [FromBody] ResGroupsGetApplicationGroupsRequestDto input)
+        [Route("get-application-groups")]
+        public async Task<IActionResult> GetApplicationGroupsAsync(ResGroupsGetApplicationGroupsRequestDto input)
         {
-            var result = await _appService.GetApplicationGroupsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetApplicationGroupsAsync(input);
             return Ok(result);
         }
     }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("LinkTrackerModule", Category = "Marketing", Depends = new[] { "utm", "mail" })]
-    public partial class LinkTrackerAppService : GenericApplicationService<LinkTracker>, ILinkTrackerAppService
+    public partial class LinkTrackerAppService : GenericAppService<LinkTracker>, ILinkTrackerAppService
     {
         private readonly IUtmMixinAppService _utmMixinAppService;
         public LinkTrackerAppService(IRepository<LinkTracker, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IUtmMixinAppService utmMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -180,14 +180,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LinkTracker> ConvertLinksAsync(Guid id, LinkTrackerConvertLinksRequestDto input)
+        [ApiModel]
+        public async Task<LinkTracker> ConvertLinksAsync(LinkTrackerConvertLinksRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
             // def convert_links(self, html, vals, blacklist=None):
             // raise NotImplementedError('Moved on mail.render.mixin')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LinkTracker> ConvertLinksTextInternalAsync(object body, object vals, object blacklist)
@@ -200,6 +203,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LinkTracker> GetTitleFromUrlInternalAsync(object url)
         {
             /*
@@ -213,7 +217,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LinkTracker> GetUrlFromCodeAsync(Guid id, LinkTrackerGetUrlFromCodeRequestDto input)
+        [ApiModel]
+        public async Task<LinkTracker> GetUrlFromCodeAsync(LinkTrackerGetUrlFromCodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -225,7 +230,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return code_rec.link_id.redirected_url
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LinkTracker> InverseCodeInternalAsync()
@@ -243,7 +250,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LinkTracker> RecentLinksAsync(Guid id, LinkTrackerRecentLinksRequestDto input)
+        [ApiModel]
+        public async Task<LinkTracker> RecentLinksAsync(LinkTrackerRecentLinksRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -257,10 +265,13 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return {'Error': "This filter doesn't exist."}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LinkTracker> SearchOrCreateAsync(Guid id, LinkTrackerSearchOrCreateRequestDto input)
+        [ApiModel]
+        public async Task<LinkTracker> SearchOrCreateAsync(LinkTrackerSearchOrCreateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -314,10 +325,12 @@ namespace Bamboo.Core.Application.Services
             // # Build final recordset following input order
             // return self.browse([key_to_trackers_map[_format_key(vals)].id for vals in vals_list])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LinkTracker> ViewStatisticsAsync(Guid id)
+        public async Task<LinkTracker> ViewStatisticsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -327,10 +340,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(self.env.context, create=False)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LinkTracker> VisitPageAsync(Guid id)
+        public async Task<LinkTracker> VisitPageAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -342,10 +357,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LinkTracker> VisitPageStatisticsAsync(Guid id)
+        public async Task<LinkTracker> VisitPageStatisticsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_links, FILE: link_tracker.py) ---
@@ -357,7 +374,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

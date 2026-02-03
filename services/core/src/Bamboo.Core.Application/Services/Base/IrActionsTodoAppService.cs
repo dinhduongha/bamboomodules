@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrActionsTodoAppService : GenericApplicationService<IrActionsTodo>, IIrActionsTodoAppService
+    public partial class IrActionsTodoAppService : GenericAppService<IrActionsTodo>, IIrActionsTodoAppService
     {
 
         public IrActionsTodoAppService(IRepository<IrActionsTodo, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,8 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<IrActionsTodo> EnsureOneOpenTodoAsync(Guid id)
+        [ApiModel]
+        public async Task<IrActionsTodo> EnsureOneOpenTodoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -35,10 +36,12 @@ namespace Bamboo.Core.Application.Services
             // if open_todo:
             //     open_todo.write({'state': 'done'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrActionsTodo> LaunchAsync(Guid id)
+        public async Task<IrActionsTodo> LaunchAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -69,10 +72,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrActionsTodo> OpenAsync(Guid id)
+        public async Task<IrActionsTodo> OpenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -80,7 +85,9 @@ namespace Bamboo.Core.Application.Services
             // """ Sets configuration wizard in TODO state"""
             // return self.write({'state': 'open'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

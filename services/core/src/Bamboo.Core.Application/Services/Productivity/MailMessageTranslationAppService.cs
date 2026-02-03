@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailMessageTranslationAppService : GenericApplicationService<MailMessageTranslation>, IMailMessageTranslationAppService
+    public partial class MailMessageTranslationAppService : GenericAppService<MailMessageTranslation>, IMailMessageTranslationAppService
     {
 
         public MailMessageTranslationAppService(IRepository<MailMessageTranslation, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessageTranslation> InitAsync(Guid id)
+        public async Task<MailMessageTranslation> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message_translation.py) ---
@@ -46,7 +46,9 @@ namespace Bamboo.Core.Application.Services
             //     f"CREATE UNIQUE INDEX IF NOT EXISTS mail_message_translation_unique ON {self._table} (message_id, target_lang)"
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

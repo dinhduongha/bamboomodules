@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class WizardIrModelMenuCreateAppService : GenericApplicationService<WizardIrModelMenuCreate>, IWizardIrModelMenuCreateAppService
+    public partial class WizardIrModelMenuCreateAppService : GenericAppService<WizardIrModelMenuCreate>, IWizardIrModelMenuCreateAppService
     {
 
         public WizardIrModelMenuCreateAppService(IRepository<WizardIrModelMenuCreate, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<WizardIrModelMenuCreate> MenuCreateAsync(Guid id)
+        public async Task<WizardIrModelMenuCreate> MenuCreateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -46,7 +46,9 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return {'type': 'ir.actions.act_window_close'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

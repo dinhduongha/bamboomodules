@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IFleetVehicleAssignationLogAppService : IGenericApplicationService<FleetVehicleAssignationLog>
     {
-        Task<FleetVehicleAssignationLog> GetAttachmentViewAsync(Guid id);
+        Task<FleetVehicleAssignationLog> GetAttachmentViewAsync(Guid[] ids);
     }
 }

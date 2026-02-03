@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-send-chat-request")]
-        public async Task<IActionResult> ActionSendChatRequestAsync(Guid id)
+        [Route("action-send-chat-request")]
+        public async Task<IActionResult> ActionSendChatRequestAsync(Guid[] ids)
         {
-            var result = await _appService.SendChatRequestAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendChatRequestAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-mail")]
-        public async Task<IActionResult> ActionSendMailAsync(Guid id)
+        [Route("action-send-mail")]
+        public async Task<IActionResult> ActionSendMailAsync(Guid[] ids)
         {
-            var result = await _appService.SendMailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendMailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-sms")]
-        public async Task<IActionResult> ActionSendSmsAsync(Guid id)
+        [Route("action-send-sms")]
+        public async Task<IActionResult> ActionSendSmsAsync(Guid[] ids)
         {
-            var result = await _appService.SendSmsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendSmsAsync(ids);
             return Ok(result);
         }
     }

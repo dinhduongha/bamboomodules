@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("CrmIapMine", Category = "Sales", Depends = new[] { "iap_crm", "iap_mail" })]
-    public partial class CrmIapLeadHelpersAppService : GenericApplicationService<CrmIapLeadHelpers>, ICrmIapLeadHelpersAppService
+    public partial class CrmIapLeadHelpersAppService : GenericAppService<CrmIapLeadHelpers>, ICrmIapLeadHelpersAppService
     {
 
         public CrmIapLeadHelpersAppService(IRepository<CrmIapLeadHelpers, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,6 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<CrmIapLeadHelpers> FindStateIdInternalAsync(object state_code, Guid country_id)
         {
             /*
@@ -39,7 +40,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmIapLeadHelpers> LeadValsFromResponseAsync(Guid id, CrmIapLeadHelpersLeadValsFromResponseRequestDto input)
+        [ApiModel]
+        public async Task<CrmIapLeadHelpers> LeadValsFromResponseAsync(CrmIapLeadHelpersLeadValsFromResponseRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_helpers.py) ---
@@ -75,9 +77,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return lead_vals
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<CrmIapLeadHelpers> NotifyNoMoreCreditInternalAsync(object service_name, object model_name, object notification_parameter)
         {
             /*

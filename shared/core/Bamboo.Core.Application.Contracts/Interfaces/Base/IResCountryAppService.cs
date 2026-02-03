@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResCountryAppService : IGenericApplicationService<ResCountry>
     {
-        Task<ResCountry> GetAddressFieldsAsync(Guid id);
+        Task<ResCountry> GetAddressFieldsAsync(Guid[] ids);
     }
 }

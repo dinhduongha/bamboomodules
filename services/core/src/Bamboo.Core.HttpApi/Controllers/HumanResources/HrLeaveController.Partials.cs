@@ -11,98 +11,110 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-approve")]
-        public async Task<IActionResult> ActionApproveAsync(Guid id, [FromBody] HrLeaveApproveRequestDto input)
+        [Route("action-approve")]
+        public async Task<IActionResult> ActionApproveAsync(HrLeaveApproveRequestDto input)
         {
-            var result = await _appService.ApproveAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ApproveAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-back-to-approval")]
-        public async Task<IActionResult> ActionBackToApprovalAsync(Guid id)
+        [Route("action-back-to-approval")]
+        public async Task<IActionResult> ActionBackToApprovalAsync(Guid[] ids)
         {
-            var result = await _appService.BackToApprovalAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BackToApprovalAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-documents")]
-        public async Task<IActionResult> ActionDocumentsAsync(Guid id)
+        [Route("action-documents")]
+        public async Task<IActionResult> ActionDocumentsAsync(Guid[] ids)
         {
-            var result = await _appService.DocumentsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DocumentsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-refuse")]
-        public async Task<IActionResult> ActionRefuseAsync(Guid id)
+        [Route("action-refuse")]
+        public async Task<IActionResult> ActionRefuseAsync(Guid[] ids)
         {
-            var result = await _appService.RefuseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RefuseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reset-confirm")]
-        public async Task<IActionResult> ActionResetConfirmAsync(Guid id)
+        [Route("action-reset-confirm")]
+        public async Task<IActionResult> ActionResetConfirmAsync(Guid[] ids)
         {
-            var result = await _appService.ResetConfirmAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetConfirmAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/activity-update")]
-        public async Task<IActionResult> ActivityUpdateAsync(Guid id)
+        [Route("activity-update")]
+        public async Task<IActionResult> ActivityUpdateAsync(Guid[] ids)
         {
-            var result = await _appService.ActivityUpdateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ActivityUpdateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/add-follower")]
-        public async Task<IActionResult> AddFollowerAsync(Guid id, [FromBody] HrLeaveAddFollowerRequestDto input)
+        [Route("add-follower")]
+        public async Task<IActionResult> AddFollowerAsync(HrLeaveAddFollowerRequestDto input)
         {
-            var result = await _appService.AddFollowerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AddFollowerAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] HrLeaveCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(HrLeaveCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-unusual-days")]
-        public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] HrLeaveGetUnusualDaysRequestDto input)
+        [Route("get-unusual-days")]
+        public async Task<IActionResult> GetUnusualDaysAsync(HrLeaveGetUnusualDaysRequestDto input)
         {
-            var result = await _appService.GetUnusualDaysAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetUnusualDaysAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-subscribe")]
-        public async Task<IActionResult> MessageSubscribeAsync(Guid id, [FromBody] HrLeaveMessageSubscribeRequestDto input)
+        [Route("message-subscribe")]
+        public async Task<IActionResult> MessageSubscribeAsync(HrLeaveMessageSubscribeRequestDto input)
         {
-            var result = await _appService.MessageSubscribeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageSubscribeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-pending-requests")]
-        public async Task<IActionResult> OpenPendingRequestsAsync(Guid id)
+        [Route("open-pending-requests")]
+        public async Task<IActionResult> OpenPendingRequestsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenPendingRequestsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenPendingRequestsAsync(ids);
             return Ok(result);
         }
     }

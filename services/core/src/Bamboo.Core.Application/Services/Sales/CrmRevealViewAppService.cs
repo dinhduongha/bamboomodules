@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteCrmIapReveal", Category = "Sales", Depends = new[] { "iap_crm", "iap_mail", "crm_iap_mine", "website_crm" })]
-    public partial class CrmRevealViewAppService : GenericApplicationService<CrmRevealView>, ICrmRevealViewAppService
+    public partial class CrmRevealViewAppService : GenericAppService<CrmRevealView>, ICrmRevealViewAppService
     {
 
         public CrmRevealViewAppService(IRepository<CrmRevealView, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,6 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<CrmRevealView> CleanRevealViewsInternalAsync()
         {
             /*
@@ -69,7 +70,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmRevealView> InitAsync(Guid id)
+        public async Task<CrmRevealView> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_iap_reveal, FILE: crm_reveal_view.py) ---
@@ -81,7 +82,9 @@ namespace Bamboo.Core.Application.Services
             // if not self._cr.fetchone():
             //     self._cr.execute('CREATE INDEX crm_reveal_view_state_create_date ON crm_reveal_view (reveal_state,create_date)')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

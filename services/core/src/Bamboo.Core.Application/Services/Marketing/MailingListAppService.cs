@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
-    public partial class MailingListAppService : GenericApplicationService<MailingList>, IMailingListAppService
+    public partial class MailingListAppService : GenericAppService<MailingList>, IMailingListAppService
     {
 
         public MailingListAppService(IRepository<MailingList, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -109,7 +109,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingList> CopyDataAsync(Guid id, MailingListCopyDataRequestDto input)
+        public async Task<MailingList> CopyDataAsync(MailingListCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -117,7 +117,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", mailing_list.name)) for mailing_list, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingList> FetchContactStatisticsInternalAsync()
@@ -291,7 +293,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingList> MergeAsync(Guid id, MailingListMergeRequestDto input)
+        public async Task<MailingList> MergeAsync(MailingListMergeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -358,10 +360,12 @@ namespace Bamboo.Core.Application.Services
             // if archive:
             //     (src_lists - self).action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> OpenImportAsync(Guid id)
+        public async Task<MailingList> OpenImportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -378,10 +382,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> SendMailingAsync(Guid id)
+        public async Task<MailingList> SendMailingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -402,10 +408,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> SendMailingSmsAsync(Guid id)
+        public async Task<MailingList> SendMailingSmsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_list.py) ---
@@ -425,7 +433,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingList> UpdateSubscriptionFromEmailInternalAsync(object email, object opt_out, object force_message)
@@ -514,7 +524,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingList> ViewContactsAsync(Guid id)
+        public async Task<MailingList> ViewContactsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -524,10 +534,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'default_list_ids': self.ids}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> ViewContactsBlacklistedAsync(Guid id)
+        public async Task<MailingList> ViewContactsBlacklistedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -537,10 +549,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'default_list_ids': self.ids, 'create': False, 'search_default_filter_blacklisted': 1}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> ViewContactsBouncingAsync(Guid id)
+        public async Task<MailingList> ViewContactsBouncingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -550,10 +564,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'default_list_ids': self.ids, 'create': False, 'search_default_filter_bounce': 1}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> ViewContactsEmailAsync(Guid id)
+        public async Task<MailingList> ViewContactsEmailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -562,10 +578,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(action.get('context', {}), search_default_filter_valid_email_recipient=1)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> ViewContactsOptOutAsync(Guid id)
+        public async Task<MailingList> ViewContactsOptOutAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -575,10 +593,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'default_list_ids': self.ids, 'create': False, 'search_default_filter_opt_out': 1}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> ViewContactsSmsAsync(Guid id)
+        public async Task<MailingList> ViewContactsSmsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_list.py) ---
@@ -587,10 +607,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(action.get('context', {}), search_default_filter_valid_sms_recipient=1)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingList> ViewMailingsAsync(Guid id)
+        public async Task<MailingList> ViewMailingsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -613,7 +635,9 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return super(MailingList, self).action_view_mailings()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

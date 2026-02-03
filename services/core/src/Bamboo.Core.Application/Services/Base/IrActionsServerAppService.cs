@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrActionsServerAppService : GenericApplicationService<IrActServer>, IIrActionsServerAppService
+    public partial class IrActionsServerAppService : GenericAppService<IrActServer>, IIrActionsServerAppService
     {
         private readonly IIrActionsActionsAppService _irActionsActionsAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -462,7 +462,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActServer> CopyDataAsync(Guid id, IrActionsServerCopyDataRequestDto input)
+        public async Task<IrActServer> CopyDataAsync(IrActionsServerCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -474,10 +474,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _('%s (copy)', vals.get('name', ''))
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrActServer> CreateActionAsync(Guid id)
+        public async Task<IrActServer> CreateActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -488,9 +490,12 @@ namespace Bamboo.Core.Application.Services
             //                   'binding_type': 'action'})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrActServer> DefaultUpdatePathInternalAsync()
         {
             /*
@@ -587,6 +592,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrActServer> GetChildrenDomainInternalAsync()
         {
             /*
@@ -877,7 +883,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActServer> HistoryWizardActionAsync(Guid id)
+        public async Task<IrActServer> HistoryWizardActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -892,7 +898,9 @@ namespace Bamboo.Core.Application.Services
             //     "context": {"default_action_id": self.id},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrActServer> IsRecomputeInternalAsync()
@@ -960,7 +968,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActServer> OpenAutomationAsync(Guid id)
+        public async Task<IrActServer> OpenAutomationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: ir_actions_server.py) ---
@@ -973,10 +981,12 @@ namespace Bamboo.Core.Application.Services
             //     "res_id": self.base_automation_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrActServer> OpenParentActionAsync(Guid id)
+        public async Task<IrActServer> OpenParentActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -989,10 +999,12 @@ namespace Bamboo.Core.Application.Services
             //     "res_id": self.parent_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrActServer> OpenScheduledActionAsync(Guid id)
+        public async Task<IrActServer> OpenScheduledActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1005,7 +1017,9 @@ namespace Bamboo.Core.Application.Services
             //     "res_id": self.ir_cron_ids.ids[0],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrActServer> RunActionCodeMultiInternalAsync(object eval_context)
@@ -1297,7 +1311,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActServer> RunAsync(Guid id)
+        public async Task<IrActServer> RunAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1332,7 +1346,9 @@ namespace Bamboo.Core.Application.Services
             //     res = action._run(records, eval_context)
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrActServer> RunInternalAsync(object records, object eval_context)
@@ -1375,6 +1391,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrActServer> SelectionTargetModelInternalAsync()
         {
             /*
@@ -1443,7 +1460,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActServer> UnlinkActionAsync(Guid id)
+        public async Task<IrActServer> UnlinkActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1453,9 +1470,12 @@ namespace Bamboo.Core.Application.Services
             // self.filtered('binding_model_id').write({'binding_model_id': False})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrActServer> WarningDependsInternalAsync()
         {
             /*

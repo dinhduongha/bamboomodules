@@ -29,7 +29,7 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
             entity.Property(e => e.Channel).HasColumnName("channel");
             entity.Property(e => e.OrderSourceId).HasColumnName("order_source_id");
-            entity.Property(e => e.OrderContentJson).HasColumnName("order_content_json");
+            entity.Property(e => e.OrderContent);
             entity.Property(e => e.OrderStatus).HasColumnName("order_status");
             entity.Property(e => e.ConvertedToSaleOrderId).HasColumnName("converted_to_sale_order_id");
             entity.Property(e => e.Timestamp).HasColumnName("timestamp");

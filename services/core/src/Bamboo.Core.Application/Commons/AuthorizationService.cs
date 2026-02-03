@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
+
 using Microsoft.Extensions.Caching.Memory;
 //using Microsoft.Extensions.Caching.Hybrid;
+
 using Volo.Abp;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -12,22 +15,27 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Users;
+using Volo.Abp.Application.Services;
+
 
 using Bamboo.Core.Models;
-using System.Text.Json;
 
 namespace Bamboo.Core.Application.Services.Commons
 {
-    public class AuthorizationService : IAuthorizationService
+    public class AuthorizationService : ApplicationService, IAuthorizationService
     {
         private readonly IRepository<IrModel, Guid> _modelRepository;
         private readonly IRepository<IrModelAccess, Guid> _modelAccessRepository;
         private readonly IRepository<IrModelFields, Guid> _fieldRepository;
         private readonly IRepository<IrModelFieldAccess, Guid> _fieldAccessRepository;
         private readonly IRepository<IrRule, Guid> _ruleRepository;
-        private readonly ICurrentUser _currentUser;
+
+        private readonly IRepository<ResOrganization, Guid> _resOrganization;
+        private readonly IRepository<ResTeam, Guid> _resTeam;
         private readonly IRepository<ResUsers, Guid> _resUserRepository;
         private readonly IRepository<ResGroups, Guid> _resGroupRepository;
+        private readonly ICurrentUser _currentUser;
+
         private readonly IMemoryCache _memoryCache;
         private readonly IDomainParser _domainParser;
 
@@ -38,6 +46,8 @@ namespace Bamboo.Core.Application.Services.Commons
             IRepository<IrModelFieldAccess, Guid> fieldAccessRepository,
             IRepository<IrRule, Guid> ruleRepository,
             IRepository<ResGroups, Guid> resGroupRepository,
+            IRepository<ResOrganization, Guid> resOrganization,
+            IRepository<ResTeam, Guid> resTeam,
             IRepository<ResUsers, Guid> resUserRepository,
             ICurrentUser currentUser,
             IMemoryCache memoryCache,
@@ -49,6 +59,8 @@ namespace Bamboo.Core.Application.Services.Commons
             _fieldAccessRepository = fieldAccessRepository;
             _ruleRepository = ruleRepository;
             _resGroupRepository = resGroupRepository;
+            _resOrganization = resOrganization;
+            _resTeam = resTeam;
             _resUserRepository = resUserRepository;
             _currentUser = currentUser;
             _memoryCache = memoryCache;

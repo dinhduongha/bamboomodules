@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PurchaseRequisitionModule", Category = "SupplyChain", Depends = new[] { "purchase" })]
-    public partial class PurchaseRequisitionAppService : GenericApplicationService<PurchaseRequisition>, IPurchaseRequisitionAppService
+    public partial class PurchaseRequisitionAppService : GenericAppService<PurchaseRequisition>, IPurchaseRequisitionAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<PurchaseRequisition> CancelAsync(Guid id)
+        public async Task<PurchaseRequisition> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase_requisition.py) ---
@@ -43,7 +43,9 @@ namespace Bamboo.Core.Application.Services
             //         po.message_post(body=_('Cancelled by the agreement associated to this quotation.'))
             // self.state = 'cancel'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseRequisition> CheckDatesInternalAsync()
@@ -85,7 +87,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseRequisition> ConfirmAsync(Guid id)
+        public async Task<PurchaseRequisition> ConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase_requisition.py) ---
@@ -102,7 +104,9 @@ namespace Bamboo.Core.Application.Services
             //         requisition_line._create_supplier_info()
             // self.state = 'confirmed'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseRequisition> DefaultPickingTypeIdInternalAsync()
@@ -118,7 +122,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseRequisition> DoneAsync(Guid id)
+        public async Task<PurchaseRequisition> DoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase_requisition.py) ---
@@ -134,10 +138,12 @@ namespace Bamboo.Core.Application.Services
             //         requisition_line.supplier_info_ids.sudo().unlink()
             // self.write({'state': 'done'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseRequisition> DraftAsync(Guid id)
+        public async Task<PurchaseRequisition> DraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase_requisition.py) ---
@@ -145,7 +151,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.state = 'draft'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseRequisition> OnchangeVendorInternalAsync()

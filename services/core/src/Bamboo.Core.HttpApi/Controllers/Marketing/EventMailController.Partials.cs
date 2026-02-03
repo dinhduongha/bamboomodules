@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/execute")]
-        public async Task<IActionResult> ExecuteAsync(Guid id)
+        [Route("execute")]
+        public async Task<IActionResult> ExecuteAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/run")]
-        public async Task<IActionResult> RunAsync(Guid id, [FromBody] EventMailRunRequestDto input)
+        [Route("run")]
+        public async Task<IActionResult> RunAsync(EventMailRunRequestDto input)
         {
-            var result = await _appService.RunAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RunAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/schedule-communications")]
-        public async Task<IActionResult> ScheduleCommunicationsAsync(Guid id, [FromBody] EventMailScheduleCommunicationsRequestDto input)
+        [Route("schedule-communications")]
+        public async Task<IActionResult> ScheduleCommunicationsAsync(EventMailScheduleCommunicationsRequestDto input)
         {
-            var result = await _appService.ScheduleCommunicationsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ScheduleCommunicationsAsync(input);
             return Ok(result);
         }
     }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("StockLandedCosts", Category = "SupplyChain", Depends = new[] { "stock_account", "purchase_stock" })]
-    public partial class StockLandedCostLinesAppService : GenericApplicationService<StockLandedCostLines>, IStockLandedCostLinesAppService
+    public partial class StockLandedCostLinesAppService : GenericAppService<StockLandedCostLines>, IStockLandedCostLinesAppService
     {
 
         public StockLandedCostLinesAppService(IRepository<StockLandedCostLines, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<StockLandedCostLines> OnchangeProductIdAsync(Guid id)
+        public async Task<StockLandedCostLines> OnchangeProductIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
@@ -37,7 +37,9 @@ namespace Bamboo.Core.Application.Services
             // accounts_data = self.product_id.product_tmpl_id.get_product_accounts()
             // self.account_id = accounts_data['expense']
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

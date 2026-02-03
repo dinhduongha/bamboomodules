@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IQuotationDocumentAppService : IGenericApplicationService<QuotationDocument>
     {
-        Task<QuotationDocument> OpenPdfFormFieldsAsync(Guid id);
+        Task<QuotationDocument> OpenPdfFormFieldsAsync(Guid[] ids);
     }
 }

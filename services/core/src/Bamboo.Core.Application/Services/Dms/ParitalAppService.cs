@@ -11,8 +11,8 @@ namespace Bamboo.Core.Application.Services
         public async Task AssignSalesmanLocationAsync(Guid userId, Guid locationId)
         {
             var user = await Repository.GetAsync(userId);
-            user.DefaultSalesmanLocationId = locationId;
-            await Repository.UpdateAsync(user);
+            //user.DefaultSalesmanLocationId = locationId;
+            //await Repository.UpdateAsync(user);
         }
     }
 
@@ -28,8 +28,8 @@ namespace Bamboo.Core.Application.Services
         public async Task AssignVehicleToLocationAsync(Guid locationId, Guid vehicleId)
         {
             var location = await Repository.GetAsync(locationId);
-            location.VehicleId = vehicleId;
-            location.LocationType = "vehicle";
+            //location.VehicleId = vehicleId;
+            //location.LocationType = "vehicle";
             await Repository.UpdateAsync(location);
         }
     }
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services
         public async Task ValidatePickingAsync(Guid pickingId)
         {
             var picking = await Repository.GetAsync(pickingId);
-            picking.DeliveryStatus = "delivered";
+            //picking.DeliveryStatus = "delivered";
             await Repository.UpdateAsync(picking);
         }
     }
@@ -63,7 +63,7 @@ namespace Bamboo.Core.Application.Services
         public async Task UpdateGeofenceAsync(Guid partnerId, int radius)
         {
             var partner = await Repository.GetAsync(partnerId);
-            partner.GeofenceRadiusMeters = radius;
+            //partner.GeofenceRadiusMeters = radius;
             await Repository.UpdateAsync(partner);
         }
     }

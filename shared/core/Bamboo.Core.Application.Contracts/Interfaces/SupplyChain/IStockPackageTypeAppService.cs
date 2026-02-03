@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockPackageTypeAppService : IGenericApplicationService<StockPackageType>
     {
-        Task<StockPackageType> CopyDataAsync(Guid id, StockPackageTypeCopyDataRequestDto input);
+        Task<StockPackageType> CopyDataAsync(StockPackageTypeCopyDataRequestDto input);
     }
 }

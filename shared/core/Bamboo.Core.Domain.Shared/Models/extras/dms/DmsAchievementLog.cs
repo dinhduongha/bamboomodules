@@ -25,11 +25,14 @@ public partial class DmsAchievementLog : FullAuditedAggregateRoot<Guid>, IEntity
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
     [Column("user_id")]
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     [Column("date")]
-    public DateTime Date { get; set; }
+    public DateTimeOffset? Date { get; set; }
 
     [Column("sales_today")]
     public decimal SalesToday { get; set; }
@@ -56,6 +59,27 @@ public partial class DmsAchievementLog : FullAuditedAggregateRoot<Guid>, IEntity
     public override DateTime? LastModificationTime { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("CreatorId")]
+    public virtual ResUsers? CreateU { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("LastModifierId")]
+    public virtual ResUsers? WriteU { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TeamId")]
+    public virtual ResTeam? Team { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
+
 }

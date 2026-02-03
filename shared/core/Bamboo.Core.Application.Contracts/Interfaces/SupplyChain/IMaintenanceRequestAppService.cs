@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMaintenanceRequestAppService : IGenericApplicationService<MaintenanceRequest>
     {
-        Task<MaintenanceRequest> ActivityUpdateAsync(Guid id);
-        Task<MaintenanceRequest> ArchiveEquipmentRequestAsync(Guid id);
-        Task<MaintenanceRequest> MessageNewAsync(Guid id, MaintenanceRequestMessageNewRequestDto input);
-        Task<MaintenanceRequest> ResetEquipmentRequestAsync(Guid id);
+        Task<MaintenanceRequest> ActivityUpdateAsync(Guid[] ids);
+        Task<MaintenanceRequest> ArchiveEquipmentRequestAsync(Guid[] ids);
+        Task<MaintenanceRequest> MessageNewAsync(MaintenanceRequestMessageNewRequestDto input);
+        Task<MaintenanceRequest> ResetEquipmentRequestAsync(Guid[] ids);
     }
 }

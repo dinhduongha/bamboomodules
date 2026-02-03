@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrLeaveTypeAppService : IGenericApplicationService<HrLeaveType>
     {
-        Task<HrLeaveType> CheckAllocationRequirementEditValidityAsync(Guid id);
-        Task<HrLeaveType> CopyDataAsync(Guid id, HrLeaveTypeCopyDataRequestDto input);
-        Task<HrLeaveType> GetAllocationDataAsync(Guid id, HrLeaveTypeGetAllocationDataRequestDto input);
-        Task<HrLeaveType> GetAllocationDataRequestAsync(Guid id, HrLeaveTypeGetAllocationDataRequestRequestDto input);
-        Task<HrLeaveType> HasAccrualAllocationAsync(Guid id);
-        Task<HrLeaveType> RequestedDisplayNameAsync(Guid id);
-        Task<HrLeaveType> SeeAccrualPlansAsync(Guid id);
-        Task<HrLeaveType> SeeDaysAllocatedAsync(Guid id);
-        Task<HrLeaveType> SeeGroupLeavesAsync(Guid id);
+        Task<HrLeaveType> CheckAllocationRequirementEditValidityAsync(Guid[] ids);
+        Task<HrLeaveType> CopyDataAsync(HrLeaveTypeCopyDataRequestDto input);
+        Task<HrLeaveType> GetAllocationDataAsync(HrLeaveTypeGetAllocationDataRequestDto input);
+        Task<HrLeaveType> GetAllocationDataRequestAsync(HrLeaveTypeGetAllocationDataRequestRequestDto input);
+        Task<HrLeaveType> HasAccrualAllocationAsync(Guid[] ids);
+        Task<HrLeaveType> RequestedDisplayNameAsync(Guid[] ids);
+        Task<HrLeaveType> SeeAccrualPlansAsync(Guid[] ids);
+        Task<HrLeaveType> SeeDaysAllocatedAsync(Guid[] ids);
+        Task<HrLeaveType> SeeGroupLeavesAsync(Guid[] ids);
     }
 }

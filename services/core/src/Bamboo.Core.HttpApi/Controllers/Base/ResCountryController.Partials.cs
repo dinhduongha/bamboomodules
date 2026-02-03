@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-address-fields")]
-        public async Task<IActionResult> GetAddressFieldsAsync(Guid id)
+        [Route("get-address-fields")]
+        public async Task<IActionResult> GetAddressFieldsAsync(Guid[] ids)
         {
-            var result = await _appService.GetAddressFieldsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAddressFieldsAsync(ids);
             return Ok(result);
         }
     }

@@ -10,16 +10,16 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrAttachmentAppService : IGenericApplicationService<IrAttachment>
     {
-        Task<IrAttachment> CheckAsync(Guid id, IrAttachmentCheckRequestDto input);
-        Task<IrAttachment> CopyDataAsync(Guid id, IrAttachmentCopyDataRequestDto input);
-        Task<IrAttachment> CreateUniqueAsync(Guid id, IrAttachmentCreateUniqueRequestDto input);
-        Task<IrAttachment> ForceStorageAsync(Guid id);
-        Task<IrAttachment> GenerateAccessTokenAsync(Guid id);
-        Task<IrAttachment> GetAsync(Guid id);
-        Task<IrAttachment> GetServingGroupsAsync(Guid id);
-        Task<IrAttachment> InitAsync(Guid id);
-        Task<IrAttachment> PreviewAttachmentAsync(Guid id);
-        Task<IrAttachment> RegenerateAssetsBundlesAsync(Guid id);
-        Task<IrAttachment> RegisterAsMainAttachmentAsync(Guid id, IrAttachmentRegisterAsMainAttachmentRequestDto input);
+        Task<IrAttachment> CheckAsync(IrAttachmentCheckRequestDto input);
+        Task<IrAttachment> CopyDataAsync(IrAttachmentCopyDataRequestDto input);
+        Task<IrAttachment> CreateUniqueAsync(IrAttachmentCreateUniqueRequestDto input);
+        Task<IrAttachment> ForceStorageAsync(Guid[] ids);
+        Task<IrAttachment> GenerateAccessTokenAsync(Guid[] ids);
+        Task<IrAttachment> GetAsync(Guid[] ids);
+        Task<IrAttachment> GetServingGroupsAsync(Guid[] ids);
+        Task<IrAttachment> InitAsync(Guid[] ids);
+        Task<IrAttachment> PreviewAttachmentAsync(Guid[] ids);
+        Task<IrAttachment> RegenerateAssetsBundlesAsync(Guid[] ids);
+        Task<IrAttachment> RegisterAsMainAttachmentAsync(IrAttachmentRegisterAsMainAttachmentRequestDto input);
     }
 }

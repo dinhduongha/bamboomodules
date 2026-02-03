@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountReconcileModelPartnerMappingAppService : GenericApplicationService<AccountReconcileModelPartnerMapping>, IAccountReconcileModelPartnerMappingAppService
+    public partial class AccountReconcileModelPartnerMappingAppService : GenericAppService<AccountReconcileModelPartnerMapping>, IAccountReconcileModelPartnerMappingAppService
     {
 
         public AccountReconcileModelPartnerMappingAppService(IRepository<AccountReconcileModelPartnerMapping, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<AccountReconcileModelPartnerMapping> ValidateRegexAsync(Guid id)
+        public async Task<AccountReconcileModelPartnerMapping> ValidateRegexAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
@@ -45,7 +45,9 @@ namespace Bamboo.Core.Application.Services
             //     except re.error:
             //         raise ValidationError(_("The following regular expression is invalid to create a partner mapping: %s", current_regex))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsDemandForecastAppService : IGenericApplicationService<DmsDemandForecast>
+    public interface IDmsDemandForecastAppService : IGenericAppService<DmsDemandForecast>
     {
         Task GenerateForecastAsync(Guid forecastId);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsDemandForecastAppService : GenericApplicationService<DmsDemandForecast>, IDmsDemandForecastAppService
+    public class DmsDemandForecastAppService : GenericAppService<DmsDemandForecast>, IDmsDemandForecastAppService
     {
         public DmsDemandForecastAppService(
             IRepository<DmsDemandForecast, Guid> repository,

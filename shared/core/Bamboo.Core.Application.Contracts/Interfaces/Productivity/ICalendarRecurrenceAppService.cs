@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICalendarRecurrenceAppService : IGenericApplicationService<CalendarRecurrence>
     {
-        Task<CalendarRecurrence> GetRecurrenceNameAsync(Guid id);
+        Task<CalendarRecurrence> GetRecurrenceNameAsync(Guid[] ids);
     }
 }

@@ -28,8 +28,8 @@ public static partial class ModelBuilderExtensions
 
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
             entity.Property(e => e.PortalAccessLevel).HasColumnName("portal_access_level");
-            entity.Property(e => e.DashboardWidgetsJson).HasColumnName("dashboard_widgets_json");
-            entity.Property(e => e.AllowedFeaturesJson).HasColumnName("allowed_features_json");
+            entity.Property(e => e.DashboardWidgets);
+            entity.Property(e => e.AllowedFeatures);
             entity.Property(e => e.LastLoginDate).HasColumnName("last_login_date");
 
             entity.Property(e => e.CreationTime)

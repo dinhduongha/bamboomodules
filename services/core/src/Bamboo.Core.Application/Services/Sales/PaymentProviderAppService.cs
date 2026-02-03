@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Payment", Category = "Sales", Depends = new[] { "onboarding", "portal" })]
-    public partial class PaymentProviderAppService : GenericApplicationService<PaymentProvider>, IPaymentProviderAppService
+    public partial class PaymentProviderAppService : GenericAppService<PaymentProvider>, IPaymentProviderAppService
     {
 
         public PaymentProviderAppService(IRepository<PaymentProvider, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -75,6 +75,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> AdyenExtractPrefixFromApiUrlInternalAsync(object values)
         {
             /*
@@ -685,7 +686,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> ButtonImmediateInstallAsync(Guid id)
+        public async Task<PaymentProvider> ButtonImmediateInstallAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_provider.py) ---
@@ -704,7 +705,9 @@ namespace Bamboo.Core.Application.Services
             //         'tag': 'reload',
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> CheckAvailableCountryCurrencyIdsInternalAsync()
@@ -1100,7 +1103,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<PaymentProvider> CopyAsync(Guid id, List<string> fields, PaymentProvider defaultValues = null)
+        public override async Task<PaymentProvider> CopyAsync(CopyRequestDto<PaymentProvider> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: payment_provider.py) ---
@@ -1112,10 +1115,10 @@ namespace Bamboo.Core.Application.Services
             //             copy.website_id = src.website_id
             // return res
             */
-            return await base.CopyAsync(id, fields, defaultValues);
+            return await base.CopyAsync(input);
         }
 
-        public override async Task<PaymentProvider> CreateAsync(PaymentProvider entity, List<string> fields)
+        public override async Task<PaymentProvider> CreateAsync(CreateRequestDto<PaymentProvider> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_provider.py) ---
@@ -1136,7 +1139,7 @@ namespace Bamboo.Core.Application.Services
             // providers.filtered(lambda p: p.custom_mode == 'wire_transfer').pending_msg = None
             // return providers
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<PaymentProvider> DeactivateUnsupportedPaymentMethodsInternalAsync()
@@ -1215,7 +1218,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> GetBaseUrlAsync(Guid id)
+        public async Task<PaymentProvider> GetBaseUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: payment_provider.py) ---
@@ -1229,7 +1232,9 @@ namespace Bamboo.Core.Application.Services
             //     return iri_to_uri(request.httprequest.url_root)
             // return super().get_base_url()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> GetCodeInternalAsync()
@@ -1250,6 +1255,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> GetCompatibleProvidersInternalAsync(Guid company_id)
         {
             /*
@@ -1692,6 +1698,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> GetProviderDomainInternalAsync(object provider_code)
         {
             /*
@@ -1715,6 +1722,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> GetProviderPaymentMethodInternalAsync(object code)
         {
             /*
@@ -1767,6 +1775,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> GetRemovalValuesInternalAsync()
         {
             /*
@@ -2726,7 +2735,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> PaypalCreateWebhookAsync(Guid id)
+        public async Task<PaymentProvider> PaypalCreateWebhookAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_paypal, FILE: payment_provider.py) ---
@@ -2750,7 +2759,9 @@ namespace Bamboo.Core.Application.Services
             // webhook_data = self._send_api_request('POST', '/v1/notifications/webhooks', json=data)
             // self.paypal_webhook_id = webhook_data.get('id')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> PaypalFetchAccessTokenInternalAsync()
@@ -2892,7 +2903,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> RazorpayCreateWebhookAsync(Guid id)
+        public async Task<PaymentProvider> RazorpayCreateWebhookAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_razorpay, FILE: payment_provider.py) ---
@@ -2931,7 +2942,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> RazorpayRefreshAccessTokenInternalAsync()
@@ -2968,7 +2981,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> RecomputePendingMsgAsync(Guid id)
+        public async Task<PaymentProvider> RecomputePendingMsgAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_custom, FILE: payment_provider.py) ---
@@ -2991,7 +3004,9 @@ namespace Bamboo.Core.Application.Services
             //             f'<p><br></p>' \
             //             f'</div>'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> RedsysCalculateSignatureInternalAsync(object merchant_parameters, object reference, object secret_key)
@@ -3039,6 +3054,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> RemoveProviderInternalAsync(object provider_code)
         {
             /*
@@ -3064,7 +3080,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> ResetCredentialsAsync(Guid id)
+        public async Task<PaymentProvider> ResetCredentialsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_provider.py) ---
@@ -3084,7 +3100,9 @@ namespace Bamboo.Core.Application.Services
             //     **self._get_reset_values(),
             // })
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> SendApiRequestInternalAsync(object method, object endpoint)
@@ -3147,6 +3165,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> SetupPaymentMethodInternalAsync(object code)
         {
             /*
@@ -3163,6 +3182,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> SetupProviderInternalAsync(object provider_code)
         {
             /*
@@ -3214,7 +3234,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> StartOnboardingAsync(Guid id, PaymentProviderStartOnboardingRequestDto input)
+        public async Task<PaymentProvider> StartOnboardingAsync(PaymentProviderStartOnboardingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_provider.py) ---
@@ -3374,7 +3394,9 @@ namespace Bamboo.Core.Application.Services
             //         }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> StripeCreateAccountLinkInternalAsync(Guid connected_account_id, Guid menu_id)
@@ -3419,7 +3441,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> StripeCreateWebhookAsync(Guid id)
+        public async Task<PaymentProvider> StripeCreateWebhookAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_provider.py) ---
@@ -3462,7 +3484,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> StripeFetchOrCreateConnectedAccountInternalAsync()
@@ -3680,7 +3704,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> StripeVerifyApplePayDomainAsync(Guid id)
+        public async Task<PaymentProvider> StripeVerifyApplePayDomainAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_provider.py) ---
@@ -3716,10 +3740,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PaymentProvider> SyncPaymobPaymentMethodsAsync(Guid id)
+        public async Task<PaymentProvider> SyncPaymobPaymentMethodsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_paymob, FILE: payment_provider.py) ---
@@ -3767,10 +3793,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // return displayed_notification
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PaymentProvider> ToggleIsPublishedAsync(Guid id)
+        public async Task<PaymentProvider> ToggleIsPublishedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_provider.py) ---
@@ -3784,9 +3812,12 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("You cannot publish a disabled provider."))
             // self.is_published = not self.is_published
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentProvider> TogglePostProcessingCronInternalAsync()
         {
             /*
@@ -3842,7 +3873,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> UpdateMerchantDetailsAsync(Guid id)
+        public async Task<PaymentProvider> UpdateMerchantDetailsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_authorize, FILE: payment_provider.py) ---
@@ -3871,7 +3902,9 @@ namespace Bamboo.Core.Application.Services
             // self.available_currency_ids = [Command.set(currency.ids)]
             // self.authorize_client_key = res_content.get('publicClientKey')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> UpdatePaymentMethodIntegrationNamesInternalAsync(object matched_gateways_data)
@@ -3916,7 +3949,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> ViewPaymentMethodsAsync(Guid id)
+        public async Task<PaymentProvider> ViewPaymentMethodsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_provider.py) ---
@@ -3931,7 +3964,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'active_test': False, 'create': False},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentProvider> WorldlineCalculateSignatureInternalAsync(object method, object endpoint, object content_type, object dt_rfc, object idempotency_key)
@@ -3986,7 +4021,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, PaymentProvider entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<PaymentProvider> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_provider.py) ---
@@ -4018,7 +4053,7 @@ namespace Bamboo.Core.Application.Services
             // self._adyen_extract_prefix_from_api_url(vals)
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteForum", Category = "Website", Depends = new[] { "auth_signup", "website_mail", "website_profile" })]
-    public partial class ForumForumAppService : GenericApplicationService<ForumForum>, IForumForumAppService
+    public partial class ForumForumAppService : GenericAppService<ForumForum>, IForumForumAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -207,6 +207,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ForumForum> GetDefaultWelcomeMessageInternalAsync()
         {
             /*
@@ -251,7 +252,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumForum> GoToWebsiteAsync(Guid id)
+        public async Task<ForumForum> GoToWebsiteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_forum.py) ---
@@ -262,9 +263,12 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // return self.env['website'].get_client_action(self._compute_website_url())
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ForumForum> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*

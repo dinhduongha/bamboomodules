@@ -25,20 +25,23 @@ public partial class DmsRoute : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
     [Column("route_code")]
     public string RouteCode { get; set; } = null!;
 
     [Column("planned_date")]
-    public DateTime PlannedDate { get; set; }
+    public DateTimeOffset? PlannedDate { get; set; }
 
     [Column("status")]
     public string Status { get; set; } = "draft";
 
     [Column("total_distance_km")]
-    public decimal TotalDistanceKm { get; set; }
+    public decimal? TotalDistanceKm { get; set; }
 
     [Column("estimated_time_hours")]
-    public decimal EstimatedTimeHours { get; set; }
+    public decimal? EstimatedTimeHours { get; set; }
 
     [Column("vehicle_id")]
     public Guid? VehicleId { get; set; }
@@ -48,6 +51,24 @@ public partial class DmsRoute : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("start_checkpoint_id")]
     public Guid? StartCheckpointId { get; set; }
+
+    [Column("route_template_id")]
+    public Guid? RouteTemplateId { get; set; }
+
+    [Column("is_dynamic")]
+    public bool IsDynamic { get; set; } = true; // true: động, false: copy nguyên từ template
+
+    [Column("date")]
+    public DateTimeOffset? Date { get; set; } // Ngày áp dụng route này
+
+    [Column("h3_center")]
+    public string? H3Center { get; set; }  // hex trung tâm của route
+
+    [Column("geom_start")]
+    public NetTopologySuite.Geometries.Point? GeomStartPoint { get; set; }
+
+    [Column("geojson_start", TypeName = "jsonb")]
+    public string? GeoJsonStartPoint { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -71,15 +92,6 @@ public partial class DmsRoute : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public virtual ICollection<DmsRouteLine>? RouteLines { get; set; } = new List<DmsRouteLine>();
-
-    [Column("route_template_id")]
-    public Guid? RouteTemplateId { get; set; }
-
-    [Column("is_dynamic")]
-    public bool IsDynamic { get; set; } = true; // true: động, false: copy nguyên từ template
-
-    [Column("date")]
-    public DateTime Date { get; set; } // Ngày áp dụng route này
 
     // Navigation mới
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

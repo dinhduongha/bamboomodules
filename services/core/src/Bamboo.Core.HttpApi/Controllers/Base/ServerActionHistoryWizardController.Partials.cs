@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/restore-revision")]
-        public async Task<IActionResult> RestoreRevisionAsync(Guid id)
+        [Route("restore-revision")]
+        public async Task<IActionResult> RestoreRevisionAsync(Guid[] ids)
         {
-            var result = await _appService.RestoreRevisionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RestoreRevisionAsync(ids);
             return Ok(result);
         }
     }

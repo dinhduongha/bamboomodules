@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBlogBlogAppService : IGenericApplicationService<BlogBlog>
     {
-        Task<BlogBlog> AllTagsAsync(Guid id, BlogBlogAllTagsRequestDto input);
-        Task<BlogBlog> MessagePostAsync(Guid id);
+        Task<BlogBlog> AllTagsAsync(BlogBlogAllTagsRequestDto input);
+        Task<BlogBlog> MessagePostAsync(Guid[] ids);
     }
 }

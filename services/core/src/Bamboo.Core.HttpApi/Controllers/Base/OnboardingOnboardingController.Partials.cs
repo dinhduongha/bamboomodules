@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-close")]
-        public async Task<IActionResult> ActionCloseAsync(Guid id)
+        [Route("action-close")]
+        public async Task<IActionResult> ActionCloseAsync(Guid[] ids)
         {
-            var result = await _appService.CloseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CloseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-close-panel")]
-        public async Task<IActionResult> ActionClosePanelAsync(Guid id, [FromBody] OnboardingOnboardingClosePanelRequestDto input)
+        [Route("action-close-panel")]
+        public async Task<IActionResult> ActionClosePanelAsync(OnboardingOnboardingClosePanelRequestDto input)
         {
-            var result = await _appService.ClosePanelAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ClosePanelAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-close-panel-account-dashboard")]
-        public async Task<IActionResult> ActionClosePanelAccountDashboardAsync(Guid id)
+        [Route("action-close-panel-account-dashboard")]
+        public async Task<IActionResult> ActionClosePanelAccountDashboardAsync(Guid[] ids)
         {
-            var result = await _appService.ClosePanelAccountDashboardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ClosePanelAccountDashboardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-close-panel-account-invoice")]
-        public async Task<IActionResult> ActionClosePanelAccountInvoiceAsync(Guid id)
+        [Route("action-close-panel-account-invoice")]
+        public async Task<IActionResult> ActionClosePanelAccountInvoiceAsync(Guid[] ids)
         {
-            var result = await _appService.ClosePanelAccountInvoiceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ClosePanelAccountInvoiceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-refresh-progress-ids")]
-        public async Task<IActionResult> ActionRefreshProgressIdsAsync(Guid id)
+        [Route("action-refresh-progress-ids")]
+        public async Task<IActionResult> ActionRefreshProgressIdsAsync(Guid[] ids)
         {
-            var result = await _appService.RefreshProgressIdsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RefreshProgressIdsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-toggle-visibility")]
-        public async Task<IActionResult> ActionToggleVisibilityAsync(Guid id)
+        [Route("action-toggle-visibility")]
+        public async Task<IActionResult> ActionToggleVisibilityAsync(Guid[] ids)
         {
-            var result = await _appService.ToggleVisibilityAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ToggleVisibilityAsync(ids);
             return Ok(result);
         }
     }

@@ -10,16 +10,16 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIapAccountAppService : IGenericApplicationService<IapAccount>
     {
-        Task<IapAccount> BuyCreditsAsync(Guid id);
-        Task<IapAccount> GetAccountIdAsync(Guid id, IapAccountGetAccountIdRequestDto input);
-        Task<IapAccount> GetAsync(Guid id, IapAccountGetRequestDto input);
-        Task<IapAccount> GetConfigAccountUrlAsync(Guid id);
-        Task<IapAccount> GetCreditsAsync(Guid id, IapAccountGetCreditsRequestDto input);
-        Task<IapAccount> GetCreditsUrlAsync(Guid id, IapAccountGetCreditsUrlRequestDto input);
-        Task<IapAccount> OpenRegistrationWizardAsync(Guid id);
-        Task<IapAccount> OpenSenderNameWizardAsync(Guid id);
-        Task<IapAccount> ValidateWarningAlertsAsync(Guid id);
-        Task<IapAccount> WebReadAsync(Guid id);
-        Task<IapAccount> WebSaveAsync(Guid id);
+        Task<IapAccount> BuyCreditsAsync(Guid[] ids);
+        Task<IapAccount> GetAccountIdAsync(IapAccountGetAccountIdRequestDto input);
+        Task<IapAccount> GetAsync(IapAccountGetRequestDto input);
+        Task<IapAccount> GetConfigAccountUrlAsync(Guid[] ids);
+        Task<IapAccount> GetCreditsAsync(IapAccountGetCreditsRequestDto input);
+        Task<IapAccount> GetCreditsUrlAsync(IapAccountGetCreditsUrlRequestDto input);
+        Task<IapAccount> OpenRegistrationWizardAsync(Guid[] ids);
+        Task<IapAccount> OpenSenderNameWizardAsync(Guid[] ids);
+        Task<IapAccount> ValidateWarningAlertsAsync(Guid[] ids);
+        Task<IapAccount> WebReadAsync(Guid[] ids);
+        Task<IapAccount> WebSaveAsync(Guid[] ids);
     }
 }

@@ -11,7 +11,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Models;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsBIReportConfigAppService : IGenericApplicationService<DmsBIReportConfig>
+    public interface IDmsBIReportConfigAppService : IGenericAppService<DmsBIReportConfig>
     {
         Task GenerateReportAsync(Guid configId);
     }
@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsBIReportConfigAppService : GenericApplicationService<DmsBIReportConfig>, IDmsBIReportConfigAppService
+    public class DmsBIReportConfigAppService : GenericAppService<DmsBIReportConfig>, IDmsBIReportConfigAppService
     {
         public DmsBIReportConfigAppService(
             IRepository<DmsBIReportConfig, Guid> repository,

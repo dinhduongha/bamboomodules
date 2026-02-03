@@ -98,6 +98,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReloadAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITransifexCodeTranslationable
         {
             /*

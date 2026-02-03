@@ -25,13 +25,13 @@ public partial class DmsOutletInventoryCheck : FullAuditedAggregateRoot<Guid>, I
     public Guid? OrganizationUnitId { get; set; }
 
     [Column("outlet_visit_id")]
-    public Guid OutletVisitId { get; set; }
+    public Guid? OutletVisitId { get; set; }
 
     [Column("partner_id")]
-    public Guid PartnerId { get; set; }
+    public Guid? PartnerId { get; set; }
 
     [Column("product_id")]
-    public Guid ProductId { get; set; }
+    public Guid? ProductId { get; set; }
 
     [Column("checked_qty")]
     public decimal CheckedQty { get; set; }
@@ -42,8 +42,8 @@ public partial class DmsOutletInventoryCheck : FullAuditedAggregateRoot<Guid>, I
     [Column("variance_qty")]
     public decimal VarianceQty { get; set; }
 
-    [Column("photos_json")]
-    public string? PhotosJson { get; set; }
+    [Column("photos", TypeName = "jsonb")]
+    public string? Photos { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -60,4 +60,16 @@ public partial class DmsOutletInventoryCheck : FullAuditedAggregateRoot<Guid>, I
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("OutletVisitId")]
     public virtual DmsOutletVisit? OutletVisit { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("PartnerId")]
+    public virtual ResPartner? ResPartner { get; set; }
+
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
 }

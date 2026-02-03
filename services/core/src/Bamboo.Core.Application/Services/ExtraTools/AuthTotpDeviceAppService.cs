@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("AuthTotp", Category = "ExtraTools", Depends = new[] { "web" })]
-    public partial class AuthTotpDeviceAppService : GenericApplicationService<AuthTotpDevice>, IAuthTotpDeviceAppService
+    public partial class AuthTotpDeviceAppService : GenericAppService<AuthTotpDevice>, IAuthTotpDeviceAppService
     {
 
         public AuthTotpDeviceAppService(IRepository<AuthTotpDevice, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -180,7 +180,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AuthTotpDevice> InitAsync(Guid id)
+        public async Task<AuthTotpDevice> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -209,17 +209,21 @@ namespace Bamboo.Core.Application.Services
             //     table,
             // ))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AuthTotpDevice> RemoveAsync(Guid id)
+        public async Task<AuthTotpDevice> RemoveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def remove(self):
             // return self._remove()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AuthTotpDevice> RemoveInternalAsync()

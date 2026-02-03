@@ -30,8 +30,8 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.TradePromotionId).HasColumnName("trade_promotion_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.DeploymentDate).HasColumnName("deployment_date");
-            entity.Property(e => e.PhotosBeforeJson).HasColumnName("photos_before_json");
-            entity.Property(e => e.PhotosAfterJson).HasColumnName("photos_after_json");
+            entity.Property(e => e.PhotosBefore);
+            entity.Property(e => e.PhotosAfter);
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.Cost).HasColumnName("cost");
 

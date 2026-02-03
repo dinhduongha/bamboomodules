@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockLocationAppService : IGenericApplicationService<StockLocation>
     {
-        Task<StockLocation> CopyDataAsync(Guid id, StockLocationCopyDataRequestDto input);
-        Task<StockLocation> IsSubcontractAsync(Guid id);
-        Task<StockLocation> ShouldBypassReservationAsync(Guid id);
-        Task<StockLocation> ViewEquipmentsRecordsAsync(Guid id);
+        Task<StockLocation> CopyDataAsync(StockLocationCopyDataRequestDto input);
+        Task<StockLocation> IsSubcontractAsync(Guid[] ids);
+        Task<StockLocation> ShouldBypassReservationAsync(Guid[] ids);
+        Task<StockLocation> ViewEquipmentsRecordsAsync(Guid[] ids);
     }
 }

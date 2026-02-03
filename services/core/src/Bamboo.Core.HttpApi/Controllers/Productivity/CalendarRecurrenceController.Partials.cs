@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-recurrence-name")]
-        public async Task<IActionResult> GetRecurrenceNameAsync(Guid id)
+        [Route("get-recurrence-name")]
+        public async Task<IActionResult> GetRecurrenceNameAsync(Guid[] ids)
         {
-            var result = await _appService.GetRecurrenceNameAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetRecurrenceNameAsync(ids);
             return Ok(result);
         }
     }

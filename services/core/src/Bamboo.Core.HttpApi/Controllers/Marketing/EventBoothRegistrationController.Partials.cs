@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-confirm")]
-        public async Task<IActionResult> ActionConfirmAsync(Guid id)
+        [Route("action-confirm")]
+        public async Task<IActionResult> ActionConfirmAsync(Guid[] ids)
         {
-            var result = await _appService.ConfirmAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfirmAsync(ids);
             return Ok(result);
         }
     }

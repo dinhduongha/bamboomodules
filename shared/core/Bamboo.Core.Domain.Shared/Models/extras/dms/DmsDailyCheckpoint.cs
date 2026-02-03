@@ -24,17 +24,20 @@ public partial class DmsDailyCheckpoint : FullAuditedAggregateRoot<Guid>, IEntit
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
-    [Column("user_id")]
-    public Guid UserId { get; set; }
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
 
-    [Column("date")]
-    public DateTime Date { get; set; }
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
+
+    [Column("checkpoint_date")]
+    public DateTimeOffset? CheckpointDate { get; set; }
 
     [Column("checkpoint_type")]
-    public string CheckpointType { get; set; } = "start_at_warehouse";
+    public string? CheckpointType { get; set; } = "start_at_warehouse";
 
     [Column("check_in_time")]
-    public DateTime? CheckInTime { get; set; }
+    public DateTimeOffset? CheckInTime { get; set; }
 
     [Column("geo_latitude")]
     public decimal? GeoLatitude { get; set; }
@@ -42,14 +45,20 @@ public partial class DmsDailyCheckpoint : FullAuditedAggregateRoot<Guid>, IEntit
     [Column("geo_longitude")]
     public decimal? GeoLongitude { get; set; }
 
+    [Column("geom_check_in")]
+    public NetTopologySuite.Geometries.Point? GeomCheckInPoint { get; set; }
+
+    [Column("check_in_h3")]
+    public string? CheckInH3 { get; set; }
+
     [Column("status")]
-    public string Status { get; set; } = "pending";
+    public string? Status { get; set; } = "pending";
 
     [Column("notes")]
     public string? Notes { get; set; }
 
-    [Column("photos_json")]
-    public string? PhotosJson { get; set; }
+    [Column("photos", TypeName = "jsonb")]
+    public string? Photos { get; set; }
 
     [Column("provision_picking_id")]
     public Guid? ProvisionPickingId { get; set; }
@@ -65,6 +74,18 @@ public partial class DmsDailyCheckpoint : FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TeamId")]
+    public virtual ResTeam? Team { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]

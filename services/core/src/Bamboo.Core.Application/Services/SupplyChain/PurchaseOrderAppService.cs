@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Purchase", Category = "SupplyChain", Depends = new[] { "account" })]
-    public partial class PurchaseOrderAppService : GenericApplicationService<PurchaseOrder>, IPurchaseOrderAppService
+    public partial class PurchaseOrderAppService : GenericAppService<PurchaseOrder>, IPurchaseOrderAppService
     {
         private readonly IAccountDocumentImportMixinAppService _accountDocumentImportMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -35,14 +35,16 @@ namespace Bamboo.Core.Application.Services
             _productCatalogMixinAppService = productCatalogMixinAppService;
         }
 
-        public async Task<PurchaseOrder> AcknowledgeAsync(Guid id)
+        public async Task<PurchaseOrder> AcknowledgeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def action_acknowledge(self):
             // self.acknowledged = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> ActivityCancelOnSaleInternalAsync()
@@ -73,7 +75,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> AddFromCatalogAsync(Guid id)
+        public async Task<PurchaseOrder> AddFromCatalogAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -92,7 +94,9 @@ namespace Bamboo.Core.Application.Services
             // action['views'] = [(kanban_view_id, view_type) if view_type == 'kanban' else (view_id, view_type) for (view_id, view_type) in action['views']]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> AddPickingInfoInternalAsync(object activity)
@@ -292,7 +296,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> BillMatchingAsync(Guid id)
+        public async Task<PurchaseOrder> BillMatchingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -310,10 +314,12 @@ namespace Bamboo.Core.Application.Services
             //     'views': [(self.env.ref('purchase.purchase_bill_line_match_tree').id, 'list')],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ButtonApproveAsync(Guid id, PurchaseOrderButtonApproveRequestDto input)
+        public async Task<PurchaseOrder> ButtonApproveAsync(PurchaseOrderButtonApproveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -328,10 +334,12 @@ namespace Bamboo.Core.Application.Services
             // self._create_picking()
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ButtonCancelAsync(Guid id)
+        public async Task<PurchaseOrder> ButtonCancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -405,10 +413,12 @@ namespace Bamboo.Core.Application.Services
             // self.sudo()._activity_cancel_on_sale()
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ButtonConfirmAsync(Guid id)
+        public async Task<PurchaseOrder> ButtonConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -445,10 +455,12 @@ namespace Bamboo.Core.Application.Services
             // res = super(PurchaseOrder, self).button_confirm()
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ButtonDraftAsync(Guid id)
+        public async Task<PurchaseOrder> ButtonDraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -456,27 +468,33 @@ namespace Bamboo.Core.Application.Services
             // self.write({'state': 'draft'})
             // return {}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ButtonLockAsync(Guid id)
+        public async Task<PurchaseOrder> ButtonLockAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def button_lock(self):
             // self.locked = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ButtonUnlockAsync(Guid id)
+        public async Task<PurchaseOrder> ButtonUnlockAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def button_unlock(self):
             // self.locked = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> CheckOrderLineCompanyIdInternalAsync()
@@ -502,7 +520,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> CompareAlternativeLinesAsync(Guid id)
+        public async Task<PurchaseOrder> CompareAlternativeLinesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
@@ -523,7 +541,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> ComputeAccessUrlInternalAsync()
@@ -963,7 +983,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> CreateAlternativeAsync(Guid id)
+        public async Task<PurchaseOrder> CreateAlternativeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
@@ -979,10 +999,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<PurchaseOrder> CreateAsync(PurchaseOrder entity, List<string> fields)
+        public override async Task<PurchaseOrder> CreateAsync(CreateRequestDto<PurchaseOrder> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1018,10 +1040,10 @@ namespace Bamboo.Core.Application.Services
             //         )
             // return orders
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<PurchaseOrder> CreateDocumentFromAttachmentAsync(Guid id, PurchaseOrderCreateDocumentFromAttachmentRequestDto input)
+        public async Task<PurchaseOrder> CreateDocumentFromAttachmentAsync(PurchaseOrderCreateDocumentFromAttachmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1040,7 +1062,9 @@ namespace Bamboo.Core.Application.Services
             // orders = self.with_context(default_partner_id=self.env.user.partner_id.id)._create_records_from_attachments(attachments)
             // return orders._get_records_action(name=_("Generated Orders"))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> CreateDownpaymentsInternalAsync(object line_vals)
@@ -1072,7 +1096,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> CreateInvoiceAsync(Guid id, PurchaseOrderCreateInvoiceRequestDto input)
+        public async Task<PurchaseOrder> CreateInvoiceAsync(PurchaseOrderCreateInvoiceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1151,7 +1175,9 @@ namespace Bamboo.Core.Application.Services
             // attachments.write({'res_model': 'account.move', 'res_id': invoices.id})
             // return self.action_view_invoice(invoices)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> CreatePickingInternalAsync()
@@ -1233,6 +1259,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrder> DefaultPickingTypeInternalAsync()
         {
             /*
@@ -1282,14 +1309,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetAcknowledgeUrlAsync(Guid id)
+        public async Task<PurchaseOrder> GetAcknowledgeUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def get_acknowledge_url(self):
             // return self.get_portal_url(query_string='&acknowledge=True')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> GetActionAddFromCatalogExtraContextInternalAsync()
@@ -1344,7 +1373,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetConfirmUrlAsync(Guid id, PurchaseOrderGetConfirmUrlRequestDto input)
+        public async Task<PurchaseOrder> GetConfirmUrlAsync(PurchaseOrderGetConfirmUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1356,7 +1385,9 @@ namespace Bamboo.Core.Application.Services
             //     return self.get_acknowledge_url()
             // return self.get_portal_url()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> GetDefaultCreateSectionValuesInternalAsync()
@@ -1474,7 +1505,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<PurchaseOrder> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1484,7 +1516,9 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/purchase/static/xls/requests_for_quotation_import_template.xlsx',
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> GetInvoicedInternalAsync()
@@ -1517,6 +1551,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrder> GetLineValsListInternalAsync(object lines_vals)
         {
             /*
@@ -1538,7 +1573,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetLocalizedDatePlannedAsync(Guid id, PurchaseOrderGetLocalizedDatePlannedRequestDto input)
+        public async Task<PurchaseOrder> GetLocalizedDatePlannedAsync(PurchaseOrderGetLocalizedDatePlannedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1554,7 +1589,9 @@ namespace Bamboo.Core.Application.Services
             // tz = self.get_order_timezone()
             // return date_planned.astimezone(tz)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> GetMatrixInternalAsync(object product_template)
@@ -1603,7 +1640,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetOrderTimezoneAsync(Guid id)
+        public async Task<PurchaseOrder> GetOrderTimezoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1613,9 +1650,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return timezone(self.user_id.tz or self.company_id.partner_id.tz or 'UTC')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrder> GetOrdersToRemindInternalAsync()
         {
             /*
@@ -1648,6 +1688,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrder> GetPickingTypeInternalAsync(Guid company_id)
         {
             /*
@@ -1792,7 +1833,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetReportMatrixesAsync(Guid id)
+        public async Task<PurchaseOrder> GetReportMatrixesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_product_matrix, FILE: purchase.py) ---
@@ -1814,7 +1855,9 @@ namespace Bamboo.Core.Application.Services
             //             matrixes.append(matrix)
             // return matrixes
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> GetSaleOrdersInternalAsync()
@@ -1842,7 +1885,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetTenderBestLinesAsync(Guid id)
+        public async Task<PurchaseOrder> GetTenderBestLinesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
@@ -1891,10 +1934,12 @@ namespace Bamboo.Core.Application.Services
             //     best_price_unit_ids.update(lines.ids)
             // return list(best_price_ids), list(best_date_ids), list(best_price_unit_ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> GetUpdateUrlAsync(Guid id)
+        public async Task<PurchaseOrder> GetUpdateUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1904,7 +1949,9 @@ namespace Bamboo.Core.Application.Services
             // update_param = url_encode({'update': 'True'})
             // return self.get_portal_url(query_string='&%s' % update_param)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> IsDisplayStockInCatalogInternalAsync()
@@ -1996,7 +2043,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> MergeAsync(Guid id)
+        public async Task<PurchaseOrder> MergeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2081,10 +2128,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('id', 'in', merged_rfq_ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> MessagePostAsync(Guid id)
+        public async Task<PurchaseOrder> MessagePostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2094,7 +2143,9 @@ namespace Bamboo.Core.Application.Services
             //     kwargs['notify_author_mention'] = kwargs.get('notify_author_mention', True)
             // return super().message_post(**kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> MustDeleteDatePlannedInternalAsync(object field_name)
@@ -2181,7 +2232,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> OnchangeDatePlannedAsync(Guid id)
+        public async Task<PurchaseOrder> OnchangeDatePlannedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2189,10 +2240,12 @@ namespace Bamboo.Core.Application.Services
             // if self.date_planned:
             //     self.order_line.filtered(lambda line: not line.display_type).date_planned = self.date_planned
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> OnchangePartnerIdAsync(Guid id)
+        public async Task<PurchaseOrder> OnchangePartnerIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2210,10 +2263,12 @@ namespace Bamboo.Core.Application.Services
             //         self.user_id = self.partner_id.buyer_id
             // return {}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> OnchangePickingTypeIdAsync(Guid id)
+        public async Task<PurchaseOrder> OnchangePickingTypeIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_dropshipping, FILE: purchase.py) ---
@@ -2223,7 +2278,9 @@ namespace Bamboo.Core.Application.Services
             //         'warning': {'title': _('Warning'), 'message': _('Please note this purchase order is for subcontracting purposes.')}
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> OnchangeRequisitionIdInternalAsync()
@@ -2296,7 +2353,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> OpenBusinessDocAsync(Guid id)
+        public async Task<PurchaseOrder> OpenBusinessDocAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2310,7 +2367,9 @@ namespace Bamboo.Core.Application.Services
             //     'views': [(False, 'form')],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> PrepareDownPaymentSectionValuesInternalAsync()
@@ -2459,7 +2518,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> PrintQuotationAsync(Guid id)
+        public async Task<PurchaseOrder> PrintQuotationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2467,10 +2526,12 @@ namespace Bamboo.Core.Application.Services
             // self.filtered(lambda po: po.state == 'draft').write({'state': "sent"})
             // return self.env.ref('purchase.report_purchase_quotation').report_action(self)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> PurchaseComparisonAsync(Guid id)
+        public async Task<PurchaseOrder> PurchaseComparisonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2481,10 +2542,12 @@ namespace Bamboo.Core.Application.Services
             // action['display_name'] = _("Purchase Comparison for %s", self.display_name)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> PurchaseOrderSuggestAsync(Guid id)
+        public async Task<PurchaseOrder> PurchaseOrderSuggestAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
@@ -2534,7 +2597,9 @@ namespace Bamboo.Core.Application.Services
             // # Return the change in number of po_lines for the given section
             // return sum({"CREATE": 1, "UNLINK": -1}.get(line[0].name, 0) for line in po_lines_commands)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> RemoveReferenceInternalAsync(object reference)
@@ -2549,7 +2614,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> RetrieveDashboardAsync(Guid id)
+        [ApiModel]
+        public async Task<PurchaseOrder> RetrieveDashboardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2665,10 +2731,12 @@ namespace Bamboo.Core.Application.Services
             // result['days_to_purchase'] = self.env.company.days_to_purchase
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> RfqSendAsync(Guid id)
+        public async Task<PurchaseOrder> RfqSendAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2728,7 +2796,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> SearchIsLateInternalAsync(object @operator, object @value)
@@ -2828,7 +2898,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> SendReminderPreviewAsync(Guid id)
+        public async Task<PurchaseOrder> SendReminderPreviewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2848,7 +2918,9 @@ namespace Bamboo.Core.Application.Services
             //     )
             //     return {'toast_message': escape(_("A sample email has been sent to %s.", self.env.user.email))}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrder> SetGridUpInternalAsync()
@@ -2991,17 +3063,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> ViewDropshipAsync(Guid id)
+        public async Task<PurchaseOrder> ViewDropshipAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: purchase.py) ---
             // def action_view_dropship(self):
             // return self._get_action_view_picking(self.picking_ids.filtered(lambda p: p.is_dropship))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ViewInvoiceAsync(Guid id, PurchaseOrderViewInvoiceRequestDto input)
+        public async Task<PurchaseOrder> ViewInvoiceAsync(PurchaseOrderViewInvoiceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -3034,10 +3108,12 @@ namespace Bamboo.Core.Application.Services
             //     result['context']['default_partner_id'] = self.partner_id.id
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ViewMrpProductionsAsync(Guid id)
+        public async Task<PurchaseOrder> ViewMrpProductionsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: purchase.py) ---
@@ -3061,10 +3137,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ViewPickingAsync(Guid id)
+        public async Task<PurchaseOrder> ViewPickingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order.py) ---
@@ -3074,10 +3152,12 @@ namespace Bamboo.Core.Application.Services
             // def action_view_picking(self):
             // return self._get_action_view_picking(self.picking_ids.filtered(lambda p: not p.is_dropship))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ViewRepairOrdersAsync(Guid id)
+        public async Task<PurchaseOrder> ViewRepairOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_repair, FILE: purchase_order.py) ---
@@ -3097,10 +3177,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('id', 'in', repair_ids.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ViewSaleOrdersAsync(Guid id)
+        public async Task<PurchaseOrder> ViewSaleOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_purchase, FILE: purchase_order.py) ---
@@ -3124,20 +3206,24 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrder> ViewSubcontractingResupplyAsync(Guid id)
+        public async Task<PurchaseOrder> ViewSubcontractingResupplyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_purchase, FILE: purchase_order.py) ---
             // def action_view_subcontracting_resupply(self):
             // return self._get_action_view_picking(self._get_subcontracting_resupplies())
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, PurchaseOrder entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<PurchaseOrder> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
@@ -3187,7 +3273,7 @@ namespace Bamboo.Core.Application.Services
             //             order._log_decrease_ordered_quantity(to_log)
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

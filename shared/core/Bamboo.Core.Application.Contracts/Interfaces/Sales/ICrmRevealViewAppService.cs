@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICrmRevealViewAppService : IGenericApplicationService<CrmRevealView>
     {
-        Task<CrmRevealView> InitAsync(Guid id);
+        Task<CrmRevealView> InitAsync(Guid[] ids);
     }
 }

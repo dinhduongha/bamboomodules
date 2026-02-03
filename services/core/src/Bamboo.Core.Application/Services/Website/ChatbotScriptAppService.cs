@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("ImLivechat", Category = "Website", Depends = new[] { "mail", "rating", "digest", "utm" })]
-    public partial class ChatbotScriptAppService : GenericApplicationService<ChatbotScript>, IChatbotScriptAppService
+    public partial class ChatbotScriptAppService : GenericAppService<ChatbotScript>, IChatbotScriptAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IUtmSourceMixinAppService _utmSourceMixinAppService;
@@ -93,7 +93,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ChatbotScript> CopyDataAsync(Guid id, ChatbotScriptCopyDataRequestDto input)
+        public async Task<ChatbotScript> CopyDataAsync(ChatbotScriptCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
@@ -101,7 +101,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, title=self.env._("%s (copy)", script.title)) for script, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ChatbotScript> GetChatbotLanguageInternalAsync()
@@ -198,7 +200,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ChatbotScript> TestScriptAsync(Guid id)
+        public async Task<ChatbotScript> TestScriptAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: chatbot_script.py) ---
@@ -210,7 +212,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'self',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ChatbotScript> ToStoreDefaultsInternalAsync(object target)
@@ -249,7 +253,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ChatbotScript> ViewLeadsAsync(Guid id)
+        public async Task<ChatbotScript> ViewLeadsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_livechat, FILE: chatbot_script.py) ---
@@ -260,10 +264,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'create': False}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ChatbotScript> ViewLivechatChannelsAsync(Guid id)
+        public async Task<ChatbotScript> ViewLivechatChannelsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
@@ -273,7 +279,9 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('rule_ids.chatbot_script_id', 'in', self.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

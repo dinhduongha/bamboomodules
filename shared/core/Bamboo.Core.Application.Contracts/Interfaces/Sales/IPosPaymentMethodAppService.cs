@@ -10,33 +10,33 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPosPaymentMethodAppService : IGenericApplicationService<PosPaymentMethod>
     {
-        Task<PosPaymentMethod> CopyDataAsync(Guid id, PosPaymentMethodCopyDataRequestDto input);
-        Task<PosPaymentMethod> ForcePdvAsync(Guid id);
-        Task<PosPaymentMethod> GetLatestAdyenStatusAsync(Guid id);
-        Task<PosPaymentMethod> GetLatestVivaComStatusAsync(Guid id);
-        Task<PosPaymentMethod> GetProviderStatusAsync(Guid id, PosPaymentMethodGetProviderStatusRequestDto input);
-        Task<PosPaymentMethod> GetQrCodeAsync(Guid id, PosPaymentMethodGetQrCodeRequestDto input);
-        Task<PosPaymentMethod> MpGetPaymentStatusAsync(Guid id, PosPaymentMethodMpGetPaymentStatusRequestDto input);
-        Task<PosPaymentMethod> MpPaymentIntentCancelAsync(Guid id, PosPaymentMethodMpPaymentIntentCancelRequestDto input);
-        Task<PosPaymentMethod> MpPaymentIntentCreateAsync(Guid id, PosPaymentMethodMpPaymentIntentCreateRequestDto input);
-        Task<PosPaymentMethod> MpPaymentIntentGetAsync(Guid id, PosPaymentMethodMpPaymentIntentGetRequestDto input);
-        Task<PosPaymentMethod> PineLabsCancelPaymentRequestAsync(Guid id, PosPaymentMethodPineLabsCancelPaymentRequestRequestDto input);
-        Task<PosPaymentMethod> PineLabsFetchPaymentStatusAsync(Guid id, PosPaymentMethodPineLabsFetchPaymentStatusRequestDto input);
-        Task<PosPaymentMethod> PineLabsMakePaymentRequestAsync(Guid id, PosPaymentMethodPineLabsMakePaymentRequestRequestDto input);
-        Task<PosPaymentMethod> ProxyAdyenRequestAsync(Guid id, PosPaymentMethodProxyAdyenRequestRequestDto input);
-        Task<PosPaymentMethod> QfpaySignRequestAsync(Guid id, PosPaymentMethodQfpaySignRequestRequestDto input);
-        Task<PosPaymentMethod> RazorpayCancelPaymentRequestAsync(Guid id, PosPaymentMethodRazorpayCancelPaymentRequestRequestDto input);
-        Task<PosPaymentMethod> RazorpayFetchPaymentStatusAsync(Guid id, PosPaymentMethodRazorpayFetchPaymentStatusRequestDto input);
-        Task<PosPaymentMethod> RazorpayMakePaymentRequestAsync(Guid id, PosPaymentMethodRazorpayMakePaymentRequestRequestDto input);
-        Task<PosPaymentMethod> RazorpayMakeRefundRequestAsync(Guid id, PosPaymentMethodRazorpayMakeRefundRequestRequestDto input);
-        Task<PosPaymentMethod> SendDpopayRequestAsync(Guid id, PosPaymentMethodSendDpopayRequestRequestDto input);
-        Task<PosPaymentMethod> StripeCapturePaymentAsync(Guid id, PosPaymentMethodStripeCapturePaymentRequestDto input);
-        Task<PosPaymentMethod> StripeConnectionTokenAsync(Guid id);
-        Task<PosPaymentMethod> StripeKeyAsync(Guid id);
-        Task<PosPaymentMethod> StripePaymentIntentAsync(Guid id, PosPaymentMethodStripePaymentIntentRequestDto input);
-        Task<PosPaymentMethod> VivaComGetPaymentStatusAsync(Guid id, PosPaymentMethodVivaComGetPaymentStatusRequestDto input);
-        Task<PosPaymentMethod> VivaComSendPaymentCancelAsync(Guid id, PosPaymentMethodVivaComSendPaymentCancelRequestDto input);
-        Task<PosPaymentMethod> VivaComSendPaymentRequestAsync(Guid id, PosPaymentMethodVivaComSendPaymentRequestRequestDto input);
-        Task<PosPaymentMethod> VivaComSendRefundRequestAsync(Guid id, PosPaymentMethodVivaComSendRefundRequestRequestDto input);
+        Task<PosPaymentMethod> CopyDataAsync(PosPaymentMethodCopyDataRequestDto input);
+        Task<PosPaymentMethod> ForcePdvAsync(Guid[] ids);
+        Task<PosPaymentMethod> GetLatestAdyenStatusAsync(Guid[] ids);
+        Task<PosPaymentMethod> GetLatestVivaComStatusAsync(Guid[] ids);
+        Task<PosPaymentMethod> GetProviderStatusAsync(PosPaymentMethodGetProviderStatusRequestDto input);
+        Task<PosPaymentMethod> GetQrCodeAsync(PosPaymentMethodGetQrCodeRequestDto input);
+        Task<PosPaymentMethod> MpGetPaymentStatusAsync(PosPaymentMethodMpGetPaymentStatusRequestDto input);
+        Task<PosPaymentMethod> MpPaymentIntentCancelAsync(PosPaymentMethodMpPaymentIntentCancelRequestDto input);
+        Task<PosPaymentMethod> MpPaymentIntentCreateAsync(PosPaymentMethodMpPaymentIntentCreateRequestDto input);
+        Task<PosPaymentMethod> MpPaymentIntentGetAsync(PosPaymentMethodMpPaymentIntentGetRequestDto input);
+        Task<PosPaymentMethod> PineLabsCancelPaymentRequestAsync(PosPaymentMethodPineLabsCancelPaymentRequestRequestDto input);
+        Task<PosPaymentMethod> PineLabsFetchPaymentStatusAsync(PosPaymentMethodPineLabsFetchPaymentStatusRequestDto input);
+        Task<PosPaymentMethod> PineLabsMakePaymentRequestAsync(PosPaymentMethodPineLabsMakePaymentRequestRequestDto input);
+        Task<PosPaymentMethod> ProxyAdyenRequestAsync(PosPaymentMethodProxyAdyenRequestRequestDto input);
+        Task<PosPaymentMethod> QfpaySignRequestAsync(PosPaymentMethodQfpaySignRequestRequestDto input);
+        Task<PosPaymentMethod> RazorpayCancelPaymentRequestAsync(PosPaymentMethodRazorpayCancelPaymentRequestRequestDto input);
+        Task<PosPaymentMethod> RazorpayFetchPaymentStatusAsync(PosPaymentMethodRazorpayFetchPaymentStatusRequestDto input);
+        Task<PosPaymentMethod> RazorpayMakePaymentRequestAsync(PosPaymentMethodRazorpayMakePaymentRequestRequestDto input);
+        Task<PosPaymentMethod> RazorpayMakeRefundRequestAsync(PosPaymentMethodRazorpayMakeRefundRequestRequestDto input);
+        Task<PosPaymentMethod> SendDpopayRequestAsync(PosPaymentMethodSendDpopayRequestRequestDto input);
+        Task<PosPaymentMethod> StripeCapturePaymentAsync(PosPaymentMethodStripeCapturePaymentRequestDto input);
+        Task<PosPaymentMethod> StripeConnectionTokenAsync(Guid[] ids);
+        Task<PosPaymentMethod> StripeKeyAsync(Guid[] ids);
+        Task<PosPaymentMethod> StripePaymentIntentAsync(PosPaymentMethodStripePaymentIntentRequestDto input);
+        Task<PosPaymentMethod> VivaComGetPaymentStatusAsync(PosPaymentMethodVivaComGetPaymentStatusRequestDto input);
+        Task<PosPaymentMethod> VivaComSendPaymentCancelAsync(PosPaymentMethodVivaComSendPaymentCancelRequestDto input);
+        Task<PosPaymentMethod> VivaComSendPaymentRequestAsync(PosPaymentMethodVivaComSendPaymentRequestRequestDto input);
+        Task<PosPaymentMethod> VivaComSendRefundRequestAsync(PosPaymentMethodVivaComSendRefundRequestRequestDto input);
     }
 }

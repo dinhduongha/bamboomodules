@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-rates-for-spreadsheet")]
-        public async Task<IActionResult> GetRatesForSpreadsheetAsync(Guid id, [FromBody] ResCurrencyRateGetRatesForSpreadsheetRequestDto input)
+        [Route("get-rates-for-spreadsheet")]
+        public async Task<IActionResult> GetRatesForSpreadsheetAsync(ResCurrencyRateGetRatesForSpreadsheetRequestDto input)
         {
-            var result = await _appService.GetRatesForSpreadsheetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetRatesForSpreadsheetAsync(input);
             return Ok(result);
         }
     }

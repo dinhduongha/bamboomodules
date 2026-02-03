@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/accept-challenge")]
-        public async Task<IActionResult> AcceptChallengeAsync(Guid id)
+        [Route("accept-challenge")]
+        public async Task<IActionResult> AcceptChallengeAsync(Guid[] ids)
         {
-            var result = await _appService.AcceptChallengeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AcceptChallengeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-check")]
-        public async Task<IActionResult> ActionCheckAsync(Guid id)
+        [Route("action-check")]
+        public async Task<IActionResult> ActionCheckAsync(Guid[] ids)
         {
-            var result = await _appService.CheckAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-report-progress")]
-        public async Task<IActionResult> ActionReportProgressAsync(Guid id)
+        [Route("action-report-progress")]
+        public async Task<IActionResult> ActionReportProgressAsync(Guid[] ids)
         {
-            var result = await _appService.ReportProgressAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReportProgressAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-start")]
-        public async Task<IActionResult> ActionStartAsync(Guid id)
+        [Route("action-start")]
+        public async Task<IActionResult> ActionStartAsync(Guid[] ids)
         {
-            var result = await _appService.StartAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StartAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-users")]
-        public async Task<IActionResult> ActionViewUsersAsync(Guid id)
+        [Route("action-view-users")]
+        public async Task<IActionResult> ActionViewUsersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewUsersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewUsersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/discard-challenge")]
-        public async Task<IActionResult> DiscardChallengeAsync(Guid id)
+        [Route("discard-challenge")]
+        public async Task<IActionResult> DiscardChallengeAsync(Guid[] ids)
         {
-            var result = await _appService.DiscardChallengeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DiscardChallengeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/report-progress")]
-        public async Task<IActionResult> ReportProgressAsync(Guid id, [FromBody] GamificationChallengeReportProgressRequestDto input)
+        [Route("report-progress")]
+        public async Task<IActionResult> ReportProgressAsync(GamificationChallengeReportProgressRequestDto input)
         {
-            var result = await _appService.ReportProgressAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ReportProgressAsync(input);
             return Ok(result);
         }
     }

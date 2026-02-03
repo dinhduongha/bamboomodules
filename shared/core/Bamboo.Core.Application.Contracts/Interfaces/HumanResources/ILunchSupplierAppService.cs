@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ILunchSupplierAppService : IGenericApplicationService<LunchSupplier>
     {
-        Task<LunchSupplier> ConfirmOrdersAsync(Guid id);
-        Task<LunchSupplier> SendOrdersAsync(Guid id);
+        Task<LunchSupplier> ConfirmOrdersAsync(Guid[] ids);
+        Task<LunchSupplier> SendOrdersAsync(Guid[] ids);
     }
 }

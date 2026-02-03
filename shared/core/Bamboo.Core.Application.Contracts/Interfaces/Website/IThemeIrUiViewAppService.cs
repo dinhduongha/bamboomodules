@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IThemeIrUiViewAppService : IGenericApplicationService<ThemeIrUiView>
     {
-        Task<ThemeIrUiView> ComputeArchFsAsync(Guid id);
+        Task<ThemeIrUiView> ComputeArchFsAsync(Guid[] ids);
     }
 }

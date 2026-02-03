@@ -197,6 +197,28 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
             field_info['related_model'] = 'website'
             logging.info(f"  -> Heuristic applied: Field '{field_name}' assuming related model is 'website'.")
 
+        # --- [NEW] XỬ LÝ SELECTION RELATED ---
+        # Chỉ xử lý riêng nếu là Selection VÀ có thuộc tính related
+        if field_type == 'selection' and field_info.get('related'):
+            related_path = field_info.get('related')
+            # Lấy thông tin model gốc nếu parse được từ trước, hoặc để trống
+            target_model = field_info.get('related_model', 'Unknown (Check related path)')
+            
+            # Odoo related mặc định store=False (Computed), nếu store=True thì là cột vật lý
+            is_stored = field_info.get('attributes', {}).get('Store', False)
+            mapping_attr = f'[Column("{field_name}")]' if is_stored else "[NotMapped]"
+            
+            # Note: Dùng string vì selection related lấy GIÁ TRỊ key (text/int), không phải ID (Guid)
+            return f"""
+            // Related Selection Info:
+            // - Related Path: {related_path}
+            // - Target Model: {target_model}
+            [OdooField(String = "{field_info['attributes'].get('String', pascal_field_name)}", IsRelated = true)]
+            {mapping_attr}
+            public string? {pascal_field_name} {{ get; set; }}
+            """
+        # -------------------------------------
+
         if field_type in ['many2one', 'one2many', 'many2many'] and 'related_model' not in field_info:
             nav_prop_name = to_pascal_case(field_name.removesuffix('_id'))
             if field_type == 'many2one':
@@ -348,6 +370,89 @@ def create_enum_content(project_base_name, module_name, model_name, field_name, 
     content += "    }\n}"
     return format_csharp_code(content)
 
+def create_enum_content2(project_base_name, module_grouping_name, model_name, field_name, selection_data, flat_model_ns, source_module="unknown", source_file="unknown", related_info=None, selection_add_data=None):
+    pascal_model = to_pascal_case(model_name)
+    pascal_field = to_pascal_case(field_name)
+    enum_name = f"{pascal_model}{pascal_field}"
+    
+    if flat_model_ns:
+        namespace = f"{project_base_name}.Models.Enums"
+    else:
+        namespace = f"{project_base_name}.Domain.Enums.{module_grouping_name}"
+    namespace = f"{project_base_name}.Domain.Shared.Enums"
+
+    source_file_name = Path(source_file).name if source_file != 'unknown' else 'unknown'
+
+    sb = []
+    sb.append(f"// Source: Module: '{source_module}', File: '{source_file_name}', Field: {field_name} = fields.Selection")
+    sb.append("using System;")
+    sb.append("using System.ComponentModel;")
+    sb.append("")
+    sb.append(f"namespace {namespace}")
+    sb.append("{")
+    sb.append(f"    public enum {enum_name}Enum")
+    sb.append("    {")
+
+    # --- CASE 1: RELATED FIELD ---
+    if related_info:
+        sb.append(f"        // This field is RELATED to: {related_info}")
+        sb.append(f"        // Values are defined in the related model.")
+        
+        # Nếu related mà không có selection override, tạo placeholder
+        if not selection_data and not selection_add_data:
+            sb.append(f'        [Description("Placeholder for Related Field")]')
+            sb.append("        RelatedValuePlaceholder,")
+
+    # --- CASE 2: SELECTION ADD (Gộp dữ liệu) ---
+    final_items = []
+    
+    # 2a. Base Selection
+    if isinstance(selection_data, (list, tuple)):
+        final_items.extend(selection_data)
+    elif selection_data:
+         # Selection là reference string/func
+         sb.append(f"        // Base Selection is dynamic/reference: '{selection_data}'")
+
+    # 2b. Selection Add
+    if isinstance(selection_add_data, (list, tuple)):
+        sb.append(f"        // --- Added via selection_add ---")
+        final_items.extend(selection_add_data)
+    
+    # --- GENERATE MEMBERS ---
+    if final_items:
+        for item in final_items:
+            key, label = None, None
+            
+            if isinstance(item, (list, tuple)):
+                if len(item) >= 2: key, label = item[0], item[1]
+                elif len(item) == 1: key = label = item[0]
+            elif isinstance(item, (str, int, float)):
+                key = label = item
+
+            if key is None: continue
+
+            csharp_key = to_pascal_case(key)
+            if not csharp_key or csharp_key[0].isdigit(): csharp_key = f"Item{csharp_key}"
+            if not csharp_key: csharp_key = "None"
+            
+            safe_label = str(label).replace('"', '\\"')
+            sb.append(f'        [Description("{safe_label}")]')
+            
+            if isinstance(key, int) and str(key).isdigit():
+                 sb.append(f'        {csharp_key} = {key},')
+            else:
+                 sb.append(f'        {csharp_key},')
+
+    # Fallback nếu không có item nào (và ko phải related placeholder)
+    if not final_items and not related_info:
+        sb.append(f"        // TODO: Could not parse selection values.")
+        sb.append(f"        Option1,")
+
+    sb.append("    }")
+    sb.append("}")
+    
+    return "\n".join(sb)
+
 def create_partial_model_content(project_base_name, module_name, model_name, computed_fields, all_methods, flat_model_ns, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
@@ -420,7 +525,7 @@ def create_service_interface_content(project_base_name, module_name, model_name,
         using_statements.append(f"using {entity_namespace};")
         using_statements.append(f"using {dto_namespace};")
     else:
-        base_interface = f"IGenericApplicationService<{pascal_model}>"
+        base_interface = f"IGenericAppService<{pascal_model}>"
         using_statements.extend([f"using {entity_namespace};", f"using {project_base_name}.Application.Contracts;", f"using {dto_namespace};"])
     
     content = f"""
@@ -464,8 +569,10 @@ def create_service_interface_content(project_base_name, module_name, model_name,
 
     for item in sorted_method_info:
         service_method_name, implementations = item['csharp_name'], item['implementations']
-        last_impl = implementations[-1]; params = last_impl.get('params', []); 
+        last_impl = implementations[-1]; 
+        params = last_impl.get('params', []); 
         is_instance_method = last_impl.get('is_instance_method', True)
+        has_extra_params = any(p[0] not in ('id', 'ids') for p in params)
         
         return_type_py = last_impl.get('return_type')
         if is_mixin and is_instance_method:
@@ -485,11 +592,13 @@ def create_service_interface_content(project_base_name, module_name, model_name,
             param_str = ", ".join([f"IEnumerable<TEntity> entities"] + param_parts)
             generic_constraint = f" where TEntity : IEntity<Guid>, I{pascal_model}able"
         elif not is_mixin:
+            # if has_extra_params:
             if params:
                 dto_name = f"{pascal_model}{service_method_name.replace('Async', '')}RequestDto"
-                param_str = f"Guid id, {dto_name} input"
+                #param_str = f"Guid id, {dto_name} input"
+                param_str = f"{dto_name} input"
             else:
-                param_str = "Guid id"
+                param_str = "Guid[] ids"
         else:
             param_str = ", ".join(param_parts)
         
@@ -507,6 +616,8 @@ def create_service_implementation_content(project_base_name, module_name, model_
 
     service_name, interface_name = f"{pascal_model}AppService", f"I{pascal_model}AppService"
     module_attr_parts = [f'"{module_name}"']
+    main_parts = []
+    partial_parts = []
     if module_category:
         # Xử lý escape ký tự nếu cần (đơn giản hóa là lấy raw string)
         module_attr_parts.append(f'Category = "{module_category}"')
@@ -545,12 +656,13 @@ def create_service_implementation_content(project_base_name, module_name, model_
     #     constructor_params.append(f"{repo_interface_name} {repo_var_name[1:]}")
     #     constructor_assignments.append(f"{repo_var_name} = {repo_var_name[1:]};")
     else:
-        base_class = f"GenericApplicationService<{pascal_model}>"
-        base_constructor_params_str = "repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache"
-        constructor_params = [f"IRepository<{pascal_model}, Guid> repository", "IServiceProvider serviceProvider", "IAuthorizationService authorizationService", "IDomainParser domainParser", "IModelTypeRegistry modelTypeRegistry", "IDataFilter dataFilter", "IObjectMapper objectMapper", "IMemoryCache memoryCache"]
+        base_class = f"GenericAppService<{pascal_model}>"
+        base_constructor_params_str = "repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry"
+        constructor_params = [f"IRepository<{pascal_model}, Guid> repository", "IServiceProvider serviceProvider", "IDataFilter dataFilter", "IObjectMapper objectMapper", "IDistributedCache cache", "IAuthorizationService authorizationService", "IDomainParser domainParser", "IModelTypeRegistry modelTypeRegistry"]
         base_call = f": base({base_constructor_params_str})"
         using_statements.extend([
             f"using Microsoft.Extensions.Caching.Memory;", 
+            f"using Microsoft.Extensions.Caching.Distributed;",
             f"using {project_base_name}.Application.Services.Commons;", f"using {entity_namespace};"
         ])
     
@@ -633,7 +745,9 @@ def create_service_implementation_content(project_base_name, module_name, model_
         is_common_method = method_name.lower() in ODOO_COMMON_API_METHODS
         is_instance_method = last_impl.get('is_instance_method', True)
         is_api_private = last_impl.get('is_api_private', False) # Lấy cờ private
+        is_api_model = last_impl.get('is_api_model', False) # Lấy cờ private
         base_call_params = ""
+        has_extra_params = any(p[0] not in ('id', 'ids') for p in params)
         
         param_parts = [f"{map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)} @{p_name}" if p_name in CSHARP_KEYWORDS else f"{map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)} {p_name}" for p_name, p_type in params]
         
@@ -648,30 +762,44 @@ def create_service_implementation_content(project_base_name, module_name, model_
                 #dto_name = f"{pascal_model}{action_name}RequestDto"
                 dto_name = f"{pascal_model}{service_method_name.replace('Async', '')}RequestDto"
                 #dto_name = f"{pascal_model}{method_name.replace('action_', '')}RequestDto"
-                param_str = f"Guid id, {dto_name} input"
+                #param_str = f"Guid id, {dto_name} input"
+                param_str = f"{dto_name} input"
             else:
-                param_str = "Guid id"
+                param_str = "Guid[] ids"
         elif is_common_method and 'override' in visibility:
             if method_name.lower() in ['write', 'unlink']:
                 param_str = ", ".join([f"List<Guid> ids"] + param_parts)
             elif method_name.lower() == 'create':
                 param_str = ", ".join(param_parts)
             else: # copy and others
-                 param_str = ", ".join([f"Guid id"] + param_parts)
+                 param_str = ", ".join([f"Guid[] ids"] + param_parts)
         else: # private/protected
             param_str = ", ".join(param_parts)
-        
         if is_common_method and 'override' in visibility:
-            if method_name.lower() == 'write': param_str, return_type, base_call_params = f"List<Guid> ids, {pascal_model} entity, List<string> fields", "Task<List<object>>", "ids, entity, fields"
-            elif method_name.lower() == 'create': param_str, return_type, base_call_params = f"{pascal_model} entity, List<string> fields", f"Task<{pascal_model}>", "entity, fields"
-            elif method_name.lower() == 'copy': param_str, return_type, base_call_params = f"Guid id, List<string> fields, {pascal_model} defaultValues = null", f"Task<{pascal_model}>", "id, fields, defaultValues"
+            #if method_name.lower() == 'create': param_str, return_type, base_call_params = f"{pascal_model} entity, List<string> fields", f"Task<{pascal_model}>", "entity, fields"
+            #elif method_name.lower() == 'write': param_str, return_type, base_call_params = f"List<Guid> ids, {pascal_model} entity, List<string> fields", "Task<List<object>>", "ids, entity, fields"
+            #elif method_name.lower() == 'copy': param_str, return_type, base_call_params = f"Guid id, List<string> fields, {pascal_model} defaultValues = null", f"Task<{pascal_model}>", "id, fields, defaultValues"
+            #elif method_name.lower() == 'unlink': param_str, return_type, base_call_params = f"List<Guid> ids", "Task<object>", "ids"
+            #elif method_name.lower() == 'default_get': param_str, return_type, base_call_params = f"List<string> fields", f"Task<{pascal_model}>", "fields"
+            #elif method_name.lower() == 'fields_get': param_str, return_type, base_call_params = f"List<string> fields = null, Dictionary<string, List<string>> attributes = null", f"Task<Dictionary<string, Dictionary<string, object>>>", "fields, attributes"
+            #elif method_name.lower() == 'name_get': param_str, return_type, base_call_params = f"List<Guid> ids", f"Task<List<(Guid Id, string Name)>>", "ids"
+            #elif method_name.lower() == 'name_create': param_str, return_type, base_call_params = f"string name", f"Task<object>", "name"
+            #elif method_name.lower() == 'name_search': param_str, return_type, base_call_params = f"string name, string domain = null, string @operator = \"ilike\", int limit = 100", f"Task<List<(Guid Id, string Name)>>", "name, domain, @operator, limit"
+            #elif method_name.lower() == 'on_change': param_str, return_type, base_call_params = f"List<string> changedFields, {pascal_model} values, Dictionary<string, object> fieldInfo", f"Task<object>", "changedFields, values, fieldInfo"
+            if method_name.lower() == 'read': param_str, return_type, base_call_params = f"ReadRequestDto input", f"Task<{pascal_model}>", "input"
+            elif method_name.lower() == 'search': param_str, return_type, base_call_params = f"SearchRequestDto input", f"Task<{pascal_model}>", "input"
+            elif method_name.lower() == 'search_read': param_str, return_type, base_call_params = f"SearchReadRequestDto input", f"Task<{pascal_model}>", "input"
+            elif method_name.lower() == 'search_count': param_str, return_type, base_call_params = f"SearchCountRequestDto input", f"Task<{pascal_model}>", "input"
+            elif method_name.lower() == 'create': param_str, return_type, base_call_params = f"CreateRequestDto<{pascal_model}> input", f"Task<{pascal_model}>", "input"
+            elif method_name.lower() == 'write': param_str, return_type, base_call_params = f"UpdateRequestDto<{pascal_model}> input", "Task<List<object>>", "input"
+            elif method_name.lower() == 'copy': param_str, return_type, base_call_params = f"CopyRequestDto<{pascal_model}> input", f"Task<{pascal_model}>", "input"
             elif method_name.lower() == 'unlink': param_str, return_type, base_call_params = f"List<Guid> ids", "Task<object>", "ids"
-            elif method_name.lower() == 'default_get': param_str, return_type, base_call_params = f"List<string> fields", f"Task<{pascal_model}>", "fields"
-            elif method_name.lower() == 'fields_get': param_str, return_type, base_call_params = f"List<string> fields = null, Dictionary<string, List<string>> attributes = null", f"Task<Dictionary<string, Dictionary<string, object>>>", "fields, attributes"
-            elif method_name.lower() == 'name_create': param_str, return_type, base_call_params = f"string name", f"Task<object>", "name"
-            elif method_name.lower() == 'name_get': param_str, return_type, base_call_params = f"List<Guid> ids", f"Task<List<(Guid Id, string Name)>>", "ids"
-            elif method_name.lower() == 'name_search': param_str, return_type, base_call_params = f"string name, string domain = null, string @operator = \"ilike\", int limit = 100", f"Task<List<(Guid Id, string Name)>>", "name, domain, @operator, limit"
-            elif method_name.lower() == 'on_change': param_str, return_type, base_call_params = f"List<string> changedFields, {pascal_model} values, Dictionary<string, object> fieldInfo", f"Task<object>", "changedFields, values, fieldInfo"
+            elif method_name.lower() == 'default_get': param_str, return_type, base_call_params = f"DefaultGetRequestDto input", f"Task<{pascal_model}>", "input"
+            elif method_name.lower() == 'name_create': param_str, return_type, base_call_params = f"NameCreateRequestDto input", f"Task<object>", "name"
+            elif method_name.lower() == 'name_get': param_str, return_type, base_call_params = f"NameGetRequestDto input", f"Task<List<(Guid Id, string Name)>>", "input"
+            elif method_name.lower() == 'name_search': param_str, return_type, base_call_params = f"NameSearchRequestDto input", f"Task<List<(Guid Id, string Name)>>", "input"
+            elif method_name.lower() == 'on_change': param_str, return_type, base_call_params = f"OnChangeRequestDto<{pascal_model}> input", f"Task<object>", "input"
+            elif method_name.lower() == 'fields_get': param_str, return_type, base_call_params = f"FieldsGetRequestDto input", f"Task<Dictionary<string, Dictionary<string, object>>>", "input"
             else:
                 final_return_type = return_type_str_py or "object"
                 return_type = f"Task<{map_python_type_to_csharp(final_return_type, all_csharp_entity_names)}>"
@@ -692,6 +820,8 @@ def create_service_implementation_content(project_base_name, module_name, model_
         attribute_line = ""
         if is_api_private:
             attribute_line = "        [ApiPrivate]\n"
+        if is_api_model:
+            attribute_line = "        [ApiModel]\n"
             
         method_body = [f"\n{attribute_line}        {visibility} async {return_type} {service_method_name}{generic_part}({param_str}){generic_constraint}", "        {", f"            {comment_wrapper[0]}"]
         for impl in implementations:
@@ -703,7 +833,11 @@ def create_service_implementation_content(project_base_name, module_name, model_
         if is_common_method and 'override' in visibility and not is_mixin and base_call_params:
             method_body.append(f"            return await base.{service_method_name}({base_call_params});")
         elif "Task<" in return_type and 'public' in visibility and not is_mixin:
-            method_body.append(f"            var entity = await Repository.GetAsync(id); return entity;")
+            if has_extra_params:
+                method_body.append(f"            var entity = await Repository.GetAsync(input.Ids[0]);")
+            else:
+                method_body.append(f"            var entity = await Repository.GetAsync(ids[0]);")
+            method_body.append(f"            await Task.CompletedTask;\n            return default;")
         elif "Task<" in return_type:
             method_body.append(f"            return default;")
         else:
@@ -754,6 +888,77 @@ def create_dtos_content(project_base_name, module_name, model_name, methods, fla
     content = f"""
     // Auto-generated by Odoo C# Code Generator
     {'\n'.join(sorted(list(dict.fromkeys(using_statements)), reverse=True))}
+
+    namespace {namespace}
+    {{
+    {'\n\n'.join(dto_classes)}
+    }}
+    """
+    return format_csharp_code(content)
+
+def create_dtos_content2(project_base_name, module_name, model_name, methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map):
+    pascal_model = to_pascal_case(model_name)
+    pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
+    
+    # Namespace cho DTOs
+    namespace = f"{project_base_name}.Application.Contracts.DTOs" + (f".{pascal_module}" if not flat_service_ns else "")
+    
+    # [UPDATE] Thêm namespace Interfaces để dùng IBambooDto
+    using_statements = {
+        "using System;",
+        "using System.Collections.Generic;",
+        f"using {project_base_name}.Application.Contracts.Interfaces;"
+    }
+    
+    dto_classes = []
+    # Lọc các method hợp lệ (public, not common, not private)
+    specific_actions = {name: impl for name, impl in methods.items() if not name.startswith('_') and name.lower() not in ODOO_COMMON_API_METHODS and not impl[-1].get('is_api_private', False)}
+
+    sorted_actions = []
+    for method_name, implementations in specific_actions.items():
+        # Clean tên action (bỏ prefix 'action_' cho gọn)
+        action_name = to_pascal_case(method_name.replace("action_", ""))
+        sorted_actions.append({'csharp_name': action_name, 'implementations': implementations})
+    sorted_actions.sort(key=lambda x: x['csharp_name'])
+
+    for item in sorted_actions:
+        action_name, implementations = item['csharp_name'], item['implementations']
+        last_impl = implementations[-1]
+        params = last_impl.get('params', [])
+        
+        # [UPDATE] Lọc bỏ tham số 'id' vì ta sẽ tự thêm Property Id cứng
+        filtered_params = [p for p in params if p[0] != 'id']
+        #filtered_params = [p for p in params if p[0] not in ('id', 'ids')]
+        id_params = [p for p in params if p[0] == 'id']
+        
+        # Chỉ tạo DTO nếu hàm có tham số (ngoài id ra)
+        # Nếu hàm chỉ có id thì Controller/Service xử lý trực tiếp (hoặc sửa logic này nếu bạn muốn luôn luôn có DTO)
+        if not filtered_params:
+            continue
+            
+        dto_name = f"{pascal_model}{action_name}RequestDto"
+        dto_base = " : IBambooDto"
+        # [UPDATE] Thừa kế IBambooDto và thêm Property Id
+        class_content = [
+            f"    public class {dto_name}",
+            "    {",
+            "        public Guid[]? Ids { get; set; }"
+        ]
+        
+        for p_name, p_type in filtered_params:
+            csharp_type = map_python_type_to_csharp(p_type, all_csharp_entity_names, p_name)
+            prop_name = to_pascal_case(p_name)
+            class_content.append(f"        public {csharp_type}? {prop_name} {{ get; set; }}")
+        
+        class_content.append("    }")
+        dto_classes.append("\n".join(class_content))
+
+    if not dto_classes:
+        return None
+
+    content = f"""
+    // Auto-generated by Odoo C# Code Generator
+    {'\n'.join(sorted(list(using_statements)))}
 
     namespace {namespace}
     {{
@@ -849,6 +1054,8 @@ def create_controller_content(project_base_name, module_name, module_category, m
             action_name, method_name, implementations = item['csharp_name'], item['python_name'], item['implementations']
             last_impl = implementations[-1]
             params = last_impl.get('params', [])
+            has_extra_params = any(p[0] != 'id' for p in params)
+            #has_extra_params = any(p[0] not in ('id', 'ids') for p in params)
 
             # Xác định kiểu trả về
             return_type_py = last_impl.get('return_type', pascal_model)
@@ -857,19 +1064,27 @@ def create_controller_content(project_base_name, module_name, module_category, m
 
             route_action = ''.join(['-' + c.lower() if c.isupper() else c for c in action_name]).strip('-')
             #dto_name, action_params, service_call_params = f"{action_name}RequestDto", "Guid id", "id"
-            action_params, service_call_params = "Guid id", "id"
+            action_params, service_call_params = "Guid[] ids", "ids"
             if params:
                 dto_name = f"{pascal_model}{method_name}RequestDto"
-                action_params += f", [FromBody] {dto_name} input"
-                service_call_params = f"id, input" # Thay đổi ở đây
+                #action_params += f", [FromBody] {dto_name} input"
+                action_params = f"{dto_name} input"
+                service_call_params = f"input"
+                #service_call_params = f"id, input" # Thay đổi ở đây
                 #service_call_params += ", " + ", ".join(f"input.{to_pascal_case(p_name)}" for p_name, _ in params)
             service_method_name = f"{method_name}Async"
             #service_method_name = f"{action_name}Async"
+            if has_extra_params:
+                content_id = f"input.Id = id;"
+            else:
+                content_id = ""
+            
             partial_content_entity_result += f"""
                 [HttpPost]
-                [Route(\"{{id}}/{route_action}\")]
+                [Route(\"{route_action}\")]
                 public async {final_return_type} {action_name}Async({action_params})
                 {{
+                    // content_entity has_extra_params: {has_extra_params} 
                     var result = await {service_accessor}.{service_method_name}({service_call_params});
                     return result;
                 }}
@@ -878,9 +1093,10 @@ def create_controller_content(project_base_name, module_name, module_category, m
 
             partial_content_action_result += f"""
                 [HttpPost]
-                [Route(\"{{id}}/{route_action}\")]
+                [Route(\"{route_action}\")]
                 public async Task<IActionResult> {action_name}Async({action_params})
                 {{
+                    // content_action has_extra_params: {has_extra_params}
                     var result = await {service_accessor}.{service_method_name}({service_call_params});
                     return Ok(result);
                 }}
@@ -1175,6 +1391,30 @@ class OdooModelVisitor(ast.NodeVisitor):
                 return f"list[{slice_type}]" if slice_type else "list"
         return None
 
+    # --- HÀM MỚI: Helper để trích xuất dữ liệu phức tạp (List, Dict, Ref...) ---
+    def _eval_node(self, node):
+        if isinstance(node, ast.List):
+            return [self._eval_node(elt) for elt in node.elts]
+        elif isinstance(node, ast.Tuple):
+            return tuple(self._eval_node(elt) for elt in node.elts)
+        elif isinstance(node, ast.Dict):
+            # Hỗ trợ lấy ondelete={'key': 'value'}
+            return {self._eval_node(k): self._eval_node(v) for k, v in zip(node.keys, node.values)}
+        elif isinstance(node, ast.Constant): # Python 3.8+
+            return node.value
+        elif isinstance(node, ast.Str): return node.s
+        elif isinstance(node, ast.Num): return node.n
+        elif isinstance(node, ast.Name):
+            return f"ref:{node.id}" # Đánh dấu tham chiếu biến
+        elif isinstance(node, ast.Attribute):
+            # Đệ quy để lấy full path (vd: channel_id.channel_type)
+            val = self._eval_node(node.value)
+            prefix = val if val else ""
+            prefix = prefix.replace("ref:", "") if isinstance(prefix, str) else ""
+            return f"ref:{prefix}.{node.attr}" if prefix else f"ref:{node.attr}"
+        return None
+    # --------------------------------------------------------------------------
+
     def visit_ClassDef(self, node):
         current_class_info = {
             'name': None, 'inherits': [], 'fields': {}, 'methods': {}, 
@@ -1232,11 +1472,24 @@ class OdooModelVisitor(ast.NodeVisitor):
         if not (isinstance(call.func, ast.Attribute) and hasattr(call.func.value, 'id') and call.func.value.id == 'fields'): return
         
         field_type = call.func.attr
-        field_data = {'type': field_type, 'attributes': {}}
+        field_data = {'type': field_type, 'attributes': {}, 'source_file': self.source_filename}
         
+        # --- CẬP NHẬT: Parse Keywords mở rộng ---
         for kw in call.keywords:
+            # Thuộc tính cơ bản (String, Required...)
             if isinstance(kw.value, ast.Constant):
                 field_data['attributes'][to_pascal_case(kw.arg)] = kw.value.value
+            
+            # Thuộc tính phức tạp (Dùng _eval_node)
+            if kw.arg == 'selection_add':
+                field_data['selection_add'] = self._eval_node(kw.value)
+            elif kw.arg == 'ondelete':
+                field_data['ondelete'] = self._eval_node(kw.value) # Lưu lại dict ondelete để tham khảo
+            elif kw.arg == 'related':
+                field_data['related'] = self._eval_node(kw.value)
+            elif kw.arg == 'selection':
+                field_data['selection'] = self._eval_node(kw.value)
+        # ----------------------------------------
 
         field_data['is_required'] = field_data['attributes'].get('Required', False)
         field_data['is_translatable'] = field_data['attributes'].get('Translate', False)
@@ -1266,11 +1519,19 @@ class OdooModelVisitor(ast.NodeVisitor):
                 if inverse_field:
                     field_data['inverse_field'] = inverse_field
         
+        # --- CẬP NHẬT: Parse Selection (Positional Args) ---
         if field_type.lower() == 'selection':
-            selection_list = []
-            if 'Selection' in field_data['attributes'] and isinstance(field_data['attributes']['Selection'], list):
-                selection_list = field_data['attributes']['Selection']
-            field_data['selection'] = selection_list
+            # Nếu chưa có trong keywords, tìm ở tham số đầu tiên (positional)
+            if 'selection' not in field_data and len(call.args) > 0:
+                field_data['selection'] = self._eval_node(call.args[0])
+            
+            # Đôi khi tham số thứ 2 là String description
+            if 'String' not in field_data['attributes'] and len(call.args) > 1:
+                val = self._eval_node(call.args[1])
+                if isinstance(val, str):
+                    field_data['attributes']['String'] = val
+        # ---------------------------------------------------
+
         if field_type.lower() == 'serialized':
             field_data['is_sparse'] = True
 
@@ -1280,11 +1541,15 @@ class OdooModelVisitor(ast.NodeVisitor):
         method_name = node.name
         is_instance_method = len(node.args.args) > 0 and node.args.args[0].arg == 'self'
         is_api_private = False
+        is_api_model = False
         for decorator in node.decorator_list:
             # Kiểm tra dạng @api.private (Attribute)
             if isinstance(decorator, ast.Attribute):
                 if isinstance(decorator.value, ast.Name) and decorator.value.id == 'api' and decorator.attr == 'private':
                     is_api_private = True
+                    break
+                if isinstance(decorator.value, ast.Name) and decorator.value.id == 'api' and decorator.attr == 'model':
+                    is_api_model = True
                     break
             # Kiểm tra các dạng khác nếu cần (ví dụ @private nếu có import riêng)
         # ----------------------------------------
@@ -1297,7 +1562,7 @@ class OdooModelVisitor(ast.NodeVisitor):
         except:
             try: source_code = inspect.getsource(node)
             except: source_code = f"# Could not retrieve source code for {method_name}"
-        method_data = {'params': params, 'source': inspect.cleandoc(source_code or ""), 'is_instance_method': is_instance_method, 'source_file': self.source_filename, 'is_api_private': is_api_private}
+        method_data = {'params': params, 'source': inspect.cleandoc(source_code or ""), 'is_instance_method': is_instance_method, 'source_file': self.source_filename, 'is_api_private': is_api_private, 'is_api_model': is_api_model}
         if return_type_str: method_data['return_type'] = return_type_str
         context['methods'][method_name] = method_data
 #</editor-fold>
@@ -1463,6 +1728,7 @@ def analyze_odoo_sources(args):
     # BƯỚC 2: Tổng hợp dữ liệu ban đầu
     all_model_names_from_parsing = set()
     for parsed_file in all_parsed_files:
+        module_name = parsed_file['module_name']
         for info in parsed_file['models']:
             if info.get('name'): all_model_names_from_parsing.add(info['name'])
             for inherited in info.get('inherits', []): all_model_names_from_parsing.add(inherited)
@@ -1483,6 +1749,10 @@ def analyze_odoo_sources(args):
                     if info.get('table_name'):
                          master_models[target_model_name]['table_name'] = info['table_name']
 
+                    # Gán module cho từng field trước khi update vào master
+                    for f_name, f_data in info['fields'].items():
+                        f_data['module'] = module_name
+                        
                     master_models[target_model_name]['fields'].update(info['fields'])
                     master_models[target_model_name]['delegated_inherits'].extend(info.get('delegated_inherits', []))
                     master_models[target_model_name]['source_modules'].add(module_name)
@@ -1617,6 +1887,13 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             }
         """,
         # --- THÊM ATTRIBUTE MỚI ---
+        "ApiModelAttribute.cs": """
+            [AttributeUsage(AttributeTargets.Method)]
+            public class ApiModelAttribute : Attribute 
+            { 
+                // Marker attribute to indicate this method is @api.model
+            }
+        """,
         "ApiPrivateAttribute.cs": """
             [AttributeUsage(AttributeTargets.Method)]
             public class ApiPrivateAttribute : Attribute 
@@ -1720,6 +1997,9 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
                 elif base_module.startswith('payment'):
                     grouping_key_pascal = "Sales"
                     final_category_for_attr = "Sales"
+                elif base_module.startswith('sms'):
+                    grouping_key_pascal = "Sales"
+                    final_category_for_attr = "Sales"
                 elif base_module.startswith('web'):
                     grouping_key_pascal = "Website"
                     final_category_for_attr = "Website"
@@ -1759,6 +2039,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         
         pascal_module_for_ns = module_namespace_map.get(base_module, to_pascal_case(base_module))
 
+        domain_shared_path = output_path / f"src/{project_base_name}.Domain.Shared"
         domain_path = output_path / f"src/{project_base_name}.Domain"
         app_contracts_path = output_path / f"src/{project_base_name}.Application.Contracts"
         app_path = output_path / f"src/{project_base_name}.Application"
@@ -1773,7 +2054,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
 
         # Thiết lập thư mục
         entity_dir = (domain_path / 'Models') if flat_model_dir else (domain_path / 'Entities' / grouping_key_pascal)
-        enum_dir = (domain_path / 'Models' / 'Enums') if flat_model_dir else (domain_path / 'Enums' / grouping_key_pascal)
+        enum_dir = (domain_shared_path / 'Models' / 'Enums') if flat_service_dir else (domain_shared_path / 'Enums' / grouping_key_pascal)
         interface_dir = (app_contracts_path / 'Interfaces') if flat_service_dir else (app_contracts_path / 'Interfaces' / grouping_key_pascal)
         service_dir = (app_path / 'Services') if flat_service_dir else (app_path / 'Services' / grouping_key_pascal)
         controller_dir = (http_api_path / 'Controllers') if flat_controller_dir else (http_api_path / 'Controllers' / grouping_key_pascal)
@@ -1787,9 +2068,44 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         
         computed_fields = {}
         for field_name, field_data in data['fields'].items():
-            if field_data.get('type', '').lower() == 'selection' and 'selection' in field_data:
-                enum_filename = f"{to_pascal_case(model_name.split('.')[-1])}{to_pascal_case(field_name)}Enum.cs"
-                (enum_dir / enum_filename).write_text(create_enum_content(project_base_name, base_module, model_name, field_name, field_data['selection'], flat_model_ns, module_namespace_map), encoding='utf-8')
+            is_selection = field_data.get('type') == 'selection'
+            has_selection_add = field_data.get('selection_add')
+            is_related = field_data.get('related')
+
+            # --- LOGIC MỚI: BỎ QUA NẾU LÀ RELATED ---
+            # Nếu là related field VÀ không có selection_add (không mở rộng thêm)
+            # -> Bỏ qua, không sinh file Enum. (Entity sẽ dùng string?)
+            if is_related and not has_selection_add:
+                continue
+            # ----------------------------------------
+
+            if field_data.get('type', '').lower() == 'selection' or field_data.get('selection_add'):# and 'selection' in field_data:
+                selection_data = field_data.get('selection')
+                selection_add_data = field_data.get('selection_add')
+                related_info = field_data.get('related')
+
+                pascal_field = to_pascal_case(field_name)
+                enum_name = f"{pascal_model}{pascal_field}"
+
+                source_module = field_data.get('module', base_module)
+                source_file = field_data.get('source_file', 'unknown')
+                enum_content = create_enum_content2(
+                    project_base_name=project_base_name,
+                    module_grouping_name=grouping_key_pascal, # Dùng key đã xử lý (Category/SupplyChain/Base...)
+                    model_name=model_name,
+                    field_name=field_name,
+                    selection_data=selection_data,
+                    flat_model_ns=flat_model_dir, # Dùng cờ flat_model_dir (hoặc flat_model_ns tùy logic bạn muốn)
+                    source_module=source_module,
+                    source_file=source_file,
+                    related_info=related_info,
+                    selection_add_data=selection_add_data
+                )
+                (enum_dir / f"{enum_name}Enum.cs").write_text(enum_content, encoding='utf-8')
+
+                #enum_filename = f"{to_pascal_case(model_name.split('.')[-1])}{to_pascal_case(field_name)}Enum.cs"
+                #(enum_dir / enum_filename).write_text(create_enum_content(project_base_name, base_module, model_name, field_name, field_data['selection'], flat_model_ns, module_namespace_map), encoding='utf-8')
+                
             elif field_data.get('type') == 'Computed':
                 computed_fields[field_name] = field_data.get('compute')
         
@@ -1819,17 +2135,18 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             logging.info(f"  -> Generating AppService for '{model_name}'.")
             (interface_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, pascal_module_for_ns, model_name, data, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map), encoding='utf-8')
             (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, pascal_module_for_ns, model_name, data, all_methods, dependencies, flat_model_ns, flat_service_ns, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr), encoding='utf-8')
-        
-        if should_generate_controller:
-            logging.info(f"  -> Generating Controller for '{model_name}'.")
-
+            
             # TẠO THƯ MỤC DTO
             dtos_dir.mkdir(parents=True, exist_ok=True)
 
             # TẠO FILE DTO
-            dtos_content = create_dtos_content(project_base_name, base_module, model_name, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map)
+            dtos_content = create_dtos_content2(project_base_name, base_module, model_name, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map)
             if dtos_content:
                 (dtos_dir / f"{pascal_model}Dtos.cs").write_text(dtos_content, encoding='utf-8')
+        
+        if should_generate_controller:
+            logging.info(f"  -> Generating Controller for '{model_name}'.")
+
 
             # TẠO FILE CONTROLLER
             main_controller, partial_controller = create_controller_content(project_base_name, base_module, module_category, model_name, data, public_methods, flat_model_ns, flat_service_ns, flat_controller_ns, args.add_common_actions, all_csharp_entity_names, args.group_by_category, module_namespace_map)

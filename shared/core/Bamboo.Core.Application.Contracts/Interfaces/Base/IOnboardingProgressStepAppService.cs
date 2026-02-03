@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IOnboardingProgressStepAppService : IGenericApplicationService<OnboardingProgressStep>
     {
-        Task<OnboardingProgressStep> ConsolidateJustDoneAsync(Guid id);
-        Task<OnboardingProgressStep> SetJustDoneAsync(Guid id);
+        Task<OnboardingProgressStep> ConsolidateJustDoneAsync(Guid[] ids);
+        Task<OnboardingProgressStep> SetJustDoneAsync(Guid[] ids);
     }
 }

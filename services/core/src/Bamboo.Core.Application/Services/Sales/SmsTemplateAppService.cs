@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Sms", Category = "Sales", Depends = new[] { "base", "iap_mail", "mail", "phone_validation" })]
-    public partial class SmsTemplateAppService : GenericApplicationService<SmsTemplate>, ISmsTemplateAppService
+    public partial class SmsTemplateAppService : GenericAppService<SmsTemplate>, ISmsTemplateAppService
     {
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;
         private readonly ITemplateResetMixinAppService _templateResetMixinAppService;
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SmsTemplate> CopyDataAsync(Guid id, SmsTemplateCopyDataRequestDto input)
+        public async Task<SmsTemplate> CopyDataAsync(SmsTemplateCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_template.py) ---
@@ -48,10 +48,12 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", template.name)) for template, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SmsTemplate> CreateSidebarActionAsync(Guid id)
+        public async Task<SmsTemplate> CreateSidebarActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_template.py) ---
@@ -75,9 +77,12 @@ namespace Bamboo.Core.Application.Services
             //     template.write({'sidebar_action_id': action.id})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<SmsTemplate> SearchInternalAsync(object domain)
         {
             /*
@@ -115,7 +120,7 @@ namespace Bamboo.Core.Application.Services
             return await base.UnlinkAsync(ids);
         }
 
-        public async Task<SmsTemplate> UnlinkSidebarActionAsync(Guid id)
+        public async Task<SmsTemplate> UnlinkSidebarActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_template.py) ---
@@ -125,7 +130,9 @@ namespace Bamboo.Core.Application.Services
             //         template.sidebar_action_id.unlink()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

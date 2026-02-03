@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebTour", Category = "Base", Depends = new[] { "web" })]
-    public partial class WebTourTourStepAppService : GenericApplicationService<WebTourTourStep>, IWebTourTourStepAppService
+    public partial class WebTourTourStepAppService : GenericAppService<WebTourTourStep>, IWebTourTourStepAppService
     {
 
         public WebTourTourStepAppService(IRepository<WebTourTourStep, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<WebTourTourStep> GetStepsJsonAsync(Guid id)
+        public async Task<WebTourTourStep> GetStepsJsonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_tour, FILE: tour.py) ---
@@ -44,7 +44,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return steps
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

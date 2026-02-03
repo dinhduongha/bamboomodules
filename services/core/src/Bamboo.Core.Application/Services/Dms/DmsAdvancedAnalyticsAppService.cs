@@ -11,7 +11,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Models;
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsAdvancedAnalyticsAppService : IGenericApplicationService<DmsAdvancedAnalytics>
+    public interface IDmsAdvancedAnalyticsAppService : IGenericAppService<DmsAdvancedAnalytics>
     {
         Task GenerateInsightAsync(Guid analyticsId);
     }
@@ -19,7 +19,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsAdvancedAnalyticsAppService : GenericApplicationService<DmsAdvancedAnalytics>, IDmsAdvancedAnalyticsAppService
+    public class DmsAdvancedAnalyticsAppService : GenericAppService<DmsAdvancedAnalytics>, IDmsAdvancedAnalyticsAppService
     {
         public DmsAdvancedAnalyticsAppService(
             IRepository<DmsAdvancedAnalytics, Guid> repository,

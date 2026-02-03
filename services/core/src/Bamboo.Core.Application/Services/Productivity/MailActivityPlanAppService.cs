@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailActivityPlanAppService : GenericApplicationService<MailActivityPlan>, IMailActivityPlanAppService
+    public partial class MailActivityPlanAppService : GenericAppService<MailActivityPlan>, IMailActivityPlanAppService
     {
 
         public MailActivityPlanAppService(IRepository<MailActivityPlan, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -131,7 +131,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailActivityPlan> CopyDataAsync(Guid id, MailActivityPlanCopyDataRequestDto input)
+        public async Task<MailActivityPlan> CopyDataAsync(MailActivityPlanCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity_plan.py) ---
@@ -143,7 +143,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", plan.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailActivityPlan> GetModelSelectionInternalAsync()

@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/run")]
-        public async Task<IActionResult> RunAsync(Guid id, [FromBody] ProcurementGroupRunRequestDto input)
+        [Route("run")]
+        public async Task<IActionResult> RunAsync(ProcurementGroupRunRequestDto input)
         {
-            var result = await _appService.RunAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RunAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/run-scheduler")]
-        public async Task<IActionResult> RunSchedulerAsync(Guid id, [FromBody] ProcurementGroupRunSchedulerRequestDto input)
+        [Route("run-scheduler")]
+        public async Task<IActionResult> RunSchedulerAsync(ProcurementGroupRunSchedulerRequestDto input)
         {
-            var result = await _appService.RunSchedulerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RunSchedulerAsync(input);
             return Ok(result);
         }
     }

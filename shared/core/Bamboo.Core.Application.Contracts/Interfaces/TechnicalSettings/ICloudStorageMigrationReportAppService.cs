@@ -9,7 +9,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICloudStorageMigrationReportAppService : IApplicationService
     {
-        Task<CloudStorageMigrationReport> GetProgressAsync(Guid id);
-        Task<CloudStorageMigrationReport> InitAsync(Guid id);
+        Task<CloudStorageMigrationReport> GetProgressAsync(Guid[] ids);
+        Task<CloudStorageMigrationReport> InitAsync(Guid[] ids);
     }
 }

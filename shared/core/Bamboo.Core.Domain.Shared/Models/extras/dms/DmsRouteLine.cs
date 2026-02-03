@@ -25,7 +25,7 @@ public partial class DmsRouteLine : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? OrganizationUnitId { get; set; }
 
     [Column("route_id")]
-    public Guid RouteId { get; set; }
+    public Guid? RouteId { get; set; }
 
     [Column("stock_picking_id")]
     public Guid? StockPickingId { get; set; }
@@ -34,10 +34,19 @@ public partial class DmsRouteLine : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public int Sequence { get; set; }
 
     [Column("estimated_arrival_time")]
-    public DateTime? EstimatedArrivalTime { get; set; }
+    public DateTimeOffset? EstimatedArrivalTime { get; set; }
 
     [Column("actual_arrival_time")]
-    public DateTime? ActualArrivalTime { get; set; }
+    public DateTimeOffset? ActualArrivalTime { get; set; }
+
+    [Column("h3_center")]
+    public string? H3Center { get; set; }  // hex trung tâm của route
+
+    [Column("geom_start")]
+    public NetTopologySuite.Geometries.Point? GeomStartPoint { get; set; }
+
+    [Column("geojson_start", TypeName = "jsonb")]
+    public string? GeoJsonStartPoint { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }

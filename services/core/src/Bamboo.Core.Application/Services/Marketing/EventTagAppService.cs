@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
-    public partial class EventTagAppService : GenericApplicationService<EventTag>, IEventTagAppService
+    public partial class EventTagAppService : GenericAppService<EventTag>, IEventTagAppService
     {
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         public EventTagAppService(IRepository<EventTag, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<EventTag> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<EventTag> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_tag.py) ---
@@ -47,7 +48,7 @@ namespace Bamboo.Core.Application.Services
             //     result['website_id'] = self.env.context.get('default_website_id')
             // return result
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
     }
 }

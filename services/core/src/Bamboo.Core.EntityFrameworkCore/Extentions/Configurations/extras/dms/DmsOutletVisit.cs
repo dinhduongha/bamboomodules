@@ -37,7 +37,7 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.CheckOutLatitude).HasColumnName("check_out_latitude");
             entity.Property(e => e.CheckOutLongitude).HasColumnName("check_out_longitude");
             entity.Property(e => e.VisitStatus).HasColumnName("visit_status");
-            entity.Property(e => e.PhotosJson).HasColumnName("photos_json");
+            //entity.Property(e => e.PhotosJson).HasColumnName("photos_json");
             entity.Property(e => e.OrderCreated).HasColumnName("order_created");
             entity.Property(e => e.NoSaleReasonId).HasColumnName("no_sale_reason_id");
 

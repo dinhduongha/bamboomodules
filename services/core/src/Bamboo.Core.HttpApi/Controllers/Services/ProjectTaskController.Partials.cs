@@ -11,314 +11,353 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-convert-to-subtask")]
-        public async Task<IActionResult> ActionConvertToSubtaskAsync(Guid id)
+        [Route("action-convert-to-subtask")]
+        public async Task<IActionResult> ActionConvertToSubtaskAsync(Guid[] ids)
         {
-            var result = await _appService.ConvertToSubtaskAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConvertToSubtaskAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-convert-to-task")]
-        public async Task<IActionResult> ActionConvertToTaskAsync(Guid id)
+        [Route("action-convert-to-task")]
+        public async Task<IActionResult> ActionConvertToTaskAsync(Guid[] ids)
         {
-            var result = await _appService.ConvertToTaskAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConvertToTaskAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-convert-to-template")]
-        public async Task<IActionResult> ActionConvertToTemplateAsync(Guid id)
+        [Route("action-convert-to-template")]
+        public async Task<IActionResult> ActionConvertToTemplateAsync(Guid[] ids)
         {
-            var result = await _appService.ConvertToTemplateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConvertToTemplateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-from-template")]
-        public async Task<IActionResult> ActionCreateFromTemplateAsync(Guid id, [FromBody] ProjectTaskCreateFromTemplateRequestDto input)
+        [Route("action-create-from-template")]
+        public async Task<IActionResult> ActionCreateFromTemplateAsync(ProjectTaskCreateFromTemplateRequestDto input)
         {
-            var result = await _appService.CreateFromTemplateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateFromTemplateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-dependent-tasks")]
-        public async Task<IActionResult> ActionDependentTasksAsync(Guid id)
+        [Route("action-dependent-tasks")]
+        public async Task<IActionResult> ActionDependentTasksAsync(Guid[] ids)
         {
-            var result = await _appService.DependentTasksAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DependentTasksAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-parent-task")]
-        public async Task<IActionResult> ActionOpenParentTaskAsync(Guid id)
+        [Route("action-open-parent-task")]
+        public async Task<IActionResult> ActionOpenParentTaskAsync(Guid[] ids)
         {
-            var result = await _appService.OpenParentTaskAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenParentTaskAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-ratings")]
-        public async Task<IActionResult> ActionOpenRatingsAsync(Guid id)
+        [Route("action-open-ratings")]
+        public async Task<IActionResult> ActionOpenRatingsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenRatingsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenRatingsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-task")]
-        public async Task<IActionResult> ActionOpenTaskAsync(Guid id)
+        [Route("action-open-task")]
+        public async Task<IActionResult> ActionOpenTaskAsync(Guid[] ids)
         {
-            var result = await _appService.OpenTaskAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenTaskAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-project-sharing-open-blocking")]
-        public async Task<IActionResult> ActionProjectSharingOpenBlockingAsync(Guid id)
+        [Route("action-project-sharing-open-blocking")]
+        public async Task<IActionResult> ActionProjectSharingOpenBlockingAsync(Guid[] ids)
         {
-            var result = await _appService.ProjectSharingOpenBlockingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProjectSharingOpenBlockingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-project-sharing-open-subtasks")]
-        public async Task<IActionResult> ActionProjectSharingOpenSubtasksAsync(Guid id)
+        [Route("action-project-sharing-open-subtasks")]
+        public async Task<IActionResult> ActionProjectSharingOpenSubtasksAsync(Guid[] ids)
         {
-            var result = await _appService.ProjectSharingOpenSubtasksAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProjectSharingOpenSubtasksAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-project-sharing-open-task")]
-        public async Task<IActionResult> ActionProjectSharingOpenTaskAsync(Guid id)
+        [Route("action-project-sharing-open-task")]
+        public async Task<IActionResult> ActionProjectSharingOpenTaskAsync(Guid[] ids)
         {
-            var result = await _appService.ProjectSharingOpenTaskAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProjectSharingOpenTaskAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-project-sharing-recurring-tasks")]
-        public async Task<IActionResult> ActionProjectSharingRecurringTasksAsync(Guid id)
+        [Route("action-project-sharing-recurring-tasks")]
+        public async Task<IActionResult> ActionProjectSharingRecurringTasksAsync(Guid[] ids)
         {
-            var result = await _appService.ProjectSharingRecurringTasksAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProjectSharingRecurringTasksAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-project-sharing-view-parent-task")]
-        public async Task<IActionResult> ActionProjectSharingViewParentTaskAsync(Guid id)
+        [Route("action-project-sharing-view-parent-task")]
+        public async Task<IActionResult> ActionProjectSharingViewParentTaskAsync(Guid[] ids)
         {
-            var result = await _appService.ProjectSharingViewParentTaskAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProjectSharingViewParentTaskAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-project-sharing-view-so")]
-        public async Task<IActionResult> ActionProjectSharingViewSoAsync(Guid id)
+        [Route("action-project-sharing-view-so")]
+        public async Task<IActionResult> ActionProjectSharingViewSoAsync(Guid[] ids)
         {
-            var result = await _appService.ProjectSharingViewSoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProjectSharingViewSoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-recurring-tasks")]
-        public async Task<IActionResult> ActionRecurringTasksAsync(Guid id)
+        [Route("action-recurring-tasks")]
+        public async Task<IActionResult> ActionRecurringTasksAsync(Guid[] ids)
         {
-            var result = await _appService.RecurringTasksAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RecurringTasksAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-project-task-form")]
-        public async Task<IActionResult> ActionRedirectToProjectTaskFormAsync(Guid id)
+        [Route("action-redirect-to-project-task-form")]
+        public async Task<IActionResult> ActionRedirectToProjectTaskFormAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToProjectTaskFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToProjectTaskFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-undo-convert-to-template")]
-        public async Task<IActionResult> ActionUndoConvertToTemplateAsync(Guid id)
+        [Route("action-undo-convert-to-template")]
+        public async Task<IActionResult> ActionUndoConvertToTemplateAsync(Guid[] ids)
         {
-            var result = await _appService.UndoConvertToTemplateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UndoConvertToTemplateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unlink-recurrence")]
-        public async Task<IActionResult> ActionUnlinkRecurrenceAsync(Guid id)
+        [Route("action-unlink-recurrence")]
+        public async Task<IActionResult> ActionUnlinkRecurrenceAsync(Guid[] ids)
         {
-            var result = await _appService.UnlinkRecurrenceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnlinkRecurrenceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-so")]
-        public async Task<IActionResult> ActionViewSoAsync(Guid id)
+        [Route("action-view-so")]
+        public async Task<IActionResult> ActionViewSoAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-subtask-timesheet")]
-        public async Task<IActionResult> ActionViewSubtaskTimesheetAsync(Guid id)
+        [Route("action-view-subtask-timesheet")]
+        public async Task<IActionResult> ActionViewSubtaskTimesheetAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSubtaskTimesheetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSubtaskTimesheetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProjectTaskCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ProjectTaskCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-empty-list-help")]
-        public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] ProjectTaskGetEmptyListHelpRequestDto input)
+        [Route("get-empty-list-help")]
+        public async Task<IActionResult> GetEmptyListHelpAsync(ProjectTaskGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetEmptyListHelpAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-mention-suggestions")]
-        public async Task<IActionResult> GetMentionSuggestionsAsync(Guid id, [FromBody] ProjectTaskGetMentionSuggestionsRequestDto input)
+        [Route("get-mention-suggestions")]
+        public async Task<IActionResult> GetMentionSuggestionsAsync(ProjectTaskGetMentionSuggestionsRequestDto input)
         {
-            var result = await _appService.GetMentionSuggestionsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetMentionSuggestionsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-todo-views-id")]
-        public async Task<IActionResult> GetTodoViewsIdAsync(Guid id)
+        [Route("get-todo-views-id")]
+        public async Task<IActionResult> GetTodoViewsIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetTodoViewsIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetTodoViewsIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-unusual-days")]
-        public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] ProjectTaskGetUnusualDaysRequestDto input)
+        [Route("get-unusual-days")]
+        public async Task<IActionResult> GetUnusualDaysAsync(ProjectTaskGetUnusualDaysRequestDto input)
         {
-            var result = await _appService.GetUnusualDaysAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetUnusualDaysAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-blocked-by-dependences")]
-        public async Task<IActionResult> IsBlockedByDependencesAsync(Guid id)
+        [Route("is-blocked-by-dependences")]
+        public async Task<IActionResult> IsBlockedByDependencesAsync(Guid[] ids)
         {
-            var result = await _appService.IsBlockedByDependencesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.IsBlockedByDependencesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-new")]
-        public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] ProjectTaskMessageNewRequestDto input)
+        [Route("message-new")]
+        public async Task<IActionResult> MessageNewAsync(ProjectTaskMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageNewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-subscribe")]
-        public async Task<IActionResult> MessageSubscribeAsync(Guid id, [FromBody] ProjectTaskMessageSubscribeRequestDto input)
+        [Route("message-subscribe")]
+        public async Task<IActionResult> MessageSubscribeAsync(ProjectTaskMessageSubscribeRequestDto input)
         {
-            var result = await _appService.MessageSubscribeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageSubscribeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-update")]
-        public async Task<IActionResult> MessageUpdateAsync(Guid id, [FromBody] ProjectTaskMessageUpdateRequestDto input)
+        [Route("message-update")]
+        public async Task<IActionResult> MessageUpdateAsync(ProjectTaskMessageUpdateRequestDto input)
         {
-            var result = await _appService.MessageUpdateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageUpdateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/o-p-e-n-s-t-a-t-e-s")]
-        public async Task<IActionResult> OPENSTATESAsync(Guid id)
+        [Route("o-p-e-n-s-t-a-t-e-s")]
+        public async Task<IActionResult> OPENSTATESAsync(Guid[] ids)
         {
-            var result = await _appService.OPENSTATESAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OPENSTATESAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/plan-task-in-calendar")]
-        public async Task<IActionResult> PlanTaskInCalendarAsync(Guid id, [FromBody] ProjectTaskPlanTaskInCalendarRequestDto input)
+        [Route("plan-task-in-calendar")]
+        public async Task<IActionResult> PlanTaskInCalendarAsync(ProjectTaskPlanTaskInCalendarRequestDto input)
         {
-            var result = await _appService.PlanTaskInCalendarAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PlanTaskInCalendarAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/project-sharing-toggle-is-follower")]
-        public async Task<IActionResult> ProjectSharingToggleIsFollowerAsync(Guid id)
+        [Route("project-sharing-toggle-is-follower")]
+        public async Task<IActionResult> ProjectSharingToggleIsFollowerAsync(Guid[] ids)
         {
-            var result = await _appService.ProjectSharingToggleIsFollowerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProjectSharingToggleIsFollowerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/rating-apply")]
-        public async Task<IActionResult> RatingApplyAsync(Guid id, [FromBody] ProjectTaskRatingApplyRequestDto input)
+        [Route("rating-apply")]
+        public async Task<IActionResult> RatingApplyAsync(ProjectTaskRatingApplyRequestDto input)
         {
-            var result = await _appService.RatingApplyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RatingApplyAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/stage-find")]
-        public async Task<IActionResult> StageFindAsync(Guid id, [FromBody] ProjectTaskStageFindRequestDto input)
+        [Route("stage-find")]
+        public async Task<IActionResult> StageFindAsync(ProjectTaskStageFindRequestDto input)
         {
-            var result = await _appService.StageFindAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.StageFindAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/t-a-s-k-p-o-r-t-a-l-r-e-a-d-a-b-l-e-f-i-e-l-d-s")]
-        public async Task<IActionResult> TASKPORTALREADABLEFIELDSAsync(Guid id)
+        [Route("t-a-s-k-p-o-r-t-a-l-r-e-a-d-a-b-l-e-f-i-e-l-d-s")]
+        public async Task<IActionResult> TASKPORTALREADABLEFIELDSAsync(Guid[] ids)
         {
-            var result = await _appService.TASKPORTALREADABLEFIELDSAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TASKPORTALREADABLEFIELDSAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/t-a-s-k-p-o-r-t-a-l-w-r-i-t-a-b-l-e-f-i-e-l-d-s")]
-        public async Task<IActionResult> TASKPORTALWRITABLEFIELDSAsync(Guid id)
+        [Route("t-a-s-k-p-o-r-t-a-l-w-r-i-t-a-b-l-e-f-i-e-l-d-s")]
+        public async Task<IActionResult> TASKPORTALWRITABLEFIELDSAsync(Guid[] ids)
         {
-            var result = await _appService.TASKPORTALWRITABLEFIELDSAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TASKPORTALWRITABLEFIELDSAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-date-end")]
-        public async Task<IActionResult> UpdateDateEndAsync(Guid id, [FromBody] ProjectTaskUpdateDateEndRequestDto input)
+        [Route("update-date-end")]
+        public async Task<IActionResult> UpdateDateEndAsync(ProjectTaskUpdateDateEndRequestDto input)
         {
-            var result = await _appService.UpdateDateEndAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdateDateEndAsync(input);
             return Ok(result);
         }
     }

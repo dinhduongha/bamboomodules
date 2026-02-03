@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-account-move")]
-        public async Task<IActionResult> ActionOpenAccountMoveAsync(Guid id)
+        [Route("action-open-account-move")]
+        public async Task<IActionResult> ActionOpenAccountMoveAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAccountMoveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAccountMoveAsync(ids);
             return Ok(result);
         }
     }

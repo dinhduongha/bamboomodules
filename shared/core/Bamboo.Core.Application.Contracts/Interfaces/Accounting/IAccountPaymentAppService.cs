@@ -10,26 +10,26 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountPaymentAppService : IGenericApplicationService<AccountPayment>
     {
-        Task<AccountPayment> ButtonOpenBillsAsync(Guid id);
-        Task<AccountPayment> ButtonOpenInvoicesAsync(Guid id);
-        Task<AccountPayment> ButtonOpenJournalEntryAsync(Guid id);
-        Task<AccountPayment> ButtonOpenStatementLinesAsync(Guid id);
-        Task<AccountPayment> ButtonRequestCancelAsync(Guid id);
-        Task<AccountPayment> CancelAsync(Guid id);
-        Task<AccountPayment> CopyDataAsync(Guid id, AccountPaymentCopyDataRequestDto input);
-        Task<AccountPayment> DoPrintChecksAsync(Guid id);
-        Task<AccountPayment> DraftAsync(Guid id);
-        Task<AccountPayment> MarkAsSentAsync(Guid id);
-        Task<AccountPayment> OpenBusinessDocAsync(Guid id);
-        Task<AccountPayment> OpenExpenseAsync(Guid id);
-        Task<AccountPayment> PostAsync(Guid id);
-        Task<AccountPayment> PrintChecksAsync(Guid id);
-        Task<AccountPayment> RefundWizardAsync(Guid id);
-        Task<AccountPayment> RejectAsync(Guid id);
-        Task<AccountPayment> UnmarkAsSentAsync(Guid id);
-        Task<AccountPayment> ValidateAsync(Guid id);
-        Task<AccountPayment> ViewPosOrderAsync(Guid id);
-        Task<AccountPayment> ViewRefundsAsync(Guid id);
-        Task<AccountPayment> VoidCheckAsync(Guid id);
+        Task<AccountPayment> ButtonOpenBillsAsync(Guid[] ids);
+        Task<AccountPayment> ButtonOpenInvoicesAsync(Guid[] ids);
+        Task<AccountPayment> ButtonOpenJournalEntryAsync(Guid[] ids);
+        Task<AccountPayment> ButtonOpenStatementLinesAsync(Guid[] ids);
+        Task<AccountPayment> ButtonRequestCancelAsync(Guid[] ids);
+        Task<AccountPayment> CancelAsync(Guid[] ids);
+        Task<AccountPayment> CopyDataAsync(AccountPaymentCopyDataRequestDto input);
+        Task<AccountPayment> DoPrintChecksAsync(Guid[] ids);
+        Task<AccountPayment> DraftAsync(Guid[] ids);
+        Task<AccountPayment> MarkAsSentAsync(Guid[] ids);
+        Task<AccountPayment> OpenBusinessDocAsync(Guid[] ids);
+        Task<AccountPayment> OpenExpenseAsync(Guid[] ids);
+        Task<AccountPayment> PostAsync(Guid[] ids);
+        Task<AccountPayment> PrintChecksAsync(Guid[] ids);
+        Task<AccountPayment> RefundWizardAsync(Guid[] ids);
+        Task<AccountPayment> RejectAsync(Guid[] ids);
+        Task<AccountPayment> UnmarkAsSentAsync(Guid[] ids);
+        Task<AccountPayment> ValidateAsync(Guid[] ids);
+        Task<AccountPayment> ViewPosOrderAsync(Guid[] ids);
+        Task<AccountPayment> ViewRefundsAsync(Guid[] ids);
+        Task<AccountPayment> VoidCheckAsync(Guid[] ids);
     }
 }

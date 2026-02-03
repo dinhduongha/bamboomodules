@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/consume")]
-        public async Task<IActionResult> ConsumeAsync(Guid id, [FromBody] WebTourTourConsumeRequestDto input)
+        [Route("consume")]
+        public async Task<IActionResult> ConsumeAsync(WebTourTourConsumeRequestDto input)
         {
-            var result = await _appService.ConsumeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConsumeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/export-js-file")]
-        public async Task<IActionResult> ExportJsFileAsync(Guid id)
+        [Route("export-js-file")]
+        public async Task<IActionResult> ExportJsFileAsync(Guid[] ids)
         {
-            var result = await _appService.ExportJsFileAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExportJsFileAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-current-tour")]
-        public async Task<IActionResult> GetCurrentTourAsync(Guid id)
+        [Route("get-current-tour")]
+        public async Task<IActionResult> GetCurrentTourAsync(Guid[] ids)
         {
-            var result = await _appService.GetCurrentTourAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetCurrentTourAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-tour-json-by-name")]
-        public async Task<IActionResult> GetTourJsonByNameAsync(Guid id, [FromBody] WebTourTourGetTourJsonByNameRequestDto input)
+        [Route("get-tour-json-by-name")]
+        public async Task<IActionResult> GetTourJsonByNameAsync(WebTourTourGetTourJsonByNameRequestDto input)
         {
-            var result = await _appService.GetTourJsonByNameAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetTourJsonByNameAsync(input);
             return Ok(result);
         }
     }

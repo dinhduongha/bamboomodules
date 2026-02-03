@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-steps-json")]
-        public async Task<IActionResult> GetStepsJsonAsync(Guid id)
+        [Route("get-steps-json")]
+        public async Task<IActionResult> GetStepsJsonAsync(Guid[] ids)
         {
-            var result = await _appService.GetStepsJsonAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetStepsJsonAsync(ids);
             return Ok(result);
         }
     }

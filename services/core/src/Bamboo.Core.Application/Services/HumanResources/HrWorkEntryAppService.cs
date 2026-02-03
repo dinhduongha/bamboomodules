@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrWorkEntryModule", Category = "HumanResources", Depends = new[] { "hr" })]
-    public partial class HrWorkEntryAppService : GenericApplicationService<HrWorkEntry>, IHrWorkEntryAppService
+    public partial class HrWorkEntryAppService : GenericAppService<HrWorkEntry>, IHrWorkEntryAppService
     {
 
         public HrWorkEntryAppService(IRepository<HrWorkEntry, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<HrWorkEntry> ApproveLeaveAsync(Guid id)
+        public async Task<HrWorkEntry> ApproveLeaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_work_entry.py) ---
@@ -36,7 +36,9 @@ namespace Bamboo.Core.Application.Services
             // if self.leave_id:
             //     self.leave_id.action_approve()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrWorkEntry> CheckDurationInternalAsync()
@@ -149,6 +151,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrWorkEntry> FromIntervalsInternalAsync(object intervals)
         {
             /*
@@ -159,6 +162,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrWorkEntry> GetLeavesDurationBetweenTwoDatesInternalAsync(Guid employee_id, object date_from, object date_to)
         {
             /*
@@ -196,7 +200,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrWorkEntry> GetUnusualDaysAsync(Guid id, HrWorkEntryGetUnusualDaysRequestDto input)
+        [ApiModel]
+        public async Task<HrWorkEntry> GetUnusualDaysAsync(HrWorkEntryGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
@@ -207,7 +212,9 @@ namespace Bamboo.Core.Application.Services
             //     self.company_id,
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrWorkEntry> GetWorkEntryTypeDomainInternalAsync()
@@ -342,7 +349,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrWorkEntry> RefuseLeaveAsync(Guid id)
+        public async Task<HrWorkEntry> RefuseLeaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_holidays, FILE: hr_work_entry.py) ---
@@ -352,7 +359,9 @@ namespace Bamboo.Core.Application.Services
             // if leave_sudo:
             //     leave_sudo.action_refuse()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrWorkEntry> ResetConflictingStateInternalAsync()
@@ -370,6 +379,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrWorkEntry> SetCurrentContractInternalAsync(object vals)
         {
             /*
@@ -392,7 +402,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrWorkEntry> SplitAsync(Guid id, HrWorkEntrySplitRequestDto input)
+        public async Task<HrWorkEntry> SplitAsync(HrWorkEntrySplitRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
@@ -412,7 +422,9 @@ namespace Bamboo.Core.Application.Services
             // split_work_entry.write(vals)
             // return split_work_entry.id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrWorkEntry> ToIntervalsInternalAsync()
@@ -438,7 +450,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrWorkEntry> ValidateAsync(Guid id)
+        public async Task<HrWorkEntry> ValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
@@ -455,10 +467,12 @@ namespace Bamboo.Core.Application.Services
             //     return True
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, HrWorkEntry entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<HrWorkEntry> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_work_entry.py) ---
@@ -485,7 +499,7 @@ namespace Bamboo.Core.Application.Services
             //     self.mapped('leave_id').filtered(lambda l: l.state != 'refuse').action_refuse()
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

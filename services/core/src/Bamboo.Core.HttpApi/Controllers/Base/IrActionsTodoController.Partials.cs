@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-launch")]
-        public async Task<IActionResult> ActionLaunchAsync(Guid id)
+        [Route("action-launch")]
+        public async Task<IActionResult> ActionLaunchAsync(Guid[] ids)
         {
-            var result = await _appService.LaunchAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LaunchAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open")]
-        public async Task<IActionResult> ActionOpenAsync(Guid id)
+        [Route("action-open")]
+        public async Task<IActionResult> ActionOpenAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/ensure-one-open-todo")]
-        public async Task<IActionResult> EnsureOneOpenTodoAsync(Guid id)
+        [Route("ensure-one-open-todo")]
+        public async Task<IActionResult> EnsureOneOpenTodoAsync(Guid[] ids)
         {
-            var result = await _appService.EnsureOneOpenTodoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.EnsureOneOpenTodoAsync(ids);
             return Ok(result);
         }
     }

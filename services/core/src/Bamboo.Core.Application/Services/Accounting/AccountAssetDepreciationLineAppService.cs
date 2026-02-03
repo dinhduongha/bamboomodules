@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountAsset", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class AccountAssetDepreciationLineAppService : GenericApplicationService<AccountAssetDepreciationLine>, IAccountAssetDepreciationLineAppService
+    public partial class AccountAssetDepreciationLineAppService : GenericAppService<AccountAssetDepreciationLine>, IAccountAssetDepreciationLineAppService
     {
 
         public AccountAssetDepreciationLineAppService(IRepository<AccountAssetDepreciationLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<AccountAssetDepreciationLine> CreateGroupedMoveAsync(Guid id, AccountAssetDepreciationLineCreateGroupedMoveRequestDto input)
+        public async Task<AccountAssetDepreciationLine> CreateGroupedMoveAsync(AccountAssetDepreciationLineCreateGroupedMoveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -43,10 +43,12 @@ namespace Bamboo.Core.Application.Services
             //     created_moves.action_post()
             // return [x.id for x in created_moves]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetDepreciationLine> CreateMoveAsync(Guid id, AccountAssetDepreciationLineCreateMoveRequestDto input)
+        public async Task<AccountAssetDepreciationLine> CreateMoveAsync(AccountAssetDepreciationLineCreateMoveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -64,7 +66,9 @@ namespace Bamboo.Core.Application.Services
             //     created_moves.filtered(lambda m: any(m.asset_depreciation_ids.mapped('asset_id.category_id.open_asset'))).action_post()
             // return [x.id for x in created_moves]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAssetDepreciationLine> GetMoveCheckInternalAsync()
@@ -89,7 +93,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAssetDepreciationLine> LogMessageWhenPostedAsync(Guid id)
+        public async Task<AccountAssetDepreciationLine> LogMessageWhenPostedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -113,10 +117,12 @@ namespace Bamboo.Core.Application.Services
             //         msg = _format_message(_('Depreciation line posted.'), msg_values)
             //         line.asset_id.message_post(body=msg)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetDepreciationLine> PostLinesAndCloseAssetAsync(Guid id)
+        public async Task<AccountAssetDepreciationLine> PostLinesAndCloseAssetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -129,7 +135,9 @@ namespace Bamboo.Core.Application.Services
             //         asset.message_post(body=_("Document closed."))
             //         asset.write({'state': 'close'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAssetDepreciationLine> PrepareMoveGroupedInternalAsync()

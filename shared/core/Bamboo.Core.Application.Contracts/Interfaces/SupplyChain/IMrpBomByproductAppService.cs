@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMrpBomByproductAppService : IGenericApplicationService<MrpBomByproduct>
     {
-        Task<MrpBomByproduct> AddFromCatalogAsync(Guid id);
+        Task<MrpBomByproduct> AddFromCatalogAsync(Guid[] ids);
     }
 }

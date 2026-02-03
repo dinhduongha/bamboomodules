@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/exists")]
-        public async Task<IActionResult> ExistsAsync(Guid id)
+        [Route("exists")]
+        public async Task<IActionResult> ExistsAsync(Guid[] ids)
         {
-            var result = await _appService.ExistsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExistsAsync(ids);
             return Ok(result);
         }
     }

@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-see-accrual-plans")]
-        public async Task<IActionResult> ActionSeeAccrualPlansAsync(Guid id)
+        [Route("action-see-accrual-plans")]
+        public async Task<IActionResult> ActionSeeAccrualPlansAsync(Guid[] ids)
         {
-            var result = await _appService.SeeAccrualPlansAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SeeAccrualPlansAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-see-days-allocated")]
-        public async Task<IActionResult> ActionSeeDaysAllocatedAsync(Guid id)
+        [Route("action-see-days-allocated")]
+        public async Task<IActionResult> ActionSeeDaysAllocatedAsync(Guid[] ids)
         {
-            var result = await _appService.SeeDaysAllocatedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SeeDaysAllocatedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-see-group-leaves")]
-        public async Task<IActionResult> ActionSeeGroupLeavesAsync(Guid id)
+        [Route("action-see-group-leaves")]
+        public async Task<IActionResult> ActionSeeGroupLeavesAsync(Guid[] ids)
         {
-            var result = await _appService.SeeGroupLeavesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SeeGroupLeavesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-allocation-requirement-edit-validity")]
-        public async Task<IActionResult> CheckAllocationRequirementEditValidityAsync(Guid id)
+        [Route("check-allocation-requirement-edit-validity")]
+        public async Task<IActionResult> CheckAllocationRequirementEditValidityAsync(Guid[] ids)
         {
-            var result = await _appService.CheckAllocationRequirementEditValidityAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckAllocationRequirementEditValidityAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] HrLeaveTypeCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(HrLeaveTypeCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-allocation-data")]
-        public async Task<IActionResult> GetAllocationDataAsync(Guid id, [FromBody] HrLeaveTypeGetAllocationDataRequestDto input)
+        [Route("get-allocation-data")]
+        public async Task<IActionResult> GetAllocationDataAsync(HrLeaveTypeGetAllocationDataRequestDto input)
         {
-            var result = await _appService.GetAllocationDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAllocationDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-allocation-data-request")]
-        public async Task<IActionResult> GetAllocationDataRequestAsync(Guid id, [FromBody] HrLeaveTypeGetAllocationDataRequestRequestDto input)
+        [Route("get-allocation-data-request")]
+        public async Task<IActionResult> GetAllocationDataRequestAsync(HrLeaveTypeGetAllocationDataRequestRequestDto input)
         {
-            var result = await _appService.GetAllocationDataRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAllocationDataRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-accrual-allocation")]
-        public async Task<IActionResult> HasAccrualAllocationAsync(Guid id)
+        [Route("has-accrual-allocation")]
+        public async Task<IActionResult> HasAccrualAllocationAsync(Guid[] ids)
         {
-            var result = await _appService.HasAccrualAllocationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.HasAccrualAllocationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/requested-display-name")]
-        public async Task<IActionResult> RequestedDisplayNameAsync(Guid id)
+        [Route("requested-display-name")]
+        public async Task<IActionResult> RequestedDisplayNameAsync(Guid[] ids)
         {
-            var result = await _appService.RequestedDisplayNameAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RequestedDisplayNameAsync(ids);
             return Ok(result);
         }
     }

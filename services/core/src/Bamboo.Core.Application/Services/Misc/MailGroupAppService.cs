@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MailGroupModule", Category = "Misc", Depends = new[] { "mail", "portal" })]
-    public partial class MailGroupAppService : GenericApplicationService<MailGroup>, IMailGroupAppService
+    public partial class MailGroupAppService : GenericAppService<MailGroup>, IMailGroupAppService
     {
         private readonly IMailAliasMixinAppService _mailAliasMixinAppService;
         public MailGroupAppService(IRepository<MailGroup, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailAliasMixinAppService mailAliasMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -123,6 +123,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailGroup> CleanEmailBodyInternalAsync(object body_html)
         {
             /*
@@ -141,7 +142,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroup> CloseAsync(Guid id)
+        public async Task<MailGroup> CloseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
@@ -149,7 +150,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.is_closed = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailGroup> ComputeCanManageGroupInternalAsync()
@@ -299,6 +302,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailGroup> CronNotifyModeratorsInternalAsync()
         {
             /*
@@ -455,7 +459,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroup> GoToWebsiteAsync(Guid id)
+        public async Task<MailGroup> GoToWebsiteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_mail_group, FILE: mail_group.py) ---
@@ -467,10 +471,12 @@ namespace Bamboo.Core.Application.Services
             //     'url': '/groups/%s' % self.env['ir.http']._slug(self),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailGroup> JoinAsync(Guid id)
+        public async Task<MailGroup> JoinAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
@@ -483,7 +489,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // _logger.info('"%s" (#%s) joined mail.group "%s" (#%s)', partner.name, partner.id, self.name, self.id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailGroup> JoinGroupInternalAsync(object email, Guid partner_id)
@@ -523,7 +531,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroup> LeaveAsync(Guid id)
+        public async Task<MailGroup> LeaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
@@ -534,7 +542,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // _logger.info('"%s" (#%s) leaved mail.group "%s" (#%s)', partner.name, partner.id, self.name, self.id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailGroup> LeaveGroupInternalAsync(object email, Guid partner_id, object all_members)
@@ -563,7 +573,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroup> MessageNewAsync(Guid id, MailGroupMessageNewRequestDto input)
+        [ApiModel]
+        public async Task<MailGroup> MessageNewAsync(MailGroupMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
@@ -571,10 +582,12 @@ namespace Bamboo.Core.Application.Services
             // """Add the method to make the mail gateway flow work with this model."""
             // return
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailGroup> MessagePostAsync(Guid id, MailGroupMessagePostRequestDto input)
+        public async Task<MailGroup> MessagePostAsync(MailGroupMessagePostRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
@@ -669,10 +682,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return mail_message
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailGroup> MessageUpdateAsync(Guid id, MailGroupMessageUpdateRequestDto input)
+        [ApiModel]
+        public async Task<MailGroup> MessageUpdateAsync(MailGroupMessageUpdateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
@@ -680,7 +696,9 @@ namespace Bamboo.Core.Application.Services
             // """Add the method to make the mail gateway flow work with this model."""
             // return
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailGroup> NotifyMembersInternalAsync(object message)
@@ -830,7 +848,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroup> OpenAsync(Guid id)
+        public async Task<MailGroup> OpenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
@@ -838,9 +856,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.is_closed = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<MailGroup> RoutingCheckRouteInternalAsync(object message, object message_dict, object route, object raise_exception)
         {
             /*
@@ -879,7 +900,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroup> SendGuidelinesAsync(Guid id, MailGroupSendGuidelinesRequestDto input)
+        public async Task<MailGroup> SendGuidelinesAsync(MailGroupSendGuidelinesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group.py) ---
@@ -922,7 +943,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // _logger.info('Send guidelines to %i members', len(members))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailGroup> SendSubscribeConfirmationEmailInternalAsync(object email)

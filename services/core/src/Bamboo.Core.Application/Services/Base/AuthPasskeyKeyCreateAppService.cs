@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("AuthPasskey", Category = "Base", Depends = new[] { "base_setup", "web" })]
-    public partial class AuthPasskeyKeyCreateAppService : GenericApplicationService<AuthPasskeyKeyCreate>, IAuthPasskeyKeyCreateAppService
+    public partial class AuthPasskeyKeyCreateAppService : GenericAppService<AuthPasskeyKeyCreate>, IAuthPasskeyKeyCreateAppService
     {
 
         public AuthPasskeyKeyCreateAppService(IRepository<AuthPasskeyKeyCreate, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<AuthPasskeyKeyCreate> MakeKeyAsync(Guid id, AuthPasskeyKeyCreateMakeKeyRequestDto input)
+        public async Task<AuthPasskeyKeyCreate> MakeKeyAsync(AuthPasskeyKeyCreateMakeKeyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: auth_passkey_key.py) ---
@@ -59,7 +59,9 @@ namespace Bamboo.Core.Application.Services
             // request.session.session_token = new_token
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

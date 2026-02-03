@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/toggle-active")]
-        public async Task<IActionResult> ToggleActiveAsync(Guid id)
+        [Route("toggle-active")]
+        public async Task<IActionResult> ToggleActiveAsync(Guid[] ids)
         {
-            var result = await _appService.ToggleActiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ToggleActiveAsync(ids);
             return Ok(result);
         }
     }

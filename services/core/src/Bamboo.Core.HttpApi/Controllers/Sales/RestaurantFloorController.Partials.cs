@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/deactivate-floor")]
-        public async Task<IActionResult> DeactivateFloorAsync(Guid id, [FromBody] RestaurantFloorDeactivateFloorRequestDto input)
+        [Route("deactivate-floor")]
+        public async Task<IActionResult> DeactivateFloorAsync(RestaurantFloorDeactivateFloorRequestDto input)
         {
-            var result = await _appService.DeactivateFloorAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DeactivateFloorAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/rename-floor")]
-        public async Task<IActionResult> RenameFloorAsync(Guid id, [FromBody] RestaurantFloorRenameFloorRequestDto input)
+        [Route("rename-floor")]
+        public async Task<IActionResult> RenameFloorAsync(RestaurantFloorRenameFloorRequestDto input)
         {
-            var result = await _appService.RenameFloorAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RenameFloorAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/sync-from-ui")]
-        public async Task<IActionResult> SyncFromUiAsync(Guid id, [FromBody] RestaurantFloorSyncFromUiRequestDto input)
+        [Route("sync-from-ui")]
+        public async Task<IActionResult> SyncFromUiAsync(RestaurantFloorSyncFromUiRequestDto input)
         {
-            var result = await _appService.SyncFromUiAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SyncFromUiAsync(input);
             return Ok(result);
         }
     }

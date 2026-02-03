@@ -11,226 +11,254 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-pos-session-close")]
-        public async Task<IActionResult> ActionPosSessionCloseAsync(Guid id, [FromBody] PosSessionPosSessionCloseRequestDto input)
+        [Route("action-pos-session-close")]
+        public async Task<IActionResult> ActionPosSessionCloseAsync(PosSessionPosSessionCloseRequestDto input)
         {
-            var result = await _appService.PosSessionCloseAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PosSessionCloseAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-pos-session-closing-control")]
-        public async Task<IActionResult> ActionPosSessionClosingControlAsync(Guid id, [FromBody] PosSessionPosSessionClosingControlRequestDto input)
+        [Route("action-pos-session-closing-control")]
+        public async Task<IActionResult> ActionPosSessionClosingControlAsync(PosSessionPosSessionClosingControlRequestDto input)
         {
-            var result = await _appService.PosSessionClosingControlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PosSessionClosingControlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-pos-session-open")]
-        public async Task<IActionResult> ActionPosSessionOpenAsync(Guid id)
+        [Route("action-pos-session-open")]
+        public async Task<IActionResult> ActionPosSessionOpenAsync(Guid[] ids)
         {
-            var result = await _appService.PosSessionOpenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PosSessionOpenAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-pos-session-validate")]
-        public async Task<IActionResult> ActionPosSessionValidateAsync(Guid id, [FromBody] PosSessionPosSessionValidateRequestDto input)
+        [Route("action-pos-session-validate")]
+        public async Task<IActionResult> ActionPosSessionValidateAsync(PosSessionPosSessionValidateRequestDto input)
         {
-            var result = await _appService.PosSessionValidateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PosSessionValidateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-payments-list")]
-        public async Task<IActionResult> ActionShowPaymentsListAsync(Guid id)
+        [Route("action-show-payments-list")]
+        public async Task<IActionResult> ActionShowPaymentsListAsync(Guid[] ids)
         {
-            var result = await _appService.ShowPaymentsListAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowPaymentsListAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-stock-picking")]
-        public async Task<IActionResult> ActionStockPickingAsync(Guid id)
+        [Route("action-stock-picking")]
+        public async Task<IActionResult> ActionStockPickingAsync(Guid[] ids)
         {
-            var result = await _appService.StockPickingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StockPickingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-order")]
-        public async Task<IActionResult> ActionViewOrderAsync(Guid id)
+        [Route("action-view-order")]
+        public async Task<IActionResult> ActionViewOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/close-session-from-ui")]
-        public async Task<IActionResult> CloseSessionFromUiAsync(Guid id, [FromBody] PosSessionCloseSessionFromUiRequestDto input)
+        [Route("close-session-from-ui")]
+        public async Task<IActionResult> CloseSessionFromUiAsync(PosSessionCloseSessionFromUiRequestDto input)
         {
-            var result = await _appService.CloseSessionFromUiAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CloseSessionFromUiAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/delete-cash-in-out")]
-        public async Task<IActionResult> DeleteCashInOutAsync(Guid id, [FromBody] PosSessionDeleteCashInOutRequestDto input)
+        [Route("delete-cash-in-out")]
+        public async Task<IActionResult> DeleteCashInOutAsync(PosSessionDeleteCashInOutRequestDto input)
         {
-            var result = await _appService.DeleteCashInOutAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DeleteCashInOutAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/delete-opening-control-session")]
-        public async Task<IActionResult> DeleteOpeningControlSessionAsync(Guid id)
+        [Route("delete-opening-control-session")]
+        public async Task<IActionResult> DeleteOpeningControlSessionAsync(Guid[] ids)
         {
-            var result = await _appService.DeleteOpeningControlSessionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DeleteOpeningControlSessionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/filter-local-data")]
-        public async Task<IActionResult> FilterLocalDataAsync(Guid id, [FromBody] PosSessionFilterLocalDataRequestDto input)
+        [Route("filter-local-data")]
+        public async Task<IActionResult> FilterLocalDataAsync(PosSessionFilterLocalDataRequestDto input)
         {
-            var result = await _appService.FilterLocalDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FilterLocalDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/find-product-by-barcode")]
-        public async Task<IActionResult> FindProductByBarcodeAsync(Guid id, [FromBody] PosSessionFindProductByBarcodeRequestDto input)
+        [Route("find-product-by-barcode")]
+        public async Task<IActionResult> FindProductByBarcodeAsync(PosSessionFindProductByBarcodeRequestDto input)
         {
-            var result = await _appService.FindProductByBarcodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FindProductByBarcodeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-cash-in-out-list")]
-        public async Task<IActionResult> GetCashInOutListAsync(Guid id)
+        [Route("get-cash-in-out-list")]
+        public async Task<IActionResult> GetCashInOutListAsync(Guid[] ids)
         {
-            var result = await _appService.GetCashInOutListAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetCashInOutListAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-closing-control-data")]
-        public async Task<IActionResult> GetClosingControlDataAsync(Guid id)
+        [Route("get-closing-control-data")]
+        public async Task<IActionResult> GetClosingControlDataAsync(Guid[] ids)
         {
-            var result = await _appService.GetClosingControlDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetClosingControlDataAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-pos-ui-product-pricelist-item-by-product")]
-        public async Task<IActionResult> GetPosUiProductPricelistItemByProductAsync(Guid id, [FromBody] PosSessionGetPosUiProductPricelistItemByProductRequestDto input)
+        [Route("get-pos-ui-product-pricelist-item-by-product")]
+        public async Task<IActionResult> GetPosUiProductPricelistItemByProductAsync(PosSessionGetPosUiProductPricelistItemByProductRequestDto input)
         {
-            var result = await _appService.GetPosUiProductPricelistItemByProductAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetPosUiProductPricelistItemByProductAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-session-orders")]
-        public async Task<IActionResult> GetSessionOrdersAsync(Guid id)
+        [Route("get-session-orders")]
+        public async Task<IActionResult> GetSessionOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.GetSessionOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetSessionOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-total-discount")]
-        public async Task<IActionResult> GetTotalDiscountAsync(Guid id)
+        [Route("get-total-discount")]
+        public async Task<IActionResult> GetTotalDiscountAsync(Guid[] ids)
         {
-            var result = await _appService.GetTotalDiscountAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetTotalDiscountAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-data")]
-        public async Task<IActionResult> LoadDataAsync(Guid id, [FromBody] PosSessionLoadDataRequestDto input)
+        [Route("load-data")]
+        public async Task<IActionResult> LoadDataAsync(PosSessionLoadDataRequestDto input)
         {
-            var result = await _appService.LoadDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-data-params")]
-        public async Task<IActionResult> LoadDataParamsAsync(Guid id)
+        [Route("load-data-params")]
+        public async Task<IActionResult> LoadDataParamsAsync(Guid[] ids)
         {
-            var result = await _appService.LoadDataParamsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LoadDataParamsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/log-partner-message")]
-        public async Task<IActionResult> LogPartnerMessageAsync(Guid id, [FromBody] PosSessionLogPartnerMessageRequestDto input)
+        [Route("log-partner-message")]
+        public async Task<IActionResult> LogPartnerMessageAsync(PosSessionLogPartnerMessageRequestDto input)
         {
-            var result = await _appService.LogPartnerMessageAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LogPartnerMessageAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-frontend-cb")]
-        public async Task<IActionResult> OpenFrontendCbAsync(Guid id)
+        [Route("open-frontend-cb")]
+        public async Task<IActionResult> OpenFrontendCbAsync(Guid[] ids)
         {
-            var result = await _appService.OpenFrontendCbAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenFrontendCbAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/post-close-register-message")]
-        public async Task<IActionResult> PostCloseRegisterMessageAsync(Guid id)
+        [Route("post-close-register-message")]
+        public async Task<IActionResult> PostCloseRegisterMessageAsync(Guid[] ids)
         {
-            var result = await _appService.PostCloseRegisterMessageAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PostCloseRegisterMessageAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/post-closing-cash-details")]
-        public async Task<IActionResult> PostClosingCashDetailsAsync(Guid id, [FromBody] PosSessionPostClosingCashDetailsRequestDto input)
+        [Route("post-closing-cash-details")]
+        public async Task<IActionResult> PostClosingCashDetailsAsync(PosSessionPostClosingCashDetailsRequestDto input)
         {
-            var result = await _appService.PostClosingCashDetailsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PostClosingCashDetailsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-opening-control")]
-        public async Task<IActionResult> SetOpeningControlAsync(Guid id, [FromBody] PosSessionSetOpeningControlRequestDto input)
+        [Route("set-opening-control")]
+        public async Task<IActionResult> SetOpeningControlAsync(PosSessionSetOpeningControlRequestDto input)
         {
-            var result = await _appService.SetOpeningControlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetOpeningControlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/show-cash-register")]
-        public async Task<IActionResult> ShowCashRegisterAsync(Guid id)
+        [Route("show-cash-register")]
+        public async Task<IActionResult> ShowCashRegisterAsync(Guid[] ids)
         {
-            var result = await _appService.ShowCashRegisterAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowCashRegisterAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/show-journal-items")]
-        public async Task<IActionResult> ShowJournalItemsAsync(Guid id)
+        [Route("show-journal-items")]
+        public async Task<IActionResult> ShowJournalItemsAsync(Guid[] ids)
         {
-            var result = await _appService.ShowJournalItemsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowJournalItemsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/try-cash-in-out")]
-        public async Task<IActionResult> TryCashInOutAsync(Guid id, [FromBody] PosSessionTryCashInOutRequestDto input)
+        [Route("try-cash-in-out")]
+        public async Task<IActionResult> TryCashInOutAsync(PosSessionTryCashInOutRequestDto input)
         {
-            var result = await _appService.TryCashInOutAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.TryCashInOutAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-closing-control-state-session")]
-        public async Task<IActionResult> UpdateClosingControlStateSessionAsync(Guid id, [FromBody] PosSessionUpdateClosingControlStateSessionRequestDto input)
+        [Route("update-closing-control-state-session")]
+        public async Task<IActionResult> UpdateClosingControlStateSessionAsync(PosSessionUpdateClosingControlStateSessionRequestDto input)
         {
-            var result = await _appService.UpdateClosingControlStateSessionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdateClosingControlStateSessionAsync(input);
             return Ok(result);
         }
     }

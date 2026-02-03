@@ -10,15 +10,15 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISlideSlideAppService : IGenericApplicationService<SlideSlide>
     {
-        Task<SlideSlide> CopyDataAsync(Guid id, SlideSlideCopyDataRequestDto input);
-        Task<SlideSlide> DislikeAsync(Guid id);
-        Task<SlideSlide> GetBackendMenuIdAsync(Guid id);
-        Task<SlideSlide> GetBaseUrlAsync(Guid id);
-        Task<SlideSlide> LikeAsync(Guid id);
-        Task<SlideSlide> MarkCompletedAsync(Guid id);
-        Task<SlideSlide> MarkUncompletedAsync(Guid id);
-        Task<SlideSlide> MessagePostAsync(Guid id);
-        Task<SlideSlide> SetViewedAsync(Guid id, SlideSlideSetViewedRequestDto input);
-        Task<SlideSlide> ViewEmbedsAsync(Guid id);
+        Task<SlideSlide> CopyDataAsync(SlideSlideCopyDataRequestDto input);
+        Task<SlideSlide> DislikeAsync(Guid[] ids);
+        Task<SlideSlide> GetBackendMenuIdAsync(Guid[] ids);
+        Task<SlideSlide> GetBaseUrlAsync(Guid[] ids);
+        Task<SlideSlide> LikeAsync(Guid[] ids);
+        Task<SlideSlide> MarkCompletedAsync(Guid[] ids);
+        Task<SlideSlide> MarkUncompletedAsync(Guid[] ids);
+        Task<SlideSlide> MessagePostAsync(Guid[] ids);
+        Task<SlideSlide> SetViewedAsync(SlideSlideSetViewedRequestDto input);
+        Task<SlideSlide> ViewEmbedsAsync(Guid[] ids);
     }
 }

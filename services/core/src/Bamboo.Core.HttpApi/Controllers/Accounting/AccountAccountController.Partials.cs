@@ -11,90 +11,101 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-related-taxes")]
-        public async Task<IActionResult> ActionOpenRelatedTaxesAsync(Guid id)
+        [Route("action-open-related-taxes")]
+        public async Task<IActionResult> ActionOpenRelatedTaxesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenRelatedTaxesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenRelatedTaxesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unmerge")]
-        public async Task<IActionResult> ActionUnmergeAsync(Guid id)
+        [Route("action-unmerge")]
+        public async Task<IActionResult> ActionUnmergeAsync(Guid[] ids)
         {
-            var result = await _appService.UnmergeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnmergeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountAccountCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(AccountAccountCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-translations")]
-        public async Task<IActionResult> CopyTranslationsAsync(Guid id, [FromBody] AccountAccountCopyTranslationsRequestDto input)
+        [Route("copy-translations")]
+        public async Task<IActionResult> CopyTranslationsAsync(AccountAccountCopyTranslationsRequestDto input)
         {
-            var result = await _appService.CopyTranslationsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyTranslationsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-account-group")]
-        public async Task<IActionResult> GetAccountGroupAsync(Guid id, [FromBody] AccountAccountGetAccountGroupRequestDto input)
+        [Route("get-account-group")]
+        public async Task<IActionResult> GetAccountGroupAsync(AccountAccountGetAccountGroupRequestDto input)
         {
-            var result = await _appService.GetAccountGroupAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAccountGroupAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/spreadsheet-fetch-balance-tag")]
-        public async Task<IActionResult> SpreadsheetFetchBalanceTagAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchBalanceTagRequestDto input)
+        [Route("spreadsheet-fetch-balance-tag")]
+        public async Task<IActionResult> SpreadsheetFetchBalanceTagAsync(AccountAccountSpreadsheetFetchBalanceTagRequestDto input)
         {
-            var result = await _appService.SpreadsheetFetchBalanceTagAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SpreadsheetFetchBalanceTagAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/spreadsheet-fetch-debit-credit")]
-        public async Task<IActionResult> SpreadsheetFetchDebitCreditAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchDebitCreditRequestDto input)
+        [Route("spreadsheet-fetch-debit-credit")]
+        public async Task<IActionResult> SpreadsheetFetchDebitCreditAsync(AccountAccountSpreadsheetFetchDebitCreditRequestDto input)
         {
-            var result = await _appService.SpreadsheetFetchDebitCreditAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SpreadsheetFetchDebitCreditAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/spreadsheet-fetch-partner-balance")]
-        public async Task<IActionResult> SpreadsheetFetchPartnerBalanceAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input)
+        [Route("spreadsheet-fetch-partner-balance")]
+        public async Task<IActionResult> SpreadsheetFetchPartnerBalanceAsync(AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input)
         {
-            var result = await _appService.SpreadsheetFetchPartnerBalanceAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SpreadsheetFetchPartnerBalanceAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/spreadsheet-fetch-residual-amount")]
-        public async Task<IActionResult> SpreadsheetFetchResidualAmountAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchResidualAmountRequestDto input)
+        [Route("spreadsheet-fetch-residual-amount")]
+        public async Task<IActionResult> SpreadsheetFetchResidualAmountAsync(AccountAccountSpreadsheetFetchResidualAmountRequestDto input)
         {
-            var result = await _appService.SpreadsheetFetchResidualAmountAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SpreadsheetFetchResidualAmountAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/spreadsheet-move-line-action")]
-        public async Task<IActionResult> SpreadsheetMoveLineActionAsync(Guid id, [FromBody] AccountAccountSpreadsheetMoveLineActionRequestDto input)
+        [Route("spreadsheet-move-line-action")]
+        public async Task<IActionResult> SpreadsheetMoveLineActionAsync(AccountAccountSpreadsheetMoveLineActionRequestDto input)
         {
-            var result = await _appService.SpreadsheetMoveLineActionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SpreadsheetMoveLineActionAsync(input);
             return Ok(result);
         }
     }

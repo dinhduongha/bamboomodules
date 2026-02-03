@@ -10,28 +10,28 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrApplicantAppService : IGenericApplicationService<HrApplicant>
     {
-        Task<HrApplicant> AddToJobAsync(Guid id);
-        Task<HrApplicant> ArchiveApplicantAsync(Guid id);
-        Task<HrApplicant> ArchiveAsync(Guid id);
-        Task<HrApplicant> CopyDataAsync(Guid id, HrApplicantCopyDataRequestDto input);
-        Task<HrApplicant> CreateEmployeeFromApplicantAsync(Guid id);
-        Task<HrApplicant> CreateMeetingAsync(Guid id);
-        Task<HrApplicant> GetEmptyListHelpAsync(Guid id, HrApplicantGetEmptyListHelpRequestDto input);
-        Task<HrApplicant> GetViewAsync(Guid id, HrApplicantGetViewRequestDto input);
-        Task<HrApplicant> JobAddApplicantsAsync(Guid id);
-        Task<HrApplicant> LinkApplicantToTalentAsync(Guid id);
-        Task<HrApplicant> MessageNewAsync(Guid id, HrApplicantMessageNewRequestDto input);
-        Task<HrApplicant> OpenApplicationsAsync(Guid id);
-        Task<HrApplicant> OpenAttachmentsAsync(Guid id);
-        Task<HrApplicant> OpenEmployeeAsync(Guid id);
-        Task<HrApplicant> PrintSurveyAsync(Guid id);
-        Task<HrApplicant> ResetApplicantAsync(Guid id);
-        Task<HrApplicant> SendEmailAsync(Guid id);
-        Task<HrApplicant> SendSmsAsync(Guid id);
-        Task<HrApplicant> SendSurveyAsync(Guid id);
-        Task<HrApplicant> TalentPoolAddApplicantsAsync(Guid id);
-        Task<HrApplicant> TalentPoolStatButtonAsync(Guid id);
-        Task<HrApplicant> UnarchiveAsync(Guid id);
-        Task<HrApplicant> WebsiteFormInputFilterAsync(Guid id, HrApplicantWebsiteFormInputFilterRequestDto input);
+        Task<HrApplicant> AddToJobAsync(Guid[] ids);
+        Task<HrApplicant> ArchiveApplicantAsync(Guid[] ids);
+        Task<HrApplicant> ArchiveAsync(Guid[] ids);
+        Task<HrApplicant> CopyDataAsync(HrApplicantCopyDataRequestDto input);
+        Task<HrApplicant> CreateEmployeeFromApplicantAsync(Guid[] ids);
+        Task<HrApplicant> CreateMeetingAsync(Guid[] ids);
+        Task<HrApplicant> GetEmptyListHelpAsync(HrApplicantGetEmptyListHelpRequestDto input);
+        Task<HrApplicant> GetViewAsync(HrApplicantGetViewRequestDto input);
+        Task<HrApplicant> JobAddApplicantsAsync(Guid[] ids);
+        Task<HrApplicant> LinkApplicantToTalentAsync(Guid[] ids);
+        Task<HrApplicant> MessageNewAsync(HrApplicantMessageNewRequestDto input);
+        Task<HrApplicant> OpenApplicationsAsync(Guid[] ids);
+        Task<HrApplicant> OpenAttachmentsAsync(Guid[] ids);
+        Task<HrApplicant> OpenEmployeeAsync(Guid[] ids);
+        Task<HrApplicant> PrintSurveyAsync(Guid[] ids);
+        Task<HrApplicant> ResetApplicantAsync(Guid[] ids);
+        Task<HrApplicant> SendEmailAsync(Guid[] ids);
+        Task<HrApplicant> SendSmsAsync(Guid[] ids);
+        Task<HrApplicant> SendSurveyAsync(Guid[] ids);
+        Task<HrApplicant> TalentPoolAddApplicantsAsync(Guid[] ids);
+        Task<HrApplicant> TalentPoolStatButtonAsync(Guid[] ids);
+        Task<HrApplicant> UnarchiveAsync(Guid[] ids);
+        Task<HrApplicant> WebsiteFormInputFilterAsync(HrApplicantWebsiteFormInputFilterRequestDto input);
     }
 }

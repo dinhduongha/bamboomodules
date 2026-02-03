@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Sms", Category = "Sales", Depends = new[] { "base", "iap_mail", "mail", "phone_validation" })]
-    public partial class SmsSmsAppService : GenericApplicationService<SmsSms>, ISmsSmsAppService
+    public partial class SmsSmsAppService : GenericAppService<SmsSms>, ISmsSmsAppService
     {
 
         public SmsSmsAppService(IRepository<SmsSms, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -41,7 +41,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<SmsSms> CreateAsync(SmsSms entity, List<string> fields)
+        public override async Task<SmsSms> CreateAsync(CreateRequestDto<SmsSms> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_sms.py) ---
@@ -54,10 +54,11 @@ namespace Bamboo.Core.Application.Services
             //     vals['record_company_id'] = vals.get('record_company_id') or self.env.company.id  # TODO RIGR in master: move this field to SmsSms, and populate it via vals_list from all flows
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
+        [ApiModel]
+        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(FieldsGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: sms_sms.py) ---
@@ -85,7 +86,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            return await base.FieldsGetAsync(fields, attributes);
+            return await base.FieldsGetAsync(input);
         }
 
         protected async Task<SmsSms> GcDeviceInternalAsync()
@@ -156,6 +157,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SmsSms> ProcessQueueInternalAsync()
         {
             /*
@@ -175,7 +177,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SmsSms> ResendFailedAsync(Guid id)
+        public async Task<SmsSms> ResendFailedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_sms.py) ---
@@ -206,10 +208,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SmsSms> SendAsync(Guid id, SmsSmsSendRequestDto input)
+        public async Task<SmsSms> SendAsync(SmsSmsSendRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_sms.py) ---
@@ -234,7 +238,9 @@ namespace Bamboo.Core.Application.Services
             //             raise_exception=raise_exception,
             //         )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SmsSms> SendInternalAsync(object unlink_failed, object unlink_sent, object raise_exception)
@@ -305,34 +311,40 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SmsSms> SetCanceledAsync(Guid id)
+        public async Task<SmsSms> SetCanceledAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_sms.py) ---
             // def action_set_canceled(self):
             // self._update_sms_state_and_trackers('canceled')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SmsSms> SetErrorAsync(Guid id, SmsSmsSetErrorRequestDto input)
+        public async Task<SmsSms> SetErrorAsync(SmsSmsSetErrorRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_sms.py) ---
             // def action_set_error(self, failure_type):
             // self._update_sms_state_and_trackers('error', failure_type=failure_type)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SmsSms> SetOutgoingAsync(Guid id)
+        public async Task<SmsSms> SetOutgoingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_sms.py) ---
             // def action_set_outgoing(self):
             // self._update_sms_state_and_trackers('outgoing', failure_type=False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SmsSms> SplitBatchInternalAsync()

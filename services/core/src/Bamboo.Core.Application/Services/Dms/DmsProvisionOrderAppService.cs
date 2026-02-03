@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsProvisionOrderAppService : IGenericApplicationService<DmsProvisionOrder>
+    public interface IDmsProvisionOrderAppService : IGenericAppService<DmsProvisionOrder>
     {
         Task ProvisionStockAsync(Guid provisionId);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsProvisionOrderAppService : GenericApplicationService<DmsProvisionOrder>, IDmsProvisionOrderAppService
+    public class DmsProvisionOrderAppService : GenericAppService<DmsProvisionOrder>, IDmsProvisionOrderAppService
     {
         public DmsProvisionOrderAppService(
             IRepository<DmsProvisionOrder, Guid> repository,

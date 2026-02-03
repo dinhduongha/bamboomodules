@@ -10,25 +10,25 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IRepairOrderAppService : IGenericApplicationService<RepairOrder>
     {
-        Task<RepairOrder> AddFromCatalogAsync(Guid id);
-        Task<RepairOrder> AssignAsync(Guid id);
-        Task<RepairOrder> ComputeLotIdAsync(Guid id);
-        Task<RepairOrder> ComputeProductUomAsync(Guid id);
-        Task<RepairOrder> CreateSaleOrderAsync(Guid id);
-        Task<RepairOrder> ExplodeAsync(Guid id);
-        Task<RepairOrder> GenerateSerialAsync(Guid id);
-        Task<RepairOrder> MessagePostAsync(Guid id);
-        Task<RepairOrder> OnchangeProductUomAsync(Guid id);
-        Task<RepairOrder> PrintRepairOrderAsync(Guid id);
-        Task<RepairOrder> RepairCancelAsync(Guid id);
-        Task<RepairOrder> RepairCancelDraftAsync(Guid id);
-        Task<RepairOrder> RepairDoneAsync(Guid id);
-        Task<RepairOrder> RepairEndAsync(Guid id);
-        Task<RepairOrder> RepairStartAsync(Guid id);
-        Task<RepairOrder> UnreserveAsync(Guid id);
-        Task<RepairOrder> ValidateAsync(Guid id);
-        Task<RepairOrder> ViewMrpProductionsAsync(Guid id);
-        Task<RepairOrder> ViewPurchaseOrdersAsync(Guid id);
-        Task<RepairOrder> ViewSaleOrderAsync(Guid id);
+        Task<RepairOrder> AddFromCatalogAsync(Guid[] ids);
+        Task<RepairOrder> AssignAsync(Guid[] ids);
+        Task<RepairOrder> ComputeLotIdAsync(Guid[] ids);
+        Task<RepairOrder> ComputeProductUomAsync(Guid[] ids);
+        Task<RepairOrder> CreateSaleOrderAsync(Guid[] ids);
+        Task<RepairOrder> ExplodeAsync(Guid[] ids);
+        Task<RepairOrder> GenerateSerialAsync(Guid[] ids);
+        Task<RepairOrder> MessagePostAsync(Guid[] ids);
+        Task<RepairOrder> OnchangeProductUomAsync(Guid[] ids);
+        Task<RepairOrder> PrintRepairOrderAsync(Guid[] ids);
+        Task<RepairOrder> RepairCancelAsync(Guid[] ids);
+        Task<RepairOrder> RepairCancelDraftAsync(Guid[] ids);
+        Task<RepairOrder> RepairDoneAsync(Guid[] ids);
+        Task<RepairOrder> RepairEndAsync(Guid[] ids);
+        Task<RepairOrder> RepairStartAsync(Guid[] ids);
+        Task<RepairOrder> UnreserveAsync(Guid[] ids);
+        Task<RepairOrder> ValidateAsync(Guid[] ids);
+        Task<RepairOrder> ViewMrpProductionsAsync(Guid[] ids);
+        Task<RepairOrder> ViewPurchaseOrdersAsync(Guid[] ids);
+        Task<RepairOrder> ViewSaleOrderAsync(Guid[] ids);
     }
 }

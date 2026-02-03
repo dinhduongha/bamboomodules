@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-discuss-channel-view")]
-        public async Task<IActionResult> ActionOpenDiscussChannelViewAsync(Guid id, [FromBody] ImLivechatChannelMemberHistoryOpenDiscussChannelViewRequestDto input)
+        [Route("action-open-discuss-channel-view")]
+        public async Task<IActionResult> ActionOpenDiscussChannelViewAsync(ImLivechatChannelMemberHistoryOpenDiscussChannelViewRequestDto input)
         {
-            var result = await _appService.OpenDiscussChannelViewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.OpenDiscussChannelViewAsync(input);
             return Ok(result);
         }
     }

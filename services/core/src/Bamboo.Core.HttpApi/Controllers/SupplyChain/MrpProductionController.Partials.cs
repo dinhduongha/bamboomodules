@@ -11,314 +11,353 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-assign")]
-        public async Task<IActionResult> ActionAssignAsync(Guid id)
+        [Route("action-assign")]
+        public async Task<IActionResult> ActionAssignAsync(Guid[] ids)
         {
-            var result = await _appService.AssignAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AssignAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-clear-lot-producing-ids")]
-        public async Task<IActionResult> ActionClearLotProducingIdsAsync(Guid id)
+        [Route("action-clear-lot-producing-ids")]
+        public async Task<IActionResult> ActionClearLotProducingIdsAsync(Guid[] ids)
         {
-            var result = await _appService.ClearLotProducingIdsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ClearLotProducingIdsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-confirm")]
-        public async Task<IActionResult> ActionConfirmAsync(Guid id)
+        [Route("action-confirm")]
+        public async Task<IActionResult> ActionConfirmAsync(Guid[] ids)
         {
-            var result = await _appService.ConfirmAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfirmAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-generate-bom")]
-        public async Task<IActionResult> ActionGenerateBomAsync(Guid id)
+        [Route("action-generate-bom")]
+        public async Task<IActionResult> ActionGenerateBomAsync(Guid[] ids)
         {
-            var result = await _appService.GenerateBomAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GenerateBomAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-generate-serial")]
-        public async Task<IActionResult> ActionGenerateSerialAsync(Guid id, [FromBody] MrpProductionGenerateSerialRequestDto input)
+        [Route("action-generate-serial")]
+        public async Task<IActionResult> ActionGenerateSerialAsync(MrpProductionGenerateSerialRequestDto input)
         {
-            var result = await _appService.GenerateSerialAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GenerateSerialAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-merge")]
-        public async Task<IActionResult> ActionMergeAsync(Guid id)
+        [Route("action-merge")]
+        public async Task<IActionResult> ActionMergeAsync(Guid[] ids)
         {
-            var result = await _appService.MergeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MergeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-label-layout")]
-        public async Task<IActionResult> ActionOpenLabelLayoutAsync(Guid id)
+        [Route("action-open-label-layout")]
+        public async Task<IActionResult> ActionOpenLabelLayoutAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLabelLayoutAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLabelLayoutAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-label-type")]
-        public async Task<IActionResult> ActionOpenLabelTypeAsync(Guid id)
+        [Route("action-open-label-type")]
+        public async Task<IActionResult> ActionOpenLabelTypeAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLabelTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLabelTypeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-plan-with-components-availability")]
-        public async Task<IActionResult> ActionPlanWithComponentsAvailabilityAsync(Guid id)
+        [Route("action-plan-with-components-availability")]
+        public async Task<IActionResult> ActionPlanWithComponentsAvailabilityAsync(Guid[] ids)
         {
-            var result = await _appService.PlanWithComponentsAvailabilityAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PlanWithComponentsAvailabilityAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-product-forecast-report")]
-        public async Task<IActionResult> ActionProductForecastReportAsync(Guid id)
+        [Route("action-product-forecast-report")]
+        public async Task<IActionResult> ActionProductForecastReportAsync(Guid[] ids)
         {
-            var result = await _appService.ProductForecastReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProductForecastReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-see-move-scrap")]
-        public async Task<IActionResult> ActionSeeMoveScrapAsync(Guid id)
+        [Route("action-see-move-scrap")]
+        public async Task<IActionResult> ActionSeeMoveScrapAsync(Guid[] ids)
         {
-            var result = await _appService.SeeMoveScrapAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SeeMoveScrapAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-split")]
-        public async Task<IActionResult> ActionSplitAsync(Guid id)
+        [Route("action-split")]
+        public async Task<IActionResult> ActionSplitAsync(Guid[] ids)
         {
-            var result = await _appService.SplitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SplitAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-split-subcontracting")]
-        public async Task<IActionResult> ActionSplitSubcontractingAsync(Guid id)
+        [Route("action-split-subcontracting")]
+        public async Task<IActionResult> ActionSplitSubcontractingAsync(Guid[] ids)
         {
-            var result = await _appService.SplitSubcontractingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SplitSubcontractingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-start")]
-        public async Task<IActionResult> ActionStartAsync(Guid id)
+        [Route("action-start")]
+        public async Task<IActionResult> ActionStartAsync(Guid[] ids)
         {
-            var result = await _appService.StartAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StartAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-toggle-is-locked")]
-        public async Task<IActionResult> ActionToggleIsLockedAsync(Guid id)
+        [Route("action-toggle-is-locked")]
+        public async Task<IActionResult> ActionToggleIsLockedAsync(Guid[] ids)
         {
-            var result = await _appService.ToggleIsLockedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ToggleIsLockedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-update-bom")]
-        public async Task<IActionResult> ActionUpdateBomAsync(Guid id)
+        [Route("action-update-bom")]
+        public async Task<IActionResult> ActionUpdateBomAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateBomAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateBomAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-analytic-accounts")]
-        public async Task<IActionResult> ActionViewAnalyticAccountsAsync(Guid id)
+        [Route("action-view-analytic-accounts")]
+        public async Task<IActionResult> ActionViewAnalyticAccountsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewAnalyticAccountsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewAnalyticAccountsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mo-delivery")]
-        public async Task<IActionResult> ActionViewMoDeliveryAsync(Guid id)
+        [Route("action-view-mo-delivery")]
+        public async Task<IActionResult> ActionViewMoDeliveryAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMoDeliveryAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMoDeliveryAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-move-wip")]
-        public async Task<IActionResult> ActionViewMoveWipAsync(Guid id)
+        [Route("action-view-move-wip")]
+        public async Task<IActionResult> ActionViewMoveWipAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMoveWipAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMoveWipAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mrp-production-backorders")]
-        public async Task<IActionResult> ActionViewMrpProductionBackordersAsync(Guid id)
+        [Route("action-view-mrp-production-backorders")]
+        public async Task<IActionResult> ActionViewMrpProductionBackordersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMrpProductionBackordersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMrpProductionBackordersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mrp-production-childs")]
-        public async Task<IActionResult> ActionViewMrpProductionChildsAsync(Guid id)
+        [Route("action-view-mrp-production-childs")]
+        public async Task<IActionResult> ActionViewMrpProductionChildsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMrpProductionChildsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMrpProductionChildsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mrp-production-sources")]
-        public async Task<IActionResult> ActionViewMrpProductionSourcesAsync(Guid id)
+        [Route("action-view-mrp-production-sources")]
+        public async Task<IActionResult> ActionViewMrpProductionSourcesAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMrpProductionSourcesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMrpProductionSourcesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mrp-production-unbuilds")]
-        public async Task<IActionResult> ActionViewMrpProductionUnbuildsAsync(Guid id)
+        [Route("action-view-mrp-production-unbuilds")]
+        public async Task<IActionResult> ActionViewMrpProductionUnbuildsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMrpProductionUnbuildsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMrpProductionUnbuildsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-purchase-orders")]
-        public async Task<IActionResult> ActionViewPurchaseOrdersAsync(Guid id)
+        [Route("action-view-purchase-orders")]
+        public async Task<IActionResult> ActionViewPurchaseOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPurchaseOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPurchaseOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-reception-report")]
-        public async Task<IActionResult> ActionViewReceptionReportAsync(Guid id)
+        [Route("action-view-reception-report")]
+        public async Task<IActionResult> ActionViewReceptionReportAsync(Guid[] ids)
         {
-            var result = await _appService.ViewReceptionReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewReceptionReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-repair-orders")]
-        public async Task<IActionResult> ActionViewRepairOrdersAsync(Guid id)
+        [Route("action-view-repair-orders")]
+        public async Task<IActionResult> ActionViewRepairOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewRepairOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewRepairOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sale-orders")]
-        public async Task<IActionResult> ActionViewSaleOrdersAsync(Guid id)
+        [Route("action-view-sale-orders")]
+        public async Task<IActionResult> ActionViewSaleOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSaleOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSaleOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-serial-numbers")]
-        public async Task<IActionResult> ActionViewSerialNumbersAsync(Guid id)
+        [Route("action-view-serial-numbers")]
+        public async Task<IActionResult> ActionViewSerialNumbersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSerialNumbersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSerialNumbersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-mark-done")]
-        public async Task<IActionResult> ButtonMarkDoneAsync(Guid id)
+        [Route("button-mark-done")]
+        public async Task<IActionResult> ButtonMarkDoneAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonMarkDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonMarkDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-plan")]
-        public async Task<IActionResult> ButtonPlanAsync(Guid id)
+        [Route("button-plan")]
+        public async Task<IActionResult> ButtonPlanAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonPlanAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonPlanAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-scrap")]
-        public async Task<IActionResult> ButtonScrapAsync(Guid id)
+        [Route("button-scrap")]
+        public async Task<IActionResult> ButtonScrapAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonScrapAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonScrapAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-unbuild")]
-        public async Task<IActionResult> ButtonUnbuildAsync(Guid id)
+        [Route("button-unbuild")]
+        public async Task<IActionResult> ButtonUnbuildAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonUnbuildAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonUnbuildAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-unplan")]
-        public async Task<IActionResult> ButtonUnplanAsync(Guid id)
+        [Route("button-unplan")]
+        public async Task<IActionResult> ButtonUnplanAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonUnplanAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonUnplanAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] MrpProductionCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(MrpProductionCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-unreserve")]
-        public async Task<IActionResult> DoUnreserveAsync(Guid id)
+        [Route("do-unreserve")]
+        public async Task<IActionResult> DoUnreserveAsync(Guid[] ids)
         {
-            var result = await _appService.DoUnreserveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoUnreserveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-empty-list-help")]
-        public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] MrpProductionGetEmptyListHelpRequestDto input)
+        [Route("get-empty-list-help")]
+        public async Task<IActionResult> GetEmptyListHelpAsync(MrpProductionGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetEmptyListHelpAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pre-button-mark-done")]
-        public async Task<IActionResult> PreButtonMarkDoneAsync(Guid id)
+        [Route("pre-button-mark-done")]
+        public async Task<IActionResult> PreButtonMarkDoneAsync(Guid[] ids)
         {
-            var result = await _appService.PreButtonMarkDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PreButtonMarkDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-qty-producing")]
-        public async Task<IActionResult> SetQtyProducingAsync(Guid id)
+        [Route("set-qty-producing")]
+        public async Task<IActionResult> SetQtyProducingAsync(Guid[] ids)
         {
-            var result = await _appService.SetQtyProducingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetQtyProducingAsync(ids);
             return Ok(result);
         }
     }

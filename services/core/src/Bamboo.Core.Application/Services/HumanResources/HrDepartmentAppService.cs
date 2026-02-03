@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Hr", Category = "HumanResources", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
-    public partial class HrDepartmentAppService : GenericApplicationService<HrDepartment>, IHrDepartmentAppService
+    public partial class HrDepartmentAppService : GenericAppService<HrDepartment>, IHrDepartmentAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -197,7 +197,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrDepartment> EmployeeFromDepartmentAsync(Guid id)
+        public async Task<HrDepartment> EmployeeFromDepartmentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---
@@ -224,7 +224,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrDepartment> GetActionContextInternalAsync()
@@ -243,17 +245,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrDepartment> GetChildrenDepartmentIdsAsync(Guid id)
+        public async Task<HrDepartment> GetChildrenDepartmentIdsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---
             // def get_children_department_ids(self):
             // return self.env['hr.department'].search([('id', 'child_of', self.ids)])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrDepartment> GetDepartmentHierarchyAsync(Guid id)
+        public async Task<HrDepartment> GetDepartmentHierarchyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---
@@ -283,10 +287,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return hierarchy
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrDepartment> GetFormviewActionAsync(Guid id, HrDepartmentGetFormviewActionRequestDto input)
+        public async Task<HrDepartment> GetFormviewActionAsync(HrDepartmentGetFormviewActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---
@@ -304,10 +310,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrDepartment> OpenAllocationDepartmentAsync(Guid id)
+        public async Task<HrDepartment> OpenAllocationDepartmentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_department.py) ---
@@ -318,10 +326,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = Domain.AND([ast.literal_eval(action['domain']), [('state', '=', 'confirm')]])
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrDepartment> OpenLeaveDepartmentAsync(Guid id)
+        public async Task<HrDepartment> OpenLeaveDepartmentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_department.py) ---
@@ -334,10 +344,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrDepartment> OpenViewChildDepartmentsAsync(Guid id)
+        public async Task<HrDepartment> OpenViewChildDepartmentsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---
@@ -351,10 +363,12 @@ namespace Bamboo.Core.Application.Services
             //     "name": "Child departments",
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrDepartment> PlanFromDepartmentAsync(Guid id)
+        public async Task<HrDepartment> PlanFromDepartmentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---
@@ -377,7 +391,9 @@ namespace Bamboo.Core.Application.Services
             //     action['views'] = [(False, 'form')]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrDepartment> SearchCompleteNameInternalAsync(object @operator, object @value)

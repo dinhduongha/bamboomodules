@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-from-catalog")]
-        public async Task<IActionResult> ActionAddFromCatalogAsync(Guid id)
+        [Route("action-add-from-catalog")]
+        public async Task<IActionResult> ActionAddFromCatalogAsync(Guid[] ids)
         {
-            var result = await _appService.AddFromCatalogAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddFromCatalogAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-see-attachments")]
-        public async Task<IActionResult> ActionSeeAttachmentsAsync(Guid id)
+        [Route("action-see-attachments")]
+        public async Task<IActionResult> ActionSeeAttachmentsAsync(Guid[] ids)
         {
-            var result = await _appService.SeeAttachmentsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SeeAttachmentsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-product-id")]
-        public async Task<IActionResult> OnchangeProductIdAsync(Guid id)
+        [Route("onchange-product-id")]
+        public async Task<IActionResult> OnchangeProductIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeProductIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeProductIdAsync(ids);
             return Ok(result);
         }
     }

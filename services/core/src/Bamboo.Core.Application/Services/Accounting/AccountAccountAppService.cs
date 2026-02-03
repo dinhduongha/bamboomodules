@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountAccountAppService : GenericApplicationService<AccountAccount>, IAccountAccountAppService
+    public partial class AccountAccountAppService : GenericAppService<AccountAccount>, IAccountAccountAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -909,7 +909,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> CopyDataAsync(Guid id, AccountAccountCopyDataRequestDto input)
+        public async Task<AccountAccount> CopyDataAsync(AccountAccountCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
@@ -937,10 +937,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAccount> CopyTranslationsAsync(Guid id, AccountAccountCopyTranslationsRequestDto input)
+        public async Task<AccountAccount> CopyTranslationsAsync(AccountAccountCopyTranslationsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
@@ -953,7 +955,9 @@ namespace Bamboo.Core.Application.Services
             //         for lang, tr in name_field._get_stored_translations(self).items()
             //     }], dirty=True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAccount> EnsureCodeIsUniqueInternalAsync()
@@ -1079,7 +1083,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> GetAccountGroupAsync(Guid id, AccountAccountGetAccountGroupRequestDto input)
+        [ApiModel]
+        public async Task<AccountAccount> GetAccountGroupAsync(AccountAccountGetAccountGroupRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1095,7 +1100,9 @@ namespace Bamboo.Core.Application.Services
             // mapped = dict(data)
             // return [mapped.get(account_type, []) for account_type in account_types]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAccount> GetClosestParentAccountInternalAsync(object accounts_to_process, object field_name, object default_value)
@@ -1130,6 +1137,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> GetDatePeriodBoundariesInternalAsync(object date_period, object company)
         {
             /*
@@ -1165,7 +1173,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<AccountAccount> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
@@ -1175,7 +1184,9 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/account/static/xls/coa_import_template.xlsx'
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAccount> GetInternalGroupInternalAsync(object account_type)
@@ -1188,6 +1199,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> GetMostFrequentAccountForPartnerInternalAsync(Guid company_id, Guid partner_id, object move_type)
         {
             /*
@@ -1199,6 +1211,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> GetMostFrequentAccountsForPartnerInternalAsync(Guid company_id, Guid partner_id, object move_type, object filter_never_user_accounts, object limit)
         {
             /*
@@ -1283,6 +1296,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -1294,6 +1308,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -1306,6 +1321,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> LoadPrecommitUpdateOpeningMoveInternalAsync()
         {
             /*
@@ -1378,7 +1394,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> OpenRelatedTaxesAsync(Guid id)
+        public async Task<AccountAccount> OpenRelatedTaxesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
@@ -1394,9 +1410,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('id', 'in', related_taxes_ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> OrderAccountsByFrequencyForPartnerInternalAsync(Guid company_id, Guid partner_id, object move_type)
         {
             /*
@@ -1461,6 +1480,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> SearchDisplayNameInternalAsync(object @operator, object @value)
         {
             /*
@@ -1510,6 +1530,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAccount> SearchNewAccountCodeInternalAsync(object start_code, object cache)
         {
             /*
@@ -1722,7 +1743,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> SpreadsheetFetchBalanceTagAsync(Guid id, AccountAccountSpreadsheetFetchBalanceTagRequestDto input)
+        [ApiModel]
+        public async Task<AccountAccount> SpreadsheetFetchBalanceTagAsync(AccountAccountSpreadsheetFetchBalanceTagRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1755,10 +1777,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return results
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAccount> SpreadsheetFetchDebitCreditAsync(Guid id, AccountAccountSpreadsheetFetchDebitCreditRequestDto input)
+        [ApiModel]
+        public async Task<AccountAccount> SpreadsheetFetchDebitCreditAsync(AccountAccountSpreadsheetFetchDebitCreditRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1786,10 +1811,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return results
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAccount> SpreadsheetFetchPartnerBalanceAsync(Guid id, AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input)
+        [ApiModel]
+        public async Task<AccountAccount> SpreadsheetFetchPartnerBalanceAsync(AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1823,10 +1851,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return results
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAccount> SpreadsheetFetchResidualAmountAsync(Guid id, AccountAccountSpreadsheetFetchResidualAmountRequestDto input)
+        [ApiModel]
+        public async Task<AccountAccount> SpreadsheetFetchResidualAmountAsync(AccountAccountSpreadsheetFetchResidualAmountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1854,10 +1885,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return results
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAccount> SpreadsheetMoveLineActionAsync(Guid id, AccountAccountSpreadsheetMoveLineActionRequestDto input)
+        [ApiModel]
+        public async Task<AccountAccount> SpreadsheetMoveLineActionAsync(AccountAccountSpreadsheetMoveLineActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1873,7 +1907,9 @@ namespace Bamboo.Core.Application.Services
             //     "name": _("Cell Audit"),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAccount> ToggleReconcileToFalseInternalAsync()
@@ -1967,7 +2003,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> UnmergeAsync(Guid id)
+        public async Task<AccountAccount> UnmergeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
@@ -1988,7 +2024,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

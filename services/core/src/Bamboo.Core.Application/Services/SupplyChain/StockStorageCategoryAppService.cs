@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockStorageCategoryAppService : GenericApplicationService<StockStorageCategory>, IStockStorageCategoryAppService
+    public partial class StockStorageCategoryAppService : GenericAppService<StockStorageCategory>, IStockStorageCategoryAppService
     {
 
         public StockStorageCategoryAppService(IRepository<StockStorageCategory, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -48,7 +48,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockStorageCategory> CopyDataAsync(Guid id, StockStorageCategoryCopyDataRequestDto input)
+        public async Task<StockStorageCategory> CopyDataAsync(StockStorageCategoryCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_storage_category.py) ---
@@ -56,7 +56,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", category.name)) for category, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockStorageCategory> SetStorageCapacityIdsInternalAsync()

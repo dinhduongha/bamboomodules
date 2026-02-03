@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrAttendanceOvertimeAppService : IGenericApplicationService<HrAttendanceOvertime>
     {
-        Task<HrAttendanceOvertime> InitAsync(Guid id);
+        Task<HrAttendanceOvertime> InitAsync(Guid[] ids);
     }
 }

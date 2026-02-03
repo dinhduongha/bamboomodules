@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWebsiteControllerPageAppService : IGenericApplicationService<WebsiteControllerPage>
     {
-        Task<WebsiteControllerPage> OpenWebsiteUrlAsync(Guid id);
+        Task<WebsiteControllerPage> OpenWebsiteUrlAsync(Guid[] ids);
     }
 }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Calendar", Category = "Productivity", Depends = new[] { "base", "mail" })]
-    public partial class CalendarFiltersAppService : GenericApplicationService<CalendarFilters>, ICalendarFiltersAppService
+    public partial class CalendarFiltersAppService : GenericAppService<CalendarFilters>, ICalendarFiltersAppService
     {
 
         public CalendarFiltersAppService(IRepository<CalendarFilters, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,14 +26,17 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<CalendarFilters> UnlinkFromPartnerIdAsync(Guid id, CalendarFiltersUnlinkFromPartnerIdRequestDto input)
+        [ApiModel]
+        public async Task<CalendarFilters> UnlinkFromPartnerIdAsync(CalendarFiltersUnlinkFromPartnerIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_filter.py) ---
             // def unlink_from_partner_id(self, partner_id):
             // return self.search([('partner_id', '=', partner_id)]).unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

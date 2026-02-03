@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmHrPayroll", Category = "HumanResources", Depends = new[] { "mail", "hr_contract", "hr_holidays" })]
-    public partial class HrPayrollStructureAppService : GenericApplicationService<HrPayrollStructure>, IHrPayrollStructureAppService
+    public partial class HrPayrollStructureAppService : GenericAppService<HrPayrollStructure>, IHrPayrollStructureAppService
     {
 
         public HrPayrollStructureAppService(IRepository<HrPayrollStructure, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrPayrollStructure> GetAllRulesAsync(Guid id)
+        public async Task<HrPayrollStructure> GetAllRulesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_salary_rule.py) ---
@@ -50,9 +50,12 @@ namespace Bamboo.Core.Application.Services
             //     all_rules += struct.rule_ids._recursive_search_of_rules()
             // return all_rules
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<HrPayrollStructure> GetParentInternalAsync()
         {
             /*

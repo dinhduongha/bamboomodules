@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/all-dependencies")]
-        public async Task<IActionResult> AllDependenciesAsync(Guid id, [FromBody] IrModuleModuleDependencyAllDependenciesRequestDto input)
+        [Route("all-dependencies")]
+        public async Task<IActionResult> AllDependenciesAsync(IrModuleModuleDependencyAllDependenciesRequestDto input)
         {
-            var result = await _appService.AllDependenciesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AllDependenciesAsync(input);
             return Ok(result);
         }
     }

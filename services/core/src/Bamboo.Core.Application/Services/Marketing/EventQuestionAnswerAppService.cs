@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
-    public partial class EventQuestionAnswerAppService : GenericApplicationService<EventQuestionAnswer>, IEventQuestionAnswerAppService
+    public partial class EventQuestionAnswerAppService : GenericAppService<EventQuestionAnswer>, IEventQuestionAnswerAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public EventQuestionAnswerAppService(IRepository<EventQuestionAnswer, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<EventQuestionAnswer> AddRuleButtonAsync(Guid id)
+        public async Task<EventQuestionAnswer> AddRuleButtonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_question_answer.py) ---
@@ -46,9 +46,12 @@ namespace Bamboo.Core.Application.Services
             // action['target'] = 'new'
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<EventQuestionAnswer> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -59,6 +62,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventQuestionAnswer> LoadPosDataFieldsInternalAsync(object config)
         {
             /*

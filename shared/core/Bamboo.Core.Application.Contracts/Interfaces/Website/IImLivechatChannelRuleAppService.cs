@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IImLivechatChannelRuleAppService : IGenericApplicationService<ImLivechatChannelRule>
     {
-        Task<ImLivechatChannelRule> MatchRuleAsync(Guid id, ImLivechatChannelRuleMatchRuleRequestDto input);
+        Task<ImLivechatChannelRule> MatchRuleAsync(ImLivechatChannelRuleMatchRuleRequestDto input);
     }
 }

@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IChatbotScriptAppService : IGenericApplicationService<ChatbotScript>
     {
-        Task<ChatbotScript> CopyDataAsync(Guid id, ChatbotScriptCopyDataRequestDto input);
-        Task<ChatbotScript> TestScriptAsync(Guid id);
-        Task<ChatbotScript> ViewLeadsAsync(Guid id);
-        Task<ChatbotScript> ViewLivechatChannelsAsync(Guid id);
+        Task<ChatbotScript> CopyDataAsync(ChatbotScriptCopyDataRequestDto input);
+        Task<ChatbotScript> TestScriptAsync(Guid[] ids);
+        Task<ChatbotScript> ViewLeadsAsync(Guid[] ids);
+        Task<ChatbotScript> ViewLivechatChannelsAsync(Guid[] ids);
     }
 }

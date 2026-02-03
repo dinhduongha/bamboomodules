@@ -19,17 +19,27 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.ObjectMapping;
 using Volo.Abp.ObjectExtending;
+using Volo.Abp.Application.Dtos;
 
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
-using Volo.Abp.Application.Dtos;
+using Bamboo.Core.Application.Dtos;
+using Bamboo.Core.Application.Contracts.DTOs;
+using Microsoft.Extensions.Logging;
 
 namespace Bamboo.Core.Application
 {
-    //public class GenericApplicationService<TEntity> : ApplicationService, IGenericApplicationService<TEntity>
-    public class GenericApplicationService<TEntity> : CrudAppService<TEntity, TEntity, Guid>, IGenericApplicationService<TEntity>
+    // 'create', 'write', 'unlink', 'read', 'search', 'search_count', 'search_read', 'copy'
+    // 'default_get', 'fields_get', 'name_get', 'name_search', 'name_create', 'read_group', 'onchange', 'ondelete', 
+    // 'check_access_rights', 'check_access_rule', 'check_field_access_rights'
+    // browse search search_count search_fetch fetch read - 
+    // exists ensure_one get_metadata filtered filtered_domain mapped sorted grouped
+
+
+    //public class GenericAppService<TEntity> : ApplicationService, IGenericApplicationService<TEntity>
+    public class GenericAppService<TEntity> : CrudAppService<TEntity, TEntity, Guid>, IGenericAppService<TEntity>
         where TEntity : class, IEntity<Guid>
     {
         //protected readonly IRepository<TEntity, Guid> Repository;
@@ -43,7 +53,9 @@ namespace Bamboo.Core.Application
         protected readonly IDistributedCache _cache;
         private readonly bool _filterFieldAccess = false;
         protected readonly ICurrentTenant _currentTenant;
-        public GenericApplicationService(
+
+        protected static readonly bool IsMultiTenant = typeof(IMultiTenant).IsAssignableFrom(typeof(TEntity));
+        public GenericAppService(
             IRepository<TEntity, Guid> repository,
             IServiceProvider serviceProvider,
             IDataFilter dataFilter,
@@ -65,10 +77,10 @@ namespace Bamboo.Core.Application
             _cache = cache;
 
             _currentTenant = _serviceProvider.GetRequiredService<ICurrentTenant>();
-            if (!_currentTenant.Id.HasValue)
-            {
-                _dataFilter.Disable<IMultiTenant>();
-            }
+            // if (!_currentTenant.Id.HasValue)
+            // {
+            //     _dataFilter.Disable<IMultiTenant>();
+            // }
         }
 
         private async Task<List<string>> GetAllowedFieldsAsync(string modelName, string operation, List<string>? fields = null)
@@ -137,10 +149,14 @@ namespace Bamboo.Core.Application
             return relationFields;
         }
 
-        public virtual async Task<List<Guid>> SearchAsync(JsonElement? domain, long offset = 0, int limit = 100, string order = null)
+        public virtual async Task<List<Guid>> SearchAsync(SearchRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
+            JsonElement? domain = input.Domain;
+            long offset = input.Offset;
+            var limit = input.Limit;
+            var order = input.Order;
 
             var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
@@ -148,8 +164,10 @@ namespace Bamboo.Core.Application
             return query.Select(x => x.Id).Skip((int)offset).Take(limit).ToList();
         }
 
-        public virtual async Task<List<object>> ReadAsync(List<Guid> ids, List<string> fields)
+        public virtual async Task<List<object>> ReadAsync(ReadRequestDto input)
         {
+            List<Guid> ids = input.Ids;
+            List<string> fields = input.Fields;
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
 
@@ -195,17 +213,24 @@ namespace Bamboo.Core.Application
             }).ToList();
         }
 
-        public virtual async Task<List<object>> SearchReadAsync(JsonElement? domain = null, List<string> fields = null, long offset = 0, int limit = 100, string order = null)
+        public virtual async Task<List<object>> SearchReadAsync(SearchReadRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
+            JsonElement? domain = input.Domain;
+            long offset = input.Offset;
+            var limit = input.Limit;
+            var order = input.Order;
+            List<string>? fields = input.Fields;
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "read", fields);
             var relationFields = GetRelationFields();
             var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
             query = await _domainParser.ApplyDomain(query, domain);
-            return query.Cast<object>().Skip((int)offset).Take((int)limit).ToList();
+            var queryResult = query.Cast<object>().Skip((int)offset).Take((int)limit).ToList();
+            Logger.LogInformation($"Result {modelName} SearchReadAsync");
+            return queryResult;
 
             var dynamicSelect = new List<string>();
             var dynamicParameters = new List<object>();
@@ -242,10 +267,66 @@ namespace Bamboo.Core.Application
             }).ToList();
         }
 
-        public virtual async Task<TEntity> CreateAsync(TEntity entity, List<string> fields)
+        public virtual async Task<long> SearchCountAsync(SearchCountRequestDto input)
+        {
+            var modelName = typeof(TEntity).Name;
+            await _authorizationService.CheckAccessAsync(modelName, "read");
+            JsonElement? domain = input.Domain;
+            long offset = input.Offset;
+            var limit = input.Limit;
+            var order = input.Order;
+            List<string>? fields = input.Fields;
+
+            var allowedFields = await GetAllowedFieldsAsync(modelName, "read", fields);
+            var relationFields = GetRelationFields();
+            var query = await Repository.GetQueryableAsync();
+            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await _domainParser.ApplyDomain(query, domain);
+            return query.LongCount();
+            //return query.Cast<object>().Skip((int)offset).Take((int)limit).ToList();
+
+            // var dynamicSelect = new List<string>();
+            // var dynamicParameters = new List<object>();
+            // foreach (var field in allowedFields)
+            // {
+            //     if (relationFields.ContainsKey(field))
+            //     {
+            //         var relatedModel = relationFields[field];
+            //         var service = GetServiceForModel(relatedModel);
+            //         var relatedIds = query.Select($"it.{field}").Cast<Guid>().Distinct().ToList();
+            //         var relatedData = await CallServiceMethodAsync<List<(Guid Id, string Name)>>(service, "NameGetAsync", relatedIds);
+            //         dynamicSelect.Add($"new {{ Id = {field}, Name = @0.FirstOrDefault(x => x.Id == {field})?.Name ?? \"\" }} as {field}");
+            //         dynamicParameters.Add(relatedData);
+            //     }
+            //     else
+            //     {
+            //         dynamicSelect.Add($"{field} as {field}");
+            //     }
+            // }
+
+            // var result = query.Select($"new {{ {string.Join(", ", dynamicSelect)} }}", dynamicParameters.ToArray()).ToDynamicList();
+            // return result.Select(r =>
+            // {
+            //     var dict = _objectMapper.Map<object, Dictionary<string, object>>(r);
+            //     foreach (var field in allowedFields.Where(f => relationFields.ContainsKey(f)))
+            //     {
+            //         if (dict[field] is Dictionary<string, object> fieldDict && fieldDict["Id"] is Guid id && id != Guid.Empty)
+            //             dict[field] = new object[] { id, fieldDict["Name"] };
+            //         else
+            //             dict[field] = false;
+            //         dict.Remove($"{field}.Name");
+            //     }
+            //     return dict;
+            // }).ToList();
+        }
+
+
+        public virtual async Task<TEntity> CreateAsync(CreateRequestDto<TEntity> input)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "create");
+            List<string> fields = input.Fields;
+            var entity = input.Entity;
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "write", fields);
             var relationFields = GetRelationFields();
@@ -307,10 +388,13 @@ namespace Bamboo.Core.Application
             return dict;
         }
 
-        public virtual async Task<List<object>> WriteAsync(List<Guid> ids, TEntity entity, List<string> fields)
+        public virtual async Task<List<object>> WriteAsync(UpdateRequestDto<TEntity> input)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "write");
+            List<Guid> ids = input.Ids;
+            TEntity? entity = input.Entity;
+            List<string> fields = input.Fields;
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "write", fields);
             var relationFields = GetRelationFields();
@@ -382,6 +466,65 @@ namespace Bamboo.Core.Application
             }).ToList();
         }
 
+        public async Task<object> UpdateJsonAsync(UpdateJsonRequestDto input)
+        {
+            var modelName = typeof(TEntity).Name;
+            await _authorizationService.CheckAccessAsync(modelName, "write");
+            //if (!await _accessControlService.CheckAccess(_modelName, "write"))
+            //    throw new AbpAuthorizationException($"No write permission on {_modelName}");
+
+            List<Guid> ids = input.Ids;
+            string jsonField = input.JsonField;
+            Dictionary<string, object> jsonValue = input.Dict; // Values
+            string action = input.Action ?? "update";
+
+            var prop = typeof(TEntity).GetProperty(jsonField);
+            if (prop == null || prop.PropertyType != typeof(Dictionary<string, object>))
+                throw new AbpException($"Field {jsonField} is not a valid jsonb field in {modelName}");
+
+            var query = await Repository.GetQueryableAsync();
+            //var entities = await query.Where(e => ids.Contains(((dynamic)e).Id)).ToListAsync();
+            var entities = await query.Where(e => ids.Contains((e.Id))).ToDynamicListAsync();
+            if (!entities.Any())
+                throw new AbpException($"No records found with IDs {string.Join(", ", ids)}");
+
+            foreach (var entity in entities)
+            {
+                var currentDict = (Dictionary<string, object>)prop.GetValue(entity) ?? new Dictionary<string, object>();
+
+                switch (action.ToLower())
+                {
+                    case "update":
+                        foreach (var kvp in jsonValue)
+                        {
+                            currentDict[kvp.Key] = kvp.Value;
+                        }
+                        break;
+                    case "delete":
+                        foreach (var key in jsonValue.Keys)
+                        {
+                            currentDict.Remove(key);
+                        }
+                        break;
+                    case "add":
+                        foreach (var kvp in jsonValue)
+                        {
+                            if (!currentDict.ContainsKey(kvp.Key))
+                            {
+                                currentDict[kvp.Key] = kvp.Value;
+                            }
+                        }
+                        break;
+                    default:
+                        throw new AbpException($"Invalid action: {action}. Supported actions: update, delete, add.");
+                }
+
+                prop.SetValue(entity, currentDict);
+                await Repository.UpdateAsync(entity);
+            }
+
+            return entities.Select(entity => (object)JsonSerializer.SerializeToElement(entity)).ToList();
+        }
         public virtual async Task DeleteAsync(List<Guid> ids)
         {
             var modelName = typeof(TEntity).Name;
@@ -409,64 +552,13 @@ namespace Bamboo.Core.Application
             return default;
         }
 
-        public virtual async Task<object> NameCreateAsync(string name)
-        {
-            var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
-            var allowedFields = await GetAllowedFieldsAsync(modelName, "write", null);
-            if (!allowedFields.Contains("Name"))
-            {
-                throw new UserFriendlyException("Entity not found or access denied");
-            }
-            var entityType = typeof(TEntity);
-            var newEntity = Activator.CreateInstance<TEntity>();
-            var property = entityType.GetProperty("Name");
-            if (property.PropertyType == typeof(StringDictionary))
-            {
-                var value = new StringDictionary
-                {
-                    { "en_US", name }
-                };
-                property.SetValue(newEntity, value);
-            }
-            return await Repository.InsertAsync(newEntity);
-        }
-
-        public virtual async Task<List<(Guid Id, string Name)>> NameGetAsync(List<Guid> ids)
-        {
-            var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
-
-            var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
-            query = query.Where(e => ids.Contains(e.Id));
-
-            var result = query.Select(e => new { e.Id, Name = e.ToString() }).ToList();
-            return result.Select(r => (r.Id, r.Name)).ToList();
-        }
-
-        public virtual async Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, JsonElement? domain = null, string @operator = "ilike", int limit = 100)
-        {
-            var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
-
-            var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
-            query = await _domainParser.ApplyDomain(query, domain);
-
-            if (!string.IsNullOrEmpty(name))
-            {
-                query = query.Where($"it.ToString().ToLower().Contains(@0)", name.ToLower());
-            }
-
-            var result = query.Take(limit).Select(e => new { e.Id, Name = e.ToString() }).ToList();
-            return result.Select(r => (r.Id, r.Name)).ToList();
-        }
-
-        public virtual async Task<TEntity> CopyAsync(Guid id, List<string> fields, TEntity defaultValues = null)
+        public virtual async Task<TEntity> CopyAsync(CopyRequestDto<TEntity> input)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "create");
+            Guid id = input.Ids[0];
+            List<string> fields = input.Fields;
+            TEntity defaultValues = input.DefaultValues;
 
             var query = await Repository.GetQueryableAsync();
             query = await _authorizationService.ApplyRulesAsync(query, modelName);
@@ -541,12 +633,78 @@ namespace Bamboo.Core.Application
             return dict;
         }
 
+        public virtual async Task<TEntity> NameCreateAsync(NameCreateRequestDto input)
+        {
+            var modelName = typeof(TEntity).Name;
+            await _authorizationService.CheckAccessAsync(modelName, "read");
+            string name = input.Name;
+
+            var allowedFields = await GetAllowedFieldsAsync(modelName, "write", null);
+            if (!allowedFields.Contains("Name"))
+            {
+                throw new UserFriendlyException("Entity not found or access denied");
+            }
+            var entityType = typeof(TEntity);
+            var newEntity = Activator.CreateInstance<TEntity>();
+            var property = entityType.GetProperty("Name");
+            if (property.PropertyType == typeof(StringDictionary))
+            {
+                var value = new StringDictionary
+                {
+                    { "en_US", name }
+                };
+                property.SetValue(newEntity, value);
+            }
+            return await Repository.InsertAsync(newEntity);
+        }
+
+        public virtual async Task<List<(Guid Id, string Name)>> NameGetAsync(NameGetRequestDto input)
+        {
+            var modelName = typeof(TEntity).Name;
+            await _authorizationService.CheckAccessAsync(modelName, "read");
+            List<Guid> ids = input.Ids;
+
+            var query = await Repository.GetQueryableAsync();
+            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = query.Where(e => ids.Contains(e.Id));
+
+            var result = query.Select(e => new { e.Id, Name = e.ToString() }).ToList();
+            return result.Select(r => (r.Id, r.Name)).ToList();
+        }
+
+        public virtual async Task<List<(Guid Id, string Name)>> NameSearchAsync(NameSearchRequestDto input)
+        {
+            var modelName = typeof(TEntity).Name;
+            await _authorizationService.CheckAccessAsync(modelName, "read");
+            string name = input.Name;
+            JsonElement? domain = input.Domain;
+            string @operator = "ilike";
+            int limit = input.Limit ?? 100;
+
+            var query = await Repository.GetQueryableAsync();
+            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await _domainParser.ApplyDomain(query, domain);
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where($"it.ToString().ToLower().Contains(@0)", name.ToLower());
+            }
+
+            var result = query.Take(limit).Select(e => new { e.Id, Name = e.ToString() }).ToList();
+            return result.Select(r => (r.Id, r.Name)).ToList();
+        }
+
+
         // object values, object field_names, object fields_spec
-        public virtual async Task<object> OnchangeAsync(List<string> changedFields, TEntity values, Dictionary<string, object> fieldInfo)
+        public virtual async Task<object> OnChangeAsync(OnChangeRequestDto<TEntity> input)
         //public virtual async Task<object> OnchangeAsync(object values, object field_names, object fields_spec)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
+
+            List<string> changedFields = input.ChangedFields;
+            TEntity values = input.Values;
+            Dictionary<string, object> fieldInfo = input.FieldInfos;
 
             var result = new OnchangeResult
             {
@@ -611,10 +769,11 @@ namespace Bamboo.Core.Application
             throw new UserFriendlyException("Not implemented");
         }
 
-        public virtual async Task<TEntity> DefaultGetAsync(List<string> fields)
+        public virtual async Task<TEntity> DefaultGetAsync(DefaultGetRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "create");
+            List<string> fields = input.Fields;
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "write", fields);
             var result = new Dictionary<string, object>();
@@ -642,10 +801,12 @@ namespace Bamboo.Core.Application
             return default;
         }
 
-        public virtual async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
+        public virtual async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(FieldsGetRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
+            List<string> fields = input.Fields;
+            Dictionary<string, List<string>> attributes = input.Attributes;
 
             var cacheKey = $"FieldsMetadata_{modelName}";
             Dictionary<string, Dictionary<string, object>> metadata;
@@ -730,7 +891,7 @@ namespace Bamboo.Core.Application
         private object GetServiceForModel(string modelName)
         {
             var entityType = _modelTypeRegistry.GetType(modelName);
-            var serviceType = typeof(IGenericApplicationService<>).MakeGenericType(entityType);
+            var serviceType = typeof(IGenericAppService<>).MakeGenericType(entityType);
             return _serviceProvider.GetService(serviceType)
                 ?? throw new UserFriendlyException($"Service for {modelName} not found");
         }

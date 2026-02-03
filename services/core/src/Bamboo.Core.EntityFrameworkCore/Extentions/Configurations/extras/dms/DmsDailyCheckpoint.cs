@@ -27,14 +27,14 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
-            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.CheckpointDate);
             entity.Property(e => e.CheckpointType).HasColumnName("checkpoint_type");
             entity.Property(e => e.CheckInTime).HasColumnName("check_in_time");
             entity.Property(e => e.GeoLatitude).HasColumnName("geo_latitude");
             entity.Property(e => e.GeoLongitude).HasColumnName("geo_longitude");
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.Notes).HasColumnName("notes");
-            entity.Property(e => e.PhotosJson).HasColumnName("photos_json");
+            entity.Property(e => e.Photos);
             entity.Property(e => e.ProvisionPickingId).HasColumnName("provision_picking_id");
 
             entity.Property(e => e.CreationTime)

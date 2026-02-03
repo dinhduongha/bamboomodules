@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrSkills", Category = "HumanResources", Depends = new[] { "hr" })]
-    public partial class HrSkillTypeAppService : GenericApplicationService<HrSkillType>, IHrSkillTypeAppService
+    public partial class HrSkillTypeAppService : GenericAppService<HrSkillType>, IHrSkillTypeAppService
     {
 
         public HrSkillTypeAppService(IRepository<HrSkillType, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -73,7 +73,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrSkillType> CopyDataAsync(Guid id, HrSkillTypeCopyDataRequestDto input)
+        public async Task<HrSkillType> CopyDataAsync(HrSkillTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py) ---
@@ -81,7 +81,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", skill_type.name), color=0) for skill_type, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrSkillType> GetDefaultColorInternalAsync()

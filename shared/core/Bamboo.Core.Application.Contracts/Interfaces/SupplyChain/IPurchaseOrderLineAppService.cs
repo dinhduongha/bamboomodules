@@ -10,12 +10,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPurchaseOrderLineAppService : IGenericApplicationService<PurchaseOrderLine>
     {
-        Task<PurchaseOrderLine> AddFromCatalogAsync(Guid id);
-        Task<PurchaseOrderLine> ChooseAsync(Guid id);
-        Task<PurchaseOrderLine> ClearQuantitiesAsync(Guid id);
-        Task<PurchaseOrderLine> GetParentSectionLineAsync(Guid id);
-        Task<PurchaseOrderLine> OnchangeProductIdAsync(Guid id);
-        Task<PurchaseOrderLine> OpenOrderAsync(Guid id);
-        Task<PurchaseOrderLine> ProductForecastReportAsync(Guid id);
+        Task<PurchaseOrderLine> AddFromCatalogAsync(Guid[] ids);
+        Task<PurchaseOrderLine> ChooseAsync(Guid[] ids);
+        Task<PurchaseOrderLine> ClearQuantitiesAsync(Guid[] ids);
+        Task<PurchaseOrderLine> GetParentSectionLineAsync(Guid[] ids);
+        Task<PurchaseOrderLine> OnchangeProductIdAsync(Guid[] ids);
+        Task<PurchaseOrderLine> OpenOrderAsync(Guid[] ids);
+        Task<PurchaseOrderLine> ProductForecastReportAsync(Guid[] ids);
     }
 }

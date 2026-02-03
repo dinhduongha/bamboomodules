@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-all-routes")]
-        public async Task<IActionResult> ActionViewAllRoutesAsync(Guid id)
+        [Route("action-view-all-routes")]
+        public async Task<IActionResult> ActionViewAllRoutesAsync(Guid[] ids)
         {
-            var result = await _appService.ViewAllRoutesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewAllRoutesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockWarehouseCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(StockWarehouseCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-resupply-routes")]
-        public async Task<IActionResult> CreateResupplyRoutesAsync(Guid id, [FromBody] StockWarehouseCreateResupplyRoutesRequestDto input)
+        [Route("create-resupply-routes")]
+        public async Task<IActionResult> CreateResupplyRoutesAsync(StockWarehouseCreateResupplyRoutesRequestDto input)
         {
-            var result = await _appService.CreateResupplyRoutesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateResupplyRoutesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-current-warehouses")]
-        public async Task<IActionResult> GetCurrentWarehousesAsync(Guid id)
+        [Route("get-current-warehouses")]
+        public async Task<IActionResult> GetCurrentWarehousesAsync(Guid[] ids)
         {
-            var result = await _appService.GetCurrentWarehousesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetCurrentWarehousesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-rules-dict")]
-        public async Task<IActionResult> GetRulesDictAsync(Guid id)
+        [Route("get-rules-dict")]
+        public async Task<IActionResult> GetRulesDictAsync(Guid[] ids)
         {
-            var result = await _appService.GetRulesDictAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetRulesDictAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-global-route-dropship-subcontractor")]
-        public async Task<IActionResult> UpdateGlobalRouteDropshipSubcontractorAsync(Guid id)
+        [Route("update-global-route-dropship-subcontractor")]
+        public async Task<IActionResult> UpdateGlobalRouteDropshipSubcontractorAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateGlobalRouteDropshipSubcontractorAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateGlobalRouteDropshipSubcontractorAsync(ids);
             return Ok(result);
         }
     }

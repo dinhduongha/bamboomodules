@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Hr", Category = "HumanResources", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
-    public partial class HrEmployeePublicAppService : GenericApplicationService<HrEmployeePublic>, IHrEmployeePublicAppService
+    public partial class HrEmployeePublicAppService : GenericAppService<HrEmployeePublic>, IHrEmployeePublicAppService
     {
 
         public HrEmployeePublicAppService(IRepository<HrEmployeePublic, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -249,16 +249,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployeePublic> GetAvatarCardDataAsync(Guid id, HrEmployeePublicGetAvatarCardDataRequestDto input)
+        public async Task<HrEmployeePublic> GetAvatarCardDataAsync(HrEmployeePublicGetAvatarCardDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee_public.py) ---
             // def get_avatar_card_data(self, fields):
             // return self.read(fields)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployeePublic> GetFieldsInternalAsync()
         {
             /*
@@ -315,7 +318,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployeePublic> InitAsync(Guid id)
+        public async Task<HrEmployeePublic> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee_public.py) ---
@@ -329,10 +332,12 @@ namespace Bamboo.Core.Application.Services
             //       ON v.id = e.current_version_id
             // )""" % (self._table, self._get_fields()))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployeePublic> OpenCoursesAsync(Guid id)
+        public async Task<HrEmployeePublic> OpenCoursesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills_slides, FILE: hr_employee_public.py) ---
@@ -341,10 +346,12 @@ namespace Bamboo.Core.Application.Services
             // if self.is_user:
             //     return self.employee_id.action_open_courses()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployeePublic> OpenLastMonthAttendancesAsync(Guid id)
+        public async Task<HrEmployeePublic> OpenLastMonthAttendancesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_employee_public.py) ---
@@ -353,10 +360,12 @@ namespace Bamboo.Core.Application.Services
             // if self.is_user:
             //     return self.employee_id.action_open_last_month_attendances()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployeePublic> OpenTimeOffCalendarAsync(Guid id)
+        public async Task<HrEmployeePublic> OpenTimeOffCalendarAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee_public.py) ---
@@ -376,7 +385,9 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = ctx
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployeePublic> SearchAbsentEmployeeInternalAsync(object @operator, object @value)
@@ -460,7 +471,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployeePublic> TimeOffDashboardAsync(Guid id)
+        public async Task<HrEmployeePublic> TimeOffDashboardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee_public.py) ---
@@ -469,10 +480,12 @@ namespace Bamboo.Core.Application.Services
             // if self.is_user:
             //     return self.employee_id.action_time_off_dashboard()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployeePublic> TimesheetFromEmployeeAsync(Guid id)
+        public async Task<HrEmployeePublic> TimesheetFromEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_employee_public.py) ---
@@ -481,7 +494,9 @@ namespace Bamboo.Core.Application.Services
             // if self.is_user:
             //     return self.employee_id.action_timesheet_from_employee()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

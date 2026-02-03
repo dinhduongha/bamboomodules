@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-fail")]
-        public async Task<IActionResult> ActionFailAsync(Guid id)
+        [Route("action-fail")]
+        public async Task<IActionResult> ActionFailAsync(Guid[] ids)
         {
-            var result = await _appService.FailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.FailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reach")]
-        public async Task<IActionResult> ActionReachAsync(Guid id)
+        [Route("action-reach")]
+        public async Task<IActionResult> ActionReachAsync(Guid[] ids)
         {
-            var result = await _appService.ReachAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReachAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-start")]
-        public async Task<IActionResult> ActionStartAsync(Guid id)
+        [Route("action-start")]
+        public async Task<IActionResult> ActionStartAsync(Guid[] ids)
         {
-            var result = await _appService.StartAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StartAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-action")]
-        public async Task<IActionResult> GetActionAsync(Guid id)
+        [Route("get-action")]
+        public async Task<IActionResult> GetActionAsync(Guid[] ids)
         {
-            var result = await _appService.GetActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-goal")]
-        public async Task<IActionResult> UpdateGoalAsync(Guid id)
+        [Route("update-goal")]
+        public async Task<IActionResult> UpdateGoalAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateGoalAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateGoalAsync(ids);
             return Ok(result);
         }
     }

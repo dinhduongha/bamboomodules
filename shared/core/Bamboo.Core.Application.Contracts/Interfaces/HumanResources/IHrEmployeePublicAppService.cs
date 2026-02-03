@@ -10,12 +10,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrEmployeePublicAppService : IGenericApplicationService<HrEmployeePublic>
     {
-        Task<HrEmployeePublic> GetAvatarCardDataAsync(Guid id, HrEmployeePublicGetAvatarCardDataRequestDto input);
-        Task<HrEmployeePublic> InitAsync(Guid id);
-        Task<HrEmployeePublic> OpenCoursesAsync(Guid id);
-        Task<HrEmployeePublic> OpenLastMonthAttendancesAsync(Guid id);
-        Task<HrEmployeePublic> OpenTimeOffCalendarAsync(Guid id);
-        Task<HrEmployeePublic> TimeOffDashboardAsync(Guid id);
-        Task<HrEmployeePublic> TimesheetFromEmployeeAsync(Guid id);
+        Task<HrEmployeePublic> GetAvatarCardDataAsync(HrEmployeePublicGetAvatarCardDataRequestDto input);
+        Task<HrEmployeePublic> InitAsync(Guid[] ids);
+        Task<HrEmployeePublic> OpenCoursesAsync(Guid[] ids);
+        Task<HrEmployeePublic> OpenLastMonthAttendancesAsync(Guid[] ids);
+        Task<HrEmployeePublic> OpenTimeOffCalendarAsync(Guid[] ids);
+        Task<HrEmployeePublic> TimeOffDashboardAsync(Guid[] ids);
+        Task<HrEmployeePublic> TimesheetFromEmployeeAsync(Guid[] ids);
     }
 }

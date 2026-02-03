@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmRecurringPayments", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class AccountRecurringTemplateAppService : GenericApplicationService<AccountRecurringTemplate>, IAccountRecurringTemplateAppService
+    public partial class AccountRecurringTemplateAppService : GenericAppService<AccountRecurringTemplate>, IAccountRecurringTemplateAppService
     {
 
         public AccountRecurringTemplateAppService(IRepository<AccountRecurringTemplate, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -41,7 +41,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountRecurringTemplate> DoneAsync(Guid id)
+        public async Task<AccountRecurringTemplate> DoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_template.py) ---
@@ -49,10 +49,12 @@ namespace Bamboo.Core.Application.Services
             // for rec in self:
             //     rec.state = 'done'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountRecurringTemplate> DraftAsync(Guid id)
+        public async Task<AccountRecurringTemplate> DraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_template.py) ---
@@ -60,7 +62,9 @@ namespace Bamboo.Core.Application.Services
             // for rec in self:
             //     rec.state = 'draft'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

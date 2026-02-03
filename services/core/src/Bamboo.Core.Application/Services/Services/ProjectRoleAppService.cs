@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public partial class ProjectRoleAppService : GenericApplicationService<ProjectRole>, IProjectRoleAppService
+    public partial class ProjectRoleAppService : GenericAppService<ProjectRole>, IProjectRoleAppService
     {
 
         public ProjectRoleAppService(IRepository<ProjectRole, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ProjectRole> CopyDataAsync(Guid id, ProjectRoleCopyDataRequestDto input)
+        public async Task<ProjectRole> CopyDataAsync(ProjectRoleCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_role.py) ---
@@ -34,7 +34,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._('%s (copy)', role.name)) for role, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectRole> GetDefaultColorInternalAsync()

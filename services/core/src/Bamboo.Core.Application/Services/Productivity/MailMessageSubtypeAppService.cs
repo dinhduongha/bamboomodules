@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailMessageSubtypeAppService : GenericApplicationService<MailMessageSubtype>, IMailMessageSubtypeAppService
+    public partial class MailMessageSubtypeAppService : GenericAppService<MailMessageSubtype>, IMailMessageSubtypeAppService
     {
 
         public MailMessageSubtypeAppService(IRepository<MailMessageSubtype, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public override async Task<MailMessageSubtype> CreateAsync(MailMessageSubtype entity, List<string> fields)
+        public override async Task<MailMessageSubtype> CreateAsync(CreateRequestDto<MailMessageSubtype> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: mail_message_subtype.py) ---
@@ -42,10 +42,11 @@ namespace Bamboo.Core.Application.Services
             // self.env.registry.clear_cache()  # _get_auto_subscription_subtypes
             // return super(MailMessageSubtype, self).create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<MailMessageSubtype> DefaultSubtypesAsync(Guid id, MailMessageSubtypeDefaultSubtypesRequestDto input)
+        [ApiModel]
+        public async Task<MailMessageSubtype> DefaultSubtypesAsync(MailMessageSubtypeDefaultSubtypesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message_subtype.py) ---
@@ -54,7 +55,9 @@ namespace Bamboo.Core.Application.Services
             // subtype_ids, internal_ids, external_ids = self._default_subtypes(model_name)
             // return self.browse(subtype_ids), self.browse(internal_ids), self.browse(external_ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessageSubtype> DefaultSubtypesInternalAsync(object model_name)
@@ -155,7 +158,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, MailMessageSubtype entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<MailMessageSubtype> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: mail_message_subtype.py) ---
@@ -170,7 +173,7 @@ namespace Bamboo.Core.Application.Services
             // self.env.registry.clear_cache()  # _get_auto_subscription_subtypes
             // return super(MailMessageSubtype, self).write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

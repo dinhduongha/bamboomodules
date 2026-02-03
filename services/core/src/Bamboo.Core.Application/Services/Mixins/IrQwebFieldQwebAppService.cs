@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> RecordToHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field_name, object options) where TEntity : IEntity<Guid>, IIrQwebFieldQwebable
         {
             /*

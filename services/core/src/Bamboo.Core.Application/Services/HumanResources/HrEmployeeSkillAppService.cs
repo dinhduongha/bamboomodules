@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrSkills", Category = "HumanResources", Depends = new[] { "hr" })]
-    public partial class HrEmployeeSkillAppService : GenericApplicationService<HrEmployeeSkill>, IHrEmployeeSkillAppService
+    public partial class HrEmployeeSkillAppService : GenericAppService<HrEmployeeSkill>, IHrEmployeeSkillAppService
     {
         private readonly IHrIndividualSkillMixinAppService _hrIndividualSkillMixinAppService;
         public HrEmployeeSkillAppService(IRepository<HrEmployeeSkill, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IHrIndividualSkillMixinAppService hrIndividualSkillMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _hrIndividualSkillMixinAppService = hrIndividualSkillMixinAppService;
         }
 
-        public async Task<HrEmployeeSkill> GetCurrentSkillsByEmployeeAsync(Guid id)
+        public async Task<HrEmployeeSkill> GetCurrentSkillsByEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py) ---
@@ -47,7 +47,9 @@ namespace Bamboo.Core.Application.Services
             //     result_dict[employee.id] += filtered_emp_skill
             // return result_dict
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployeeSkill> LinkedFieldNameInternalAsync()
@@ -60,7 +62,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployeeSkill> OpenHrEmployeeSkillModalAsync(Guid id)
+        public async Task<HrEmployeeSkill> OpenHrEmployeeSkillModalAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py) ---
@@ -77,17 +79,21 @@ namespace Bamboo.Core.Application.Services
             //     'views': [(self.env.ref('hr_skills.employee_skill_view_inherit_certificate_form').id, 'form')],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployeeSkill> SaveAsync(Guid id)
+        public async Task<HrEmployeeSkill> SaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py) ---
             // def action_save(self):
             // return {'type': 'ir.actions.act_window_close'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

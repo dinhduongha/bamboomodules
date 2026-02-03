@@ -11,98 +11,110 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-approve-expense-sheets")]
-        public async Task<IActionResult> ActionApproveExpenseSheetsAsync(Guid id)
+        [Route("action-approve-expense-sheets")]
+        public async Task<IActionResult> ActionApproveExpenseSheetsAsync(Guid[] ids)
         {
-            var result = await _appService.ApproveExpenseSheetsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ApproveExpenseSheetsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-account-moves")]
-        public async Task<IActionResult> ActionOpenAccountMovesAsync(Guid id)
+        [Route("action-open-account-moves")]
+        public async Task<IActionResult> ActionOpenAccountMovesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAccountMovesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAccountMovesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-expense-view")]
-        public async Task<IActionResult> ActionOpenExpenseViewAsync(Guid id)
+        [Route("action-open-expense-view")]
+        public async Task<IActionResult> ActionOpenExpenseViewAsync(Guid[] ids)
         {
-            var result = await _appService.OpenExpenseViewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenExpenseViewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-sale-orders")]
-        public async Task<IActionResult> ActionOpenSaleOrdersAsync(Guid id)
+        [Route("action-open-sale-orders")]
+        public async Task<IActionResult> ActionOpenSaleOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.OpenSaleOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenSaleOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-refuse-expense-sheets")]
-        public async Task<IActionResult> ActionRefuseExpenseSheetsAsync(Guid id)
+        [Route("action-refuse-expense-sheets")]
+        public async Task<IActionResult> ActionRefuseExpenseSheetsAsync(Guid[] ids)
         {
-            var result = await _appService.RefuseExpenseSheetsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RefuseExpenseSheetsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-register-payment")]
-        public async Task<IActionResult> ActionRegisterPaymentAsync(Guid id)
+        [Route("action-register-payment")]
+        public async Task<IActionResult> ActionRegisterPaymentAsync(Guid[] ids)
         {
-            var result = await _appService.RegisterPaymentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RegisterPaymentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reset-expense-sheets")]
-        public async Task<IActionResult> ActionResetExpenseSheetsAsync(Guid id)
+        [Route("action-reset-expense-sheets")]
+        public async Task<IActionResult> ActionResetExpenseSheetsAsync(Guid[] ids)
         {
-            var result = await _appService.ResetExpenseSheetsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetExpenseSheetsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-sheet-move-post")]
-        public async Task<IActionResult> ActionSheetMovePostAsync(Guid id)
+        [Route("action-sheet-move-post")]
+        public async Task<IActionResult> ActionSheetMovePostAsync(Guid[] ids)
         {
-            var result = await _appService.SheetMovePostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SheetMovePostAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-submit-sheet")]
-        public async Task<IActionResult> ActionSubmitSheetAsync(Guid id)
+        [Route("action-submit-sheet")]
+        public async Task<IActionResult> ActionSubmitSheetAsync(Guid[] ids)
         {
-            var result = await _appService.SubmitSheetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SubmitSheetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/activity-update")]
-        public async Task<IActionResult> ActivityUpdateAsync(Guid id)
+        [Route("activity-update")]
+        public async Task<IActionResult> ActivityUpdateAsync(Guid[] ids)
         {
-            var result = await _appService.ActivityUpdateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ActivityUpdateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-to-paid")]
-        public async Task<IActionResult> SetToPaidAsync(Guid id)
+        [Route("set-to-paid")]
+        public async Task<IActionResult> SetToPaidAsync(Guid[] ids)
         {
-            var result = await _appService.SetToPaidAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetToPaidAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-to-posted")]
-        public async Task<IActionResult> SetToPostedAsync(Guid id)
+        [Route("set-to-posted")]
+        public async Task<IActionResult> SetToPostedAsync(Guid[] ids)
         {
-            var result = await _appService.SetToPostedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetToPostedAsync(ids);
             return Ok(result);
         }
     }

@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsTargetAssignmentAppService : IGenericApplicationService<DmsTargetAssignment>
+    public interface IDmsTargetAssignmentAppService : IGenericAppService<DmsTargetAssignment>
     {
         Task AssignTargetAsync(Guid userId, string period, decimal salesTarget, int visitTarget);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsTargetAssignmentAppService : GenericApplicationService<DmsTargetAssignment>, IDmsTargetAssignmentAppService
+    public class DmsTargetAssignmentAppService : GenericAppService<DmsTargetAssignment>, IDmsTargetAssignmentAppService
     {
         public DmsTargetAssignmentAppService(
             IRepository<DmsTargetAssignment, Guid> repository,

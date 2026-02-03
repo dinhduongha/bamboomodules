@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Gamification", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class GamificationChallengeAppService : GenericApplicationService<GamificationChallenge>, IGamificationChallengeAppService
+    public partial class GamificationChallengeAppService : GenericAppService<GamificationChallenge>, IGamificationChallengeAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public GamificationChallengeAppService(IRepository<GamificationChallenge, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<GamificationChallenge> AcceptChallengeAsync(Guid id)
+        public async Task<GamificationChallenge> AcceptChallengeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_challenge.py) ---
@@ -38,10 +38,12 @@ namespace Bamboo.Core.Application.Services
             // sudoed.write({'invited_user_ids': [(3, user.id)], 'user_ids': [(4, user.id)]})
             // return sudoed._generate_goals_from_challenge()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<GamificationChallenge> CheckAsync(Guid id)
+        public async Task<GamificationChallenge> CheckAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_challenge.py) ---
@@ -57,7 +59,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self._update_all()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationChallenge> CheckChallengeRewardInternalAsync(object force)
@@ -186,6 +190,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<GamificationChallenge> CronUpdateInternalAsync(object ids, object commit)
         {
             /*
@@ -224,7 +229,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationChallenge> DiscardChallengeAsync(Guid id)
+        public async Task<GamificationChallenge> DiscardChallengeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_challenge.py) ---
@@ -235,7 +240,9 @@ namespace Bamboo.Core.Application.Services
             // sudoed.message_post(body=_("%s has refused the challenge", user.name))
             // return sudoed.write({'invited_user_ids': (3, user.id)})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationChallenge> GenerateGoalsFromChallengeInternalAsync()
@@ -597,7 +604,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationChallenge> ReportProgressAsync(Guid id)
+        public async Task<GamificationChallenge> ReportProgressAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_challenge.py) ---
@@ -607,10 +614,12 @@ namespace Bamboo.Core.Application.Services
             //     challenge.report_progress()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<GamificationChallenge> ReportProgressAsync(Guid id, GamificationChallengeReportProgressRequestDto input)
+        public async Task<GamificationChallenge> ReportProgressAsync(GamificationChallengeReportProgressRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_challenge.py) ---
@@ -669,7 +678,9 @@ namespace Bamboo.Core.Application.Services
             //             )
             // return challenge.write({'last_report_date': fields.Date.today()})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationChallenge> RewardUserInternalAsync(object user, object badge)
@@ -691,7 +702,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationChallenge> StartAsync(Guid id)
+        public async Task<GamificationChallenge> StartAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_challenge.py) ---
@@ -699,7 +710,9 @@ namespace Bamboo.Core.Application.Services
             // """Start a challenge"""
             // return self.write({'state': 'inprogress'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationChallenge> UpdateAllInternalAsync()
@@ -761,7 +774,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationChallenge> ViewUsersAsync(Guid id)
+        public async Task<GamificationChallenge> ViewUsersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_challenge.py) ---
@@ -771,7 +784,9 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('id', 'in', self.user_ids.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

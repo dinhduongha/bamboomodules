@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ILinkTrackerClickAppService : IGenericApplicationService<LinkTrackerClick>
     {
-        Task<LinkTrackerClick> AddClickAsync(Guid id, LinkTrackerClickAddClickRequestDto input);
+        Task<LinkTrackerClick> AddClickAsync(LinkTrackerClickAddClickRequestDto input);
     }
 }

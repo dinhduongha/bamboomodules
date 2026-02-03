@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Calendar", Category = "Productivity", Depends = new[] { "base", "mail" })]
-    public partial class CalendarAttendeeAppService : GenericApplicationService<CalendarAttendee>, ICalendarAttendeeAppService
+    public partial class CalendarAttendeeAppService : GenericAppService<CalendarAttendee>, ICalendarAttendeeAppService
     {
 
         public CalendarAttendeeAppService(IRepository<CalendarAttendee, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -59,7 +59,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarAttendee> DoAcceptAsync(Guid id)
+        public async Task<CalendarAttendee> DoAcceptAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_attendee.py) ---
@@ -85,10 +85,12 @@ namespace Bamboo.Core.Application.Services
             // self._microsoft_sync_event('accept')
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CalendarAttendee> DoDeclineAsync(Guid id)
+        public async Task<CalendarAttendee> DoDeclineAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_attendee.py) ---
@@ -114,10 +116,12 @@ namespace Bamboo.Core.Application.Services
             // self._microsoft_sync_event('decline')
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CalendarAttendee> DoTentativeAsync(Guid id)
+        public async Task<CalendarAttendee> DoTentativeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_attendee.py) ---
@@ -137,9 +141,12 @@ namespace Bamboo.Core.Application.Services
             // self._microsoft_sync_event('tentativelyAccept')
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarAttendee> MailTemplateDefaultValuesInternalAsync()
         {
             /*

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("ImLivechat", Category = "Website", Depends = new[] { "mail", "rating", "digest", "utm" })]
-    public partial class ImLivechatChannelMemberHistoryAppService : GenericApplicationService<ImLivechatChannelMemberHistory>, IImLivechatChannelMemberHistoryAppService
+    public partial class ImLivechatChannelMemberHistoryAppService : GenericAppService<ImLivechatChannelMemberHistory>, IImLivechatChannelMemberHistoryAppService
     {
 
         public ImLivechatChannelMemberHistoryAppService(IRepository<ImLivechatChannelMemberHistory, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -162,7 +162,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ImLivechatChannelMemberHistory> OpenDiscussChannelViewAsync(Guid id, ImLivechatChannelMemberHistoryOpenDiscussChannelViewRequestDto input)
+        [ApiModel]
+        public async Task<ImLivechatChannelMemberHistory> OpenDiscussChannelViewAsync(ImLivechatChannelMemberHistoryOpenDiscussChannelViewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel_member_history.py) ---
@@ -181,7 +182,9 @@ namespace Bamboo.Core.Application.Services
             // action["views"] = [view for view in action["views"] if view[1] in ("list", "form")]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

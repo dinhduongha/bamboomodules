@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IDataRecycleRecordAppService : IGenericApplicationService<DataRecycleRecord>
     {
-        Task<DataRecycleRecord> DiscardAsync(Guid id);
-        Task<DataRecycleRecord> ValidateAsync(Guid id);
+        Task<DataRecycleRecord> DiscardAsync(Guid[] ids);
+        Task<DataRecycleRecord> ValidateAsync(Guid[] ids);
     }
 }

@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductDocumentAppService : IGenericApplicationService<ProductDocument>
     {
-        Task<ProductDocument> CopyDataAsync(Guid id, ProductDocumentCopyDataRequestDto input);
-        Task<ProductDocument> OpenPdfFormFieldsAsync(Guid id);
+        Task<ProductDocument> CopyDataAsync(ProductDocumentCopyDataRequestDto input);
+        Task<ProductDocument> OpenPdfFormFieldsAsync(Guid[] ids);
     }
 }

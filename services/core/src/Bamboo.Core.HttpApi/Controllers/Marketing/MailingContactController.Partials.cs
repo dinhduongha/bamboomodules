@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-to-mailing-list")]
-        public async Task<IActionResult> ActionAddToMailingListAsync(Guid id)
+        [Route("action-add-to-mailing-list")]
+        public async Task<IActionResult> ActionAddToMailingListAsync(Guid[] ids)
         {
-            var result = await _appService.AddToMailingListAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddToMailingListAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-import")]
-        public async Task<IActionResult> ActionImportAsync(Guid id)
+        [Route("action-import")]
+        public async Task<IActionResult> ActionImportAsync(Guid[] ids)
         {
-            var result = await _appService.ImportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ImportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/add-to-list")]
-        public async Task<IActionResult> AddToListAsync(Guid id, [FromBody] MailingContactAddToListRequestDto input)
+        [Route("add-to-list")]
+        public async Task<IActionResult> AddToListAsync(MailingContactAddToListRequestDto input)
         {
-            var result = await _appService.AddToListAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AddToListAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
     }

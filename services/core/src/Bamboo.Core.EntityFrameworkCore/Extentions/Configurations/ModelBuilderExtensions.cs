@@ -15,6 +15,7 @@ namespace Bamboo.Core.EntityFrameworkCore
         {
             modelBuilder.HasPostgresExtension("pg_trgm");
             modelBuilder.HasPostgresExtension("btree_gist");
+            modelBuilder.HasPostgresExtension("postgis");
 
             // Áp dụng global cho tất cả FullAudited entities (nếu dùng ABP 8.x+)
             //modelBuilder.Entity<FullAuditedAggregateRoot<Guid>>(b => b.Property(e => e.ExtraProperties).IsRequired(false));

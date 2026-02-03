@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IChangePasswordUserAppService : IGenericApplicationService<ChangePasswordUser>
     {
-        Task<ChangePasswordUser> ChangePasswordButtonAsync(Guid id);
+        Task<ChangePasswordUser> ChangePasswordButtonAsync(Guid[] ids);
     }
 }

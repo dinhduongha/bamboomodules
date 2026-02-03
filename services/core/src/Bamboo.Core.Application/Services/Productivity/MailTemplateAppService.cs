@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailTemplateAppService : GenericApplicationService<MailTemplate>, IMailTemplateAppService
+    public partial class MailTemplateAppService : GenericAppService<MailTemplate>, IMailTemplateAppService
     {
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
@@ -163,7 +163,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailTemplate> CopyDataAsync(Guid id, MailTemplateCopyDataRequestDto input)
+        public async Task<MailTemplate> CopyDataAsync(MailTemplateCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
@@ -174,10 +174,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = self.env._("%s (copy)", template.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailTemplate> CreateActionAsync(Guid id)
+        public async Task<MailTemplate> CreateActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
@@ -205,7 +207,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailTemplate> ExpressionIsDefaultInternalAsync(object source, object model, object fname)
@@ -647,6 +651,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailTemplate> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -657,6 +662,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailTemplate> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -681,7 +687,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailTemplate> OpenMailPreviewAsync(Guid id)
+        public async Task<MailTemplate> OpenMailPreviewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
@@ -690,7 +696,9 @@ namespace Bamboo.Core.Application.Services
             // action.update({'name': _('Template Preview: "%(template_name)s"', template_name=self.name)})
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailTemplate> ParsePartnerToInternalAsync(object partner_to)
@@ -712,6 +720,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailTemplate> SearchInternalAsync(object domain)
         {
             /*
@@ -731,6 +740,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailTemplate> SearchTemplateCategoryInternalAsync(object @operator, object @value)
         {
             /*
@@ -771,7 +781,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailTemplate> SendMailAsync(Guid id, MailTemplateSendMailRequestDto input)
+        public async Task<MailTemplate> SendMailAsync(MailTemplateSendMailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
@@ -799,10 +809,12 @@ namespace Bamboo.Core.Application.Services
             //     email_layout_xmlid=email_layout_xmlid
             // )[0].id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailTemplate> SendMailBatchAsync(Guid id, MailTemplateSendMailBatchRequestDto input)
+        public async Task<MailTemplate> SendMailBatchAsync(MailTemplateSendMailBatchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
@@ -916,10 +928,12 @@ namespace Bamboo.Core.Application.Services
             //     mails_sudo.send(raise_exception=raise_exception)
             // return mails_sudo
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailTemplate> UnlinkActionAsync(Guid id)
+        public async Task<MailTemplate> UnlinkActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
@@ -929,7 +943,9 @@ namespace Bamboo.Core.Application.Services
             //         template.ref_ir_act_window.unlink()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         public override async Task<object> UnlinkAsync(List<Guid> ids)

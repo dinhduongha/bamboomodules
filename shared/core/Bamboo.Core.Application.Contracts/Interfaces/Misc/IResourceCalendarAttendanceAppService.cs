@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResourceCalendarAttendanceAppService : IGenericApplicationService<ResourceCalendarAttendance>
     {
-        Task<ResourceCalendarAttendance> GetWeekTypeAsync(Guid id, ResourceCalendarAttendanceGetWeekTypeRequestDto input);
+        Task<ResourceCalendarAttendance> GetWeekTypeAsync(ResourceCalendarAttendanceGetWeekTypeRequestDto input);
     }
 }

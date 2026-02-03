@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseImport", Category = "Base", Depends = new[] { "web" })]
-    public partial class BaseImportImportAppService : GenericApplicationService<BaseImportImport>, IBaseImportImportAppService
+    public partial class BaseImportImportAppService : GenericAppService<BaseImportImport>, IBaseImportImportAppService
     {
 
         public BaseImportImportAppService(IRepository<BaseImportImport, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -42,6 +42,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseImportImport> ConvertImportDataInternalAsync(object fields, object options)
         {
             /*
@@ -143,7 +144,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseImportImport> ExecuteImportAsync(Guid id, BaseImportImportExecuteImportRequestDto input)
+        public async Task<BaseImportImport> ExecuteImportAsync(BaseImportImportExecuteImportRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
@@ -252,7 +253,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return import_result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BaseImportImport> ExtractBinaryFilenamesInternalAsync(object import_fields, object data, object model, object prefix, object binary_filenames)
@@ -286,6 +289,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseImportImport> ExtractHeaderTypesInternalAsync(object preview_values, object options)
         {
             /*
@@ -385,6 +389,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseImportImport> ExtractHeadersTypesInternalAsync(object headers, object preview, object options)
         {
             /*
@@ -462,7 +467,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseImportImport> GetFieldsTreeAsync(Guid id, BaseImportImportGetFieldsTreeRequestDto input)
+        [ApiModel]
+        public async Task<BaseImportImport> GetFieldsTreeAsync(BaseImportImportGetFieldsTreeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
@@ -628,7 +634,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return importable_fields
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BaseImportImport> GetMappingSuggestionInternalAsync(object header, object fields_tree, object header_types, object mapping_fields)
@@ -1181,6 +1189,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseImportImport> ParseFloatFromDataInternalAsync(object data, object index, object name, object options)
         {
             /*
@@ -1278,7 +1287,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseImportImport> ParsePreviewAsync(Guid id, BaseImportImportParsePreviewRequestDto input)
+        public async Task<BaseImportImport> ParsePreviewAsync(BaseImportImportParsePreviewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
@@ -1405,7 +1414,9 @@ namespace Bamboo.Core.Application.Services
             //         'preview': preview,
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BaseImportImport> ReadCsvInternalAsync(object options)
@@ -1678,6 +1689,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseImportImport> RemoveCurrencySymbolInternalAsync(object @value)
         {
             /*
@@ -1713,6 +1725,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseImportImport> StringifyDateLikeObjectsInternalAsync(object data, object options, object trim)
         {
             /*

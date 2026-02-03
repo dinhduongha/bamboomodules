@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISpreadsheetDashboardShareAppService : IGenericApplicationService<SpreadsheetDashboardShare>
     {
-        Task<SpreadsheetDashboardShare> GetShareUrlAsync(Guid id, SpreadsheetDashboardShareGetShareUrlRequestDto input);
+        Task<SpreadsheetDashboardShare> GetShareUrlAsync(SpreadsheetDashboardShareGetShareUrlRequestDto input);
     }
 }

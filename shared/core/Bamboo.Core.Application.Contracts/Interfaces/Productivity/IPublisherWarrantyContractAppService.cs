@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPublisherWarrantyContractAppService : IGenericApplicationService<PublisherWarrantyContract>
     {
-        Task<PublisherWarrantyContract> UpdateNotificationAsync(Guid id, PublisherWarrantyContractUpdateNotificationRequestDto input);
+        Task<PublisherWarrantyContract> UpdateNotificationAsync(PublisherWarrantyContractUpdateNotificationRequestDto input);
     }
 }

@@ -10,23 +10,23 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IDiscussChannelAppService : IGenericApplicationService<DiscussChannel>
     {
-        Task<DiscussChannel> AddMembersAsync(Guid id, DiscussChannelAddMembersRequestDto input);
-        Task<DiscussChannel> ChannelChangeDescriptionAsync(Guid id, DiscussChannelChannelChangeDescriptionRequestDto input);
-        Task<DiscussChannel> ChannelFetchedAsync(Guid id);
-        Task<DiscussChannel> ChannelJoinAsync(Guid id);
-        Task<DiscussChannel> ChannelPinAsync(Guid id, DiscussChannelChannelPinRequestDto input);
-        Task<DiscussChannel> ChannelRenameAsync(Guid id, DiscussChannelChannelRenameRequestDto input);
-        Task<DiscussChannel> ChannelSetCustomNameAsync(Guid id, DiscussChannelChannelSetCustomNameRequestDto input);
-        Task<DiscussChannel> ExecuteCommandHelpAsync(Guid id);
-        Task<DiscussChannel> ExecuteCommandHistoryAsync(Guid id);
-        Task<DiscussChannel> ExecuteCommandLeadAsync(Guid id);
-        Task<DiscussChannel> ExecuteCommandLeaveAsync(Guid id);
-        Task<DiscussChannel> ExecuteCommandWhoAsync(Guid id);
-        Task<DiscussChannel> GetMentionSuggestionsAsync(Guid id, DiscussChannelGetMentionSuggestionsRequestDto input);
-        Task<DiscussChannel> InviteByEmailAsync(Guid id, DiscussChannelInviteByEmailRequestDto input);
-        Task<DiscussChannel> LivechatJoinChannelNeedingHelpAsync(Guid id);
-        Task<DiscussChannel> MessagePostAsync(Guid id);
-        Task<DiscussChannel> SetMessagePinAsync(Guid id, DiscussChannelSetMessagePinRequestDto input);
-        Task<DiscussChannel> UnfollowAsync(Guid id);
+        Task<DiscussChannel> AddMembersAsync(DiscussChannelAddMembersRequestDto input);
+        Task<DiscussChannel> ChannelChangeDescriptionAsync(DiscussChannelChannelChangeDescriptionRequestDto input);
+        Task<DiscussChannel> ChannelFetchedAsync(Guid[] ids);
+        Task<DiscussChannel> ChannelJoinAsync(Guid[] ids);
+        Task<DiscussChannel> ChannelPinAsync(DiscussChannelChannelPinRequestDto input);
+        Task<DiscussChannel> ChannelRenameAsync(DiscussChannelChannelRenameRequestDto input);
+        Task<DiscussChannel> ChannelSetCustomNameAsync(DiscussChannelChannelSetCustomNameRequestDto input);
+        Task<DiscussChannel> ExecuteCommandHelpAsync(Guid[] ids);
+        Task<DiscussChannel> ExecuteCommandHistoryAsync(Guid[] ids);
+        Task<DiscussChannel> ExecuteCommandLeadAsync(Guid[] ids);
+        Task<DiscussChannel> ExecuteCommandLeaveAsync(Guid[] ids);
+        Task<DiscussChannel> ExecuteCommandWhoAsync(Guid[] ids);
+        Task<DiscussChannel> GetMentionSuggestionsAsync(DiscussChannelGetMentionSuggestionsRequestDto input);
+        Task<DiscussChannel> InviteByEmailAsync(DiscussChannelInviteByEmailRequestDto input);
+        Task<DiscussChannel> LivechatJoinChannelNeedingHelpAsync(Guid[] ids);
+        Task<DiscussChannel> MessagePostAsync(Guid[] ids);
+        Task<DiscussChannel> SetMessagePinAsync(DiscussChannelSetMessagePinRequestDto input);
+        Task<DiscussChannel> UnfollowAsync(Guid[] ids);
     }
 }

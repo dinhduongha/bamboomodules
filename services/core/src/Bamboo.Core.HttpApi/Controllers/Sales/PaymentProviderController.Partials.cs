@@ -11,106 +11,119 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-paypal-create-webhook")]
-        public async Task<IActionResult> ActionPaypalCreateWebhookAsync(Guid id)
+        [Route("action-paypal-create-webhook")]
+        public async Task<IActionResult> ActionPaypalCreateWebhookAsync(Guid[] ids)
         {
-            var result = await _appService.PaypalCreateWebhookAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PaypalCreateWebhookAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-razorpay-create-webhook")]
-        public async Task<IActionResult> ActionRazorpayCreateWebhookAsync(Guid id)
+        [Route("action-razorpay-create-webhook")]
+        public async Task<IActionResult> ActionRazorpayCreateWebhookAsync(Guid[] ids)
         {
-            var result = await _appService.RazorpayCreateWebhookAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RazorpayCreateWebhookAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-recompute-pending-msg")]
-        public async Task<IActionResult> ActionRecomputePendingMsgAsync(Guid id)
+        [Route("action-recompute-pending-msg")]
+        public async Task<IActionResult> ActionRecomputePendingMsgAsync(Guid[] ids)
         {
-            var result = await _appService.RecomputePendingMsgAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RecomputePendingMsgAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reset-credentials")]
-        public async Task<IActionResult> ActionResetCredentialsAsync(Guid id)
+        [Route("action-reset-credentials")]
+        public async Task<IActionResult> ActionResetCredentialsAsync(Guid[] ids)
         {
-            var result = await _appService.ResetCredentialsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetCredentialsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-start-onboarding")]
-        public async Task<IActionResult> ActionStartOnboardingAsync(Guid id, [FromBody] PaymentProviderStartOnboardingRequestDto input)
+        [Route("action-start-onboarding")]
+        public async Task<IActionResult> ActionStartOnboardingAsync(PaymentProviderStartOnboardingRequestDto input)
         {
-            var result = await _appService.StartOnboardingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.StartOnboardingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-stripe-create-webhook")]
-        public async Task<IActionResult> ActionStripeCreateWebhookAsync(Guid id)
+        [Route("action-stripe-create-webhook")]
+        public async Task<IActionResult> ActionStripeCreateWebhookAsync(Guid[] ids)
         {
-            var result = await _appService.StripeCreateWebhookAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StripeCreateWebhookAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-stripe-verify-apple-pay-domain")]
-        public async Task<IActionResult> ActionStripeVerifyApplePayDomainAsync(Guid id)
+        [Route("action-stripe-verify-apple-pay-domain")]
+        public async Task<IActionResult> ActionStripeVerifyApplePayDomainAsync(Guid[] ids)
         {
-            var result = await _appService.StripeVerifyApplePayDomainAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StripeVerifyApplePayDomainAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-sync-paymob-payment-methods")]
-        public async Task<IActionResult> ActionSyncPaymobPaymentMethodsAsync(Guid id)
+        [Route("action-sync-paymob-payment-methods")]
+        public async Task<IActionResult> ActionSyncPaymobPaymentMethodsAsync(Guid[] ids)
         {
-            var result = await _appService.SyncPaymobPaymentMethodsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SyncPaymobPaymentMethodsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-toggle-is-published")]
-        public async Task<IActionResult> ActionToggleIsPublishedAsync(Guid id)
+        [Route("action-toggle-is-published")]
+        public async Task<IActionResult> ActionToggleIsPublishedAsync(Guid[] ids)
         {
-            var result = await _appService.ToggleIsPublishedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ToggleIsPublishedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-update-merchant-details")]
-        public async Task<IActionResult> ActionUpdateMerchantDetailsAsync(Guid id)
+        [Route("action-update-merchant-details")]
+        public async Task<IActionResult> ActionUpdateMerchantDetailsAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateMerchantDetailsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateMerchantDetailsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-payment-methods")]
-        public async Task<IActionResult> ActionViewPaymentMethodsAsync(Guid id)
+        [Route("action-view-payment-methods")]
+        public async Task<IActionResult> ActionViewPaymentMethodsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPaymentMethodsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPaymentMethodsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-immediate-install")]
-        public async Task<IActionResult> ButtonImmediateInstallAsync(Guid id)
+        [Route("button-immediate-install")]
+        public async Task<IActionResult> ButtonImmediateInstallAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonImmediateInstallAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonImmediateInstallAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-base-url")]
-        public async Task<IActionResult> GetBaseUrlAsync(Guid id)
+        [Route("get-base-url")]
+        public async Task<IActionResult> GetBaseUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetBaseUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBaseUrlAsync(ids);
             return Ok(result);
         }
     }

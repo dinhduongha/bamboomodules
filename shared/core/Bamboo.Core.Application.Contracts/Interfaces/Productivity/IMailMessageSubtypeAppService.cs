@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailMessageSubtypeAppService : IGenericApplicationService<MailMessageSubtype>
     {
-        Task<MailMessageSubtype> DefaultSubtypesAsync(Guid id, MailMessageSubtypeDefaultSubtypesRequestDto input);
+        Task<MailMessageSubtype> DefaultSubtypesAsync(MailMessageSubtypeDefaultSubtypesRequestDto input);
     }
 }

@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsPromotionSchemeAppService : IGenericApplicationService<DmsPromotionScheme>
+    public interface IDmsPromotionSchemeAppService : IGenericAppService<DmsPromotionScheme>
     {
         Task ActivateSchemeAsync(Guid schemeId);
         Task DeactivateSchemeAsync(Guid schemeId);
@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsPromotionSchemeAppService : GenericApplicationService<DmsPromotionScheme>, IDmsPromotionSchemeAppService
+    public class DmsPromotionSchemeAppService : GenericAppService<DmsPromotionScheme>, IDmsPromotionSchemeAppService
     {
         public DmsPromotionSchemeAppService(
             IRepository<DmsPromotionScheme, Guid> repository,

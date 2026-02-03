@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICrossoveredBudgetLinesAppService : IGenericApplicationService<CrossoveredBudgetLines>
     {
-        Task<CrossoveredBudgetLines> OpenBudgetEntriesAsync(Guid id);
+        Task<CrossoveredBudgetLines> OpenBudgetEntriesAsync(Guid[] ids);
     }
 }

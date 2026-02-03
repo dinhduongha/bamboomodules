@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/menu-create")]
-        public async Task<IActionResult> MenuCreateAsync(Guid id)
+        [Route("menu-create")]
+        public async Task<IActionResult> MenuCreateAsync(Guid[] ids)
         {
-            var result = await _appService.MenuCreateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MenuCreateAsync(ids);
             return Ok(result);
         }
     }

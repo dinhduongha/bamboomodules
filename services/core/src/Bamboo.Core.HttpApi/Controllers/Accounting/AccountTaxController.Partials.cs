@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/compute-all")]
-        public async Task<IActionResult> ComputeAllAsync(Guid id, [FromBody] AccountTaxComputeAllRequestDto input)
+        [Route("compute-all")]
+        public async Task<IActionResult> ComputeAllAsync(AccountTaxComputeAllRequestDto input)
         {
-            var result = await _appService.ComputeAllAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ComputeAllAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountTaxCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(AccountTaxCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/flatten-taxes-hierarchy")]
-        public async Task<IActionResult> FlattenTaxesHierarchyAsync(Guid id)
+        [Route("flatten-taxes-hierarchy")]
+        public async Task<IActionResult> FlattenTaxesHierarchyAsync(Guid[] ids)
         {
-            var result = await _appService.FlattenTaxesHierarchyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.FlattenTaxesHierarchyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-tax-tags")]
-        public async Task<IActionResult> GetTaxTagsAsync(Guid id, [FromBody] AccountTaxGetTaxTagsRequestDto input)
+        [Route("get-tax-tags")]
+        public async Task<IActionResult> GetTaxTagsAsync(AccountTaxGetTaxTagsRequestDto input)
         {
-            var result = await _appService.GetTaxTagsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetTaxTagsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-amount")]
-        public async Task<IActionResult> OnchangeAmountAsync(Guid id)
+        [Route("onchange-amount")]
+        public async Task<IActionResult> OnchangeAmountAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeAmountAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeAmountAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-amount-type")]
-        public async Task<IActionResult> OnchangeAmountTypeAsync(Guid id)
+        [Route("onchange-amount-type")]
+        public async Task<IActionResult> OnchangeAmountTypeAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeAmountTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeAmountTypeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-price-include")]
-        public async Task<IActionResult> OnchangePriceIncludeAsync(Guid id)
+        [Route("onchange-price-include")]
+        public async Task<IActionResult> OnchangePriceIncludeAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangePriceIncludeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangePriceIncludeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/validate-tax-group-id")]
-        public async Task<IActionResult> ValidateTaxGroupIdAsync(Guid id)
+        [Route("validate-tax-group-id")]
+        public async Task<IActionResult> ValidateTaxGroupIdAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateTaxGroupIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateTaxGroupIdAsync(ids);
             return Ok(result);
         }
     }

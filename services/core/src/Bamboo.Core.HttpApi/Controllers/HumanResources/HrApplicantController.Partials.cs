@@ -11,186 +11,209 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-to-job")]
-        public async Task<IActionResult> ActionAddToJobAsync(Guid id)
+        [Route("action-add-to-job")]
+        public async Task<IActionResult> ActionAddToJobAsync(Guid[] ids)
         {
-            var result = await _appService.AddToJobAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddToJobAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-meeting")]
-        public async Task<IActionResult> ActionCreateMeetingAsync(Guid id)
+        [Route("action-create-meeting")]
+        public async Task<IActionResult> ActionCreateMeetingAsync(Guid[] ids)
         {
-            var result = await _appService.CreateMeetingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateMeetingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-job-add-applicants")]
-        public async Task<IActionResult> ActionJobAddApplicantsAsync(Guid id)
+        [Route("action-job-add-applicants")]
+        public async Task<IActionResult> ActionJobAddApplicantsAsync(Guid[] ids)
         {
-            var result = await _appService.JobAddApplicantsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.JobAddApplicantsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-applications")]
-        public async Task<IActionResult> ActionOpenApplicationsAsync(Guid id)
+        [Route("action-open-applications")]
+        public async Task<IActionResult> ActionOpenApplicationsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenApplicationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenApplicationsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-attachments")]
-        public async Task<IActionResult> ActionOpenAttachmentsAsync(Guid id)
+        [Route("action-open-attachments")]
+        public async Task<IActionResult> ActionOpenAttachmentsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAttachmentsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAttachmentsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employee")]
-        public async Task<IActionResult> ActionOpenEmployeeAsync(Guid id)
+        [Route("action-open-employee")]
+        public async Task<IActionResult> ActionOpenEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-print-survey")]
-        public async Task<IActionResult> ActionPrintSurveyAsync(Guid id)
+        [Route("action-print-survey")]
+        public async Task<IActionResult> ActionPrintSurveyAsync(Guid[] ids)
         {
-            var result = await _appService.PrintSurveyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PrintSurveyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-email")]
-        public async Task<IActionResult> ActionSendEmailAsync(Guid id)
+        [Route("action-send-email")]
+        public async Task<IActionResult> ActionSendEmailAsync(Guid[] ids)
         {
-            var result = await _appService.SendEmailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendEmailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-sms")]
-        public async Task<IActionResult> ActionSendSmsAsync(Guid id)
+        [Route("action-send-sms")]
+        public async Task<IActionResult> ActionSendSmsAsync(Guid[] ids)
         {
-            var result = await _appService.SendSmsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendSmsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-survey")]
-        public async Task<IActionResult> ActionSendSurveyAsync(Guid id)
+        [Route("action-send-survey")]
+        public async Task<IActionResult> ActionSendSurveyAsync(Guid[] ids)
         {
-            var result = await _appService.SendSurveyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendSurveyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-talent-pool-add-applicants")]
-        public async Task<IActionResult> ActionTalentPoolAddApplicantsAsync(Guid id)
+        [Route("action-talent-pool-add-applicants")]
+        public async Task<IActionResult> ActionTalentPoolAddApplicantsAsync(Guid[] ids)
         {
-            var result = await _appService.TalentPoolAddApplicantsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TalentPoolAddApplicantsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-talent-pool-stat-button")]
-        public async Task<IActionResult> ActionTalentPoolStatButtonAsync(Guid id)
+        [Route("action-talent-pool-stat-button")]
+        public async Task<IActionResult> ActionTalentPoolStatButtonAsync(Guid[] ids)
         {
-            var result = await _appService.TalentPoolStatButtonAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TalentPoolStatButtonAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/archive-applicant")]
-        public async Task<IActionResult> ArchiveApplicantAsync(Guid id)
+        [Route("archive-applicant")]
+        public async Task<IActionResult> ArchiveApplicantAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveApplicantAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveApplicantAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] HrApplicantCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(HrApplicantCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-employee-from-applicant")]
-        public async Task<IActionResult> CreateEmployeeFromApplicantAsync(Guid id)
+        [Route("create-employee-from-applicant")]
+        public async Task<IActionResult> CreateEmployeeFromApplicantAsync(Guid[] ids)
         {
-            var result = await _appService.CreateEmployeeFromApplicantAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateEmployeeFromApplicantAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-empty-list-help")]
-        public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] HrApplicantGetEmptyListHelpRequestDto input)
+        [Route("get-empty-list-help")]
+        public async Task<IActionResult> GetEmptyListHelpAsync(HrApplicantGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetEmptyListHelpAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-view")]
-        public async Task<IActionResult> GetViewAsync(Guid id, [FromBody] HrApplicantGetViewRequestDto input)
+        [Route("get-view")]
+        public async Task<IActionResult> GetViewAsync(HrApplicantGetViewRequestDto input)
         {
-            var result = await _appService.GetViewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetViewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/link-applicant-to-talent")]
-        public async Task<IActionResult> LinkApplicantToTalentAsync(Guid id)
+        [Route("link-applicant-to-talent")]
+        public async Task<IActionResult> LinkApplicantToTalentAsync(Guid[] ids)
         {
-            var result = await _appService.LinkApplicantToTalentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LinkApplicantToTalentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-new")]
-        public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] HrApplicantMessageNewRequestDto input)
+        [Route("message-new")]
+        public async Task<IActionResult> MessageNewAsync(HrApplicantMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageNewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/reset-applicant")]
-        public async Task<IActionResult> ResetApplicantAsync(Guid id)
+        [Route("reset-applicant")]
+        public async Task<IActionResult> ResetApplicantAsync(Guid[] ids)
         {
-            var result = await _appService.ResetApplicantAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetApplicantAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/website-form-input-filter")]
-        public async Task<IActionResult> WebsiteFormInputFilterAsync(Guid id, [FromBody] HrApplicantWebsiteFormInputFilterRequestDto input)
+        [Route("website-form-input-filter")]
+        public async Task<IActionResult> WebsiteFormInputFilterAsync(HrApplicantWebsiteFormInputFilterRequestDto input)
         {
-            var result = await _appService.WebsiteFormInputFilterAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.WebsiteFormInputFilterAsync(input);
             return Ok(result);
         }
     }

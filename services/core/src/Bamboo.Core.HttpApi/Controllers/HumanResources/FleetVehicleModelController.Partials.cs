@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-model-vehicle")]
-        public async Task<IActionResult> ActionModelVehicleAsync(Guid id)
+        [Route("action-model-vehicle")]
+        public async Task<IActionResult> ActionModelVehicleAsync(Guid[] ids)
         {
-            var result = await _appService.ModelVehicleAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ModelVehicleAsync(ids);
             return Ok(result);
         }
     }

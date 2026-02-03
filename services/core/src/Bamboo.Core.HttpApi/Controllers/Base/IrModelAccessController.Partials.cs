@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/call-cache-clearing-methods")]
-        public async Task<IActionResult> CallCacheClearingMethodsAsync(Guid id)
+        [Route("call-cache-clearing-methods")]
+        public async Task<IActionResult> CallCacheClearingMethodsAsync(Guid[] ids)
         {
-            var result = await _appService.CallCacheClearingMethodsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CallCacheClearingMethodsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check")]
-        public async Task<IActionResult> CheckAsync(Guid id, [FromBody] IrModelAccessCheckRequestDto input)
+        [Route("check")]
+        public async Task<IActionResult> CheckAsync(IrModelAccessCheckRequestDto input)
         {
-            var result = await _appService.CheckAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/group-names-with-access")]
-        public async Task<IActionResult> GroupNamesWithAccessAsync(Guid id, [FromBody] IrModelAccessGroupNamesWithAccessRequestDto input)
+        [Route("group-names-with-access")]
+        public async Task<IActionResult> GroupNamesWithAccessAsync(IrModelAccessGroupNamesWithAccessRequestDto input)
         {
-            var result = await _appService.GroupNamesWithAccessAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GroupNamesWithAccessAsync(input);
             return Ok(result);
         }
     }

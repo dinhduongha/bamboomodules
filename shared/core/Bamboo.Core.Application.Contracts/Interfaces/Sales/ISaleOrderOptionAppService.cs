@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISaleOrderOptionAppService : IGenericApplicationService<SaleOrderOption>
     {
-        Task<SaleOrderOption> AddOptionToOrderAsync(Guid id);
-        Task<SaleOrderOption> ButtonAddToOrderAsync(Guid id);
+        Task<SaleOrderOption> AddOptionToOrderAsync(Guid[] ids);
+        Task<SaleOrderOption> ButtonAddToOrderAsync(Guid[] ids);
     }
 }

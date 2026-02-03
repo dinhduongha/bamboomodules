@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/go-to-website")]
-        public async Task<IActionResult> GoToWebsiteAsync(Guid id)
+        [Route("go-to-website")]
+        public async Task<IActionResult> GoToWebsiteAsync(Guid[] ids)
         {
-            var result = await _appService.GoToWebsiteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GoToWebsiteAsync(ids);
             return Ok(result);
         }
     }

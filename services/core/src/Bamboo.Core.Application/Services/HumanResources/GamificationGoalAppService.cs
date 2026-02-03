@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Gamification", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class GamificationGoalAppService : GenericApplicationService<GamificationGoal>, IGamificationGoalAppService
+    public partial class GamificationGoalAppService : GenericAppService<GamificationGoal>, IGamificationGoalAppService
     {
 
         public GamificationGoalAppService(IRepository<GamificationGoal, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<GamificationGoal> CancelAsync(Guid id)
+        public async Task<GamificationGoal> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_goal.py) ---
@@ -38,7 +38,9 @@ namespace Bamboo.Core.Application.Services
             // next goal update."""
             // return self.write({'state': 'inprogress'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationGoal> CheckRemindDelayInternalAsync()
@@ -90,7 +92,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationGoal> FailAsync(Guid id)
+        public async Task<GamificationGoal> FailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_goal.py) ---
@@ -100,10 +102,12 @@ namespace Bamboo.Core.Application.Services
             // A failed goal will be ignored in future checks."""
             // return self.write({'state': 'failed'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<GamificationGoal> GetActionAsync(Guid id)
+        public async Task<GamificationGoal> GetActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_goal.py) ---
@@ -146,7 +150,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationGoal> GetCompletionInternalAsync()
@@ -206,7 +212,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationGoal> ReachAsync(Guid id)
+        public async Task<GamificationGoal> ReachAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_goal.py) ---
@@ -217,10 +223,12 @@ namespace Bamboo.Core.Application.Services
             // Progress at the next goal update until the end date."""
             // return self.write({'state': 'reached'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<GamificationGoal> StartAsync(Guid id)
+        public async Task<GamificationGoal> StartAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_goal.py) ---
@@ -231,10 +239,12 @@ namespace Bamboo.Core.Application.Services
             // self.write({'state': 'inprogress'})
             // return self.update_goal()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<GamificationGoal> UpdateGoalAsync(Guid id)
+        public async Task<GamificationGoal> UpdateGoalAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_goal.py) ---
@@ -353,7 +363,9 @@ namespace Bamboo.Core.Application.Services
             //         self.env.cr.commit()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

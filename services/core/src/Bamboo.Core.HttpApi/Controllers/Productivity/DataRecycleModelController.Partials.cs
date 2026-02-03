@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-recycle-records")]
-        public async Task<IActionResult> ActionRecycleRecordsAsync(Guid id)
+        [Route("action-recycle-records")]
+        public async Task<IActionResult> ActionRecycleRecordsAsync(Guid[] ids)
         {
-            var result = await _appService.RecycleRecordsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RecycleRecordsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-records")]
-        public async Task<IActionResult> OpenRecordsAsync(Guid id)
+        [Route("open-records")]
+        public async Task<IActionResult> OpenRecordsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenRecordsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenRecordsAsync(ids);
             return Ok(result);
         }
     }

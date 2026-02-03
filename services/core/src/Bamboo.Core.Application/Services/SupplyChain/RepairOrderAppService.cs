@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Repair", Category = "SupplyChain", Depends = new[] { "sale_stock", "sale_management" })]
-    public partial class RepairOrderAppService : GenericApplicationService<RepairOrder>, IRepairOrderAppService
+    public partial class RepairOrderAppService : GenericAppService<RepairOrder>, IRepairOrderAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -52,7 +52,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RepairOrder> AddFromCatalogAsync(Guid id)
+        public async Task<RepairOrder> AddFromCatalogAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -61,17 +61,21 @@ namespace Bamboo.Core.Application.Services
             // res['search_view_id'] = [self.env.ref('repair.product_view_search_catalog').id, 'search']
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> AssignAsync(Guid id)
+        public async Task<RepairOrder> AssignAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def action_assign(self):
             // return self.move_ids._action_assign()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RepairOrder> ComputeAllowedLotIdsInternalAsync()
@@ -138,7 +142,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RepairOrder> ComputeLotIdAsync(Guid id)
+        public async Task<RepairOrder> ComputeLotIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -149,7 +153,9 @@ namespace Bamboo.Core.Application.Services
             //     elif len(repair.picking_id.move_ids.lot_ids) == 1:
             //         repair.lot_id = repair.picking_id.move_ids.lot_ids
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RepairOrder> ComputePartnerIdInternalAsync()
@@ -274,7 +280,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RepairOrder> ComputeProductUomAsync(Guid id)
+        public async Task<RepairOrder> ComputeProductUomAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -285,7 +291,9 @@ namespace Bamboo.Core.Application.Services
             //     elif not repair.product_uom:
             //         repair.product_uom = repair.product_id.uom_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RepairOrder> ComputeProductionCountInternalAsync()
@@ -339,7 +347,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<RepairOrder> CreateAsync(RepairOrder entity, List<string> fields)
+        public override async Task<RepairOrder> CreateAsync(CreateRequestDto<RepairOrder> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_repair, FILE: repair.py) ---
@@ -362,10 +370,10 @@ namespace Bamboo.Core.Application.Services
             //         vals['reference_ids'] = [Command.link(self.env["stock.reference"].create({'name': vals['name']}).id)]
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<RepairOrder> CreateSaleOrderAsync(Guid id)
+        public async Task<RepairOrder> CreateSaleOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -402,7 +410,9 @@ namespace Bamboo.Core.Application.Services
             // self.move_ids._create_repair_sale_order_line()
             // return self.action_view_sale_order()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RepairOrder> DefaultOrderLineValuesInternalAsync(object child_field)
@@ -418,6 +428,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RepairOrder> DefaultPickingTypeIdInternalAsync()
         {
             /*
@@ -428,7 +439,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RepairOrder> ExplodeAsync(Guid id)
+        public async Task<RepairOrder> ExplodeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_repair, FILE: repair.py) ---
@@ -450,10 +461,12 @@ namespace Bamboo.Core.Application.Services
             // if line_vals_list:
             //     self.env['stock.move'].create(line_vals_list)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> GenerateSerialAsync(Guid id)
+        public async Task<RepairOrder> GenerateSerialAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -471,7 +484,9 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("Please set the first Serial Number or a default sequence"))
             // self.lot_id = self.env['stock.lot'].create({'product_id': self.product_id.id, 'name': name})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RepairOrder> GetActionAddFromCatalogExtraContextInternalAsync()
@@ -598,7 +613,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RepairOrder> MessagePostAsync(Guid id)
+        public async Task<RepairOrder> MessagePostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -606,7 +621,9 @@ namespace Bamboo.Core.Application.Services
             // kwargs['notify_author_mention'] = kwargs.get('notify_author_mention', True)
             // return super().message_post(**kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RepairOrder> OnchangeLocationPickingInternalAsync()
@@ -624,7 +641,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RepairOrder> OnchangeProductUomAsync(Guid id)
+        public async Task<RepairOrder> OnchangeProductUomAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -634,20 +651,24 @@ namespace Bamboo.Core.Application.Services
             //     return res
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> PrintRepairOrderAsync(Guid id)
+        public async Task<RepairOrder> PrintRepairOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def print_repair_order(self):
             // return self.env.ref('repair.action_report_repair_order').report_action(self)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> RepairCancelAsync(Guid id)
+        public async Task<RepairOrder> RepairCancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -660,10 +681,12 @@ namespace Bamboo.Core.Application.Services
             // self.move_ids._action_cancel()  # Quantity of parts added from the RO to the SO is set to 0
             // return self.write({'state': 'cancel'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> RepairCancelDraftAsync(Guid id)
+        public async Task<RepairOrder> RepairCancelDraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -676,10 +699,12 @@ namespace Bamboo.Core.Application.Services
             // self.state = 'draft'
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> RepairDoneAsync(Guid id)
+        public async Task<RepairOrder> RepairDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -764,10 +789,12 @@ namespace Bamboo.Core.Application.Services
             // self.state = 'done'
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> RepairEndAsync(Guid id)
+        public async Task<RepairOrder> RepairEndAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -786,10 +813,12 @@ namespace Bamboo.Core.Application.Services
             //         picked_moves.add(move.id)
             // return self.action_repair_done()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> RepairStartAsync(Guid id)
+        public async Task<RepairOrder> RepairStartAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -800,7 +829,9 @@ namespace Bamboo.Core.Application.Services
             //     self._action_repair_confirm()
             // return self.write({'state': 'under_repair'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RepairOrder> SearchDateCategoryInternalAsync(object @operator, object @value)
@@ -829,14 +860,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RepairOrder> UnreserveAsync(Guid id)
+        public async Task<RepairOrder> UnreserveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
             // def action_unreserve(self):
             // return self.move_ids.filtered(lambda m: m.state in ('assigned', 'partially_available'))._do_unreserve()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RepairOrder> UpdateOrderLineInfoInternalAsync(Guid product_id, object quantity)
@@ -880,7 +913,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RepairOrder> ValidateAsync(Guid id)
+        public async Task<RepairOrder> ValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -924,10 +957,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new'
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> ViewMrpProductionsAsync(Guid id)
+        public async Task<RepairOrder> ViewMrpProductionsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_repair, FILE: repair.py) ---
@@ -949,10 +984,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> ViewPurchaseOrdersAsync(Guid id)
+        public async Task<RepairOrder> ViewPurchaseOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_repair, FILE: repair_order.py) ---
@@ -972,10 +1009,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('id', 'in', purchase_ids.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RepairOrder> ViewSaleOrderAsync(Guid id)
+        public async Task<RepairOrder> ViewSaleOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
@@ -987,10 +1026,12 @@ namespace Bamboo.Core.Application.Services
             //     "res_id": self.sale_order_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, RepairOrder entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<RepairOrder> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_repair, FILE: repair.py) ---
@@ -1031,7 +1072,7 @@ namespace Bamboo.Core.Application.Services
             //     moves_to_reassign._action_assign()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

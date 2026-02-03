@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Maintenance", Category = "SupplyChain", Depends = new[] { "mail" })]
-    public partial class MaintenanceRequestAppService : GenericApplicationService<MaintenanceRequest>, IMaintenanceRequestAppService
+    public partial class MaintenanceRequestAppService : GenericAppService<MaintenanceRequest>, IMaintenanceRequestAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadCcAppService _mailThreadCcAppService;
@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadCcAppService = mailThreadCcAppService;
         }
 
-        public async Task<MaintenanceRequest> ActivityUpdateAsync(Guid id)
+        public async Task<MaintenanceRequest> ActivityUpdateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
@@ -50,7 +50,9 @@ namespace Bamboo.Core.Application.Services
             //             fields.Datetime.from_string(request.schedule_date).date(),
             //             note=note, user_id=request.user_id.id or request.owner_user_id.id or self.env.uid)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MaintenanceRequest> AddFollowersInternalAsync()
@@ -65,14 +67,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MaintenanceRequest> ArchiveEquipmentRequestAsync(Guid id)
+        public async Task<MaintenanceRequest> ArchiveEquipmentRequestAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
             // def archive_equipment_request(self):
             // self.write({'archive': True, 'recurring_maintenance': False})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MaintenanceRequest> CheckRepeatIntervalInternalAsync()
@@ -179,7 +183,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<MaintenanceRequest> CreateAsync(MaintenanceRequest entity, List<string> fields)
+        public override async Task<MaintenanceRequest> CreateAsync(CreateRequestDto<MaintenanceRequest> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_maintenance, FILE: equipment.py) ---
@@ -206,7 +210,7 @@ namespace Bamboo.Core.Application.Services
             // maintenance_requests.activity_update()
             // return maintenance_requests
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<MaintenanceRequest> CreationSubtypeInternalAsync()
@@ -266,7 +270,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MaintenanceRequest> MessageNewAsync(Guid id, MaintenanceRequestMessageNewRequestDto input)
+        [ApiModel]
+        public async Task<MaintenanceRequest> MessageNewAsync(MaintenanceRequestMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_maintenance, FILE: equipment.py) ---
@@ -282,7 +287,9 @@ namespace Bamboo.Core.Application.Services
             //         custom_values['employee_id'] = employee and employee[0].id
             // return super().message_new(msg_dict, custom_values=custom_values)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MaintenanceRequest> NeedNewActivityInternalAsync(object vals)
@@ -295,6 +302,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MaintenanceRequest> ReadGroupStageIdsInternalAsync(object stages, object domain)
         {
             /*
@@ -309,7 +317,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MaintenanceRequest> ResetEquipmentRequestAsync(Guid id)
+        public async Task<MaintenanceRequest> ResetEquipmentRequestAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
@@ -319,7 +327,9 @@ namespace Bamboo.Core.Application.Services
             // # self.write({'active': True, 'stage_id': first_stage_obj.id})
             // self.write({'archive': False, 'stage_id': first_stage_obj.id})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MaintenanceRequest> TrackSubtypeInternalAsync(object init_values)
@@ -335,7 +345,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, MaintenanceRequest entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<MaintenanceRequest> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_maintenance, FILE: equipment.py) ---
@@ -381,7 +391,7 @@ namespace Bamboo.Core.Application.Services
             //     self.activity_update()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

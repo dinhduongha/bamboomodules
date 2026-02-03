@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrModelFieldsAppService : GenericApplicationService<IrModelFields>, IIrModelFieldsAppService
+    public partial class IrModelFieldsAppService : GenericAppService<IrModelFields>, IIrModelFieldsAppService
     {
 
         public IrModelFieldsAppService(IRepository<IrModelFields, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -125,7 +125,7 @@ namespace Bamboo.Core.Application.Services
 
         protected async Task<IrModelFields> CheckIfUsedInWebsiteFormInternalAsync()
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---
             // def _check_if_used_in_website_form(self):
             // """Prevent field deletion if used in a website form."""
@@ -145,7 +145,7 @@ namespace Bamboo.Core.Application.Services
             //                     model=field.model,
             //                     view=record.display_name,
             //                 ))
-            #endif
+#endif
             return default;
         }
 
@@ -296,6 +296,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelFields> CustomMany2manyNamesInternalAsync(object model_name, object comodel_name)
         {
             /*
@@ -355,7 +356,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelFields> FormbuilderWhitelistAsync(Guid id, IrModelFieldsFormbuilderWhitelistRequestDto input)
+        [ApiModel]
+        public async Task<IrModelFields> FormbuilderWhitelistAsync(IrModelFieldsFormbuilderWhitelistRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---
@@ -387,10 +389,13 @@ namespace Bamboo.Core.Application.Services
             //     " WHERE model=%s AND name in %s", (model, tuple(fields)))
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModelFields> GetFieldHelpAsync(Guid id, IrModelFieldsGetFieldHelpRequestDto input)
+        [ApiModel]
+        public async Task<IrModelFields> GetFieldHelpAsync(IrModelFieldsGetFieldHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -406,10 +411,13 @@ namespace Bamboo.Core.Application.Services
             //     for field_name, values in self._get_fields_cached(model_name).items()
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModelFields> GetFieldSelectionAsync(Guid id, IrModelFieldsGetFieldSelectionRequestDto input)
+        [ApiModel]
+        public async Task<IrModelFields> GetFieldSelectionAsync(IrModelFieldsGetFieldSelectionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -423,10 +431,13 @@ namespace Bamboo.Core.Application.Services
             // """
             // return self._get_fields_cached(model_name).get(field_name, {}).get('selection', [])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModelFields> GetFieldStringAsync(Guid id, IrModelFieldsGetFieldStringRequestDto input)
+        [ApiModel]
+        public async Task<IrModelFields> GetFieldStringAsync(IrModelFieldsGetFieldStringRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -442,9 +453,12 @@ namespace Bamboo.Core.Application.Services
             //     for field_name, values in self._get_fields_cached(model_name).items()
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelFields> GetFieldsCachedInternalAsync(object model_name)
         {
             /*
@@ -526,7 +540,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelFields> InitAsync(Guid id)
+        public async Task<IrModelFields> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---
@@ -543,7 +557,9 @@ namespace Bamboo.Core.Application.Services
             // self.env.cr.execute('ALTER TABLE ir_model_fields '
             //                  ' ALTER COLUMN website_form_blacklisted SET DEFAULT true')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModelFields> InstanciateAttrsInternalAsync(object field_data)
@@ -649,6 +665,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelFields> IsManualNameInternalAsync(object name)
         {
             /*
@@ -1113,7 +1130,7 @@ namespace Bamboo.Core.Application.Services
             return await base.UnlinkAsync(ids);
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrModelFields entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<IrModelFields> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_sparse_field, FILE: models.py) ---
@@ -1215,7 +1232,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

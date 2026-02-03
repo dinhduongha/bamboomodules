@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountAsset", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class AccountAssetCategoryAppService : GenericApplicationService<AccountAssetCategory>, IAccountAssetCategoryAppService
+    public partial class AccountAssetCategoryAppService : GenericAppService<AccountAssetCategory>, IAccountAssetCategoryAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<AccountAssetCategory> OnchangeAccountAssetAsync(Guid id)
+        public async Task<AccountAssetCategory> OnchangeAccountAssetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -41,7 +41,9 @@ namespace Bamboo.Core.Application.Services
             // elif self.type == "sale":
             //     self.account_depreciation_expense_id = self.account_asset_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAssetCategory> OnchangeMethodTimeInternalAsync()
@@ -55,7 +57,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAssetCategory> OnchangeTypeAsync(Guid id)
+        public async Task<AccountAssetCategory> OnchangeTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -66,7 +68,9 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     self.method_period = 12
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

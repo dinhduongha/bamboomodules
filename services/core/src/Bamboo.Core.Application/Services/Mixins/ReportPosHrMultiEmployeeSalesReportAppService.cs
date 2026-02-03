@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetReportValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object docids, object data) where TEntity : IEntity<Guid>, IReportPosHrMultiEmployeeSalesReportable
         {
             /*

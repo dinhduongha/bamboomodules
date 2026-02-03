@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("EventBoothModule", Category = "Marketing", Depends = new[] { "event" })]
-    public partial class EventTypeBoothAppService : GenericApplicationService<EventTypeBooth>, IEventTypeBoothAppService
+    public partial class EventTypeBoothAppService : GenericAppService<EventTypeBooth>, IEventTypeBoothAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -86,7 +86,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventTypeBooth> ConfirmAsync(Guid id, EventTypeBoothConfirmRequestDto input)
+        public async Task<EventTypeBooth> ConfirmAsync(EventTypeBoothConfirmRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_booth, FILE: event_booth.py) ---
@@ -94,7 +94,9 @@ namespace Bamboo.Core.Application.Services
             // write_vals = dict({'state': 'unavailable'}, **additional_values or {})
             // self.write(write_vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventTypeBooth> GetDefaultBoothCategoryInternalAsync()
@@ -110,6 +112,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventTypeBooth> GetEventBoothFieldsWhitelistInternalAsync()
         {
             /*

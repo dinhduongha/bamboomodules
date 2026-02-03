@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-speedscope")]
-        public async Task<IActionResult> ActionViewSpeedscopeAsync(Guid id)
+        [Route("action-view-speedscope")]
+        public async Task<IActionResult> ActionViewSpeedscopeAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSpeedscopeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSpeedscopeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-profiling")]
-        public async Task<IActionResult> SetProfilingAsync(Guid id, [FromBody] IrProfileSetProfilingRequestDto input)
+        [Route("set-profiling")]
+        public async Task<IActionResult> SetProfilingAsync(IrProfileSetProfilingRequestDto input)
         {
-            var result = await _appService.SetProfilingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetProfilingAsync(input);
             return Ok(result);
         }
     }

@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/open-document")]
-        public async Task<IActionResult> OpenDocumentAsync(Guid id)
+        [Route("open-document")]
+        public async Task<IActionResult> OpenDocumentAsync(Guid[] ids)
         {
-            var result = await _appService.OpenDocumentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenDocumentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-parent-document")]
-        public async Task<IActionResult> OpenParentDocumentAsync(Guid id)
+        [Route("open-parent-document")]
+        public async Task<IActionResult> OpenParentDocumentAsync(Guid[] ids)
         {
-            var result = await _appService.OpenParentDocumentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenParentDocumentAsync(ids);
             return Ok(result);
         }
     }

@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> AttributesAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field_name, object options, object values) where TEntity : IEntity<Guid>, IIrQwebFieldContactable
         {
             /*
@@ -37,6 +38,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAvailableOptionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrQwebFieldContactable
         {
             /*
@@ -77,6 +79,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRecordToHtmlAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> contact_ids, object options) where TEntity : IEntity<Guid>, IIrQwebFieldContactable
         {
             /*
@@ -88,6 +91,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ValueToHtmlAsync<TEntity>(IEnumerable<TEntity> entities, object @value, object options) where TEntity : IEntity<Guid>, IIrQwebFieldContactable
         {
             /*

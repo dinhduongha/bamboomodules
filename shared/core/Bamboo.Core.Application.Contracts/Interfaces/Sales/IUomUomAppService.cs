@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IUomUomAppService : IGenericApplicationService<UomUom>
     {
-        Task<UomUom> CompareAsync(Guid id, UomUomCompareRequestDto input);
-        Task<bool> IsZeroAsync(Guid id, UomUomIsZeroRequestDto input);
-        Task<UomUom> OpenPackagingBarcodesAsync(Guid id);
-        Task<float> RoundAsync(Guid id, UomUomRoundRequestDto input);
+        Task<UomUom> CompareAsync(UomUomCompareRequestDto input);
+        Task<bool> IsZeroAsync(UomUomIsZeroRequestDto input);
+        Task<UomUom> OpenPackagingBarcodesAsync(Guid[] ids);
+        Task<float> RoundAsync(UomUomRoundRequestDto input);
     }
 }

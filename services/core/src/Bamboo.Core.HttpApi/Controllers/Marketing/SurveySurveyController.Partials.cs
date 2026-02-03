@@ -11,210 +11,236 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-end-session")]
-        public async Task<IActionResult> ActionEndSessionAsync(Guid id)
+        [Route("action-end-session")]
+        public async Task<IActionResult> ActionEndSessionAsync(Guid[] ids)
         {
-            var result = await _appService.EndSessionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.EndSessionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-load-sample-custom")]
-        public async Task<IActionResult> ActionLoadSampleCustomAsync(Guid id)
+        [Route("action-load-sample-custom")]
+        public async Task<IActionResult> ActionLoadSampleCustomAsync(Guid[] ids)
         {
-            var result = await _appService.LoadSampleCustomAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LoadSampleCustomAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-load-survey-template-sample")]
-        public async Task<IActionResult> ActionLoadSurveyTemplateSampleAsync(Guid id, [FromBody] SurveySurveyLoadSurveyTemplateSampleRequestDto input)
+        [Route("action-load-survey-template-sample")]
+        public async Task<IActionResult> ActionLoadSurveyTemplateSampleAsync(SurveySurveyLoadSurveyTemplateSampleRequestDto input)
         {
-            var result = await _appService.LoadSurveyTemplateSampleAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadSurveyTemplateSampleAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-session-manager")]
-        public async Task<IActionResult> ActionOpenSessionManagerAsync(Guid id)
+        [Route("action-open-session-manager")]
+        public async Task<IActionResult> ActionOpenSessionManagerAsync(Guid[] ids)
         {
-            var result = await _appService.OpenSessionManagerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenSessionManagerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-print-survey")]
-        public async Task<IActionResult> ActionPrintSurveyAsync(Guid id, [FromBody] SurveySurveyPrintSurveyRequestDto input)
+        [Route("action-print-survey")]
+        public async Task<IActionResult> ActionPrintSurveyAsync(SurveySurveyPrintSurveyRequestDto input)
         {
-            var result = await _appService.PrintSurveyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PrintSurveyAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-result-survey")]
-        public async Task<IActionResult> ActionResultSurveyAsync(Guid id)
+        [Route("action-result-survey")]
+        public async Task<IActionResult> ActionResultSurveyAsync(Guid[] ids)
         {
-            var result = await _appService.ResultSurveyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResultSurveyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-survey")]
-        public async Task<IActionResult> ActionSendSurveyAsync(Guid id)
+        [Route("action-send-survey")]
+        public async Task<IActionResult> ActionSendSurveyAsync(Guid[] ids)
         {
-            var result = await _appService.SendSurveyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendSurveyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-sample")]
-        public async Task<IActionResult> ActionShowSampleAsync(Guid id)
+        [Route("action-show-sample")]
+        public async Task<IActionResult> ActionShowSampleAsync(Guid[] ids)
         {
-            var result = await _appService.ShowSampleAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowSampleAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-start-session")]
-        public async Task<IActionResult> ActionStartSessionAsync(Guid id)
+        [Route("action-start-session")]
+        public async Task<IActionResult> ActionStartSessionAsync(Guid[] ids)
         {
-            var result = await _appService.StartSessionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StartSessionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-start-survey")]
-        public async Task<IActionResult> ActionStartSurveyAsync(Guid id, [FromBody] SurveySurveyStartSurveyRequestDto input)
+        [Route("action-start-survey")]
+        public async Task<IActionResult> ActionStartSurveyAsync(SurveySurveyStartSurveyRequestDto input)
         {
-            var result = await _appService.StartSurveyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.StartSurveyAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-survey-preview-certification-template")]
-        public async Task<IActionResult> ActionSurveyPreviewCertificationTemplateAsync(Guid id)
+        [Route("action-survey-preview-certification-template")]
+        public async Task<IActionResult> ActionSurveyPreviewCertificationTemplateAsync(Guid[] ids)
         {
-            var result = await _appService.SurveyPreviewCertificationTemplateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SurveyPreviewCertificationTemplateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-survey-see-leads")]
-        public async Task<IActionResult> ActionSurveySeeLeadsAsync(Guid id)
+        [Route("action-survey-see-leads")]
+        public async Task<IActionResult> ActionSurveySeeLeadsAsync(Guid[] ids)
         {
-            var result = await _appService.SurveySeeLeadsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SurveySeeLeadsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-survey-user-input")]
-        public async Task<IActionResult> ActionSurveyUserInputAsync(Guid id)
+        [Route("action-survey-user-input")]
+        public async Task<IActionResult> ActionSurveyUserInputAsync(Guid[] ids)
         {
-            var result = await _appService.SurveyUserInputAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SurveyUserInputAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-survey-user-input-certified")]
-        public async Task<IActionResult> ActionSurveyUserInputCertifiedAsync(Guid id)
+        [Route("action-survey-user-input-certified")]
+        public async Task<IActionResult> ActionSurveyUserInputCertifiedAsync(Guid[] ids)
         {
-            var result = await _appService.SurveyUserInputCertifiedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SurveyUserInputCertifiedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-survey-user-input-completed")]
-        public async Task<IActionResult> ActionSurveyUserInputCompletedAsync(Guid id)
+        [Route("action-survey-user-input-completed")]
+        public async Task<IActionResult> ActionSurveyUserInputCompletedAsync(Guid[] ids)
         {
-            var result = await _appService.SurveyUserInputCompletedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SurveyUserInputCompletedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-survey-view-slide-channels")]
-        public async Task<IActionResult> ActionSurveyViewSlideChannelsAsync(Guid id)
+        [Route("action-survey-view-slide-channels")]
+        public async Task<IActionResult> ActionSurveyViewSlideChannelsAsync(Guid[] ids)
         {
-            var result = await _appService.SurveyViewSlideChannelsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SurveyViewSlideChannelsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-test-survey")]
-        public async Task<IActionResult> ActionTestSurveyAsync(Guid id)
+        [Route("action-test-survey")]
+        public async Task<IActionResult> ActionTestSurveyAsync(Guid[] ids)
         {
-            var result = await _appService.TestSurveyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TestSurveyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-validity")]
-        public async Task<IActionResult> CheckValidityAsync(Guid id)
+        [Route("check-validity")]
+        public async Task<IActionResult> CheckValidityAsync(Guid[] ids)
         {
-            var result = await _appService.CheckValidityAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckValidityAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SurveySurveyCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(SurveySurveyCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-formview-id")]
-        public async Task<IActionResult> GetFormviewIdAsync(Guid id, [FromBody] SurveySurveyGetFormviewIdRequestDto input)
+        [Route("get-formview-id")]
+        public async Task<IActionResult> GetFormviewIdAsync(SurveySurveyGetFormviewIdRequestDto input)
         {
-            var result = await _appService.GetFormviewIdAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFormviewIdAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-print-url")]
-        public async Task<IActionResult> GetPrintUrlAsync(Guid id)
+        [Route("get-print-url")]
+        public async Task<IActionResult> GetPrintUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetPrintUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPrintUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-start-short-url")]
-        public async Task<IActionResult> GetStartShortUrlAsync(Guid id)
+        [Route("get-start-short-url")]
+        public async Task<IActionResult> GetStartShortUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetStartShortUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetStartShortUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-start-url")]
-        public async Task<IActionResult> GetStartUrlAsync(Guid id)
+        [Route("get-start-url")]
+        public async Task<IActionResult> GetStartUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetStartUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetStartUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-survey-templates-data")]
-        public async Task<IActionResult> GetSurveyTemplatesDataAsync(Guid id)
+        [Route("get-survey-templates-data")]
+        public async Task<IActionResult> GetSurveyTemplatesDataAsync(Guid[] ids)
         {
-            var result = await _appService.GetSurveyTemplatesDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetSurveyTemplatesDataAsync(ids);
             return Ok(result);
         }
     }

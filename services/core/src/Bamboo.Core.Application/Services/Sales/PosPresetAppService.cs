@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
-    public partial class PosPresetAppService : GenericApplicationService<PosPreset>, IPosPresetAppService
+    public partial class PosPresetAppService : GenericAppService<PosPreset>, IPosPresetAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public PosPresetAppService(IRepository<PosPreset, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -114,7 +114,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPreset> GetAvailableSlotsAsync(Guid id)
+        public async Task<PosPreset> GetAvailableSlotsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_preset.py) ---
@@ -125,9 +125,12 @@ namespace Bamboo.Core.Application.Services
             //     'usage_utc': usage,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<PosPreset> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -139,6 +142,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPreset> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -158,6 +162,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPreset> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -168,6 +173,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPreset> LoadPosSelfDataFieldsInternalAsync(object config)
         {
             /*
@@ -180,7 +186,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosPreset> OpenLinkedConfigAsync(Guid id)
+        public async Task<PosPreset> OpenLinkedConfigAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_preset.py) ---
@@ -194,10 +200,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': ['|', ('default_preset_id', '=', self.id), ('available_preset_ids', 'in', self.id)]
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosPreset> OpenLinkedOrdersAsync(Guid id)
+        public async Task<PosPreset> OpenLinkedOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_preset.py) ---
@@ -211,7 +219,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('preset_id', '=', self.id)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosPreset> UnlinkExceptMasterPresetsInternalAsync()

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
-    public partial class PosCategoryAppService : GenericApplicationService<PosCategory>, IPosCategoryAppService
+    public partial class PosCategoryAppService : GenericAppService<PosCategory>, IPosCategoryAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public PosCategoryAppService(IRepository<PosCategory, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -88,14 +88,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosCategory> GetDefaultColorAsync(Guid id)
+        public async Task<PosCategory> GetDefaultColorAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_category.py) ---
             // def get_default_color(self):
             // return random.randint(0, 10)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosCategory> GetDescendantsInternalAsync()
@@ -124,6 +126,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosCategory> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -137,6 +140,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosCategory> LoadPosDataFieldsInternalAsync(object config)
         {
             /*

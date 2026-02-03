@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-equipments-records")]
-        public async Task<IActionResult> ActionViewEquipmentsRecordsAsync(Guid id)
+        [Route("action-view-equipments-records")]
+        public async Task<IActionResult> ActionViewEquipmentsRecordsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewEquipmentsRecordsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewEquipmentsRecordsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockLocationCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(StockLocationCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-subcontract")]
-        public async Task<IActionResult> IsSubcontractAsync(Guid id)
+        [Route("is-subcontract")]
+        public async Task<IActionResult> IsSubcontractAsync(Guid[] ids)
         {
-            var result = await _appService.IsSubcontractAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.IsSubcontractAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/should-bypass-reservation")]
-        public async Task<IActionResult> ShouldBypassReservationAsync(Guid id)
+        [Route("should-bypass-reservation")]
+        public async Task<IActionResult> ShouldBypassReservationAsync(Guid[] ids)
         {
-            var result = await _appService.ShouldBypassReservationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShouldBypassReservationAsync(ids);
             return Ok(result);
         }
     }

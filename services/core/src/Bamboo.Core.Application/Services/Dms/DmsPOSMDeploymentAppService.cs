@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsPOSMDeploymentAppService : IGenericApplicationService<DmsPOSMDeployment>
+    public interface IDmsPOSMDeploymentAppService : IGenericAppService<DmsPOSMDeployment>
     {
         Task ConfirmDeploymentAsync(Guid deploymentId);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsPOSMDeploymentAppService : GenericApplicationService<DmsPOSMDeployment>, IDmsPOSMDeploymentAppService
+    public class DmsPOSMDeploymentAppService : GenericAppService<DmsPOSMDeployment>, IDmsPOSMDeploymentAppService
     {
         public DmsPOSMDeploymentAppService(
             IRepository<DmsPOSMDeployment, Guid> repository,

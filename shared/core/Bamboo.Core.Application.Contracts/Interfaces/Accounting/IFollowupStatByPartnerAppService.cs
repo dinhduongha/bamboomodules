@@ -9,6 +9,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IFollowupStatByPartnerAppService : IApplicationService
     {
-        Task<FollowupStatByPartner> InitAsync(Guid id);
+        Task<FollowupStatByPartner> InitAsync(Guid[] ids);
     }
 }

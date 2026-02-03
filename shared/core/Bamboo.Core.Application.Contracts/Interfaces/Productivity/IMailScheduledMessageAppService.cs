@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailScheduledMessageAppService : IGenericApplicationService<MailScheduledMessage>
     {
-        Task<MailScheduledMessage> OpenEditFormAsync(Guid id);
-        Task<MailScheduledMessage> PostMessageAsync(Guid id);
+        Task<MailScheduledMessage> OpenEditFormAsync(Guid[] ids);
+        Task<MailScheduledMessage> PostMessageAsync(Guid[] ids);
     }
 }

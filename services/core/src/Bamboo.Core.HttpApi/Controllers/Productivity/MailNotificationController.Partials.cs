@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/format-failure-reason")]
-        public async Task<IActionResult> FormatFailureReasonAsync(Guid id)
+        [Route("format-failure-reason")]
+        public async Task<IActionResult> FormatFailureReasonAsync(Guid[] ids)
         {
-            var result = await _appService.FormatFailureReasonAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.FormatFailureReasonAsync(ids);
             return Ok(result);
         }
     }

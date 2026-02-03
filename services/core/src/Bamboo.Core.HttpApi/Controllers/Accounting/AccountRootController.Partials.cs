@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/browse")]
-        public async Task<IActionResult> BrowseAsync(Guid id, [FromBody] AccountRootBrowseRequestDto input)
+        [Route("browse")]
+        public async Task<IActionResult> BrowseAsync(AccountRootBrowseRequestDto input)
         {
-            var result = await _appService.BrowseAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.BrowseAsync(input);
             return Ok(result);
         }
     }

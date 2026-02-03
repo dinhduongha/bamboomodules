@@ -10,11 +10,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockWarehouseAppService : IGenericApplicationService<StockWarehouse>
     {
-        Task<StockWarehouse> CopyDataAsync(Guid id, StockWarehouseCopyDataRequestDto input);
-        Task<StockWarehouse> CreateResupplyRoutesAsync(Guid id, StockWarehouseCreateResupplyRoutesRequestDto input);
-        Task<StockWarehouse> GetCurrentWarehousesAsync(Guid id);
-        Task<StockWarehouse> GetRulesDictAsync(Guid id);
-        Task<StockWarehouse> UpdateGlobalRouteDropshipSubcontractorAsync(Guid id);
-        Task<StockWarehouse> ViewAllRoutesAsync(Guid id);
+        Task<StockWarehouse> CopyDataAsync(StockWarehouseCopyDataRequestDto input);
+        Task<StockWarehouse> CreateResupplyRoutesAsync(StockWarehouseCreateResupplyRoutesRequestDto input);
+        Task<StockWarehouse> GetCurrentWarehousesAsync(Guid[] ids);
+        Task<StockWarehouse> GetRulesDictAsync(Guid[] ids);
+        Task<StockWarehouse> UpdateGlobalRouteDropshipSubcontractorAsync(Guid[] ids);
+        Task<StockWarehouse> ViewAllRoutesAsync(Guid[] ids);
     }
 }

@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailPushDeviceAppService : IGenericApplicationService<MailPushDevice>
     {
-        Task<MailPushDevice> GetWebPushVapidPublicKeyAsync(Guid id);
-        Task<MailPushDevice> RegisterDevicesAsync(Guid id);
-        Task<MailPushDevice> UnregisterDevicesAsync(Guid id);
+        Task<MailPushDevice> GetWebPushVapidPublicKeyAsync(Guid[] ids);
+        Task<MailPushDevice> RegisterDevicesAsync(Guid[] ids);
+        Task<MailPushDevice> UnregisterDevicesAsync(Guid[] ids);
     }
 }

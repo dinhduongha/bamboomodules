@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-analytical-accounts")]
-        public async Task<IActionResult> ActionViewAnalyticalAccountsAsync(Guid id)
+        [Route("action-view-analytical-accounts")]
+        public async Task<IActionResult> ActionViewAnalyticalAccountsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewAnalyticalAccountsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewAnalyticalAccountsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-children-plans")]
-        public async Task<IActionResult> ActionViewChildrenPlansAsync(Guid id)
+        [Route("action-view-children-plans")]
+        public async Task<IActionResult> ActionViewChildrenPlansAsync(Guid[] ids)
         {
-            var result = await _appService.ViewChildrenPlansAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewChildrenPlansAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-relevant-plans")]
-        public async Task<IActionResult> GetRelevantPlansAsync(Guid id)
+        [Route("get-relevant-plans")]
+        public async Task<IActionResult> GetRelevantPlansAsync(Guid[] ids)
         {
-            var result = await _appService.GetRelevantPlansAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetRelevantPlansAsync(ids);
             return Ok(result);
         }
     }

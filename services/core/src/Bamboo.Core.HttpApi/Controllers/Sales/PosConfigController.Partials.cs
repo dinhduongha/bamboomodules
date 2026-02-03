@@ -11,266 +11,299 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-close-kiosk-session")]
-        public async Task<IActionResult> ActionCloseKioskSessionAsync(Guid id)
+        [Route("action-close-kiosk-session")]
+        public async Task<IActionResult> ActionCloseKioskSessionAsync(Guid[] ids)
         {
-            var result = await _appService.CloseKioskSessionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CloseKioskSessionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-wizard")]
-        public async Task<IActionResult> ActionOpenWizardAsync(Guid id)
+        [Route("action-open-wizard")]
+        public async Task<IActionResult> ActionOpenWizardAsync(Guid[] ids)
         {
-            var result = await _appService.OpenWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-pos-config-modal-edit")]
-        public async Task<IActionResult> ActionPosConfigModalEditAsync(Guid id)
+        [Route("action-pos-config-modal-edit")]
+        public async Task<IActionResult> ActionPosConfigModalEditAsync(Guid[] ids)
         {
-            var result = await _appService.PosConfigModalEditAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PosConfigModalEditAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/close-ui")]
-        public async Task<IActionResult> CloseUiAsync(Guid id)
+        [Route("close-ui")]
+        public async Task<IActionResult> CloseUiAsync(Guid[] ids)
         {
-            var result = await _appService.CloseUiAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CloseUiAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/execute")]
-        public async Task<IActionResult> ExecuteAsync(Guid id)
+        [Route("execute")]
+        public async Task<IActionResult> ExecuteAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-kiosk-url")]
-        public async Task<IActionResult> GetKioskUrlAsync(Guid id)
+        [Route("get-kiosk-url")]
+        public async Task<IActionResult> GetKioskUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetKioskUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetKioskUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-limited-partners-loading")]
-        public async Task<IActionResult> GetLimitedPartnersLoadingAsync(Guid id, [FromBody] PosConfigGetLimitedPartnersLoadingRequestDto input)
+        [Route("get-limited-partners-loading")]
+        public async Task<IActionResult> GetLimitedPartnersLoadingAsync(PosConfigGetLimitedPartnersLoadingRequestDto input)
         {
-            var result = await _appService.GetLimitedPartnersLoadingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetLimitedPartnersLoadingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-limited-product-count")]
-        public async Task<IActionResult> GetLimitedProductCountAsync(Guid id)
+        [Route("get-limited-product-count")]
+        public async Task<IActionResult> GetLimitedProductCountAsync(Guid[] ids)
         {
-            var result = await _appService.GetLimitedProductCountAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetLimitedProductCountAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-pos-kanban-view-state")]
-        public async Task<IActionResult> GetPosKanbanViewStateAsync(Guid id)
+        [Route("get-pos-kanban-view-state")]
+        public async Task<IActionResult> GetPosKanbanViewStateAsync(Guid[] ids)
         {
-            var result = await _appService.GetPosKanbanViewStateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPosKanbanViewStateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-pos-qr-order-data")]
-        public async Task<IActionResult> GetPosQrOrderDataAsync(Guid id)
+        [Route("get-pos-qr-order-data")]
+        public async Task<IActionResult> GetPosQrOrderDataAsync(Guid[] ids)
         {
-            var result = await _appService.GetPosQrOrderDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPosQrOrderDataAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-record-by-ref")]
-        public async Task<IActionResult> GetRecordByRefAsync(Guid id, [FromBody] PosConfigGetRecordByRefRequestDto input)
+        [Route("get-record-by-ref")]
+        public async Task<IActionResult> GetRecordByRefAsync(PosConfigGetRecordByRefRequestDto input)
         {
-            var result = await _appService.GetRecordByRefAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetRecordByRefAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-statistics-for-session")]
-        public async Task<IActionResult> GetStatisticsForSessionAsync(Guid id, [FromBody] PosConfigGetStatisticsForSessionRequestDto input)
+        [Route("get-statistics-for-session")]
+        public async Task<IActionResult> GetStatisticsForSessionAsync(PosConfigGetStatisticsForSessionRequestDto input)
         {
-            var result = await _appService.GetStatisticsForSessionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetStatisticsForSessionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-valid-self-payment-method")]
-        public async Task<IActionResult> HasValidSelfPaymentMethodAsync(Guid id)
+        [Route("has-valid-self-payment-method")]
+        public async Task<IActionResult> HasValidSelfPaymentMethodAsync(Guid[] ids)
         {
-            var result = await _appService.HasValidSelfPaymentMethodAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.HasValidSelfPaymentMethodAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/install-pos-restaurant")]
-        public async Task<IActionResult> InstallPosRestaurantAsync(Guid id)
+        [Route("install-pos-restaurant")]
+        public async Task<IActionResult> InstallPosRestaurantAsync(Guid[] ids)
         {
-            var result = await _appService.InstallPosRestaurantAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InstallPosRestaurantAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-data-params")]
-        public async Task<IActionResult> LoadDataParamsAsync(Guid id)
+        [Route("load-data-params")]
+        public async Task<IActionResult> LoadDataParamsAsync(Guid[] ids)
         {
-            var result = await _appService.LoadDataParamsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LoadDataParamsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-demo-data")]
-        public async Task<IActionResult> LoadDemoDataAsync(Guid id)
+        [Route("load-demo-data")]
+        public async Task<IActionResult> LoadDemoDataAsync(Guid[] ids)
         {
-            var result = await _appService.LoadDemoDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LoadDemoDataAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-onboarding-bakery-scenario")]
-        public async Task<IActionResult> LoadOnboardingBakeryScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingBakeryScenarioRequestDto input)
+        [Route("load-onboarding-bakery-scenario")]
+        public async Task<IActionResult> LoadOnboardingBakeryScenarioAsync(PosConfigLoadOnboardingBakeryScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingBakeryScenarioAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadOnboardingBakeryScenarioAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-onboarding-bar-scenario")]
-        public async Task<IActionResult> LoadOnboardingBarScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingBarScenarioRequestDto input)
+        [Route("load-onboarding-bar-scenario")]
+        public async Task<IActionResult> LoadOnboardingBarScenarioAsync(PosConfigLoadOnboardingBarScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingBarScenarioAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadOnboardingBarScenarioAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-onboarding-clothes-scenario")]
-        public async Task<IActionResult> LoadOnboardingClothesScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingClothesScenarioRequestDto input)
+        [Route("load-onboarding-clothes-scenario")]
+        public async Task<IActionResult> LoadOnboardingClothesScenarioAsync(PosConfigLoadOnboardingClothesScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingClothesScenarioAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadOnboardingClothesScenarioAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-onboarding-furniture-scenario")]
-        public async Task<IActionResult> LoadOnboardingFurnitureScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingFurnitureScenarioRequestDto input)
+        [Route("load-onboarding-furniture-scenario")]
+        public async Task<IActionResult> LoadOnboardingFurnitureScenarioAsync(PosConfigLoadOnboardingFurnitureScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingFurnitureScenarioAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadOnboardingFurnitureScenarioAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-onboarding-kiosk-scenario")]
-        public async Task<IActionResult> LoadOnboardingKioskScenarioAsync(Guid id)
+        [Route("load-onboarding-kiosk-scenario")]
+        public async Task<IActionResult> LoadOnboardingKioskScenarioAsync(Guid[] ids)
         {
-            var result = await _appService.LoadOnboardingKioskScenarioAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LoadOnboardingKioskScenarioAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-onboarding-restaurant-scenario")]
-        public async Task<IActionResult> LoadOnboardingRestaurantScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingRestaurantScenarioRequestDto input)
+        [Route("load-onboarding-restaurant-scenario")]
+        public async Task<IActionResult> LoadOnboardingRestaurantScenarioAsync(PosConfigLoadOnboardingRestaurantScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingRestaurantScenarioAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadOnboardingRestaurantScenarioAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-onboarding-retail-scenario")]
-        public async Task<IActionResult> LoadOnboardingRetailScenarioAsync(Guid id, [FromBody] PosConfigLoadOnboardingRetailScenarioRequestDto input)
+        [Route("load-onboarding-retail-scenario")]
+        public async Task<IActionResult> LoadOnboardingRetailScenarioAsync(PosConfigLoadOnboardingRetailScenarioRequestDto input)
         {
-            var result = await _appService.LoadOnboardingRetailScenarioAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadOnboardingRetailScenarioAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-self-data")]
-        public async Task<IActionResult> LoadSelfDataAsync(Guid id)
+        [Route("load-self-data")]
+        public async Task<IActionResult> LoadSelfDataAsync(Guid[] ids)
         {
-            var result = await _appService.LoadSelfDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LoadSelfDataAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/notify-synchronisation")]
-        public async Task<IActionResult> NotifySynchronisationAsync(Guid id, [FromBody] PosConfigNotifySynchronisationRequestDto input)
+        [Route("notify-synchronisation")]
+        public async Task<IActionResult> NotifySynchronisationAsync(PosConfigNotifySynchronisationRequestDto input)
         {
-            var result = await _appService.NotifySynchronisationAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.NotifySynchronisationAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-existing-session-cb")]
-        public async Task<IActionResult> OpenExistingSessionCbAsync(Guid id)
+        [Route("open-existing-session-cb")]
+        public async Task<IActionResult> OpenExistingSessionCbAsync(Guid[] ids)
         {
-            var result = await _appService.OpenExistingSessionCbAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenExistingSessionCbAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-opened-rescue-session-form")]
-        public async Task<IActionResult> OpenOpenedRescueSessionFormAsync(Guid id)
+        [Route("open-opened-rescue-session-form")]
+        public async Task<IActionResult> OpenOpenedRescueSessionFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenOpenedRescueSessionFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenOpenedRescueSessionFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-ui")]
-        public async Task<IActionResult> OpenUiAsync(Guid id)
+        [Route("open-ui")]
+        public async Task<IActionResult> OpenUiAsync(Guid[] ids)
         {
-            var result = await _appService.OpenUiAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenUiAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/preview-self-order-app")]
-        public async Task<IActionResult> PreviewSelfOrderAppAsync(Guid id)
+        [Route("preview-self-order-app")]
+        public async Task<IActionResult> PreviewSelfOrderAppAsync(Guid[] ids)
         {
-            var result = await _appService.PreviewSelfOrderAppAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PreviewSelfOrderAppAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/read-config-open-orders")]
-        public async Task<IActionResult> ReadConfigOpenOrdersAsync(Guid id, [FromBody] PosConfigReadConfigOpenOrdersRequestDto input)
+        [Route("read-config-open-orders")]
+        public async Task<IActionResult> ReadConfigOpenOrdersAsync(PosConfigReadConfigOpenOrdersRequestDto input)
         {
-            var result = await _appService.ReadConfigOpenOrdersAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ReadConfigOpenOrdersAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/register-new-device-identifier")]
-        public async Task<IActionResult> RegisterNewDeviceIdentifierAsync(Guid id)
+        [Route("register-new-device-identifier")]
+        public async Task<IActionResult> RegisterNewDeviceIdentifierAsync(Guid[] ids)
         {
-            var result = await _appService.RegisterNewDeviceIdentifierAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RegisterNewDeviceIdentifierAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-customer-display")]
-        public async Task<IActionResult> UpdateCustomerDisplayAsync(Guid id, [FromBody] PosConfigUpdateCustomerDisplayRequestDto input)
+        [Route("update-customer-display")]
+        public async Task<IActionResult> UpdateCustomerDisplayAsync(PosConfigUpdateCustomerDisplayRequestDto input)
         {
-            var result = await _appService.UpdateCustomerDisplayAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdateCustomerDisplayAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/use-coupon-code")]
-        public async Task<IActionResult> UseCouponCodeAsync(Guid id, [FromBody] PosConfigUseCouponCodeRequestDto input)
+        [Route("use-coupon-code")]
+        public async Task<IActionResult> UseCouponCodeAsync(PosConfigUseCouponCodeRequestDto input)
         {
-            var result = await _appService.UseCouponCodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UseCouponCodeAsync(input);
             return Ok(result);
         }
     }

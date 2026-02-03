@@ -30,14 +30,14 @@ public partial class DmsDistributorPortalConfig : FullAuditedAggregateRoot<Guid>
     [Column("portal_access_level")]
     public string PortalAccessLevel { get; set; } = "view"; // full, view, none
 
-    [Column("dashboard_widgets_json")]
-    public string? DashboardWidgetsJson { get; set; }
+    [Column("dashboard_widgets", TypeName = "jsonb")]
+    public string? DashboardWidgets { get; set; }
 
-    [Column("allowed_features_json")]
-    public string? AllowedFeaturesJson { get; set; }
+    [Column("allowed_features", TypeName = "jsonb")]
+    public string? AllowedFeatures { get; set; }
 
     [Column("last_login_date")]
-    public DateTime? LastLoginDate { get; set; }
+    public DateTimeOffset? LastLoginDate { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -54,4 +54,9 @@ public partial class DmsDistributorPortalConfig : FullAuditedAggregateRoot<Guid>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? ResPartner { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
 }

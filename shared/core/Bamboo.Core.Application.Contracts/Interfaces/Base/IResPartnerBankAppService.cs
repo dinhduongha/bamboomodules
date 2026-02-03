@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResPartnerBankAppService : IGenericApplicationService<ResPartnerBank>
     {
-        Task<ResPartnerBank> ArchiveBankAsync(Guid id);
-        Task<ResPartnerBank> BuildQrCodeBase64Async(Guid id, ResPartnerBankBuildQrCodeBase64RequestDto input);
-        Task<ResPartnerBank> BuildQrCodeUrlAsync(Guid id, ResPartnerBankBuildQrCodeUrlRequestDto input);
-        Task<ResPartnerBank> CheckIbanAsync(Guid id, ResPartnerBankCheckIbanRequestDto input);
-        Task<ResPartnerBank> GetAvailableQrMethodsInSequenceAsync(Guid id);
-        Task<ResPartnerBank> GetBbanAsync(Guid id);
-        Task<ResPartnerBank> GetSupportedAccountTypesAsync(Guid id);
-        Task<ResPartnerBank> OpenAllocationWizardAsync(Guid id);
-        Task<ResPartnerBank> RetrieveAccTypeAsync(Guid id, ResPartnerBankRetrieveAccTypeRequestDto input);
+        Task<ResPartnerBank> ArchiveBankAsync(Guid[] ids);
+        Task<ResPartnerBank> BuildQrCodeBase64Async(ResPartnerBankBuildQrCodeBase64RequestDto input);
+        Task<ResPartnerBank> BuildQrCodeUrlAsync(ResPartnerBankBuildQrCodeUrlRequestDto input);
+        Task<ResPartnerBank> CheckIbanAsync(ResPartnerBankCheckIbanRequestDto input);
+        Task<ResPartnerBank> GetAvailableQrMethodsInSequenceAsync(Guid[] ids);
+        Task<ResPartnerBank> GetBbanAsync(Guid[] ids);
+        Task<ResPartnerBank> GetSupportedAccountTypesAsync(Guid[] ids);
+        Task<ResPartnerBank> OpenAllocationWizardAsync(Guid[] ids);
+        Task<ResPartnerBank> RetrieveAccTypeAsync(ResPartnerBankRetrieveAccTypeRequestDto input);
     }
 }

@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ILunchOrderAppService : IGenericApplicationService<LunchOrder>
     {
-        Task<LunchOrder> AddToCartAsync(Guid id);
-        Task<LunchOrder> CancelAsync(Guid id);
-        Task<LunchOrder> ConfirmAsync(Guid id);
-        Task<LunchOrder> NotifyAsync(Guid id);
-        Task<LunchOrder> OrderAsync(Guid id);
-        Task<LunchOrder> ReorderAsync(Guid id);
-        Task<LunchOrder> ResetAsync(Guid id);
-        Task<LunchOrder> SendAsync(Guid id);
-        Task<LunchOrder> UpdateQuantityAsync(Guid id, LunchOrderUpdateQuantityRequestDto input);
+        Task<LunchOrder> AddToCartAsync(Guid[] ids);
+        Task<LunchOrder> CancelAsync(Guid[] ids);
+        Task<LunchOrder> ConfirmAsync(Guid[] ids);
+        Task<LunchOrder> NotifyAsync(Guid[] ids);
+        Task<LunchOrder> OrderAsync(Guid[] ids);
+        Task<LunchOrder> ReorderAsync(Guid[] ids);
+        Task<LunchOrder> ResetAsync(Guid[] ids);
+        Task<LunchOrder> SendAsync(Guid[] ids);
+        Task<LunchOrder> UpdateQuantityAsync(LunchOrderUpdateQuantityRequestDto input);
     }
 }

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-wallet-balance")]
-        public async Task<IActionResult> GetWalletBalanceAsync(Guid id, [FromBody] LunchCashmoveGetWalletBalanceRequestDto input)
+        [Route("get-wallet-balance")]
+        public async Task<IActionResult> GetWalletBalanceAsync(LunchCashmoveGetWalletBalanceRequestDto input)
         {
-            var result = await _appService.GetWalletBalanceAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetWalletBalanceAsync(input);
             return Ok(result);
         }
     }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("AuthTotpMailEnforce", Category = "ExtraTools", Depends = new[] { "auth_totp", "mail" })]
-    public partial class AuthTotpRateLimitLogAppService : GenericApplicationService<AuthTotpRateLimitLog>, IAuthTotpRateLimitLogAppService
+    public partial class AuthTotpRateLimitLogAppService : GenericAppService<AuthTotpRateLimitLog>, IAuthTotpRateLimitLogAppService
     {
 
         public AuthTotpRateLimitLogAppService(IRepository<AuthTotpRateLimitLog, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<AuthTotpRateLimitLog> InitAsync(Guid id)
+        public async Task<AuthTotpRateLimitLog> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: auth_totp_rate_limit_log.py) ---
@@ -36,7 +36,9 @@ namespace Bamboo.Core.Application.Services
             //     ON auth_totp_rate_limit_log(user_id, limit_type, create_date);
             // """)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

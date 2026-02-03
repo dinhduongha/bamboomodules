@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> DisableAssetAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IThemeUtilsable
         {
             /*
@@ -34,6 +35,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DisableViewAsync<TEntity>(IEnumerable<TEntity> entities, Guid xml_id) where TEntity : IEntity<Guid>, IThemeUtilsable
         {
             /*
@@ -44,6 +46,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EnableAssetAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IThemeUtilsable
         {
             /*
@@ -54,6 +57,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EnableViewAsync<TEntity>(IEnumerable<TEntity> entities, Guid xml_id) where TEntity : IEntity<Guid>, IThemeUtilsable
         {
             /*
@@ -103,6 +107,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ResetDefaultConfigInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IThemeUtilsable
         {
             /*
@@ -145,6 +150,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ToggleAssetInternalAsync<TEntity>(IEnumerable<TEntity> entities, object key, object active) where TEntity : IEntity<Guid>, IThemeUtilsable
         {
             /*
@@ -169,6 +175,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ToggleViewInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid xml_id, object active) where TEntity : IEntity<Guid>, IThemeUtilsable
         {
             /*

@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-moderate-accept")]
-        public async Task<IActionResult> ActionModerateAcceptAsync(Guid id)
+        [Route("action-moderate-accept")]
+        public async Task<IActionResult> ActionModerateAcceptAsync(Guid[] ids)
         {
-            var result = await _appService.ModerateAcceptAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ModerateAcceptAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-moderate-allow")]
-        public async Task<IActionResult> ActionModerateAllowAsync(Guid id)
+        [Route("action-moderate-allow")]
+        public async Task<IActionResult> ActionModerateAllowAsync(Guid[] ids)
         {
-            var result = await _appService.ModerateAllowAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ModerateAllowAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-moderate-ban")]
-        public async Task<IActionResult> ActionModerateBanAsync(Guid id)
+        [Route("action-moderate-ban")]
+        public async Task<IActionResult> ActionModerateBanAsync(Guid[] ids)
         {
-            var result = await _appService.ModerateBanAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ModerateBanAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-moderate-ban-with-comment")]
-        public async Task<IActionResult> ActionModerateBanWithCommentAsync(Guid id, [FromBody] MailGroupMessageModerateBanWithCommentRequestDto input)
+        [Route("action-moderate-ban-with-comment")]
+        public async Task<IActionResult> ActionModerateBanWithCommentAsync(MailGroupMessageModerateBanWithCommentRequestDto input)
         {
-            var result = await _appService.ModerateBanWithCommentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ModerateBanWithCommentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-moderate-reject")]
-        public async Task<IActionResult> ActionModerateRejectAsync(Guid id)
+        [Route("action-moderate-reject")]
+        public async Task<IActionResult> ActionModerateRejectAsync(Guid[] ids)
         {
-            var result = await _appService.ModerateRejectAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ModerateRejectAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-moderate-reject-with-comment")]
-        public async Task<IActionResult> ActionModerateRejectWithCommentAsync(Guid id, [FromBody] MailGroupMessageModerateRejectWithCommentRequestDto input)
+        [Route("action-moderate-reject-with-comment")]
+        public async Task<IActionResult> ActionModerateRejectWithCommentAsync(MailGroupMessageModerateRejectWithCommentRequestDto input)
         {
-            var result = await _appService.ModerateRejectWithCommentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ModerateRejectWithCommentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] MailGroupMessageCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(MailGroupMessageCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
     }

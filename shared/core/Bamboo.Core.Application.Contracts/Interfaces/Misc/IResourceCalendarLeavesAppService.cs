@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResourceCalendarLeavesAppService : IGenericApplicationService<ResourceCalendarLeaves>
     {
-        Task<ResourceCalendarLeaves> CheckDatesAsync(Guid id);
+        Task<ResourceCalendarLeaves> CheckDatesAsync(Guid[] ids);
     }
 }

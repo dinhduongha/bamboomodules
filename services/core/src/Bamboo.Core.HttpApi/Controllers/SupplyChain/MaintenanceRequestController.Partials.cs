@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/activity-update")]
-        public async Task<IActionResult> ActivityUpdateAsync(Guid id)
+        [Route("activity-update")]
+        public async Task<IActionResult> ActivityUpdateAsync(Guid[] ids)
         {
-            var result = await _appService.ActivityUpdateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ActivityUpdateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/archive-equipment-request")]
-        public async Task<IActionResult> ArchiveEquipmentRequestAsync(Guid id)
+        [Route("archive-equipment-request")]
+        public async Task<IActionResult> ArchiveEquipmentRequestAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveEquipmentRequestAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveEquipmentRequestAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-new")]
-        public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] MaintenanceRequestMessageNewRequestDto input)
+        [Route("message-new")]
+        public async Task<IActionResult> MessageNewAsync(MaintenanceRequestMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageNewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/reset-equipment-request")]
-        public async Task<IActionResult> ResetEquipmentRequestAsync(Guid id)
+        [Route("reset-equipment-request")]
+        public async Task<IActionResult> ResetEquipmentRequestAsync(Guid[] ids)
         {
-            var result = await _appService.ResetEquipmentRequestAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetEquipmentRequestAsync(ids);
             return Ok(result);
         }
     }

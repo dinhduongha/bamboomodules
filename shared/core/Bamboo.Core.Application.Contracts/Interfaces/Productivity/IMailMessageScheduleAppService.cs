@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailMessageScheduleAppService : IGenericApplicationService<MailMessageSchedule>
     {
-        Task<MailMessageSchedule> ForceSendAsync(Guid id);
+        Task<MailMessageSchedule> ForceSendAsync(Guid[] ids);
     }
 }

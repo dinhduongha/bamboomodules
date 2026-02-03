@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockScrapAppService : GenericApplicationService<StockScrap>, IStockScrapAppService
+    public partial class StockScrapAppService : GenericAppService<StockScrap>, IStockScrapAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public StockScrapAppService(IRepository<StockScrap, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<StockScrap> CheckAvailableQtyAsync(Guid id)
+        public async Task<StockScrap> CheckAvailableQtyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
@@ -46,7 +46,9 @@ namespace Bamboo.Core.Application.Services
             // scrap_qty = self.product_uom_id._compute_quantity(self.scrap_qty, self.product_id.uom_id)
             // return float_compare(available_qty, scrap_qty, precision_digits=precision) >= 0
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockScrap> ComputeAllowedUomIdsInternalAsync()
@@ -154,7 +156,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockScrap> DoReplenishAsync(Guid id, StockScrapDoReplenishRequestDto input)
+        public async Task<StockScrap> DoReplenishAsync(StockScrapDoReplenishRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_scrap.py) ---
@@ -181,10 +183,12 @@ namespace Bamboo.Core.Application.Services
             //     values
             // )])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockScrap> DoScrapAsync(Guid id)
+        public async Task<StockScrap> DoScrapAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
@@ -201,10 +205,12 @@ namespace Bamboo.Core.Application.Services
             //         scrap.do_replenish()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockScrap> GetStockMoveLinesAsync(Guid id)
+        public async Task<StockScrap> GetStockMoveLinesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
@@ -213,10 +219,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('move_id', 'in', self.move_ids.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockScrap> GetStockPickingAsync(Guid id)
+        public async Task<StockScrap> GetStockPickingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
@@ -225,7 +233,9 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('id', '=', self.picking_id.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockScrap> OnchangeProductIdInternalAsync()
@@ -343,7 +353,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockScrap> ValidateAsync(Guid id)
+        public async Task<StockScrap> ValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_scrap.py) ---
@@ -372,7 +382,9 @@ namespace Bamboo.Core.Application.Services
             //         'target': 'new'
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

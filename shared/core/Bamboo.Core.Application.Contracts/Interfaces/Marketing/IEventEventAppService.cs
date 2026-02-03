@@ -10,23 +10,23 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventEventAppService : IGenericApplicationService<EventEvent>
     {
-        Task<EventEvent> CopyDataAsync(Guid id, EventEventCopyDataRequestDto input);
-        Task<EventEvent> CopyEventMenusAsync(Guid id, EventEventCopyEventMenusRequestDto input);
-        Task<EventEvent> GenerateLeadsAsync(Guid id, EventEventGenerateLeadsRequestDto input);
-        Task<EventEvent> GetBackendMenuIdAsync(Guid id);
-        Task<EventEvent> GetKioskUrlAsync(Guid id);
-        Task<EventEvent> GetSlotTicketsAvailabilityPosAsync(Guid id, EventEventGetSlotTicketsAvailabilityPosRequestDto input);
-        Task<EventEvent> GoogleMapLinkAsync(Guid id, EventEventGoogleMapLinkRequestDto input);
-        Task<EventEvent> InviteContactsAsync(Guid id);
-        Task<EventEvent> MassMailingAttendeesAsync(Guid id);
-        Task<EventEvent> MassMailingTrackSpeakersAsync(Guid id);
-        Task<EventEvent> OpenSlotCalendarAsync(Guid id);
-        Task<EventEvent> SetDoneAsync(Guid id);
-        Task<EventEvent> ToggleBoothMenuAsync(Guid id, EventEventToggleBoothMenuRequestDto input);
-        Task<EventEvent> ToggleExhibitorMenuAsync(Guid id, EventEventToggleExhibitorMenuRequestDto input);
-        Task<EventEvent> ToggleWebsiteMenuAsync(Guid id, EventEventToggleWebsiteMenuRequestDto input);
-        Task<EventEvent> ToggleWebsiteTrackAsync(Guid id, EventEventToggleWebsiteTrackRequestDto input);
-        Task<EventEvent> ToggleWebsiteTrackProposalAsync(Guid id, EventEventToggleWebsiteTrackProposalRequestDto input);
-        Task<EventEvent> ViewLinkedOrdersAsync(Guid id);
+        Task<EventEvent> CopyDataAsync(EventEventCopyDataRequestDto input);
+        Task<EventEvent> CopyEventMenusAsync(EventEventCopyEventMenusRequestDto input);
+        Task<EventEvent> GenerateLeadsAsync(EventEventGenerateLeadsRequestDto input);
+        Task<EventEvent> GetBackendMenuIdAsync(Guid[] ids);
+        Task<EventEvent> GetKioskUrlAsync(Guid[] ids);
+        Task<EventEvent> GetSlotTicketsAvailabilityPosAsync(EventEventGetSlotTicketsAvailabilityPosRequestDto input);
+        Task<EventEvent> GoogleMapLinkAsync(EventEventGoogleMapLinkRequestDto input);
+        Task<EventEvent> InviteContactsAsync(Guid[] ids);
+        Task<EventEvent> MassMailingAttendeesAsync(Guid[] ids);
+        Task<EventEvent> MassMailingTrackSpeakersAsync(Guid[] ids);
+        Task<EventEvent> OpenSlotCalendarAsync(Guid[] ids);
+        Task<EventEvent> SetDoneAsync(Guid[] ids);
+        Task<EventEvent> ToggleBoothMenuAsync(EventEventToggleBoothMenuRequestDto input);
+        Task<EventEvent> ToggleExhibitorMenuAsync(EventEventToggleExhibitorMenuRequestDto input);
+        Task<EventEvent> ToggleWebsiteMenuAsync(EventEventToggleWebsiteMenuRequestDto input);
+        Task<EventEvent> ToggleWebsiteTrackAsync(EventEventToggleWebsiteTrackRequestDto input);
+        Task<EventEvent> ToggleWebsiteTrackProposalAsync(EventEventToggleWebsiteTrackProposalRequestDto input);
+        Task<EventEvent> ViewLinkedOrdersAsync(Guid[] ids);
     }
 }

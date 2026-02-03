@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mrp", Category = "SupplyChain", Depends = new[] { "product", "stock", "resource" })]
-    public partial class MrpRoutingWorkcenterAppService : GenericApplicationService<MrpRoutingWorkcenter>, IMrpRoutingWorkcenterAppService
+    public partial class MrpRoutingWorkcenterAppService : GenericAppService<MrpRoutingWorkcenter>, IMrpRoutingWorkcenterAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<MrpRoutingWorkcenter> ArchiveAsync(Guid id)
+        public async Task<MrpRoutingWorkcenter> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_routing.py) ---
@@ -42,7 +42,9 @@ namespace Bamboo.Core.Application.Services
             // self.bom_id._set_outdated_bom_in_productions()
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpRoutingWorkcenter> CheckNoCyclicDependenciesInternalAsync()
@@ -142,7 +144,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpRoutingWorkcenter> CopyExistingOperationsAsync(Guid id)
+        public async Task<MrpRoutingWorkcenter> CopyExistingOperationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_routing.py) ---
@@ -159,10 +161,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpRoutingWorkcenter> CopyToBomAsync(Guid id)
+        public async Task<MrpRoutingWorkcenter> CopyToBomAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_routing.py) ---
@@ -179,10 +183,12 @@ namespace Bamboo.Core.Application.Services
             //         'res_id': bom_id,
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpRoutingWorkcenter> OpenOperationFormAsync(Guid id)
+        public async Task<MrpRoutingWorkcenter> OpenOperationFormAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_routing.py) ---
@@ -193,7 +199,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_model': 'mrp.routing.workcenter',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpRoutingWorkcenter> SkipOperationLineInternalAsync(object product, object never_attribute_values)
@@ -216,7 +224,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpRoutingWorkcenter> UnarchiveAsync(Guid id)
+        public async Task<MrpRoutingWorkcenter> UnarchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_routing.py) ---
@@ -225,7 +233,9 @@ namespace Bamboo.Core.Application.Services
             // self.bom_id._set_outdated_bom_in_productions()
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -10,34 +10,34 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrModuleModuleAppService : IGenericApplicationService<IrModuleModule>
     {
-        Task<IrModuleModule> ButtonChooseThemeAsync(Guid id);
-        Task<IrModuleModule> ButtonImmediateInstallAppAsync(Guid id);
-        Task<IrModuleModule> ButtonImmediateInstallAsync(Guid id);
-        Task<IrModuleModule> ButtonImmediateUninstallAsync(Guid id);
-        Task<IrModuleModule> ButtonImmediateUpgradeAsync(Guid id);
-        Task<IrModuleModule> ButtonInstallAsync(Guid id);
-        Task<IrModuleModule> ButtonRefreshThemeAsync(Guid id);
-        Task<IrModuleModule> ButtonRemoveThemeAsync(Guid id);
-        Task<IrModuleModule> ButtonResetStateAsync(Guid id);
-        Task<IrModuleModule> ButtonUninstallAsync(Guid id);
-        Task<IrModuleModule> ButtonUninstallWizardAsync(Guid id);
-        Task<IrModuleModule> ButtonUpgradeAsync(Guid id);
-        Task<IrModuleModule> CheckExternalDependenciesAsync(Guid id, IrModuleModuleCheckExternalDependenciesRequestDto input);
-        Task<IrModuleModule> CheckModuleUpdateAsync(Guid id);
-        Task<IrModuleModule> DownstreamDependenciesAsync(Guid id, IrModuleModuleDownstreamDependenciesRequestDto input);
-        Task<IrModuleModule> GetModuleInfoAsync(Guid id, IrModuleModuleGetModuleInfoRequestDto input);
-        Task<IrModuleModule> GetThemesDomainAsync(Guid id);
-        Task<IrModuleModule> GetValuesFromTerpAsync(Guid id);
-        Task<IrModuleModule> ModuleUninstallAsync(Guid id);
-        Task<IrModuleModule> MoreInfoAsync(Guid id);
-        Task<IrModuleModule> NextAsync(Guid id);
-        Task<IrModuleModule> OpenInstallRequestAsync(Guid id);
-        Task<IrModuleModule> SearchPanelSelectRangeAsync(Guid id, IrModuleModuleSearchPanelSelectRangeRequestDto input);
-        Task<IrModuleModule> UpdateListAsync(Guid id);
-        Task<IrModuleModule> UpdateThemeImagesAsync(Guid id);
-        Task<IrModuleModule> UpstreamDependenciesAsync(Guid id, IrModuleModuleUpstreamDependenciesRequestDto input);
-        Task<IrModuleModule> ViewDeliveryMethodsAsync(Guid id);
-        Task<IrModuleModule> WebReadAsync(Guid id, IrModuleModuleWebReadRequestDto input);
-        Task<IrModuleModule> WebSearchReadAsync(Guid id, IrModuleModuleWebSearchReadRequestDto input);
+        Task<IrModuleModule> ButtonChooseThemeAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonImmediateInstallAppAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonImmediateInstallAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonImmediateUninstallAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonImmediateUpgradeAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonInstallAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonRefreshThemeAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonRemoveThemeAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonResetStateAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonUninstallAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonUninstallWizardAsync(Guid[] ids);
+        Task<IrModuleModule> ButtonUpgradeAsync(Guid[] ids);
+        Task<IrModuleModule> CheckExternalDependenciesAsync(IrModuleModuleCheckExternalDependenciesRequestDto input);
+        Task<IrModuleModule> CheckModuleUpdateAsync(Guid[] ids);
+        Task<IrModuleModule> DownstreamDependenciesAsync(IrModuleModuleDownstreamDependenciesRequestDto input);
+        Task<IrModuleModule> GetModuleInfoAsync(IrModuleModuleGetModuleInfoRequestDto input);
+        Task<IrModuleModule> GetThemesDomainAsync(Guid[] ids);
+        Task<IrModuleModule> GetValuesFromTerpAsync(Guid[] ids);
+        Task<IrModuleModule> ModuleUninstallAsync(Guid[] ids);
+        Task<IrModuleModule> MoreInfoAsync(Guid[] ids);
+        Task<IrModuleModule> NextAsync(Guid[] ids);
+        Task<IrModuleModule> OpenInstallRequestAsync(Guid[] ids);
+        Task<IrModuleModule> SearchPanelSelectRangeAsync(IrModuleModuleSearchPanelSelectRangeRequestDto input);
+        Task<IrModuleModule> UpdateListAsync(Guid[] ids);
+        Task<IrModuleModule> UpdateThemeImagesAsync(Guid[] ids);
+        Task<IrModuleModule> UpstreamDependenciesAsync(IrModuleModuleUpstreamDependenciesRequestDto input);
+        Task<IrModuleModule> ViewDeliveryMethodsAsync(Guid[] ids);
+        Task<IrModuleModule> WebReadAsync(IrModuleModuleWebReadRequestDto input);
+        Task<IrModuleModule> WebSearchReadAsync(IrModuleModuleWebSearchReadRequestDto input);
     }
 }

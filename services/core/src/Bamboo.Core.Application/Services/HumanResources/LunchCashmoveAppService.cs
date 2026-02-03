@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Lunch", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class LunchCashmoveAppService : GenericApplicationService<LunchCashmove>, ILunchCashmoveAppService
+    public partial class LunchCashmoveAppService : GenericAppService<LunchCashmove>, ILunchCashmoveAppService
     {
 
         public LunchCashmoveAppService(IRepository<LunchCashmove, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LunchCashmove> GetWalletBalanceAsync(Guid id, LunchCashmoveGetWalletBalanceRequestDto input)
+        [ApiModel]
+        public async Task<LunchCashmove> GetWalletBalanceAsync(LunchCashmoveGetWalletBalanceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_cashmove.py) ---
@@ -48,7 +49,9 @@ namespace Bamboo.Core.Application.Services
             //     result += user.company_id.lunch_minimum_threshold
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-selection-class")]
-        public async Task<IActionResult> GetSelectionClassAsync(Guid id)
+        [Route("get-selection-class")]
+        public async Task<IActionResult> GetSelectionClassAsync(Guid[] ids)
         {
-            var result = await _appService.GetSelectionClassAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetSelectionClassAsync(ids);
             return Ok(result);
         }
     }

@@ -11,98 +11,110 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-merge")]
-        public async Task<IActionResult> ActionMergeAsync(Guid id, [FromBody] MailingListMergeRequestDto input)
+        [Route("action-merge")]
+        public async Task<IActionResult> ActionMergeAsync(MailingListMergeRequestDto input)
         {
-            var result = await _appService.MergeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MergeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-import")]
-        public async Task<IActionResult> ActionOpenImportAsync(Guid id)
+        [Route("action-open-import")]
+        public async Task<IActionResult> ActionOpenImportAsync(Guid[] ids)
         {
-            var result = await _appService.OpenImportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenImportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-mailing")]
-        public async Task<IActionResult> ActionSendMailingAsync(Guid id)
+        [Route("action-send-mailing")]
+        public async Task<IActionResult> ActionSendMailingAsync(Guid[] ids)
         {
-            var result = await _appService.SendMailingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendMailingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-mailing-sms")]
-        public async Task<IActionResult> ActionSendMailingSmsAsync(Guid id)
+        [Route("action-send-mailing-sms")]
+        public async Task<IActionResult> ActionSendMailingSmsAsync(Guid[] ids)
         {
-            var result = await _appService.SendMailingSmsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendMailingSmsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-contacts")]
-        public async Task<IActionResult> ActionViewContactsAsync(Guid id)
+        [Route("action-view-contacts")]
+        public async Task<IActionResult> ActionViewContactsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewContactsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewContactsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-contacts-blacklisted")]
-        public async Task<IActionResult> ActionViewContactsBlacklistedAsync(Guid id)
+        [Route("action-view-contacts-blacklisted")]
+        public async Task<IActionResult> ActionViewContactsBlacklistedAsync(Guid[] ids)
         {
-            var result = await _appService.ViewContactsBlacklistedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewContactsBlacklistedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-contacts-bouncing")]
-        public async Task<IActionResult> ActionViewContactsBouncingAsync(Guid id)
+        [Route("action-view-contacts-bouncing")]
+        public async Task<IActionResult> ActionViewContactsBouncingAsync(Guid[] ids)
         {
-            var result = await _appService.ViewContactsBouncingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewContactsBouncingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-contacts-email")]
-        public async Task<IActionResult> ActionViewContactsEmailAsync(Guid id)
+        [Route("action-view-contacts-email")]
+        public async Task<IActionResult> ActionViewContactsEmailAsync(Guid[] ids)
         {
-            var result = await _appService.ViewContactsEmailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewContactsEmailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-contacts-opt-out")]
-        public async Task<IActionResult> ActionViewContactsOptOutAsync(Guid id)
+        [Route("action-view-contacts-opt-out")]
+        public async Task<IActionResult> ActionViewContactsOptOutAsync(Guid[] ids)
         {
-            var result = await _appService.ViewContactsOptOutAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewContactsOptOutAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-contacts-sms")]
-        public async Task<IActionResult> ActionViewContactsSmsAsync(Guid id)
+        [Route("action-view-contacts-sms")]
+        public async Task<IActionResult> ActionViewContactsSmsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewContactsSmsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewContactsSmsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mailings")]
-        public async Task<IActionResult> ActionViewMailingsAsync(Guid id)
+        [Route("action-view-mailings")]
+        public async Task<IActionResult> ActionViewMailingsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMailingsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMailingsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] MailingListCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(MailingListCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
     }

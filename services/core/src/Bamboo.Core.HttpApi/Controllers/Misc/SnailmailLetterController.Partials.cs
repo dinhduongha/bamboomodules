@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/cancel")]
-        public async Task<IActionResult> CancelAsync(Guid id)
+        [Route("cancel")]
+        public async Task<IActionResult> CancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/snailmail-print")]
-        public async Task<IActionResult> SnailmailPrintAsync(Guid id)
+        [Route("snailmail-print")]
+        public async Task<IActionResult> SnailmailPrintAsync(Guid[] ids)
         {
-            var result = await _appService.SnailmailPrintAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SnailmailPrintAsync(ids);
             return Ok(result);
         }
     }

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-create-payment")]
-        public async Task<IActionResult> ActionCreatePaymentAsync(Guid id)
+        [Route("action-create-payment")]
+        public async Task<IActionResult> ActionCreatePaymentAsync(Guid[] ids)
         {
-            var result = await _appService.CreatePaymentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreatePaymentAsync(ids);
             return Ok(result);
         }
     }

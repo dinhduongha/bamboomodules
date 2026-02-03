@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPaymentTokenAppService : IGenericApplicationService<PaymentToken>
     {
-        Task<PaymentToken> GetLinkedRecordsInfoAsync(Guid id);
+        Task<PaymentToken> GetLinkedRecordsInfoAsync(Guid[] ids);
     }
 }

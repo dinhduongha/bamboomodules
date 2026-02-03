@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAnalyticDistributionModelAppService : IGenericApplicationService<AccountAnalyticDistributionModel>
     {
-        Task<AccountAnalyticDistributionModel> ReadDistributionModelAsync(Guid id);
+        Task<AccountAnalyticDistributionModel> ReadDistributionModelAsync(Guid[] ids);
     }
 }

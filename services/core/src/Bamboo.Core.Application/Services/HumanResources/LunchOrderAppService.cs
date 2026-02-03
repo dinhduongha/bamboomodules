@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Lunch", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class LunchOrderAppService : GenericApplicationService<LunchOrder>, ILunchOrderAppService
+    public partial class LunchOrderAppService : GenericAppService<LunchOrder>, ILunchOrderAppService
     {
 
         public LunchOrderAppService(IRepository<LunchOrder, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<LunchOrder> AddToCartAsync(Guid id)
+        public async Task<LunchOrder> AddToCartAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
@@ -38,17 +38,21 @@ namespace Bamboo.Core.Application.Services
             // # YTI FIXME: Find a way to drop this.
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LunchOrder> CancelAsync(Guid id)
+        public async Task<LunchOrder> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
             // def action_cancel(self):
             // self.write({'state': 'cancelled'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LunchOrder> CheckToppingQuantityInternalAsync()
@@ -198,14 +202,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LunchOrder> ConfirmAsync(Guid id)
+        public async Task<LunchOrder> ConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
             // def action_confirm(self):
             // self.write({'state': 'confirmed'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LunchOrder> ExtractToppingsInternalAsync(object values)
@@ -235,6 +241,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LunchOrder> FindMatchingLinesInternalAsync(object values)
         {
             /*
@@ -266,7 +273,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LunchOrder> NotifyAsync(Guid id)
+        public async Task<LunchOrder> NotifyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
@@ -296,10 +303,12 @@ namespace Bamboo.Core.Application.Services
             //     notified_users.add(user)
             // self.write({'notified': True})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LunchOrder> OrderAsync(Guid id)
+        public async Task<LunchOrder> OrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
@@ -314,10 +323,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // self._check_wallet()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LunchOrder> ReorderAsync(Guid id)
+        public async Task<LunchOrder> ReorderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
@@ -332,30 +343,36 @@ namespace Bamboo.Core.Application.Services
             // action = self.env['ir.actions.act_window']._for_xml_id('lunch.lunch_order_action')
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LunchOrder> ResetAsync(Guid id)
+        public async Task<LunchOrder> ResetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
             // def action_reset(self):
             // self.write({'state': 'ordered'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LunchOrder> SendAsync(Guid id)
+        public async Task<LunchOrder> SendAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
             // def action_send(self):
             // self.state = 'sent'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LunchOrder> UpdateQuantityAsync(Guid id, LunchOrderUpdateQuantityRequestDto input)
+        public async Task<LunchOrder> UpdateQuantityAsync(LunchOrderUpdateQuantityRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---
@@ -368,7 +385,9 @@ namespace Bamboo.Core.Application.Services
             //         line.quantity += increment
             // self._check_wallet()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

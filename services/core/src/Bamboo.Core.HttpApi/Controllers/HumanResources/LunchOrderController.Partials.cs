@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-confirm")]
-        public async Task<IActionResult> ActionConfirmAsync(Guid id)
+        [Route("action-confirm")]
+        public async Task<IActionResult> ActionConfirmAsync(Guid[] ids)
         {
-            var result = await _appService.ConfirmAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfirmAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-notify")]
-        public async Task<IActionResult> ActionNotifyAsync(Guid id)
+        [Route("action-notify")]
+        public async Task<IActionResult> ActionNotifyAsync(Guid[] ids)
         {
-            var result = await _appService.NotifyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.NotifyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-order")]
-        public async Task<IActionResult> ActionOrderAsync(Guid id)
+        [Route("action-order")]
+        public async Task<IActionResult> ActionOrderAsync(Guid[] ids)
         {
-            var result = await _appService.OrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reorder")]
-        public async Task<IActionResult> ActionReorderAsync(Guid id)
+        [Route("action-reorder")]
+        public async Task<IActionResult> ActionReorderAsync(Guid[] ids)
         {
-            var result = await _appService.ReorderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReorderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reset")]
-        public async Task<IActionResult> ActionResetAsync(Guid id)
+        [Route("action-reset")]
+        public async Task<IActionResult> ActionResetAsync(Guid[] ids)
         {
-            var result = await _appService.ResetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send")]
-        public async Task<IActionResult> ActionSendAsync(Guid id)
+        [Route("action-send")]
+        public async Task<IActionResult> ActionSendAsync(Guid[] ids)
         {
-            var result = await _appService.SendAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/add-to-cart")]
-        public async Task<IActionResult> AddToCartAsync(Guid id)
+        [Route("add-to-cart")]
+        public async Task<IActionResult> AddToCartAsync(Guid[] ids)
         {
-            var result = await _appService.AddToCartAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddToCartAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-quantity")]
-        public async Task<IActionResult> UpdateQuantityAsync(Guid id, [FromBody] LunchOrderUpdateQuantityRequestDto input)
+        [Route("update-quantity")]
+        public async Task<IActionResult> UpdateQuantityAsync(LunchOrderUpdateQuantityRequestDto input)
         {
-            var result = await _appService.UpdateQuantityAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdateQuantityAsync(input);
             return Ok(result);
         }
     }

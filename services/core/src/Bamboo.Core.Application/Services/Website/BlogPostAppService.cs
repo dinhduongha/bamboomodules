@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteBlog", Category = "Website", Depends = new[] { "website_mail", "website_partner", "html_builder" })]
-    public partial class BlogPostAppService : GenericApplicationService<BlogPost>, IBlogPostAppService
+    public partial class BlogPostAppService : GenericAppService<BlogPost>, IBlogPostAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsiteCoverPropertiesMixinAppService _websiteCoverPropertiesMixinAppService;
@@ -98,7 +98,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BlogPost> CopyDataAsync(Guid id, BlogPostCopyDataRequestDto input)
+        public async Task<BlogPost> CopyDataAsync(BlogPostCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
@@ -106,7 +106,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", blog.name)) for blog, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BlogPost> DefaultContentInternalAsync()
@@ -201,6 +203,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BlogPost> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*

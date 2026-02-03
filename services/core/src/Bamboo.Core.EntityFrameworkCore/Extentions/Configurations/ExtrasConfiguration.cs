@@ -18,6 +18,7 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.ConfigureMrpWorkcenterExtra();
             modelBuilder.ConfigureResCurrencyExtra();
             modelBuilder.ConfigureResOrganization();
+            modelBuilder.ConfigureResTeam();
 
             modelBuilder.ConfigureDmsAchievementLog();
             modelBuilder.ConfigureDmsAdvancedAnalytics();

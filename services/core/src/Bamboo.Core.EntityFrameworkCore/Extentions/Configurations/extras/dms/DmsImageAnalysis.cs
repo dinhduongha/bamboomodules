@@ -29,9 +29,9 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.OutletVisitId).HasColumnName("outlet_visit_id");
             entity.Property(e => e.PlanogramCheckId).HasColumnName("planogram_check_id");
             entity.Property(e => e.AnalyzedImageUrl).HasColumnName("analyzed_image_url");
-            entity.Property(e => e.DetectedProductsJson).HasColumnName("detected_products_json");
+            entity.Property(e => e.DetectedProducts);
             entity.Property(e => e.ComplianceScore).HasColumnName("compliance_score");
-            entity.Property(e => e.IssuesJson).HasColumnName("issues_json");
+            entity.Property(e => e.Issues);
             entity.Property(e => e.AIProvider).HasColumnName("ai_provider");
 
             entity.Property(e => e.CreationTime)

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/filter-duplicate")]
-        public async Task<IActionResult> FilterDuplicateAsync(Guid id, [FromBody] IrAssetFilterDuplicateRequestDto input)
+        [Route("filter-duplicate")]
+        public async Task<IActionResult> FilterDuplicateAsync(IrAssetFilterDuplicateRequestDto input)
         {
-            var result = await _appService.FilterDuplicateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FilterDuplicateAsync(input);
             return Ok(result);
         }
     }

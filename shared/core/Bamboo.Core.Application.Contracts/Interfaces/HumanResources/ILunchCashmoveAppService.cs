@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ILunchCashmoveAppService : IGenericApplicationService<LunchCashmove>
     {
-        Task<LunchCashmove> GetWalletBalanceAsync(Guid id, LunchCashmoveGetWalletBalanceRequestDto input);
+        Task<LunchCashmove> GetWalletBalanceAsync(LunchCashmoveGetWalletBalanceRequestDto input);
     }
 }

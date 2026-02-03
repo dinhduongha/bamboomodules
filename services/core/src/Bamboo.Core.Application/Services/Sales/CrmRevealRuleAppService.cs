@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteCrmIapReveal", Category = "Sales", Depends = new[] { "iap_crm", "iap_mail", "crm_iap_mine", "website_crm" })]
-    public partial class CrmRevealRuleAppService : GenericApplicationService<CrmRevealRule>, ICrmRevealRuleAppService
+    public partial class CrmRevealRuleAppService : GenericAppService<CrmRevealRule>, ICrmRevealRuleAppService
     {
 
         public CrmRevealRuleAppService(IRepository<CrmRevealRule, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -112,9 +112,10 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CrmRevealRule> GetActiveRulesInternalAsync()
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: website_crm_iap_reveal, FILE: crm_reveal_rule.py) ---
             // def _get_active_rules(self):
             // """
@@ -177,11 +178,11 @@ namespace Bamboo.Core.Application.Services
             //     'country_rules': country_rules,
             //     'rules': rules,
             // }
-            #endif
+#endif
             return default;
         }
 
-        public async Task<CrmRevealRule> GetLeadTreeViewAsync(Guid id)
+        public async Task<CrmRevealRule> GetLeadTreeViewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_iap_reveal, FILE: crm_reveal_rule.py) ---
@@ -191,10 +192,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(self.env.context, create=False)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CrmRevealRule> GetOpportunityTreeViewAsync(Guid id)
+        public async Task<CrmRevealRule> GetOpportunityTreeViewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_iap_reveal, FILE: crm_reveal_rule.py) ---
@@ -204,9 +207,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(self.env.context, create=False)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<CrmRevealRule> GetRevealViewsToProcessInternalAsync()
         {
             /*
@@ -401,6 +407,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CrmRevealRule> ProcessLeadGenerationInternalAsync(object autocommit)
         {
             /*
@@ -428,6 +435,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CrmRevealRule> UnlinkUnrelevantRevealViewInternalAsync()
         {
             /*

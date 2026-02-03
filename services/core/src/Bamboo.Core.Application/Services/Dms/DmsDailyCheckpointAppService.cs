@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsDailyCheckpointAppService : IGenericApplicationService<DmsDailyCheckpoint>
+    public interface IDmsDailyCheckpointAppService : IGenericAppService<DmsDailyCheckpoint>
     {
         Task CheckInWarehouseAsync(Guid checkpointId);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsDailyCheckpointAppService : GenericApplicationService<DmsDailyCheckpoint>, IDmsDailyCheckpointAppService
+    public class DmsDailyCheckpointAppService : GenericAppService<DmsDailyCheckpoint>, IDmsDailyCheckpointAppService
     {
         public DmsDailyCheckpointAppService(
             IRepository<DmsDailyCheckpoint, Guid> repository,

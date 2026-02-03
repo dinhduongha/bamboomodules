@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockRouteAppService : GenericApplicationService<StockRoute>, IStockRouteAppService
+    public partial class StockRouteAppService : GenericAppService<StockRoute>, IStockRouteAppService
     {
 
         public StockRouteAppService(IRepository<StockRoute, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -60,7 +60,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockRoute> CopyDataAsync(Guid id, StockRouteCopyDataRequestDto input)
+        public async Task<StockRoute> CopyDataAsync(StockRouteCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
@@ -72,7 +72,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", route.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockRoute> IsValidResupplyRouteForProductInternalAsync(object product)

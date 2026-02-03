@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsClaimAppService : IGenericApplicationService<DmsClaim>
+    public interface IDmsClaimAppService : IGenericAppService<DmsClaim>
     {
         Task ApproveClaimAsync(Guid claimId);
         Task RejectClaimAsync(Guid claimId);
@@ -22,7 +22,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsClaimAppService : GenericApplicationService<DmsClaim>, IDmsClaimAppService
+    public class DmsClaimAppService : GenericAppService<DmsClaim>, IDmsClaimAppService
     {
         public DmsClaimAppService(
             IRepository<DmsClaim, Guid> repository,

@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ILunchProductAppService : IGenericApplicationService<LunchProduct>
     {
-        Task<LunchProduct> ToggleActiveAsync(Guid id);
+        Task<LunchProduct> ToggleActiveAsync(Guid[] ids);
     }
 }

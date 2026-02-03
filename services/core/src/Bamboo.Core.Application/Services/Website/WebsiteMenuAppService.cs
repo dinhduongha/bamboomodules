@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public partial class WebsiteMenuAppService : GenericApplicationService<WebsiteMenu>, IWebsiteMenuAppService
+    public partial class WebsiteMenuAppService : GenericAppService<WebsiteMenu>, IWebsiteMenuAppService
     {
 
         public WebsiteMenuAppService(IRepository<WebsiteMenu, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -132,7 +132,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebsiteMenu> GetTreeAsync(Guid id, WebsiteMenuGetTreeRequestDto input)
+        [ApiModel]
+        public async Task<WebsiteMenu> GetTreeAsync(WebsiteMenuGetTreeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_menu.py) ---
@@ -160,7 +161,9 @@ namespace Bamboo.Core.Application.Services
             // menu = menu_id and self.browse(menu_id) or website.menu_id
             // return make_tree(menu)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<WebsiteMenu> IsActiveInternalAsync()
@@ -225,7 +228,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebsiteMenu> SaveAsync(Guid id, WebsiteMenuSaveRequestDto input)
+        [ApiModel]
+        public async Task<WebsiteMenu> SaveAsync(WebsiteMenuSaveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_menu.py) ---
@@ -361,7 +365,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<WebsiteMenu> SetFieldIsMegaMenuInternalAsync()

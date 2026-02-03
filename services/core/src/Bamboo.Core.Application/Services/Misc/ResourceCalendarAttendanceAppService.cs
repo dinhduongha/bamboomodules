@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Resource", Category = "Misc", Depends = new[] { "base", "web" })]
-    public partial class ResourceCalendarAttendanceAppService : GenericApplicationService<ResourceCalendarAttendance>, IResourceCalendarAttendanceAppService
+    public partial class ResourceCalendarAttendanceAppService : GenericAppService<ResourceCalendarAttendance>, IResourceCalendarAttendanceAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public ResourceCalendarAttendanceAppService(IRepository<ResourceCalendarAttendance, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -117,7 +117,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceCalendarAttendance> GetWeekTypeAsync(Guid id, ResourceCalendarAttendanceGetWeekTypeRequestDto input)
+        [ApiModel]
+        public async Task<ResourceCalendarAttendance> GetWeekTypeAsync(ResourceCalendarAttendanceGetWeekTypeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar_attendance.py) ---
@@ -130,7 +131,9 @@ namespace Bamboo.Core.Application.Services
             // # some years have 53 weeks. Therefore, two consecutive odd week number follow each other (53 --> 1).
             // return int(math.floor((date.toordinal() - 1) / 7) % 2)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResourceCalendarAttendance> InverseDurationHoursInternalAsync()
@@ -169,6 +172,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResourceCalendarAttendance> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -182,6 +186,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResourceCalendarAttendance> LoadPosDataFieldsInternalAsync(object config)
         {
             /*

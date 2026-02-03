@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsEB2BOrderAppService : IGenericApplicationService<DmsEB2BOrder>
+    public interface IDmsEB2BOrderAppService : IGenericAppService<DmsEB2BOrder>
     {
         Task CreateFromChatAsync(string channel, string message);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsEB2BOrderAppService : GenericApplicationService<DmsEB2BOrder>, IDmsEB2BOrderAppService
+    public class DmsEB2BOrderAppService : GenericAppService<DmsEB2BOrder>, IDmsEB2BOrderAppService
     {
         public DmsEB2BOrderAppService(
             IRepository<DmsEB2BOrder, Guid> repository,
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services
             var order = new DmsEB2BOrder
             {
                 Channel = channel,
-                OrderContentJson = message,
+                OrderContent = message,
                 OrderStatus = "pending",
                 Timestamp = DateTime.UtcNow
             };

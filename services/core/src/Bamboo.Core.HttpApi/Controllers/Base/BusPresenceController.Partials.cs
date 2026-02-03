@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("init")]
+        public async Task<IActionResult> InitAsync(Guid[] ids)
         {
-            var result = await _appService.InitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InitAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-presence")]
-        public async Task<IActionResult> UpdatePresenceAsync(Guid id, [FromBody] BusPresenceUpdatePresenceRequestDto input)
+        [Route("update-presence")]
+        public async Task<IActionResult> UpdatePresenceAsync(BusPresenceUpdatePresenceRequestDto input)
         {
-            var result = await _appService.UpdatePresenceAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdatePresenceAsync(input);
             return Ok(result);
         }
     }

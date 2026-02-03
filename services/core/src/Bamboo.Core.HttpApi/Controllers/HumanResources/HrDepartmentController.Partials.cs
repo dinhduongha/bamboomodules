@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-employee-from-department")]
-        public async Task<IActionResult> ActionEmployeeFromDepartmentAsync(Guid id)
+        [Route("action-employee-from-department")]
+        public async Task<IActionResult> ActionEmployeeFromDepartmentAsync(Guid[] ids)
         {
-            var result = await _appService.EmployeeFromDepartmentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.EmployeeFromDepartmentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-allocation-department")]
-        public async Task<IActionResult> ActionOpenAllocationDepartmentAsync(Guid id)
+        [Route("action-open-allocation-department")]
+        public async Task<IActionResult> ActionOpenAllocationDepartmentAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAllocationDepartmentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAllocationDepartmentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-leave-department")]
-        public async Task<IActionResult> ActionOpenLeaveDepartmentAsync(Guid id)
+        [Route("action-open-leave-department")]
+        public async Task<IActionResult> ActionOpenLeaveDepartmentAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLeaveDepartmentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLeaveDepartmentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-view-child-departments")]
-        public async Task<IActionResult> ActionOpenViewChildDepartmentsAsync(Guid id)
+        [Route("action-open-view-child-departments")]
+        public async Task<IActionResult> ActionOpenViewChildDepartmentsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenViewChildDepartmentsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenViewChildDepartmentsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-plan-from-department")]
-        public async Task<IActionResult> ActionPlanFromDepartmentAsync(Guid id)
+        [Route("action-plan-from-department")]
+        public async Task<IActionResult> ActionPlanFromDepartmentAsync(Guid[] ids)
         {
-            var result = await _appService.PlanFromDepartmentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PlanFromDepartmentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-children-department-ids")]
-        public async Task<IActionResult> GetChildrenDepartmentIdsAsync(Guid id)
+        [Route("get-children-department-ids")]
+        public async Task<IActionResult> GetChildrenDepartmentIdsAsync(Guid[] ids)
         {
-            var result = await _appService.GetChildrenDepartmentIdsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetChildrenDepartmentIdsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-department-hierarchy")]
-        public async Task<IActionResult> GetDepartmentHierarchyAsync(Guid id)
+        [Route("get-department-hierarchy")]
+        public async Task<IActionResult> GetDepartmentHierarchyAsync(Guid[] ids)
         {
-            var result = await _appService.GetDepartmentHierarchyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetDepartmentHierarchyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-formview-action")]
-        public async Task<IActionResult> GetFormviewActionAsync(Guid id, [FromBody] HrDepartmentGetFormviewActionRequestDto input)
+        [Route("get-formview-action")]
+        public async Task<IActionResult> GetFormviewActionAsync(HrDepartmentGetFormviewActionRequestDto input)
         {
-            var result = await _appService.GetFormviewActionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFormviewActionAsync(input);
             return Ok(result);
         }
     }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductAttributeAppService : GenericApplicationService<ProductAttribute>, IProductAttributeAppService
+    public partial class ProductAttributeAppService : GenericAppService<ProductAttribute>, IProductAttributeAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public ProductAttributeAppService(IRepository<ProductAttribute, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<ProductAttribute> ArchiveAsync(Guid id)
+        public async Task<ProductAttribute> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_attribute.py) ---
@@ -39,7 +39,9 @@ namespace Bamboo.Core.Application.Services
             //         ))
             // return super().action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductAttribute> ComputeNumberRelatedProductsInternalAsync()
@@ -80,6 +82,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductAttribute> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -115,7 +118,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductAttribute> OpenProductTemplateAttributeLinesAsync(Guid id)
+        public async Task<ProductAttribute> OpenProductTemplateAttributeLinesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_attribute.py) ---
@@ -129,7 +132,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('attribute_id', '=', self.id), ('product_tmpl_id.active', '=', 'True')],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductAttribute> UnlinkExceptUsedOnProductInternalAsync()

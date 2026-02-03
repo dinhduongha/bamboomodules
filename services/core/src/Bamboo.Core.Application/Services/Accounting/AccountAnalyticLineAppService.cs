@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Analytic", Category = "Accounting", Depends = new[] { "base", "mail", "uom" })]
-    public partial class AccountAnalyticLineAppService : GenericApplicationService<AccountAnalyticLine>, IAccountAnalyticLineAppService
+    public partial class AccountAnalyticLineAppService : GenericAppService<AccountAnalyticLine>, IAccountAnalyticLineAppService
     {
         private readonly IAnalyticPlanFieldsMixinAppService _analyticPlanFieldsMixinAppService;
         public AccountAnalyticLineAppService(IRepository<AccountAnalyticLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IAnalyticPlanFieldsMixinAppService analyticPlanFieldsMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -331,6 +331,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticLine> ConvertHoursToDaysInternalAsync(object time)
         {
             /*
@@ -343,7 +344,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<AccountAnalyticLine> CreateAsync(AccountAnalyticLine entity, List<string> fields)
+        public override async Task<AccountAnalyticLine> CreateAsync(CreateRequestDto<AccountAnalyticLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_analytic_line.py) ---
@@ -496,10 +497,11 @@ namespace Bamboo.Core.Application.Services
             // 
             // return lines
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public override async Task<AccountAnalyticLine> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<AccountAnalyticLine> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
@@ -514,7 +516,7 @@ namespace Bamboo.Core.Application.Services
             //         result['project_id'] = favorite_project_id
             // return result
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
         protected async Task<AccountAnalyticLine> DefaultUserInternalAsync()
@@ -570,6 +572,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticLine> EnsureUomHoursInternalAsync()
         {
             /*
@@ -626,6 +629,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticLine> GetFavoriteProjectIdInternalAsync(Guid employee_id)
         {
             /*
@@ -642,7 +646,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticLine> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<AccountAnalyticLine> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
@@ -654,7 +659,9 @@ namespace Bamboo.Core.Application.Services
             //     }]
             // return []
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAnalyticLine> GetRedirectActionInternalAsync()
@@ -712,17 +719,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticLine> GetUnusualDaysAsync(Guid id, AccountAnalyticLineGetUnusualDaysRequestDto input)
+        [ApiModel]
+        public async Task<AccountAnalyticLine> GetUnusualDaysAsync(AccountAnalyticLineGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
             // def get_unusual_days(self, date_from, date_to=None):
             // return self.env.user.employee_id._get_unusual_days(date_from, date_to)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticLine> GetViewsAsync(Guid id, AccountAnalyticLineGetViewsRequestDto input)
+        [ApiModel]
+        public async Task<AccountAnalyticLine> GetViewsAsync(AccountAnalyticLineGetViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
@@ -743,7 +754,9 @@ namespace Bamboo.Core.Application.Services
             //                 view_data['toolbar']['print'] = [print_data for print_data in print_data_list if print_data['id'] != wip_report_id]
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAnalyticLine> HourlyCostInternalAsync()
@@ -799,7 +812,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticLine> InvoiceFromTimesheetAsync(Guid id)
+        public async Task<AccountAnalyticLine> InvoiceFromTimesheetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: hr_timesheet.py) ---
@@ -814,7 +827,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.timesheet_invoice_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAnalyticLine> IsNotBilledInternalAsync()
@@ -867,7 +882,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticLine> OnChangeUnitAmountAsync(Guid id)
+        public async Task<AccountAnalyticLine> OnChangeUnitAmountAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_analytic_line.py) ---
@@ -889,7 +904,9 @@ namespace Bamboo.Core.Application.Services
             // self.general_account_id = account
             // self.product_uom_id = unit
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAnalyticLine> OnchangeProjectIdInternalAsync()
@@ -906,7 +923,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticLine> OpenTimesheetViewPortalAsync(Guid id)
+        public async Task<AccountAnalyticLine> OpenTimesheetViewPortalAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
@@ -920,10 +937,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': self.env.context,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticLine> SaleOrderFromTimesheetAsync(Guid id)
+        public async Task<AccountAnalyticLine> SaleOrderFromTimesheetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: hr_timesheet.py) ---
@@ -938,7 +957,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.order_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAnalyticLine> SearchFiscalDateInternalAsync(object @operator, object @value)
@@ -973,6 +994,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticLine> ShowPortalTimesheetsInternalAsync()
         {
             /*
@@ -1082,6 +1104,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticLine> TimesheetGetSaleDomainInternalAsync(List<Guid> order_lines_ids, List<Guid> invoice_ids)
         {
             /*
@@ -1263,7 +1286,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticLine> ViewHeaderGetAsync(Guid id, AccountAnalyticLineViewHeaderGetRequestDto input)
+        [ApiModel]
+        public async Task<AccountAnalyticLine> ViewHeaderGetAsync(AccountAnalyticLineViewHeaderGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_analytic_line.py) ---
@@ -1275,9 +1299,12 @@ namespace Bamboo.Core.Application.Services
             //     )
             // return super().view_header_get(view_id, view_type)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticLine> WhereCalcInternalAsync(object domain, object active_test)
         {
             /*
@@ -1307,7 +1334,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, AccountAnalyticLine entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<AccountAnalyticLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_analytic_line.py) ---
@@ -1349,7 +1376,7 @@ namespace Bamboo.Core.Application.Services
             // self.filtered(lambda t: t.project_id)._timesheet_postprocess(values)
             // return result
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

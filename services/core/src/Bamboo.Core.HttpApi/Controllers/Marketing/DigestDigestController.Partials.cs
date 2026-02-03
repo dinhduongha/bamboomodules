@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-activate")]
-        public async Task<IActionResult> ActionActivateAsync(Guid id)
+        [Route("action-activate")]
+        public async Task<IActionResult> ActionActivateAsync(Guid[] ids)
         {
-            var result = await _appService.ActivateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ActivateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-deactivate")]
-        public async Task<IActionResult> ActionDeactivateAsync(Guid id)
+        [Route("action-deactivate")]
+        public async Task<IActionResult> ActionDeactivateAsync(Guid[] ids)
         {
-            var result = await _appService.DeactivateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DeactivateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send")]
-        public async Task<IActionResult> ActionSendAsync(Guid id)
+        [Route("action-send")]
+        public async Task<IActionResult> ActionSendAsync(Guid[] ids)
         {
-            var result = await _appService.SendAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-manual")]
-        public async Task<IActionResult> ActionSendManualAsync(Guid id)
+        [Route("action-send-manual")]
+        public async Task<IActionResult> ActionSendManualAsync(Guid[] ids)
         {
-            var result = await _appService.SendManualAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendManualAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-periodicity")]
-        public async Task<IActionResult> ActionSetPeriodicityAsync(Guid id, [FromBody] DigestDigestSetPeriodicityRequestDto input)
+        [Route("action-set-periodicity")]
+        public async Task<IActionResult> ActionSetPeriodicityAsync(DigestDigestSetPeriodicityRequestDto input)
         {
-            var result = await _appService.SetPeriodicityAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetPeriodicityAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-subscribe")]
-        public async Task<IActionResult> ActionSubscribeAsync(Guid id)
+        [Route("action-subscribe")]
+        public async Task<IActionResult> ActionSubscribeAsync(Guid[] ids)
         {
-            var result = await _appService.SubscribeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SubscribeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unsubscribe")]
-        public async Task<IActionResult> ActionUnsubscribeAsync(Guid id)
+        [Route("action-unsubscribe")]
+        public async Task<IActionResult> ActionUnsubscribeAsync(Guid[] ids)
         {
-            var result = await _appService.UnsubscribeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnsubscribeAsync(ids);
             return Ok(result);
         }
     }

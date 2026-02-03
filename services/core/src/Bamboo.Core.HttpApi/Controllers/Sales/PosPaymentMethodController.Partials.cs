@@ -11,226 +11,254 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-stripe-key")]
-        public async Task<IActionResult> ActionStripeKeyAsync(Guid id)
+        [Route("action-stripe-key")]
+        public async Task<IActionResult> ActionStripeKeyAsync(Guid[] ids)
         {
-            var result = await _appService.StripeKeyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StripeKeyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] PosPaymentMethodCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(PosPaymentMethodCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/force-pdv")]
-        public async Task<IActionResult> ForcePdvAsync(Guid id)
+        [Route("force-pdv")]
+        public async Task<IActionResult> ForcePdvAsync(Guid[] ids)
         {
-            var result = await _appService.ForcePdvAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ForcePdvAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-latest-adyen-status")]
-        public async Task<IActionResult> GetLatestAdyenStatusAsync(Guid id)
+        [Route("get-latest-adyen-status")]
+        public async Task<IActionResult> GetLatestAdyenStatusAsync(Guid[] ids)
         {
-            var result = await _appService.GetLatestAdyenStatusAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetLatestAdyenStatusAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-latest-viva-com-status")]
-        public async Task<IActionResult> GetLatestVivaComStatusAsync(Guid id)
+        [Route("get-latest-viva-com-status")]
+        public async Task<IActionResult> GetLatestVivaComStatusAsync(Guid[] ids)
         {
-            var result = await _appService.GetLatestVivaComStatusAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetLatestVivaComStatusAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-provider-status")]
-        public async Task<IActionResult> GetProviderStatusAsync(Guid id, [FromBody] PosPaymentMethodGetProviderStatusRequestDto input)
+        [Route("get-provider-status")]
+        public async Task<IActionResult> GetProviderStatusAsync(PosPaymentMethodGetProviderStatusRequestDto input)
         {
-            var result = await _appService.GetProviderStatusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetProviderStatusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-qr-code")]
-        public async Task<IActionResult> GetQrCodeAsync(Guid id, [FromBody] PosPaymentMethodGetQrCodeRequestDto input)
+        [Route("get-qr-code")]
+        public async Task<IActionResult> GetQrCodeAsync(PosPaymentMethodGetQrCodeRequestDto input)
         {
-            var result = await _appService.GetQrCodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetQrCodeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mp-get-payment-status")]
-        public async Task<IActionResult> MpGetPaymentStatusAsync(Guid id, [FromBody] PosPaymentMethodMpGetPaymentStatusRequestDto input)
+        [Route("mp-get-payment-status")]
+        public async Task<IActionResult> MpGetPaymentStatusAsync(PosPaymentMethodMpGetPaymentStatusRequestDto input)
         {
-            var result = await _appService.MpGetPaymentStatusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MpGetPaymentStatusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mp-payment-intent-cancel")]
-        public async Task<IActionResult> MpPaymentIntentCancelAsync(Guid id, [FromBody] PosPaymentMethodMpPaymentIntentCancelRequestDto input)
+        [Route("mp-payment-intent-cancel")]
+        public async Task<IActionResult> MpPaymentIntentCancelAsync(PosPaymentMethodMpPaymentIntentCancelRequestDto input)
         {
-            var result = await _appService.MpPaymentIntentCancelAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MpPaymentIntentCancelAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mp-payment-intent-create")]
-        public async Task<IActionResult> MpPaymentIntentCreateAsync(Guid id, [FromBody] PosPaymentMethodMpPaymentIntentCreateRequestDto input)
+        [Route("mp-payment-intent-create")]
+        public async Task<IActionResult> MpPaymentIntentCreateAsync(PosPaymentMethodMpPaymentIntentCreateRequestDto input)
         {
-            var result = await _appService.MpPaymentIntentCreateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MpPaymentIntentCreateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mp-payment-intent-get")]
-        public async Task<IActionResult> MpPaymentIntentGetAsync(Guid id, [FromBody] PosPaymentMethodMpPaymentIntentGetRequestDto input)
+        [Route("mp-payment-intent-get")]
+        public async Task<IActionResult> MpPaymentIntentGetAsync(PosPaymentMethodMpPaymentIntentGetRequestDto input)
         {
-            var result = await _appService.MpPaymentIntentGetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MpPaymentIntentGetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pine-labs-cancel-payment-request")]
-        public async Task<IActionResult> PineLabsCancelPaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodPineLabsCancelPaymentRequestRequestDto input)
+        [Route("pine-labs-cancel-payment-request")]
+        public async Task<IActionResult> PineLabsCancelPaymentRequestAsync(PosPaymentMethodPineLabsCancelPaymentRequestRequestDto input)
         {
-            var result = await _appService.PineLabsCancelPaymentRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PineLabsCancelPaymentRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pine-labs-fetch-payment-status")]
-        public async Task<IActionResult> PineLabsFetchPaymentStatusAsync(Guid id, [FromBody] PosPaymentMethodPineLabsFetchPaymentStatusRequestDto input)
+        [Route("pine-labs-fetch-payment-status")]
+        public async Task<IActionResult> PineLabsFetchPaymentStatusAsync(PosPaymentMethodPineLabsFetchPaymentStatusRequestDto input)
         {
-            var result = await _appService.PineLabsFetchPaymentStatusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PineLabsFetchPaymentStatusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pine-labs-make-payment-request")]
-        public async Task<IActionResult> PineLabsMakePaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodPineLabsMakePaymentRequestRequestDto input)
+        [Route("pine-labs-make-payment-request")]
+        public async Task<IActionResult> PineLabsMakePaymentRequestAsync(PosPaymentMethodPineLabsMakePaymentRequestRequestDto input)
         {
-            var result = await _appService.PineLabsMakePaymentRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PineLabsMakePaymentRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/proxy-adyen-request")]
-        public async Task<IActionResult> ProxyAdyenRequestAsync(Guid id, [FromBody] PosPaymentMethodProxyAdyenRequestRequestDto input)
+        [Route("proxy-adyen-request")]
+        public async Task<IActionResult> ProxyAdyenRequestAsync(PosPaymentMethodProxyAdyenRequestRequestDto input)
         {
-            var result = await _appService.ProxyAdyenRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ProxyAdyenRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/qfpay-sign-request")]
-        public async Task<IActionResult> QfpaySignRequestAsync(Guid id, [FromBody] PosPaymentMethodQfpaySignRequestRequestDto input)
+        [Route("qfpay-sign-request")]
+        public async Task<IActionResult> QfpaySignRequestAsync(PosPaymentMethodQfpaySignRequestRequestDto input)
         {
-            var result = await _appService.QfpaySignRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.QfpaySignRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/razorpay-cancel-payment-request")]
-        public async Task<IActionResult> RazorpayCancelPaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodRazorpayCancelPaymentRequestRequestDto input)
+        [Route("razorpay-cancel-payment-request")]
+        public async Task<IActionResult> RazorpayCancelPaymentRequestAsync(PosPaymentMethodRazorpayCancelPaymentRequestRequestDto input)
         {
-            var result = await _appService.RazorpayCancelPaymentRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RazorpayCancelPaymentRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/razorpay-fetch-payment-status")]
-        public async Task<IActionResult> RazorpayFetchPaymentStatusAsync(Guid id, [FromBody] PosPaymentMethodRazorpayFetchPaymentStatusRequestDto input)
+        [Route("razorpay-fetch-payment-status")]
+        public async Task<IActionResult> RazorpayFetchPaymentStatusAsync(PosPaymentMethodRazorpayFetchPaymentStatusRequestDto input)
         {
-            var result = await _appService.RazorpayFetchPaymentStatusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RazorpayFetchPaymentStatusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/razorpay-make-payment-request")]
-        public async Task<IActionResult> RazorpayMakePaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodRazorpayMakePaymentRequestRequestDto input)
+        [Route("razorpay-make-payment-request")]
+        public async Task<IActionResult> RazorpayMakePaymentRequestAsync(PosPaymentMethodRazorpayMakePaymentRequestRequestDto input)
         {
-            var result = await _appService.RazorpayMakePaymentRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RazorpayMakePaymentRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/razorpay-make-refund-request")]
-        public async Task<IActionResult> RazorpayMakeRefundRequestAsync(Guid id, [FromBody] PosPaymentMethodRazorpayMakeRefundRequestRequestDto input)
+        [Route("razorpay-make-refund-request")]
+        public async Task<IActionResult> RazorpayMakeRefundRequestAsync(PosPaymentMethodRazorpayMakeRefundRequestRequestDto input)
         {
-            var result = await _appService.RazorpayMakeRefundRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RazorpayMakeRefundRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send-dpopay-request")]
-        public async Task<IActionResult> SendDpopayRequestAsync(Guid id, [FromBody] PosPaymentMethodSendDpopayRequestRequestDto input)
+        [Route("send-dpopay-request")]
+        public async Task<IActionResult> SendDpopayRequestAsync(PosPaymentMethodSendDpopayRequestRequestDto input)
         {
-            var result = await _appService.SendDpopayRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SendDpopayRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/stripe-capture-payment")]
-        public async Task<IActionResult> StripeCapturePaymentAsync(Guid id, [FromBody] PosPaymentMethodStripeCapturePaymentRequestDto input)
+        [Route("stripe-capture-payment")]
+        public async Task<IActionResult> StripeCapturePaymentAsync(PosPaymentMethodStripeCapturePaymentRequestDto input)
         {
-            var result = await _appService.StripeCapturePaymentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.StripeCapturePaymentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/stripe-connection-token")]
-        public async Task<IActionResult> StripeConnectionTokenAsync(Guid id)
+        [Route("stripe-connection-token")]
+        public async Task<IActionResult> StripeConnectionTokenAsync(Guid[] ids)
         {
-            var result = await _appService.StripeConnectionTokenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StripeConnectionTokenAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/stripe-payment-intent")]
-        public async Task<IActionResult> StripePaymentIntentAsync(Guid id, [FromBody] PosPaymentMethodStripePaymentIntentRequestDto input)
+        [Route("stripe-payment-intent")]
+        public async Task<IActionResult> StripePaymentIntentAsync(PosPaymentMethodStripePaymentIntentRequestDto input)
         {
-            var result = await _appService.StripePaymentIntentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.StripePaymentIntentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/viva-com-get-payment-status")]
-        public async Task<IActionResult> VivaComGetPaymentStatusAsync(Guid id, [FromBody] PosPaymentMethodVivaComGetPaymentStatusRequestDto input)
+        [Route("viva-com-get-payment-status")]
+        public async Task<IActionResult> VivaComGetPaymentStatusAsync(PosPaymentMethodVivaComGetPaymentStatusRequestDto input)
         {
-            var result = await _appService.VivaComGetPaymentStatusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.VivaComGetPaymentStatusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/viva-com-send-payment-cancel")]
-        public async Task<IActionResult> VivaComSendPaymentCancelAsync(Guid id, [FromBody] PosPaymentMethodVivaComSendPaymentCancelRequestDto input)
+        [Route("viva-com-send-payment-cancel")]
+        public async Task<IActionResult> VivaComSendPaymentCancelAsync(PosPaymentMethodVivaComSendPaymentCancelRequestDto input)
         {
-            var result = await _appService.VivaComSendPaymentCancelAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.VivaComSendPaymentCancelAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/viva-com-send-payment-request")]
-        public async Task<IActionResult> VivaComSendPaymentRequestAsync(Guid id, [FromBody] PosPaymentMethodVivaComSendPaymentRequestRequestDto input)
+        [Route("viva-com-send-payment-request")]
+        public async Task<IActionResult> VivaComSendPaymentRequestAsync(PosPaymentMethodVivaComSendPaymentRequestRequestDto input)
         {
-            var result = await _appService.VivaComSendPaymentRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.VivaComSendPaymentRequestAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/viva-com-send-refund-request")]
-        public async Task<IActionResult> VivaComSendRefundRequestAsync(Guid id, [FromBody] PosPaymentMethodVivaComSendRefundRequestRequestDto input)
+        [Route("viva-com-send-refund-request")]
+        public async Task<IActionResult> VivaComSendRefundRequestAsync(PosPaymentMethodVivaComSendRefundRequestRequestDto input)
         {
-            var result = await _appService.VivaComSendRefundRequestAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.VivaComSendRefundRequestAsync(input);
             return Ok(result);
         }
     }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Analytic", Category = "Accounting", Depends = new[] { "base", "mail", "uom" })]
-    public partial class AccountAnalyticPlanAppService : GenericApplicationService<AccountAnalyticPlan>, IAccountAnalyticPlanAppService
+    public partial class AccountAnalyticPlanAppService : GenericAppService<AccountAnalyticPlan>, IAccountAnalyticPlanAppService
     {
 
         public AccountAnalyticPlanAppService(IRepository<AccountAnalyticPlan, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -236,7 +236,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticPlan> GetRelevantPlansAsync(Guid id)
+        [ApiModel]
+        public async Task<AccountAnalyticPlan> GetRelevantPlansAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_plan.py) ---
@@ -267,7 +268,9 @@ namespace Bamboo.Core.Application.Services
             //     for plan in (root_plans + forced_plans).sorted('sequence')
             // ]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAnalyticPlan> HierarchyNameInternalAsync()
@@ -438,7 +441,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticPlan> ViewAnalyticalAccountsAsync(Guid id)
+        public async Task<AccountAnalyticPlan> ViewAnalyticalAccountsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_plan.py) ---
@@ -453,10 +456,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticPlan> ViewChildrenPlansAsync(Guid id)
+        public async Task<AccountAnalyticPlan> ViewChildrenPlansAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_plan.py) ---
@@ -472,7 +477,9 @@ namespace Bamboo.Core.Application.Services
             // }
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         private async Task<AccountAnalyticPlan> _GetAllPlansInternalAsync()

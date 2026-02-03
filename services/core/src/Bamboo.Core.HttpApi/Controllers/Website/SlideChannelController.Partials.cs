@@ -11,162 +11,182 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-channel-enroll")]
-        public async Task<IActionResult> ActionChannelEnrollAsync(Guid id)
+        [Route("action-channel-enroll")]
+        public async Task<IActionResult> ActionChannelEnrollAsync(Guid[] ids)
         {
-            var result = await _appService.ChannelEnrollAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ChannelEnrollAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-channel-invite")]
-        public async Task<IActionResult> ActionChannelInviteAsync(Guid id)
+        [Route("action-channel-invite")]
+        public async Task<IActionResult> ActionChannelInviteAsync(Guid[] ids)
         {
-            var result = await _appService.ChannelInviteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ChannelInviteAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-grant-access")]
-        public async Task<IActionResult> ActionGrantAccessAsync(Guid id, [FromBody] SlideChannelGrantAccessRequestDto input)
+        [Route("action-grant-access")]
+        public async Task<IActionResult> ActionGrantAccessAsync(SlideChannelGrantAccessRequestDto input)
         {
-            var result = await _appService.GrantAccessAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GrantAccessAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-mass-mailing-attendees")]
-        public async Task<IActionResult> ActionMassMailingAttendeesAsync(Guid id)
+        [Route("action-mass-mailing-attendees")]
+        public async Task<IActionResult> ActionMassMailingAttendeesAsync(Guid[] ids)
         {
-            var result = await _appService.MassMailingAttendeesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MassMailingAttendeesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-certified-members")]
-        public async Task<IActionResult> ActionRedirectToCertifiedMembersAsync(Guid id)
+        [Route("action-redirect-to-certified-members")]
+        public async Task<IActionResult> ActionRedirectToCertifiedMembersAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToCertifiedMembersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToCertifiedMembersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-completed-members")]
-        public async Task<IActionResult> ActionRedirectToCompletedMembersAsync(Guid id)
+        [Route("action-redirect-to-completed-members")]
+        public async Task<IActionResult> ActionRedirectToCompletedMembersAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToCompletedMembersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToCompletedMembersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-engaged-members")]
-        public async Task<IActionResult> ActionRedirectToEngagedMembersAsync(Guid id)
+        [Route("action-redirect-to-engaged-members")]
+        public async Task<IActionResult> ActionRedirectToEngagedMembersAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToEngagedMembersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToEngagedMembersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-forum")]
-        public async Task<IActionResult> ActionRedirectToForumAsync(Guid id)
+        [Route("action-redirect-to-forum")]
+        public async Task<IActionResult> ActionRedirectToForumAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToForumAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToForumAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-invited-members")]
-        public async Task<IActionResult> ActionRedirectToInvitedMembersAsync(Guid id)
+        [Route("action-redirect-to-invited-members")]
+        public async Task<IActionResult> ActionRedirectToInvitedMembersAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToInvitedMembersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToInvitedMembersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-members")]
-        public async Task<IActionResult> ActionRedirectToMembersAsync(Guid id, [FromBody] SlideChannelRedirectToMembersRequestDto input)
+        [Route("action-redirect-to-members")]
+        public async Task<IActionResult> ActionRedirectToMembersAsync(SlideChannelRedirectToMembersRequestDto input)
         {
-            var result = await _appService.RedirectToMembersAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RedirectToMembersAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-refuse-access")]
-        public async Task<IActionResult> ActionRefuseAccessAsync(Guid id, [FromBody] SlideChannelRefuseAccessRequestDto input)
+        [Route("action-refuse-access")]
+        public async Task<IActionResult> ActionRefuseAccessAsync(SlideChannelRefuseAccessRequestDto input)
         {
-            var result = await _appService.RefuseAccessAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RefuseAccessAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-request-access")]
-        public async Task<IActionResult> ActionRequestAccessAsync(Guid id)
+        [Route("action-request-access")]
+        public async Task<IActionResult> ActionRequestAccessAsync(Guid[] ids)
         {
-            var result = await _appService.RequestAccessAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RequestAccessAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-ratings")]
-        public async Task<IActionResult> ActionViewRatingsAsync(Guid id)
+        [Route("action-view-ratings")]
+        public async Task<IActionResult> ActionViewRatingsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewRatingsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewRatingsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sales")]
-        public async Task<IActionResult> ActionViewSalesAsync(Guid id)
+        [Route("action-view-sales")]
+        public async Task<IActionResult> ActionViewSalesAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSalesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSalesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-slides")]
-        public async Task<IActionResult> ActionViewSlidesAsync(Guid id)
+        [Route("action-view-slides")]
+        public async Task<IActionResult> ActionViewSlidesAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSlidesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSlidesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SlideChannelCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(SlideChannelCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-backend-menu-id")]
-        public async Task<IActionResult> GetBackendMenuIdAsync(Guid id)
+        [Route("get-backend-menu-id")]
+        public async Task<IActionResult> GetBackendMenuIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetBackendMenuIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBackendMenuIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-post")]
-        public async Task<IActionResult> MessagePostAsync(Guid id)
+        [Route("message-post")]
+        public async Task<IActionResult> MessagePostAsync(Guid[] ids)
         {
-            var result = await _appService.MessagePostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MessagePostAsync(ids);
             return Ok(result);
         }
     }

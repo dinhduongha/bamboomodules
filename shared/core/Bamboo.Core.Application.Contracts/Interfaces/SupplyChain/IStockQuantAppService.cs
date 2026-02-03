@@ -10,24 +10,24 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockQuantAppService : IGenericApplicationService<StockQuant>
     {
-        Task<StockQuant> ApplyAllAsync(Guid id);
-        Task<StockQuant> ApplyInventoryAsync(Guid id, StockQuantApplyInventoryRequestDto input);
-        Task<StockQuant> CheckLocationIdAsync(Guid id);
-        Task<StockQuant> CheckLotIdAsync(Guid id);
-        Task<StockQuant> CheckProductIdAsync(Guid id);
-        Task<StockQuant> CheckQuantityAsync(Guid id);
-        Task<StockQuant> ClearInventoryQuantityAsync(Guid id);
-        Task<StockQuant> GetAggregateBarcodesAsync(Guid id);
-        Task<StockQuant> GetImportTemplatesAsync(Guid id);
-        Task<StockQuant> InventoryHistoryAsync(Guid id);
-        Task<StockQuant> MoveQuantsAsync(Guid id, StockQuantMoveQuantsRequestDto input);
-        Task<StockQuant> ResetAsync(Guid id);
-        Task<StockQuant> SetInventoryQuantityAsync(Guid id);
-        Task<StockQuant> SetInventoryQuantityZeroAsync(Guid id);
-        Task<StockQuant> StockQuantRelocateAsync(Guid id);
-        Task<StockQuant> ViewInventoryAsync(Guid id);
-        Task<StockQuant> ViewOrderpointsAsync(Guid id);
-        Task<StockQuant> ViewQuantsAsync(Guid id);
-        Task<StockQuant> ViewStockMovesAsync(Guid id);
+        Task<StockQuant> ApplyAllAsync(Guid[] ids);
+        Task<StockQuant> ApplyInventoryAsync(StockQuantApplyInventoryRequestDto input);
+        Task<StockQuant> CheckLocationIdAsync(Guid[] ids);
+        Task<StockQuant> CheckLotIdAsync(Guid[] ids);
+        Task<StockQuant> CheckProductIdAsync(Guid[] ids);
+        Task<StockQuant> CheckQuantityAsync(Guid[] ids);
+        Task<StockQuant> ClearInventoryQuantityAsync(Guid[] ids);
+        Task<StockQuant> GetAggregateBarcodesAsync(Guid[] ids);
+        Task<StockQuant> GetImportTemplatesAsync(Guid[] ids);
+        Task<StockQuant> InventoryHistoryAsync(Guid[] ids);
+        Task<StockQuant> MoveQuantsAsync(StockQuantMoveQuantsRequestDto input);
+        Task<StockQuant> ResetAsync(Guid[] ids);
+        Task<StockQuant> SetInventoryQuantityAsync(Guid[] ids);
+        Task<StockQuant> SetInventoryQuantityZeroAsync(Guid[] ids);
+        Task<StockQuant> StockQuantRelocateAsync(Guid[] ids);
+        Task<StockQuant> ViewInventoryAsync(Guid[] ids);
+        Task<StockQuant> ViewOrderpointsAsync(Guid[] ids);
+        Task<StockQuant> ViewQuantsAsync(Guid[] ids);
+        Task<StockQuant> ViewStockMovesAsync(Guid[] ids);
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailBlacklistAppService : GenericApplicationService<MailBlacklist>, IMailBlacklistAppService
+    public partial class MailBlacklistAppService : GenericAppService<MailBlacklist>, IMailBlacklistAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public MailBlacklistAppService(IRepository<MailBlacklist, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,14 +27,16 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<MailBlacklist> AddAsync(Guid id)
+        public async Task<MailBlacklist> AddAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_blacklist.py) ---
             // def action_add(self):
             // self._add(self.email)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailBlacklist> AddInternalAsync(object email, object message)
@@ -60,7 +62,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailBlacklist> MailBlacklistRemoveAsync(Guid id)
+        public async Task<MailBlacklist> MailBlacklistRemoveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_blacklist.py) ---
@@ -74,7 +76,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'dialog_size': 'medium'},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailBlacklist> RemoveInternalAsync(object email, object message)

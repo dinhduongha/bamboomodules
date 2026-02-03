@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrAssetAppService : GenericApplicationService<IrAsset>, IIrAssetAppService
+    public partial class IrAssetAppService : GenericAppService<IrAsset>, IIrAssetAppService
     {
 
         public IrAssetAppService(IRepository<IrAsset, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -72,7 +72,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAsset> FilterDuplicateAsync(Guid id, IrAssetFilterDuplicateRequestDto input)
+        public async Task<IrAsset> FilterDuplicateAsync(IrAssetFilterDuplicateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_asset.py) ---
@@ -107,7 +107,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self.browse().union(*most_specific_assets)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrAsset> GetActiveAddonsListInternalAsync()
@@ -211,6 +213,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAsset> GetInstalledAddonsListInternalAsync()
         {
             /*
@@ -448,6 +451,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAsset> TopologicalSortInternalAsync(object addons_tuple)
         {
             /*
@@ -476,7 +480,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrAsset entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<IrAsset> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_asset.py) ---
@@ -516,7 +520,7 @@ namespace Bamboo.Core.Application.Services
             //     self.env.registry.clear_cache('assets')
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICrossoveredBudgetAppService : IGenericApplicationService<CrossoveredBudget>
     {
-        Task<CrossoveredBudget> BudgetCancelAsync(Guid id);
-        Task<CrossoveredBudget> BudgetConfirmAsync(Guid id);
-        Task<CrossoveredBudget> BudgetDoneAsync(Guid id);
-        Task<CrossoveredBudget> BudgetDraftAsync(Guid id);
-        Task<CrossoveredBudget> BudgetValidateAsync(Guid id);
+        Task<CrossoveredBudget> BudgetCancelAsync(Guid[] ids);
+        Task<CrossoveredBudget> BudgetConfirmAsync(Guid[] ids);
+        Task<CrossoveredBudget> BudgetDoneAsync(Guid[] ids);
+        Task<CrossoveredBudget> BudgetDraftAsync(Guid[] ids);
+        Task<CrossoveredBudget> BudgetValidateAsync(Guid[] ids);
     }
 }

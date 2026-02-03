@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockWarehouseAppService : GenericApplicationService<StockWarehouse>, IStockWarehouseAppService
+    public partial class StockWarehouseAppService : GenericAppService<StockWarehouse>, IStockWarehouseAppService
     {
 
         public StockWarehouseAppService(IRepository<StockWarehouse, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -129,7 +129,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouse> CopyDataAsync(Guid id, StockWarehouseCopyDataRequestDto input)
+        public async Task<StockWarehouse> CopyDataAsync(StockWarehouseCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
@@ -143,10 +143,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['code'] = _("COPY")
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<StockWarehouse> CreateAsync(StockWarehouse entity, List<string> fields)
+        public override async Task<StockWarehouse> CreateAsync(CreateRequestDto<StockWarehouse> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_warehouse.py) ---
@@ -216,7 +218,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return warehouses
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<StockWarehouse> CreateMissingLocationsInternalAsync(object vals)
@@ -251,6 +253,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockWarehouse> CreateMissingPosPickingTypesInternalAsync()
         {
             /*
@@ -413,7 +416,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouse> CreateResupplyRoutesAsync(Guid id, StockWarehouseCreateResupplyRoutesRequestDto input)
+        public async Task<StockWarehouse> CreateResupplyRoutesAsync(StockWarehouseCreateResupplyRoutesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
@@ -454,7 +457,9 @@ namespace Bamboo.Core.Application.Services
             //     for pull_rule_vals in pull_rules_list:
             //         Rule.create(pull_rule_vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouse> DefaultNameInternalAsync()
@@ -769,14 +774,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouse> GetCurrentWarehousesAsync(Guid id)
+        public async Task<StockWarehouse> GetCurrentWarehousesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
             // def get_current_warehouses(self):
             // return self.env['stock.warehouse'].search_read(fields=['id', 'name', 'code'])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouse> GetGlobalRouteRulesValuesInternalAsync()
@@ -905,6 +912,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockWarehouse> GetPartnerLocationsInternalAsync()
         {
             /*
@@ -1248,6 +1256,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockWarehouse> GetProductionLocationInternalAsync()
         {
             /*
@@ -1509,7 +1518,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouse> GetRulesDictAsync(Guid id)
+        public async Task<StockWarehouse> GetRulesDictAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_warehouse.py) ---
@@ -1576,7 +1585,9 @@ namespace Bamboo.Core.Application.Services
             //     } for warehouse in self
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouse> GetSequenceValuesInternalAsync(object name, object code)
@@ -1860,7 +1871,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouse> UpdateGlobalRouteDropshipSubcontractorAsync(Guid id)
+        public async Task<StockWarehouse> UpdateGlobalRouteDropshipSubcontractorAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting_dropshipping, FILE: stock_warehouse.py) ---
@@ -1877,7 +1888,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // route_id.active = bool(all_rules.filtered(lambda r: r.action == 'pull'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockWarehouse> UpdateGlobalRouteResupplySubcontractorInternalAsync()
@@ -1979,6 +1992,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockWarehouse> UpdatePartnerDataInternalAsync(Guid partner_id, Guid company_id)
         {
             /*
@@ -2050,7 +2064,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouse> ViewAllRoutesAsync(Guid id)
+        public async Task<StockWarehouse> ViewAllRoutesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
@@ -2067,9 +2081,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': dict(self.env.context, default_warehouse_selectable=True, default_warehouse_ids=self.ids)
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockWarehouse> WarehouseRedirectWarningInternalAsync()
         {
             /*
@@ -2084,7 +2101,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, StockWarehouse entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<StockWarehouse> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_warehouse.py) ---
@@ -2245,7 +2262,7 @@ namespace Bamboo.Core.Application.Services
             //     self._check_multiwarehouse_group()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

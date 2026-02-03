@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-invalidate-cache")]
-        public async Task<IActionResult> ActionInvalidateCacheAsync(Guid id)
+        [Route("action-invalidate-cache")]
+        public async Task<IActionResult> ActionInvalidateCacheAsync(Guid[] ids)
         {
-            var result = await _appService.InvalidateCacheAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InvalidateCacheAsync(ids);
             return Ok(result);
         }
     }

@@ -10,16 +10,16 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IOnboardingOnboardingStepAppService : IGenericApplicationService<OnboardingOnboardingStep>
     {
-        Task<OnboardingOnboardingStep> CheckStepOnOnboardingHasActionAsync(Guid id);
-        Task<OnboardingOnboardingStep> OpenStepBankAccountAsync(Guid id);
-        Task<OnboardingOnboardingStep> OpenStepBaseDocumentLayoutAsync(Guid id);
-        Task<OnboardingOnboardingStep> OpenStepChartOfAccountsAsync(Guid id);
-        Task<OnboardingOnboardingStep> OpenStepCompanyDataAsync(Guid id);
-        Task<OnboardingOnboardingStep> OpenStepCreateInvoiceAsync(Guid id);
-        Task<OnboardingOnboardingStep> OpenStepFiscalYearAsync(Guid id);
-        Task<OnboardingOnboardingStep> OpenStepSalesTaxAsync(Guid id);
-        Task<OnboardingOnboardingStep> SetJustDoneAsync(Guid id);
-        Task<OnboardingOnboardingStep> ValidateStepAsync(Guid id, OnboardingOnboardingStepValidateStepRequestDto input);
-        Task<OnboardingOnboardingStep> ValidateStepBaseDocumentLayoutAsync(Guid id);
+        Task<OnboardingOnboardingStep> CheckStepOnOnboardingHasActionAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> OpenStepBankAccountAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> OpenStepBaseDocumentLayoutAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> OpenStepChartOfAccountsAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> OpenStepCompanyDataAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> OpenStepCreateInvoiceAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> OpenStepFiscalYearAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> OpenStepSalesTaxAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> SetJustDoneAsync(Guid[] ids);
+        Task<OnboardingOnboardingStep> ValidateStepAsync(OnboardingOnboardingStepValidateStepRequestDto input);
+        Task<OnboardingOnboardingStep> ValidateStepBaseDocumentLayoutAsync(Guid[] ids);
     }
 }

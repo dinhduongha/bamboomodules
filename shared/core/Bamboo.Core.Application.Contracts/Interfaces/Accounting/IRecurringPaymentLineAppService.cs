@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IRecurringPaymentLineAppService : IGenericApplicationService<RecurringPaymentLine>
     {
-        Task<RecurringPaymentLine> CreatePaymentAsync(Guid id);
+        Task<RecurringPaymentLine> CreatePaymentAsync(Guid[] ids);
     }
 }

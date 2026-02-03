@@ -11,178 +11,200 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/available-carriers")]
-        public async Task<IActionResult> AvailableCarriersAsync(Guid id, [FromBody] DeliveryCarrierAvailableCarriersRequestDto input)
+        [Route("available-carriers")]
+        public async Task<IActionResult> AvailableCarriersAsync(DeliveryCarrierAvailableCarriersRequestDto input)
         {
-            var result = await _appService.AvailableCarriersAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AvailableCarriersAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/base-on-rule-cancel-shipment")]
-        public async Task<IActionResult> BaseOnRuleCancelShipmentAsync(Guid id, [FromBody] DeliveryCarrierBaseOnRuleCancelShipmentRequestDto input)
+        [Route("base-on-rule-cancel-shipment")]
+        public async Task<IActionResult> BaseOnRuleCancelShipmentAsync(DeliveryCarrierBaseOnRuleCancelShipmentRequestDto input)
         {
-            var result = await _appService.BaseOnRuleCancelShipmentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.BaseOnRuleCancelShipmentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/base-on-rule-get-tracking-link")]
-        public async Task<IActionResult> BaseOnRuleGetTrackingLinkAsync(Guid id, [FromBody] DeliveryCarrierBaseOnRuleGetTrackingLinkRequestDto input)
+        [Route("base-on-rule-get-tracking-link")]
+        public async Task<IActionResult> BaseOnRuleGetTrackingLinkAsync(DeliveryCarrierBaseOnRuleGetTrackingLinkRequestDto input)
         {
-            var result = await _appService.BaseOnRuleGetTrackingLinkAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.BaseOnRuleGetTrackingLinkAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/base-on-rule-rate-shipment")]
-        public async Task<IActionResult> BaseOnRuleRateShipmentAsync(Guid id, [FromBody] DeliveryCarrierBaseOnRuleRateShipmentRequestDto input)
+        [Route("base-on-rule-rate-shipment")]
+        public async Task<IActionResult> BaseOnRuleRateShipmentAsync(DeliveryCarrierBaseOnRuleRateShipmentRequestDto input)
         {
-            var result = await _appService.BaseOnRuleRateShipmentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.BaseOnRuleRateShipmentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/base-on-rule-send-shipping")]
-        public async Task<IActionResult> BaseOnRuleSendShippingAsync(Guid id, [FromBody] DeliveryCarrierBaseOnRuleSendShippingRequestDto input)
+        [Route("base-on-rule-send-shipping")]
+        public async Task<IActionResult> BaseOnRuleSendShippingAsync(DeliveryCarrierBaseOnRuleSendShippingRequestDto input)
         {
-            var result = await _appService.BaseOnRuleSendShippingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.BaseOnRuleSendShippingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/cancel-shipment")]
-        public async Task<IActionResult> CancelShipmentAsync(Guid id, [FromBody] DeliveryCarrierCancelShipmentRequestDto input)
+        [Route("cancel-shipment")]
+        public async Task<IActionResult> CancelShipmentAsync(DeliveryCarrierCancelShipmentRequestDto input)
         {
-            var result = await _appService.CancelShipmentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CancelShipmentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] DeliveryCarrierCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(DeliveryCarrierCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/fixed-cancel-shipment")]
-        public async Task<IActionResult> FixedCancelShipmentAsync(Guid id, [FromBody] DeliveryCarrierFixedCancelShipmentRequestDto input)
+        [Route("fixed-cancel-shipment")]
+        public async Task<IActionResult> FixedCancelShipmentAsync(DeliveryCarrierFixedCancelShipmentRequestDto input)
         {
-            var result = await _appService.FixedCancelShipmentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FixedCancelShipmentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/fixed-get-tracking-link")]
-        public async Task<IActionResult> FixedGetTrackingLinkAsync(Guid id, [FromBody] DeliveryCarrierFixedGetTrackingLinkRequestDto input)
+        [Route("fixed-get-tracking-link")]
+        public async Task<IActionResult> FixedGetTrackingLinkAsync(DeliveryCarrierFixedGetTrackingLinkRequestDto input)
         {
-            var result = await _appService.FixedGetTrackingLinkAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FixedGetTrackingLinkAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/fixed-rate-shipment")]
-        public async Task<IActionResult> FixedRateShipmentAsync(Guid id, [FromBody] DeliveryCarrierFixedRateShipmentRequestDto input)
+        [Route("fixed-rate-shipment")]
+        public async Task<IActionResult> FixedRateShipmentAsync(DeliveryCarrierFixedRateShipmentRequestDto input)
         {
-            var result = await _appService.FixedRateShipmentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FixedRateShipmentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/fixed-send-shipping")]
-        public async Task<IActionResult> FixedSendShippingAsync(Guid id, [FromBody] DeliveryCarrierFixedSendShippingRequestDto input)
+        [Route("fixed-send-shipping")]
+        public async Task<IActionResult> FixedSendShippingAsync(DeliveryCarrierFixedSendShippingRequestDto input)
         {
-            var result = await _appService.FixedSendShippingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FixedSendShippingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/gelato-rate-shipment")]
-        public async Task<IActionResult> GelatoRateShipmentAsync(Guid id, [FromBody] DeliveryCarrierGelatoRateShipmentRequestDto input)
+        [Route("gelato-rate-shipment")]
+        public async Task<IActionResult> GelatoRateShipmentAsync(DeliveryCarrierGelatoRateShipmentRequestDto input)
         {
-            var result = await _appService.GelatoRateShipmentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GelatoRateShipmentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-return-label")]
-        public async Task<IActionResult> GetReturnLabelAsync(Guid id, [FromBody] DeliveryCarrierGetReturnLabelRequestDto input)
+        [Route("get-return-label")]
+        public async Task<IActionResult> GetReturnLabelAsync(DeliveryCarrierGetReturnLabelRequestDto input)
         {
-            var result = await _appService.GetReturnLabelAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetReturnLabelAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-return-label-prefix")]
-        public async Task<IActionResult> GetReturnLabelPrefixAsync(Guid id)
+        [Route("get-return-label-prefix")]
+        public async Task<IActionResult> GetReturnLabelPrefixAsync(Guid[] ids)
         {
-            var result = await _appService.GetReturnLabelPrefixAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetReturnLabelPrefixAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-tracking-link")]
-        public async Task<IActionResult> GetTrackingLinkAsync(Guid id, [FromBody] DeliveryCarrierGetTrackingLinkRequestDto input)
+        [Route("get-tracking-link")]
+        public async Task<IActionResult> GetTrackingLinkAsync(DeliveryCarrierGetTrackingLinkRequestDto input)
         {
-            var result = await _appService.GetTrackingLinkAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetTrackingLinkAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/in-store-rate-shipment")]
-        public async Task<IActionResult> InStoreRateShipmentAsync(Guid id)
+        [Route("in-store-rate-shipment")]
+        public async Task<IActionResult> InStoreRateShipmentAsync(Guid[] ids)
         {
-            var result = await _appService.InStoreRateShipmentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InStoreRateShipmentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/install-more-provider")]
-        public async Task<IActionResult> InstallMoreProviderAsync(Guid id)
+        [Route("install-more-provider")]
+        public async Task<IActionResult> InstallMoreProviderAsync(Guid[] ids)
         {
-            var result = await _appService.InstallMoreProviderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InstallMoreProviderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/log-xml")]
-        public async Task<IActionResult> LogXmlAsync(Guid id, [FromBody] DeliveryCarrierLogXmlRequestDto input)
+        [Route("log-xml")]
+        public async Task<IActionResult> LogXmlAsync(DeliveryCarrierLogXmlRequestDto input)
         {
-            var result = await _appService.LogXmlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LogXmlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/rate-shipment")]
-        public async Task<IActionResult> RateShipmentAsync(Guid id, [FromBody] DeliveryCarrierRateShipmentRequestDto input)
+        [Route("rate-shipment")]
+        public async Task<IActionResult> RateShipmentAsync(DeliveryCarrierRateShipmentRequestDto input)
         {
-            var result = await _appService.RateShipmentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RateShipmentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send-shipping")]
-        public async Task<IActionResult> SendShippingAsync(Guid id, [FromBody] DeliveryCarrierSendShippingRequestDto input)
+        [Route("send-shipping")]
+        public async Task<IActionResult> SendShippingAsync(DeliveryCarrierSendShippingRequestDto input)
         {
-            var result = await _appService.SendShippingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SendShippingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-debug")]
-        public async Task<IActionResult> ToggleDebugAsync(Guid id)
+        [Route("toggle-debug")]
+        public async Task<IActionResult> ToggleDebugAsync(Guid[] ids)
         {
-            var result = await _appService.ToggleDebugAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ToggleDebugAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-prod-environment")]
-        public async Task<IActionResult> ToggleProdEnvironmentAsync(Guid id)
+        [Route("toggle-prod-environment")]
+        public async Task<IActionResult> ToggleProdEnvironmentAsync(Guid[] ids)
         {
-            var result = await _appService.ToggleProdEnvironmentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ToggleProdEnvironmentAsync(ids);
             return Ok(result);
         }
     }

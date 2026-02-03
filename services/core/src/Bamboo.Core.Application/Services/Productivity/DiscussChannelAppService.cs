@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class DiscussChannelAppService : GenericApplicationService<DiscussChannel>, IDiscussChannelAppService
+    public partial class DiscussChannelAppService : GenericAppService<DiscussChannel>, IDiscussChannelAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -86,7 +86,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> AddMembersAsync(Guid id, DiscussChannelAddMembersRequestDto input)
+        public async Task<DiscussChannel> AddMembersAsync(DiscussChannelAddMembersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -101,7 +101,9 @@ namespace Bamboo.Core.Application.Services
             //         post_joined_message=post_joined_message,
             //     )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> AddMembersInternalAsync()
@@ -321,7 +323,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> ChannelChangeDescriptionAsync(Guid id, DiscussChannelChannelChangeDescriptionRequestDto input)
+        public async Task<DiscussChannel> ChannelChangeDescriptionAsync(DiscussChannelChannelChangeDescriptionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -329,10 +331,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.write({'description': description})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DiscussChannel> ChannelFetchedAsync(Guid id)
+        public async Task<DiscussChannel> ChannelFetchedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -373,10 +377,12 @@ namespace Bamboo.Core.Application.Services
             //         },
             //     )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DiscussChannel> ChannelJoinAsync(Guid id)
+        public async Task<DiscussChannel> ChannelJoinAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -386,10 +392,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // self._add_members(users=self.env.user)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DiscussChannel> ChannelPinAsync(Guid id, DiscussChannelChannelPinRequestDto input)
+        public async Task<DiscussChannel> ChannelPinAsync(DiscussChannelChannelPinRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -418,10 +426,12 @@ namespace Bamboo.Core.Application.Services
             // if self.channel_type == "livechat" and not pinned and not self.message_ids:
             //     self.sudo().unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DiscussChannel> ChannelRenameAsync(Guid id, DiscussChannelChannelRenameRequestDto input)
+        public async Task<DiscussChannel> ChannelRenameAsync(DiscussChannelChannelRenameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -431,10 +441,12 @@ namespace Bamboo.Core.Application.Services
             // body = Markup('<div data-oe-type="channel_rename" class="o_mail_notification">%s</div>') % name
             // self.message_post(body=body, message_type="notification", subtype_xmlid="mail.mt_comment")
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DiscussChannel> ChannelSetCustomNameAsync(Guid id, DiscussChannelChannelSetCustomNameRequestDto input)
+        public async Task<DiscussChannel> ChannelSetCustomNameAsync(DiscussChannelChannelSetCustomNameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -446,7 +458,9 @@ namespace Bamboo.Core.Application.Services
             //     "custom_channel_name",
             // ).bus_send()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> ChatbotFindCustomerValuesInMessagesInternalAsync(object step_type_to_field)
@@ -1188,6 +1202,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannel> CreateChannelInternalAsync(object name, Guid group_id)
         {
             /*
@@ -1214,6 +1229,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannel> CreateGroupInternalAsync(object partners_to, object default_display_mode, object name)
         {
             /*
@@ -1319,7 +1335,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> ExecuteCommandHelpAsync(Guid id)
+        public async Task<DiscussChannel> ExecuteCommandHelpAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -1351,7 +1367,9 @@ namespace Bamboo.Core.Application.Services
             // super().execute_command_help(**kwargs)
             // self.env['mail.bot']._apply_logic(self, kwargs, command="help")
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> ExecuteCommandHelpMessageExtraInternalAsync()
@@ -1375,7 +1393,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> ExecuteCommandHistoryAsync(Guid id)
+        public async Task<DiscussChannel> ExecuteCommandHistoryAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: discuss_channel.py) ---
@@ -1385,10 +1403,12 @@ namespace Bamboo.Core.Application.Services
             //     {"id": self.id, "partner_id": self.env.user.partner_id.id},
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DiscussChannel> ExecuteCommandLeadAsync(Guid id)
+        public async Task<DiscussChannel> ExecuteCommandLeadAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_livechat, FILE: discuss_channel.py) ---
@@ -1410,10 +1430,12 @@ namespace Bamboo.Core.Application.Services
             //     msg = _("Created a new lead: %s", lead._get_html_link())
             // self.env.user._bus_send_transient_message(self, msg)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DiscussChannel> ExecuteCommandLeaveAsync(Guid id)
+        public async Task<DiscussChannel> ExecuteCommandLeaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -1423,10 +1445,12 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     self.channel_pin(False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DiscussChannel> ExecuteCommandWhoAsync(Guid id)
+        public async Task<DiscussChannel> ExecuteCommandWhoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -1450,7 +1474,9 @@ namespace Bamboo.Core.Application.Services
             //     msg = _("You are alone in this channel.")
             // self.env.user._bus_send_transient_message(self, msg)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> FindOrCreateMemberForSelfInternalAsync()
@@ -1638,6 +1664,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannel> GenerateRandomTokenInternalAsync()
         {
             /*
@@ -1674,6 +1701,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannel> GetAllowedChannelMemberCreateParamsInternalAsync()
         {
             /*
@@ -1772,6 +1800,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannel> GetChannelsAsMemberInternalAsync()
         {
             /*
@@ -1889,7 +1918,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> GetMentionSuggestionsAsync(Guid id, DiscussChannelGetMentionSuggestionsRequestDto input)
+        [ApiModel]
+        public async Task<DiscussChannel> GetMentionSuggestionsAsync(DiscussChannelGetMentionSuggestionsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -1908,7 +1938,9 @@ namespace Bamboo.Core.Application.Services
             // store = Store().add(channels, channel_fields)
             // return store.get_result()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> GetNotifyValidParametersInternalAsync()
@@ -1921,6 +1953,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannel> GetOrCreateChatInternalAsync(object partners_to, object pin)
         {
             /*
@@ -2071,7 +2104,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> InviteByEmailAsync(Guid id, DiscussChannelInviteByEmailRequestDto input)
+        public async Task<DiscussChannel> InviteByEmailAsync(DiscussChannelInviteByEmailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -2153,7 +2186,9 @@ namespace Bamboo.Core.Application.Services
             //         )
             //     raise UserError(error_msg) from mde
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> LazyLoadMembersChannelTypesInternalAsync()
@@ -2167,7 +2202,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> LivechatJoinChannelNeedingHelpAsync(Guid id)
+        public async Task<DiscussChannel> LivechatJoinChannelNeedingHelpAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: discuss_channel.py) ---
@@ -2184,7 +2219,9 @@ namespace Bamboo.Core.Application.Services
             // self._add_members(users=self.env.user)
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> MemberBasedNamingChannelTypesInternalAsync()
@@ -2295,7 +2332,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> MessagePostAsync(Guid id)
+        public async Task<DiscussChannel> MessagePostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -2330,7 +2367,9 @@ namespace Bamboo.Core.Application.Services
             //     visitor.sudo()._update_visitor_last_visit()
             // return message
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> MessageReceiveBounceInternalAsync(object email, object partner)
@@ -2765,7 +2804,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> SetMessagePinAsync(Guid id, DiscussChannelSetMessagePinRequestDto input)
+        public async Task<DiscussChannel> SetMessagePinAsync(DiscussChannelSetMessagePinRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -2808,7 +2847,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             //     self.message_post(body=notification, message_type="notification", subtype_xmlid="mail.mt_comment")
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> ShouldInviteMembersToJoinCallInternalAsync()
@@ -3181,14 +3222,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> UnfollowAsync(Guid id)
+        public async Task<DiscussChannel> UnfollowAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
             // def action_unfollow(self):
             // self._action_unfollow(self.env.user.partner_id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannel> UnlinkExceptAllEmployeeChannelInternalAsync()
@@ -3232,7 +3275,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, DiscussChannel entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<DiscussChannel> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: discuss_channel.py) ---
@@ -3334,7 +3377,7 @@ namespace Bamboo.Core.Application.Services
             //     self._subscribe_users_automatically()
             // return result
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

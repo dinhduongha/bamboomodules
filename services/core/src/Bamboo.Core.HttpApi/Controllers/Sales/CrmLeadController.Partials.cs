@@ -11,322 +11,362 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-assign-partner")]
-        public async Task<IActionResult> ActionAssignPartnerAsync(Guid id)
+        [Route("action-assign-partner")]
+        public async Task<IActionResult> ActionAssignPartnerAsync(Guid[] ids)
         {
-            var result = await _appService.AssignPartnerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AssignPartnerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-generate-leads")]
-        public async Task<IActionResult> ActionGenerateLeadsAsync(Guid id)
+        [Route("action-generate-leads")]
+        public async Task<IActionResult> ActionGenerateLeadsAsync(Guid[] ids)
         {
-            var result = await _appService.GenerateLeadsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GenerateLeadsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-new-quotation")]
-        public async Task<IActionResult> ActionNewQuotationAsync(Guid id)
+        [Route("action-new-quotation")]
+        public async Task<IActionResult> ActionNewQuotationAsync(Guid[] ids)
         {
-            var result = await _appService.NewQuotationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.NewQuotationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-livechat")]
-        public async Task<IActionResult> ActionOpenLivechatAsync(Guid id)
+        [Route("action-open-livechat")]
+        public async Task<IActionResult> ActionOpenLivechatAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLivechatAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLivechatAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-livechat-sessions")]
-        public async Task<IActionResult> ActionRedirectToLivechatSessionsAsync(Guid id)
+        [Route("action-redirect-to-livechat-sessions")]
+        public async Task<IActionResult> ActionRedirectToLivechatSessionsAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToLivechatSessionsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToLivechatSessionsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-page-views")]
-        public async Task<IActionResult> ActionRedirectToPageViewsAsync(Guid id)
+        [Route("action-redirect-to-page-views")]
+        public async Task<IActionResult> ActionRedirectToPageViewsAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToPageViewsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToPageViewsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reschedule-meeting")]
-        public async Task<IActionResult> ActionRescheduleMeetingAsync(Guid id)
+        [Route("action-reschedule-meeting")]
+        public async Task<IActionResult> ActionRescheduleMeetingAsync(Guid[] ids)
         {
-            var result = await _appService.RescheduleMeetingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RescheduleMeetingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-restore")]
-        public async Task<IActionResult> ActionRestoreAsync(Guid id)
+        [Route("action-restore")]
+        public async Task<IActionResult> ActionRestoreAsync(Guid[] ids)
         {
-            var result = await _appService.RestoreAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RestoreAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-sale-quotations-new")]
-        public async Task<IActionResult> ActionSaleQuotationsNewAsync(Guid id)
+        [Route("action-sale-quotations-new")]
+        public async Task<IActionResult> ActionSaleQuotationsNewAsync(Guid[] ids)
         {
-            var result = await _appService.SaleQuotationsNewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SaleQuotationsNewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-schedule-meeting")]
-        public async Task<IActionResult> ActionScheduleMeetingAsync(Guid id, [FromBody] CrmLeadScheduleMeetingRequestDto input)
+        [Route("action-schedule-meeting")]
+        public async Task<IActionResult> ActionScheduleMeetingAsync(CrmLeadScheduleMeetingRequestDto input)
         {
-            var result = await _appService.ScheduleMeetingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ScheduleMeetingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-automated-probability")]
-        public async Task<IActionResult> ActionSetAutomatedProbabilityAsync(Guid id)
+        [Route("action-set-automated-probability")]
+        public async Task<IActionResult> ActionSetAutomatedProbabilityAsync(Guid[] ids)
         {
-            var result = await _appService.SetAutomatedProbabilityAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetAutomatedProbabilityAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-lost")]
-        public async Task<IActionResult> ActionSetLostAsync(Guid id)
+        [Route("action-set-lost")]
+        public async Task<IActionResult> ActionSetLostAsync(Guid[] ids)
         {
-            var result = await _appService.SetLostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetLostAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-won")]
-        public async Task<IActionResult> ActionSetWonAsync(Guid id)
+        [Route("action-set-won")]
+        public async Task<IActionResult> ActionSetWonAsync(Guid[] ids)
         {
-            var result = await _appService.SetWonAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetWonAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-won-rainbowman")]
-        public async Task<IActionResult> ActionSetWonRainbowmanAsync(Guid id)
+        [Route("action-set-won-rainbowman")]
+        public async Task<IActionResult> ActionSetWonRainbowmanAsync(Guid[] ids)
         {
-            var result = await _appService.SetWonRainbowmanAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetWonRainbowmanAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-potential-duplicates")]
-        public async Task<IActionResult> ActionShowPotentialDuplicatesAsync(Guid id)
+        [Route("action-show-potential-duplicates")]
+        public async Task<IActionResult> ActionShowPotentialDuplicatesAsync(Guid[] ids)
         {
-            var result = await _appService.ShowPotentialDuplicatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowPotentialDuplicatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sale-order")]
-        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid id)
+        [Route("action-view-sale-order")]
+        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSaleOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSaleOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sale-quotation")]
-        public async Task<IActionResult> ActionViewSaleQuotationAsync(Guid id)
+        [Route("action-view-sale-quotation")]
+        public async Task<IActionResult> ActionViewSaleQuotationAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSaleQuotationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSaleQuotationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/assign-geo-localize")]
-        public async Task<IActionResult> AssignGeoLocalizeAsync(Guid id, [FromBody] CrmLeadAssignGeoLocalizeRequestDto input)
+        [Route("assign-geo-localize")]
+        public async Task<IActionResult> AssignGeoLocalizeAsync(CrmLeadAssignGeoLocalizeRequestDto input)
         {
-            var result = await _appService.AssignGeoLocalizeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AssignGeoLocalizeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/assign-partner")]
-        public async Task<IActionResult> AssignPartnerAsync(Guid id, [FromBody] CrmLeadAssignPartnerRequestDto input)
+        [Route("assign-partner")]
+        public async Task<IActionResult> AssignPartnerAsync(CrmLeadAssignPartnerRequestDto input)
         {
-            var result = await _appService.AssignPartnerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AssignPartnerAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/assign-salesman-of-assigned-partner")]
-        public async Task<IActionResult> AssignSalesmanOfAssignedPartnerAsync(Guid id)
+        [Route("assign-salesman-of-assigned-partner")]
+        public async Task<IActionResult> AssignSalesmanOfAssignedPartnerAsync(Guid[] ids)
         {
-            var result = await _appService.AssignSalesmanOfAssignedPartnerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AssignSalesmanOfAssignedPartnerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/convert-opportunity")]
-        public async Task<IActionResult> ConvertOpportunityAsync(Guid id, [FromBody] CrmLeadConvertOpportunityRequestDto input)
+        [Route("convert-opportunity")]
+        public async Task<IActionResult> ConvertOpportunityAsync(CrmLeadConvertOpportunityRequestDto input)
         {
-            var result = await _appService.ConvertOpportunityAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConvertOpportunityAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] CrmLeadCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(CrmLeadCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-opp-portal")]
-        public async Task<IActionResult> CreateOppPortalAsync(Guid id, [FromBody] CrmLeadCreateOppPortalRequestDto input)
+        [Route("create-opp-portal")]
+        public async Task<IActionResult> CreateOppPortalAsync(CrmLeadCreateOppPortalRequestDto input)
         {
-            var result = await _appService.CreateOppPortalAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateOppPortalAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-empty-list-help")]
-        public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] CrmLeadGetEmptyListHelpRequestDto input)
+        [Route("get-empty-list-help")]
+        public async Task<IActionResult> GetEmptyListHelpAsync(CrmLeadGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetEmptyListHelpAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-rainbowman-message")]
-        public async Task<IActionResult> GetRainbowmanMessageAsync(Guid id)
+        [Route("get-rainbowman-message")]
+        public async Task<IActionResult> GetRainbowmanMessageAsync(Guid[] ids)
         {
-            var result = await _appService.GetRainbowmanMessageAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetRainbowmanMessageAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/iap-enrich")]
-        public async Task<IActionResult> IapEnrichAsync(Guid id)
+        [Route("iap-enrich")]
+        public async Task<IActionResult> IapEnrichAsync(Guid[] ids)
         {
-            var result = await _appService.IapEnrichAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.IapEnrichAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/log-meeting")]
-        public async Task<IActionResult> LogMeetingAsync(Guid id, [FromBody] CrmLeadLogMeetingRequestDto input)
+        [Route("log-meeting")]
+        public async Task<IActionResult> LogMeetingAsync(CrmLeadLogMeetingRequestDto input)
         {
-            var result = await _appService.LogMeetingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LogMeetingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/merge-opportunity")]
-        public async Task<IActionResult> MergeOpportunityAsync(Guid id, [FromBody] CrmLeadMergeOpportunityRequestDto input)
+        [Route("merge-opportunity")]
+        public async Task<IActionResult> MergeOpportunityAsync(CrmLeadMergeOpportunityRequestDto input)
         {
-            var result = await _appService.MergeOpportunityAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MergeOpportunityAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-new")]
-        public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] CrmLeadMessageNewRequestDto input)
+        [Route("message-new")]
+        public async Task<IActionResult> MessageNewAsync(CrmLeadMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MessageNewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/partner-desinterested")]
-        public async Task<IActionResult> PartnerDesinterestedAsync(Guid id, [FromBody] CrmLeadPartnerDesinterestedRequestDto input)
+        [Route("partner-desinterested")]
+        public async Task<IActionResult> PartnerDesinterestedAsync(CrmLeadPartnerDesinterestedRequestDto input)
         {
-            var result = await _appService.PartnerDesinterestedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PartnerDesinterestedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/partner-interested")]
-        public async Task<IActionResult> PartnerInterestedAsync(Guid id, [FromBody] CrmLeadPartnerInterestedRequestDto input)
+        [Route("partner-interested")]
+        public async Task<IActionResult> PartnerInterestedAsync(CrmLeadPartnerInterestedRequestDto input)
         {
-            var result = await _appService.PartnerInterestedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PartnerInterestedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/prepare-pls-tooltip-data")]
-        public async Task<IActionResult> PreparePlsTooltipDataAsync(Guid id)
+        [Route("prepare-pls-tooltip-data")]
+        public async Task<IActionResult> PreparePlsTooltipDataAsync(Guid[] ids)
         {
-            var result = await _appService.PreparePlsTooltipDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PreparePlsTooltipDataAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/redirect-lead-opportunity-view")]
-        public async Task<IActionResult> RedirectLeadOpportunityViewAsync(Guid id)
+        [Route("redirect-lead-opportunity-view")]
+        public async Task<IActionResult> RedirectLeadOpportunityViewAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectLeadOpportunityViewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectLeadOpportunityViewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-fetch")]
-        public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] CrmLeadSearchFetchRequestDto input)
+        [Route("search-fetch")]
+        public async Task<IActionResult> SearchFetchAsync(CrmLeadSearchFetchRequestDto input)
         {
-            var result = await _appService.SearchFetchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchFetchAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-geo-partner")]
-        public async Task<IActionResult> SearchGeoPartnerAsync(Guid id)
+        [Route("search-geo-partner")]
+        public async Task<IActionResult> SearchGeoPartnerAsync(Guid[] ids)
         {
-            var result = await _appService.SearchGeoPartnerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SearchGeoPartnerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-contact-details-from-portal")]
-        public async Task<IActionResult> UpdateContactDetailsFromPortalAsync(Guid id, [FromBody] CrmLeadUpdateContactDetailsFromPortalRequestDto input)
+        [Route("update-contact-details-from-portal")]
+        public async Task<IActionResult> UpdateContactDetailsFromPortalAsync(CrmLeadUpdateContactDetailsFromPortalRequestDto input)
         {
-            var result = await _appService.UpdateContactDetailsFromPortalAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdateContactDetailsFromPortalAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-lead-portal")]
-        public async Task<IActionResult> UpdateLeadPortalAsync(Guid id, [FromBody] CrmLeadUpdateLeadPortalRequestDto input)
+        [Route("update-lead-portal")]
+        public async Task<IActionResult> UpdateLeadPortalAsync(CrmLeadUpdateLeadPortalRequestDto input)
         {
-            var result = await _appService.UpdateLeadPortalAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdateLeadPortalAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/website-form-input-filter")]
-        public async Task<IActionResult> WebsiteFormInputFilterAsync(Guid id, [FromBody] CrmLeadWebsiteFormInputFilterRequestDto input)
+        [Route("website-form-input-filter")]
+        public async Task<IActionResult> WebsiteFormInputFilterAsync(CrmLeadWebsiteFormInputFilterRequestDto input)
         {
-            var result = await _appService.WebsiteFormInputFilterAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.WebsiteFormInputFilterAsync(input);
             return Ok(result);
         }
     }

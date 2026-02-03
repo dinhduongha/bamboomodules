@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PosRestaurant", Category = "Sales", Depends = new[] { "point_of_sale" })]
-    public partial class RestaurantTableAppService : GenericApplicationService<RestaurantTable>, IRestaurantTableAppService
+    public partial class RestaurantTableAppService : GenericAppService<RestaurantTable>, IRestaurantTableAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public RestaurantTableAppService(IRepository<RestaurantTable, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<RestaurantTable> AreOrdersStillInDraftAsync(Guid id)
+        public async Task<RestaurantTable> AreOrdersStillInDraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---
@@ -39,7 +39,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<RestaurantTable> ComputeDisplayNameInternalAsync()
@@ -63,6 +65,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantTable> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -73,6 +76,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantTable> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -83,6 +87,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantTable> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -93,6 +98,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantTable> LoadPosSelfDataFieldsInternalAsync(object config)
         {
             /*
@@ -118,6 +124,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<RestaurantTable> UpdateIdentifierInternalAsync()
         {
             /*

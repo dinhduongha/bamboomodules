@@ -662,6 +662,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateFromTemplateAsync<TEntity>(IEnumerable<TEntity> entities, Guid template_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -691,6 +692,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -724,6 +726,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAvailableCategoryDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid website_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -744,6 +747,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAvailableSnippetCategoriesAsync<TEntity>(IEnumerable<TEntity> entities, Guid website_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -788,6 +792,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultWelcomeMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -817,6 +822,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetProgramTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -902,6 +908,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetTemplateValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -1091,6 +1098,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -1101,16 +1109,22 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
             // def _load_pos_data_fields(self, config):
-            // return ['name', 'pos_description', 'color', 'has_image', 'write_date']
+            // return [
+            //     'name', 'trigger', 'applies_on', 'program_type', 'pricelist_ids', 'date_from',
+            //     'date_to', 'limit_usage', 'max_usage', 'total_order_count', 'is_nominative',
+            //     'portal_visible', 'portal_point_name', 'trigger_product_ids', 'rule_ids', 'reward_ids'
+            // ]
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataReadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -1121,6 +1135,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosSelfDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -1170,6 +1185,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProgramItemsNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -1189,6 +1205,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProgramTypeDefaultValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -1363,6 +1380,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchGetDetailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object website, object order, object options) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
@@ -1436,6 +1454,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchHasPublishedProductsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*

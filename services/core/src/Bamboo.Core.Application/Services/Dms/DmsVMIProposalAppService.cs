@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsVMIProposalAppService : IGenericApplicationService<DmsVMIProposal>
+    public interface IDmsVMIProposalAppService : IGenericAppService<DmsVMIProposal>
     {
         Task GenerateProposalAsync(Guid partnerId);
         Task ApproveProposalAsync(Guid proposalId);
@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsVMIProposalAppService : GenericApplicationService<DmsVMIProposal>, IDmsVMIProposalAppService
+    public class DmsVMIProposalAppService : GenericAppService<DmsVMIProposal>, IDmsVMIProposalAppService
     {
         public DmsVMIProposalAppService(
             IRepository<DmsVMIProposal, Guid> repository,

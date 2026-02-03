@@ -682,6 +682,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateCashPaymentMethodInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cash_journal_vals) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -817,6 +818,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultDiscountValueOnModuleInstallInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -921,6 +923,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EnsureDownpaymentProductInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1218,6 +1221,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPosKanbanViewStateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1561,6 +1565,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InstallPosRestaurantAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1743,6 +1748,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingBakeryScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1767,6 +1773,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingBarScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1825,6 +1832,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingClothesScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1876,6 +1884,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingFurnitureScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1910,6 +1919,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingKioskScenarioAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1943,6 +1953,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingRestaurantScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -1990,6 +2001,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingRetailScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -2014,6 +2026,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -2024,6 +2037,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataReadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object config) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -2056,6 +2070,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosSelfDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -2066,6 +2081,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosSelfDataReadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object config) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -2356,6 +2372,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareSelfOrderSplashScreenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list, object is_new) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*
@@ -2543,6 +2560,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SetDefaultPosLoadLimitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrMixinable
         {
             /*

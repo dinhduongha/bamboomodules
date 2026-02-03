@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/method-direct-trigger")]
-        public async Task<IActionResult> MethodDirectTriggerAsync(Guid id)
+        [Route("method-direct-trigger")]
+        public async Task<IActionResult> MethodDirectTriggerAsync(Guid[] ids)
         {
-            var result = await _appService.MethodDirectTriggerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MethodDirectTriggerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle")]
-        public async Task<IActionResult> ToggleAsync(Guid id, [FromBody] IrCronToggleRequestDto input)
+        [Route("toggle")]
+        public async Task<IActionResult> ToggleAsync(IrCronToggleRequestDto input)
         {
-            var result = await _appService.ToggleAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToggleAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/try-write")]
-        public async Task<IActionResult> TryWriteAsync(Guid id, [FromBody] IrCronTryWriteRequestDto input)
+        [Route("try-write")]
+        public async Task<IActionResult> TryWriteAsync(IrCronTryWriteRequestDto input)
         {
-            var result = await _appService.TryWriteAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.TryWriteAsync(input);
             return Ok(result);
         }
     }

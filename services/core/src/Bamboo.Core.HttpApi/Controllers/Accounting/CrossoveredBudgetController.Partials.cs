@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-budget-cancel")]
-        public async Task<IActionResult> ActionBudgetCancelAsync(Guid id)
+        [Route("action-budget-cancel")]
+        public async Task<IActionResult> ActionBudgetCancelAsync(Guid[] ids)
         {
-            var result = await _appService.BudgetCancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BudgetCancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-budget-confirm")]
-        public async Task<IActionResult> ActionBudgetConfirmAsync(Guid id)
+        [Route("action-budget-confirm")]
+        public async Task<IActionResult> ActionBudgetConfirmAsync(Guid[] ids)
         {
-            var result = await _appService.BudgetConfirmAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BudgetConfirmAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-budget-done")]
-        public async Task<IActionResult> ActionBudgetDoneAsync(Guid id)
+        [Route("action-budget-done")]
+        public async Task<IActionResult> ActionBudgetDoneAsync(Guid[] ids)
         {
-            var result = await _appService.BudgetDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BudgetDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-budget-draft")]
-        public async Task<IActionResult> ActionBudgetDraftAsync(Guid id)
+        [Route("action-budget-draft")]
+        public async Task<IActionResult> ActionBudgetDraftAsync(Guid[] ids)
         {
-            var result = await _appService.BudgetDraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BudgetDraftAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-budget-validate")]
-        public async Task<IActionResult> ActionBudgetValidateAsync(Guid id)
+        [Route("action-budget-validate")]
+        public async Task<IActionResult> ActionBudgetValidateAsync(Guid[] ids)
         {
-            var result = await _appService.BudgetValidateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BudgetValidateAsync(ids);
             return Ok(result);
         }
     }

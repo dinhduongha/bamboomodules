@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrDefaultAppService : GenericApplicationService<IrDefault>, IIrDefaultAppService
+    public partial class IrDefaultAppService : GenericAppService<IrDefault>, IIrDefaultAppService
     {
 
         public IrDefaultAppService(IRepository<IrDefault, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -47,7 +47,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrDefault> DiscardRecordsAsync(Guid id, IrDefaultDiscardRecordsRequestDto input)
+        [ApiModel]
+        public async Task<IrDefault> DiscardRecordsAsync(IrDefaultDiscardRecordsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_default.py) ---
@@ -61,10 +62,13 @@ namespace Bamboo.Core.Application.Services
             //           ('json_value', 'in', json_vals)]
             // return self.search(domain).unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrDefault> DiscardValuesAsync(Guid id, IrDefaultDiscardValuesRequestDto input)
+        [ApiModel]
+        public async Task<IrDefault> DiscardValuesAsync(IrDefaultDiscardValuesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_default.py) ---
@@ -75,7 +79,9 @@ namespace Bamboo.Core.Application.Services
             // domain = [('field_id', '=', field.id), ('json_value', 'in', json_vals)]
             // return self.search(domain).unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrDefault> EvaluateConditionWithFallbackInternalAsync(object model_name, object field_expr, object @operator, object @value)
@@ -121,6 +127,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrDefault> GetInternalAsync(object model_name, object field_name, Guid user_id, Guid company_id, object condition)
         {
             /*
@@ -157,6 +164,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrDefault> GetModelDefaultsInternalAsync(object model_name, object condition)
         {
             /*
@@ -194,7 +202,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrDefault> SetAsync(Guid id, IrDefaultSetRequestDto input)
+        [ApiModel]
+        public async Task<IrDefault> SetAsync(IrDefaultSetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_default.py) ---
@@ -257,7 +266,9 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

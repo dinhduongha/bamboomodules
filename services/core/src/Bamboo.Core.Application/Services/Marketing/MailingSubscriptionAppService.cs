@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
-    public partial class MailingSubscriptionAppService : GenericApplicationService<MailingSubscription>, IMailingSubscriptionAppService
+    public partial class MailingSubscriptionAppService : GenericAppService<MailingSubscription>, IMailingSubscriptionAppService
     {
 
         public MailingSubscriptionAppService(IRepository<MailingSubscription, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -38,7 +38,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingSubscription> OpenMailingContactAsync(Guid id)
+        public async Task<MailingSubscription> OpenMailingContactAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_subscription.py) ---
@@ -58,7 +58,9 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

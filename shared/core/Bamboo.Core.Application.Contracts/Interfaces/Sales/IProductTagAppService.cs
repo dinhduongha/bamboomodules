@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductTagAppService : IGenericApplicationService<ProductTag>
     {
-        Task<ProductTag> CopyDataAsync(Guid id, ProductTagCopyDataRequestDto input);
+        Task<ProductTag> CopyDataAsync(ProductTagCopyDataRequestDto input);
     }
 }

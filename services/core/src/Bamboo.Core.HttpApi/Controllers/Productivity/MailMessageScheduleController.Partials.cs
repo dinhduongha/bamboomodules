@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/force-send")]
-        public async Task<IActionResult> ForceSendAsync(Guid id)
+        [Route("force-send")]
+        public async Task<IActionResult> ForceSendAsync(Guid[] ids)
         {
-            var result = await _appService.ForceSendAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ForceSendAsync(ids);
             return Ok(result);
         }
     }

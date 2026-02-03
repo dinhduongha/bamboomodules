@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMrpRoutingWorkcenterAppService : IGenericApplicationService<MrpRoutingWorkcenter>
     {
-        Task<MrpRoutingWorkcenter> ArchiveAsync(Guid id);
-        Task<MrpRoutingWorkcenter> CopyExistingOperationsAsync(Guid id);
-        Task<MrpRoutingWorkcenter> CopyToBomAsync(Guid id);
-        Task<MrpRoutingWorkcenter> OpenOperationFormAsync(Guid id);
-        Task<MrpRoutingWorkcenter> UnarchiveAsync(Guid id);
+        Task<MrpRoutingWorkcenter> ArchiveAsync(Guid[] ids);
+        Task<MrpRoutingWorkcenter> CopyExistingOperationsAsync(Guid[] ids);
+        Task<MrpRoutingWorkcenter> CopyToBomAsync(Guid[] ids);
+        Task<MrpRoutingWorkcenter> OpenOperationFormAsync(Guid[] ids);
+        Task<MrpRoutingWorkcenter> UnarchiveAsync(Guid[] ids);
     }
 }

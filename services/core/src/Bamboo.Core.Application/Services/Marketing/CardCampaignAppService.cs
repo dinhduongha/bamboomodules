@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MarketingCard", Category = "Marketing", Depends = new[] { "link_tracker", "mass_mailing", "website" })]
-    public partial class CardCampaignAppService : GenericApplicationService<CardCampaign>, ICardCampaignAppService
+    public partial class CardCampaignAppService : GenericAppService<CardCampaign>, ICardCampaignAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;
@@ -309,6 +309,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CardCampaign> GetRenderFieldsInternalAsync()
         {
             /*
@@ -337,7 +338,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CardCampaign> PreviewAsync(Guid id)
+        public async Task<CardCampaign> PreviewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
@@ -346,10 +347,12 @@ namespace Bamboo.Core.Application.Services
             // card = self._fetch_or_create_preview_card()
             // return {'type': 'ir.actions.act_url', 'url': card._get_path('preview'), 'target': 'new'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CardCampaign> ShareAsync(Guid id)
+        public async Task<CardCampaign> ShareAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
@@ -370,7 +373,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CardCampaign> UpdateCardsInternalAsync(object domain, object auto_commit)
@@ -419,7 +424,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CardCampaign> ViewCardsAsync(Guid id)
+        public async Task<CardCampaign> ViewCardsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
@@ -430,10 +435,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('campaign_id', '=', self.id)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CardCampaign> ViewCardsClickedAsync(Guid id)
+        public async Task<CardCampaign> ViewCardsClickedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
@@ -444,10 +451,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('campaign_id', '=', self.id)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CardCampaign> ViewCardsSharedAsync(Guid id)
+        public async Task<CardCampaign> ViewCardsSharedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
@@ -458,10 +467,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('campaign_id', '=', self.id)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CardCampaign> ViewMailingsAsync(Guid id)
+        public async Task<CardCampaign> ViewMailingsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: card_campaign.py) ---
@@ -476,7 +487,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

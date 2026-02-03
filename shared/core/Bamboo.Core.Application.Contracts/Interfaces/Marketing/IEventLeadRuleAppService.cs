@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventLeadRuleAppService : IGenericApplicationService<EventLeadRule>
     {
-        Task<EventLeadRule> ExecuteRuleAsync(Guid id);
+        Task<EventLeadRule> ExecuteRuleAsync(Guid[] ids);
     }
 }

@@ -11,154 +11,173 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-join-meeting")]
-        public async Task<IActionResult> ActionJoinMeetingAsync(Guid id, [FromBody] CalendarEventJoinMeetingRequestDto input)
+        [Route("action-join-meeting")]
+        public async Task<IActionResult> ActionJoinMeetingAsync(CalendarEventJoinMeetingRequestDto input)
         {
-            var result = await _appService.JoinMeetingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.JoinMeetingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-join-video-call")]
-        public async Task<IActionResult> ActionJoinVideoCallAsync(Guid id)
+        [Route("action-join-video-call")]
+        public async Task<IActionResult> ActionJoinVideoCallAsync(Guid[] ids)
         {
-            var result = await _appService.JoinVideoCallAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.JoinVideoCallAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-mass-archive")]
-        public async Task<IActionResult> ActionMassArchiveAsync(Guid id, [FromBody] CalendarEventMassArchiveRequestDto input)
+        [Route("action-mass-archive")]
+        public async Task<IActionResult> ActionMassArchiveAsync(CalendarEventMassArchiveRequestDto input)
         {
-            var result = await _appService.MassArchiveAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MassArchiveAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-mass-deletion")]
-        public async Task<IActionResult> ActionMassDeletionAsync(Guid id, [FromBody] CalendarEventMassDeletionRequestDto input)
+        [Route("action-mass-deletion")]
+        public async Task<IActionResult> ActionMassDeletionAsync(CalendarEventMassDeletionRequestDto input)
         {
-            var result = await _appService.MassDeletionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MassDeletionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-calendar-event")]
-        public async Task<IActionResult> ActionOpenCalendarEventAsync(Guid id)
+        [Route("action-open-calendar-event")]
+        public async Task<IActionResult> ActionOpenCalendarEventAsync(Guid[] ids)
         {
-            var result = await _appService.OpenCalendarEventAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenCalendarEventAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-composer")]
-        public async Task<IActionResult> ActionOpenComposerAsync(Guid id)
+        [Route("action-open-composer")]
+        public async Task<IActionResult> ActionOpenComposerAsync(Guid[] ids)
         {
-            var result = await _appService.OpenComposerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenComposerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-sms")]
-        public async Task<IActionResult> ActionSendSmsAsync(Guid id)
+        [Route("action-send-sms")]
+        public async Task<IActionResult> ActionSendSmsAsync(Guid[] ids)
         {
-            var result = await _appService.SendSmsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendSmsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-sendmail")]
-        public async Task<IActionResult> ActionSendmailAsync(Guid id)
+        [Route("action-sendmail")]
+        public async Task<IActionResult> ActionSendmailAsync(Guid[] ids)
         {
-            var result = await _appService.SendmailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendmailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unlink-event")]
-        public async Task<IActionResult> ActionUnlinkEventAsync(Guid id, [FromBody] CalendarEventUnlinkEventRequestDto input)
+        [Route("action-unlink-event")]
+        public async Task<IActionResult> ActionUnlinkEventAsync(CalendarEventUnlinkEventRequestDto input)
         {
-            var result = await _appService.UnlinkEventAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UnlinkEventAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/change-attendee-status")]
-        public async Task<IActionResult> ChangeAttendeeStatusAsync(Guid id, [FromBody] CalendarEventChangeAttendeeStatusRequestDto input)
+        [Route("change-attendee-status")]
+        public async Task<IActionResult> ChangeAttendeeStatusAsync(CalendarEventChangeAttendeeStatusRequestDto input)
         {
-            var result = await _appService.ChangeAttendeeStatusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ChangeAttendeeStatusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/clear-videocall-location")]
-        public async Task<IActionResult> ClearVideocallLocationAsync(Guid id)
+        [Route("clear-videocall-location")]
+        public async Task<IActionResult> ClearVideocallLocationAsync(Guid[] ids)
         {
-            var result = await _appService.ClearVideocallLocationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ClearVideocallLocationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/find-partner-customer")]
-        public async Task<IActionResult> FindPartnerCustomerAsync(Guid id)
+        [Route("find-partner-customer")]
+        public async Task<IActionResult> FindPartnerCustomerAsync(Guid[] ids)
         {
-            var result = await _appService.FindPartnerCustomerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.FindPartnerCustomerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-default-duration")]
-        public async Task<IActionResult> GetDefaultDurationAsync(Guid id)
+        [Route("get-default-duration")]
+        public async Task<IActionResult> GetDefaultDurationAsync(Guid[] ids)
         {
-            var result = await _appService.GetDefaultDurationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetDefaultDurationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-discuss-videocall-location")]
-        public async Task<IActionResult> GetDiscussVideocallLocationAsync(Guid id)
+        [Route("get-discuss-videocall-location")]
+        public async Task<IActionResult> GetDiscussVideocallLocationAsync(Guid[] ids)
         {
-            var result = await _appService.GetDiscussVideocallLocationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetDiscussVideocallLocationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-display-time-tz")]
-        public async Task<IActionResult> GetDisplayTimeTzAsync(Guid id, [FromBody] CalendarEventGetDisplayTimeTzRequestDto input)
+        [Route("get-display-time-tz")]
+        public async Task<IActionResult> GetDisplayTimeTzAsync(CalendarEventGetDisplayTimeTzRequestDto input)
         {
-            var result = await _appService.GetDisplayTimeTzAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetDisplayTimeTzAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-next-alarm-date")]
-        public async Task<IActionResult> GetNextAlarmDateAsync(Guid id, [FromBody] CalendarEventGetNextAlarmDateRequestDto input)
+        [Route("get-next-alarm-date")]
+        public async Task<IActionResult> GetNextAlarmDateAsync(CalendarEventGetNextAlarmDateRequestDto input)
         {
-            var result = await _appService.GetNextAlarmDateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetNextAlarmDateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-state-selections")]
-        public async Task<IActionResult> GetStateSelectionsAsync(Guid id)
+        [Route("get-state-selections")]
+        public async Task<IActionResult> GetStateSelectionsAsync(Guid[] ids)
         {
-            var result = await _appService.GetStateSelectionsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetStateSelectionsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-unusual-days")]
-        public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] CalendarEventGetUnusualDaysRequestDto input)
+        [Route("get-unusual-days")]
+        public async Task<IActionResult> GetUnusualDaysAsync(CalendarEventGetUnusualDaysRequestDto input)
         {
-            var result = await _appService.GetUnusualDaysAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetUnusualDaysAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-discuss-videocall-location")]
-        public async Task<IActionResult> SetDiscussVideocallLocationAsync(Guid id)
+        [Route("set-discuss-videocall-location")]
+        public async Task<IActionResult> SetDiscussVideocallLocationAsync(Guid[] ids)
         {
-            var result = await _appService.SetDiscussVideocallLocationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetDiscussVideocallLocationAsync(ids);
             return Ok(result);
         }
     }

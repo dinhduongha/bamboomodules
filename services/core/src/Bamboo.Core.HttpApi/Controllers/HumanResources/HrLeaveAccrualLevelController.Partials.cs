@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-save-new")]
-        public async Task<IActionResult> ActionSaveNewAsync(Guid id)
+        [Route("action-save-new")]
+        public async Task<IActionResult> ActionSaveNewAsync(Guid[] ids)
         {
-            var result = await _appService.SaveNewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SaveNewAsync(ids);
             return Ok(result);
         }
     }

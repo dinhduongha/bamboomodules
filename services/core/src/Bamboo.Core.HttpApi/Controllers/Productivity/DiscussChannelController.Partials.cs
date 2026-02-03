@@ -11,146 +11,164 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-unfollow")]
-        public async Task<IActionResult> ActionUnfollowAsync(Guid id)
+        [Route("action-unfollow")]
+        public async Task<IActionResult> ActionUnfollowAsync(Guid[] ids)
         {
-            var result = await _appService.UnfollowAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnfollowAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/add-members")]
-        public async Task<IActionResult> AddMembersAsync(Guid id, [FromBody] DiscussChannelAddMembersRequestDto input)
+        [Route("add-members")]
+        public async Task<IActionResult> AddMembersAsync(DiscussChannelAddMembersRequestDto input)
         {
-            var result = await _appService.AddMembersAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AddMembersAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/channel-change-description")]
-        public async Task<IActionResult> ChannelChangeDescriptionAsync(Guid id, [FromBody] DiscussChannelChannelChangeDescriptionRequestDto input)
+        [Route("channel-change-description")]
+        public async Task<IActionResult> ChannelChangeDescriptionAsync(DiscussChannelChannelChangeDescriptionRequestDto input)
         {
-            var result = await _appService.ChannelChangeDescriptionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ChannelChangeDescriptionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/channel-fetched")]
-        public async Task<IActionResult> ChannelFetchedAsync(Guid id)
+        [Route("channel-fetched")]
+        public async Task<IActionResult> ChannelFetchedAsync(Guid[] ids)
         {
-            var result = await _appService.ChannelFetchedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ChannelFetchedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/channel-join")]
-        public async Task<IActionResult> ChannelJoinAsync(Guid id)
+        [Route("channel-join")]
+        public async Task<IActionResult> ChannelJoinAsync(Guid[] ids)
         {
-            var result = await _appService.ChannelJoinAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ChannelJoinAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/channel-pin")]
-        public async Task<IActionResult> ChannelPinAsync(Guid id, [FromBody] DiscussChannelChannelPinRequestDto input)
+        [Route("channel-pin")]
+        public async Task<IActionResult> ChannelPinAsync(DiscussChannelChannelPinRequestDto input)
         {
-            var result = await _appService.ChannelPinAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ChannelPinAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/channel-rename")]
-        public async Task<IActionResult> ChannelRenameAsync(Guid id, [FromBody] DiscussChannelChannelRenameRequestDto input)
+        [Route("channel-rename")]
+        public async Task<IActionResult> ChannelRenameAsync(DiscussChannelChannelRenameRequestDto input)
         {
-            var result = await _appService.ChannelRenameAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ChannelRenameAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/channel-set-custom-name")]
-        public async Task<IActionResult> ChannelSetCustomNameAsync(Guid id, [FromBody] DiscussChannelChannelSetCustomNameRequestDto input)
+        [Route("channel-set-custom-name")]
+        public async Task<IActionResult> ChannelSetCustomNameAsync(DiscussChannelChannelSetCustomNameRequestDto input)
         {
-            var result = await _appService.ChannelSetCustomNameAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ChannelSetCustomNameAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/execute-command-help")]
-        public async Task<IActionResult> ExecuteCommandHelpAsync(Guid id)
+        [Route("execute-command-help")]
+        public async Task<IActionResult> ExecuteCommandHelpAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteCommandHelpAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteCommandHelpAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/execute-command-history")]
-        public async Task<IActionResult> ExecuteCommandHistoryAsync(Guid id)
+        [Route("execute-command-history")]
+        public async Task<IActionResult> ExecuteCommandHistoryAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteCommandHistoryAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteCommandHistoryAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/execute-command-lead")]
-        public async Task<IActionResult> ExecuteCommandLeadAsync(Guid id)
+        [Route("execute-command-lead")]
+        public async Task<IActionResult> ExecuteCommandLeadAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteCommandLeadAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteCommandLeadAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/execute-command-leave")]
-        public async Task<IActionResult> ExecuteCommandLeaveAsync(Guid id)
+        [Route("execute-command-leave")]
+        public async Task<IActionResult> ExecuteCommandLeaveAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteCommandLeaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteCommandLeaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/execute-command-who")]
-        public async Task<IActionResult> ExecuteCommandWhoAsync(Guid id)
+        [Route("execute-command-who")]
+        public async Task<IActionResult> ExecuteCommandWhoAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteCommandWhoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteCommandWhoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-mention-suggestions")]
-        public async Task<IActionResult> GetMentionSuggestionsAsync(Guid id, [FromBody] DiscussChannelGetMentionSuggestionsRequestDto input)
+        [Route("get-mention-suggestions")]
+        public async Task<IActionResult> GetMentionSuggestionsAsync(DiscussChannelGetMentionSuggestionsRequestDto input)
         {
-            var result = await _appService.GetMentionSuggestionsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetMentionSuggestionsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/invite-by-email")]
-        public async Task<IActionResult> InviteByEmailAsync(Guid id, [FromBody] DiscussChannelInviteByEmailRequestDto input)
+        [Route("invite-by-email")]
+        public async Task<IActionResult> InviteByEmailAsync(DiscussChannelInviteByEmailRequestDto input)
         {
-            var result = await _appService.InviteByEmailAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.InviteByEmailAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/livechat-join-channel-needing-help")]
-        public async Task<IActionResult> LivechatJoinChannelNeedingHelpAsync(Guid id)
+        [Route("livechat-join-channel-needing-help")]
+        public async Task<IActionResult> LivechatJoinChannelNeedingHelpAsync(Guid[] ids)
         {
-            var result = await _appService.LivechatJoinChannelNeedingHelpAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LivechatJoinChannelNeedingHelpAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-post")]
-        public async Task<IActionResult> MessagePostAsync(Guid id)
+        [Route("message-post")]
+        public async Task<IActionResult> MessagePostAsync(Guid[] ids)
         {
-            var result = await _appService.MessagePostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MessagePostAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-message-pin")]
-        public async Task<IActionResult> SetMessagePinAsync(Guid id, [FromBody] DiscussChannelSetMessagePinRequestDto input)
+        [Route("set-message-pin")]
+        public async Task<IActionResult> SetMessagePinAsync(DiscussChannelSetMessagePinRequestDto input)
         {
-            var result = await _appService.SetMessagePinAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetMessagePinAsync(input);
             return Ok(result);
         }
     }

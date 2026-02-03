@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsPromotionApplicationAppService : IGenericApplicationService<DmsPromotionApplication>
+    public interface IDmsPromotionApplicationAppService : IGenericAppService<DmsPromotionApplication>
     {
         Task ApplyPromotionAsync(Guid applicationId);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsPromotionApplicationAppService : GenericApplicationService<DmsPromotionApplication>, IDmsPromotionApplicationAppService
+    public class DmsPromotionApplicationAppService : GenericAppService<DmsPromotionApplication>, IDmsPromotionApplicationAppService
     {
         public DmsPromotionApplicationAppService(
             IRepository<DmsPromotionApplication, Guid> repository,

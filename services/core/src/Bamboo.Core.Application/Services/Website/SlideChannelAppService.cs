@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSlides", Category = "Website", Depends = new[] { "portal_rating", "website", "website_mail", "website_profile" })]
-    public partial class SlideChannelAppService : GenericApplicationService<SlideChannel>, ISlideChannelAppService
+    public partial class SlideChannelAppService : GenericAppService<SlideChannel>, ISlideChannelAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -197,6 +197,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SlideChannel> AllowPublishRatingStatsInternalAsync()
         {
             /*
@@ -207,7 +208,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> ArchiveAsync(Guid id)
+        public async Task<SlideChannel> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -226,10 +227,12 @@ namespace Bamboo.Core.Application.Services
             // archived.slide_ids.action_archive()
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> ChannelEnrollAsync(Guid id)
+        public async Task<SlideChannel> ChannelEnrollAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -237,10 +240,12 @@ namespace Bamboo.Core.Application.Services
             // template = self.env.ref('website_slides.mail_template_slide_channel_enroll', raise_if_not_found=False)
             // return self._action_channel_open_invite_wizard(template, enroll_mode=True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> ChannelInviteAsync(Guid id)
+        public async Task<SlideChannel> ChannelInviteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -248,7 +253,9 @@ namespace Bamboo.Core.Application.Services
             // template = self.env.ref('website_slides.mail_template_slide_channel_invite', raise_if_not_found=False)
             // return self._action_channel_open_invite_wizard(template)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideChannel> ComputeActionRightsInternalAsync()
@@ -340,6 +347,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SlideChannel> ComputeHasRequestedAccessInternalAsync()
         {
             /*
@@ -618,7 +626,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> CopyDataAsync(Guid id, SlideChannelCopyDataRequestDto input)
+        public async Task<SlideChannel> CopyDataAsync(SlideChannelCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -632,10 +640,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['enroll'] = 'invite'
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<SlideChannel> CreateAsync(SlideChannel entity, List<string> fields)
+        public override async Task<SlideChannel> CreateAsync(CreateRequestDto<SlideChannel> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_slides, FILE: slide_channel.py) ---
@@ -669,7 +679,7 @@ namespace Bamboo.Core.Application.Services
             // channels.forum_id.privacy = False
             // return channels
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<SlideChannel> DefaultAccessTokenInternalAsync()
@@ -741,16 +751,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> GetBackendMenuIdAsync(Guid id)
+        public async Task<SlideChannel> GetBackendMenuIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def get_backend_menu_id(self):
             // return self.env.ref('website_slides.website_slides_menu_root').id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<SlideChannel> GetCanPublishErrorMessageInternalAsync()
         {
             /*
@@ -898,7 +911,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> GrantAccessAsync(Guid id, SlideChannelGrantAccessRequestDto input)
+        public async Task<SlideChannel> GrantAccessAsync(SlideChannelGrantAccessRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -912,7 +925,9 @@ namespace Bamboo.Core.Application.Services
             //             only_automated=False,
             //         ).action_feedback(feedback=_('Access Granted'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideChannel> InitColumnInternalAsync(object column_name)
@@ -948,7 +963,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> MassMailingAttendeesAsync(Guid id)
+        public async Task<SlideChannel> MassMailingAttendeesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_slides, FILE: slide_channel.py) ---
@@ -967,7 +982,9 @@ namespace Bamboo.Core.Application.Services
             // )
             // return mass_mailing_action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideChannel> MessageEmployeeChatterInternalAsync(object msg, object partners)
@@ -986,7 +1003,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> MessagePostAsync(Guid id)
+        public async Task<SlideChannel> MessagePostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1019,7 +1036,9 @@ namespace Bamboo.Core.Application.Services
             //     self.env.user._add_karma(self.karma_gen_channel_rank, self, _("Course Ranked"))
             // return message
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideChannel> MoveCategorySlidesInternalAsync(object category, object new_category)
@@ -1052,7 +1071,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> RedirectToCertifiedMembersAsync(Guid id)
+        public async Task<SlideChannel> RedirectToCertifiedMembersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides_survey, FILE: slide_channel.py) ---
@@ -1062,30 +1081,36 @@ namespace Bamboo.Core.Application.Services
             // action['help'] = Markup('<p class="o_view_nocontent_smiling_face">%s</p>') % msg
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> RedirectToCompletedMembersAsync(Guid id)
+        public async Task<SlideChannel> RedirectToCompletedMembersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def action_redirect_to_completed_members(self):
             // return self.action_redirect_to_members('completed')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> RedirectToEngagedMembersAsync(Guid id)
+        public async Task<SlideChannel> RedirectToEngagedMembersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def action_redirect_to_engaged_members(self):
             // return self.action_redirect_to_members('engaged')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> RedirectToForumAsync(Guid id)
+        public async Task<SlideChannel> RedirectToForumAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides_forum, FILE: slide_channel.py) ---
@@ -1100,20 +1125,24 @@ namespace Bamboo.Core.Application.Services
             // 
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> RedirectToInvitedMembersAsync(Guid id)
+        public async Task<SlideChannel> RedirectToInvitedMembersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def action_redirect_to_invited_members(self):
             // return self.action_redirect_to_members('invited')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> RedirectToMembersAsync(Guid id, SlideChannelRedirectToMembersRequestDto input)
+        public async Task<SlideChannel> RedirectToMembersAsync(SlideChannelRedirectToMembersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1146,10 +1175,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = action_ctx
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> RefuseAccessAsync(Guid id, SlideChannelRefuseAccessRequestDto input)
+        public async Task<SlideChannel> RefuseAccessAsync(SlideChannelRefuseAccessRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1162,7 +1193,9 @@ namespace Bamboo.Core.Application.Services
             //         only_automated=False,
             //     ).action_feedback(feedback=_('Access Refused'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideChannel> RemoveMembershipInternalAsync(List<Guid> partner_ids)
@@ -1222,7 +1255,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> RequestAccessAsync(Guid id)
+        public async Task<SlideChannel> RequestAccessAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1242,7 +1275,9 @@ namespace Bamboo.Core.Application.Services
             //     return {'error': _('Already Requested')}
             // return {'done': False}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SlideChannel> ResequenceSlidesInternalAsync(object slide, object force_category)
@@ -1275,6 +1310,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SlideChannel> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*
@@ -1363,6 +1399,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SlideChannel> SearchIsVisibleInternalAsync(object @operator, object @value)
         {
             /*
@@ -1448,7 +1485,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> UnarchiveAsync(Guid id)
+        public async Task<SlideChannel> UnarchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1463,10 +1500,12 @@ namespace Bamboo.Core.Application.Services
             // to_activate.with_context(active_test=False).slide_ids.action_unarchive()
             // return super(SlideChannel, to_activate).action_unarchive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> ViewRatingsAsync(Guid id)
+        public async Task<SlideChannel> ViewRatingsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1476,10 +1515,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = Domain.AND([ast.literal_eval(action.get('domain', '[]')), Domain('res_id', 'in', self.ids)])
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> ViewSalesAsync(Guid id)
+        public async Task<SlideChannel> ViewSalesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_slides, FILE: slide_channel.py) ---
@@ -1488,10 +1529,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('product_id', 'in', self.product_id.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SlideChannel> ViewSlidesAsync(Guid id)
+        public async Task<SlideChannel> ViewSlidesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1504,10 +1547,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('channel_id', "=", self.id), ('is_category', '=', False)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, SlideChannel entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<SlideChannel> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_slides, FILE: slide_channel.py) ---
@@ -1548,7 +1593,7 @@ namespace Bamboo.Core.Application.Services
             //         })
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

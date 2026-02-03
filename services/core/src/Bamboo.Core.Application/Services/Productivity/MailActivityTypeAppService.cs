@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailActivityTypeAppService : GenericApplicationService<MailActivityType>, IMailActivityTypeAppService
+    public partial class MailActivityTypeAppService : GenericAppService<MailActivityType>, IMailActivityTypeAppService
     {
 
         public MailActivityTypeAppService(IRepository<MailActivityType, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<MailActivityType> ArchiveAsync(Guid id)
+        public async Task<MailActivityType> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity_type.py) ---
@@ -36,7 +36,9 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("The 'To-Do' activity type is used to create reminders from the top bar menu and the command palette. Consequently, it cannot be archived or deleted."))
             // return super().action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailActivityType> CheckActivityTypeResModelInternalAsync()
@@ -117,6 +119,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailActivityType> GetModelInfoByXmlidInternalAsync()
         {
             /*

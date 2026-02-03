@@ -33,7 +33,7 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.ClaimQty).HasColumnName("claim_qty");
             entity.Property(e => e.ClaimAmount).HasColumnName("claim_amount");
             entity.Property(e => e.Status).HasColumnName("status");
-            entity.Property(e => e.EvidencePhotosJson).HasColumnName("evidence_photos_json");
+            entity.Property(e => e.EvidencePhotos);
 
             entity.Property(e => e.CreationTime)
                 .HasDefaultValueSql("now()")

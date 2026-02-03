@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Onboarding", Category = "Base", Depends = new[] { "web" })]
-    public partial class OnboardingProgressStepAppService : GenericApplicationService<OnboardingProgressStep>, IOnboardingProgressStepAppService
+    public partial class OnboardingProgressStepAppService : GenericAppService<OnboardingProgressStep>, IOnboardingProgressStepAppService
     {
 
         public OnboardingProgressStepAppService(IRepository<OnboardingProgressStep, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<OnboardingProgressStep> ConsolidateJustDoneAsync(Guid id)
+        public async Task<OnboardingProgressStep> ConsolidateJustDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress_step.py) ---
@@ -35,10 +35,12 @@ namespace Bamboo.Core.Application.Services
             // was_just_done.step_state = 'done'
             // return was_just_done
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingProgressStep> SetJustDoneAsync(Guid id)
+        public async Task<OnboardingProgressStep> SetJustDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress_step.py) ---
@@ -47,7 +49,9 @@ namespace Bamboo.Core.Application.Services
             // not_done.step_state = 'just_done'
             // return not_done
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsReturnOrderAppService : IGenericApplicationService<DmsReturnOrder>
+    public interface IDmsReturnOrderAppService : IGenericAppService<DmsReturnOrder>
     {
         Task ProcessReturnAsync(Guid returnId);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsReturnOrderAppService : GenericApplicationService<DmsReturnOrder>, IDmsReturnOrderAppService
+    public class DmsReturnOrderAppService : GenericAppService<DmsReturnOrder>, IDmsReturnOrderAppService
     {
         public DmsReturnOrderAppService(
             IRepository<DmsReturnOrder, Guid> repository,

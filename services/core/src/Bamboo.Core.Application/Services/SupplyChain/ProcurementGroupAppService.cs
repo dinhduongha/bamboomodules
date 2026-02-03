@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class ProcurementGroupAppService : GenericApplicationService<ProcurementGroup>, IProcurementGroupAppService
+    public partial class ProcurementGroupAppService : GenericAppService<ProcurementGroup>, IProcurementGroupAppService
     {
 
         public ProcurementGroupAppService(IRepository<ProcurementGroup, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,6 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> CheckIntercompLocationInternalAsync(object locations)
         {
             /*
@@ -39,6 +40,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> GetMovesToAssignDomainInternalAsync(Guid company_id)
         {
             /*
@@ -63,6 +65,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> GetOrderpointDomainInternalAsync(Guid company_id)
         {
             /*
@@ -76,6 +79,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> GetPushRuleInternalAsync(Guid product_id, Guid location_dest_id, object values)
         {
             /*
@@ -96,6 +100,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> GetRuleDomainInternalAsync(object location, object values)
         {
             /*
@@ -127,6 +132,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> GetRuleInternalAsync(Guid product_id, Guid location_id, object values)
         {
             /*
@@ -209,6 +215,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> GetSchedulerTasksToDoInternalAsync()
         {
             /*
@@ -227,7 +234,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProcurementGroup> RunAsync(Guid id, ProcurementGroupRunRequestDto input)
+        [ApiModel]
+        public async Task<ProcurementGroup> RunAsync(ProcurementGroupRunRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_rule.py) ---
@@ -330,10 +338,13 @@ namespace Bamboo.Core.Application.Services
             //     raise_exception(procurement_errors)
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProcurementGroup> RunSchedulerAsync(Guid id, ProcurementGroupRunSchedulerRequestDto input)
+        [ApiModel]
+        public async Task<ProcurementGroup> RunSchedulerAsync(ProcurementGroupRunSchedulerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_rule.py) ---
@@ -348,9 +359,12 @@ namespace Bamboo.Core.Application.Services
             //     raise
             // return {}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> RunSchedulerTasksInternalAsync(object use_new_cursor, Guid company_id)
         {
             /*
@@ -420,6 +434,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> SearchRuleForWarehousesInternalAsync(List<Guid> route_ids, Guid packaging_id, Guid product_id, List<Guid> warehouse_ids, object domain)
         {
             /*
@@ -484,6 +499,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProcurementGroup> SkipProcurementInternalAsync(object procurement)
         {
             /*

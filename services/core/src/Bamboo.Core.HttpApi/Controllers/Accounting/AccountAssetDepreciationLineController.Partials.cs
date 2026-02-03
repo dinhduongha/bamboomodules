@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/create-grouped-move")]
-        public async Task<IActionResult> CreateGroupedMoveAsync(Guid id, [FromBody] AccountAssetDepreciationLineCreateGroupedMoveRequestDto input)
+        [Route("create-grouped-move")]
+        public async Task<IActionResult> CreateGroupedMoveAsync(AccountAssetDepreciationLineCreateGroupedMoveRequestDto input)
         {
-            var result = await _appService.CreateGroupedMoveAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateGroupedMoveAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-move")]
-        public async Task<IActionResult> CreateMoveAsync(Guid id, [FromBody] AccountAssetDepreciationLineCreateMoveRequestDto input)
+        [Route("create-move")]
+        public async Task<IActionResult> CreateMoveAsync(AccountAssetDepreciationLineCreateMoveRequestDto input)
         {
-            var result = await _appService.CreateMoveAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateMoveAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/log-message-when-posted")]
-        public async Task<IActionResult> LogMessageWhenPostedAsync(Guid id)
+        [Route("log-message-when-posted")]
+        public async Task<IActionResult> LogMessageWhenPostedAsync(Guid[] ids)
         {
-            var result = await _appService.LogMessageWhenPostedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LogMessageWhenPostedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/post-lines-and-close-asset")]
-        public async Task<IActionResult> PostLinesAndCloseAssetAsync(Guid id)
+        [Route("post-lines-and-close-asset")]
+        public async Task<IActionResult> PostLinesAndCloseAssetAsync(Guid[] ids)
         {
-            var result = await _appService.PostLinesAndCloseAssetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PostLinesAndCloseAssetAsync(ids);
             return Ok(result);
         }
     }

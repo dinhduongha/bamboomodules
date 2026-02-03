@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrLeaveAllocationAppService : IGenericApplicationService<HrLeaveAllocation>
     {
-        Task<HrLeaveAllocation> ActivityUpdateAsync(Guid id);
-        Task<HrLeaveAllocation> AddFollowerAsync(Guid id, HrLeaveAllocationAddFollowerRequestDto input);
-        Task<HrLeaveAllocation> ApproveAsync(Guid id);
-        Task<HrLeaveAllocation> MessageSubscribeAsync(Guid id, HrLeaveAllocationMessageSubscribeRequestDto input);
-        Task<HrLeaveAllocation> RefuseAsync(Guid id);
+        Task<HrLeaveAllocation> ActivityUpdateAsync(Guid[] ids);
+        Task<HrLeaveAllocation> AddFollowerAsync(HrLeaveAllocationAddFollowerRequestDto input);
+        Task<HrLeaveAllocation> ApproveAsync(Guid[] ids);
+        Task<HrLeaveAllocation> MessageSubscribeAsync(HrLeaveAllocationMessageSubscribeRequestDto input);
+        Task<HrLeaveAllocation> RefuseAsync(Guid[] ids);
     }
 }

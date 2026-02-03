@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public partial class ProjectTaskAppService : GenericApplicationService<ProjectTask>, IProjectTaskAppService
+    public partial class ProjectTaskAppService : GenericAppService<ProjectTask>, IProjectTaskAppService
     {
         private readonly IHtmlFieldHistoryMixinAppService _htmlFieldHistoryMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -37,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             _ratingMixinAppService = ratingMixinAppService;
         }
 
-        public async Task<ProjectTask> ArchiveAsync(Guid id)
+        public async Task<ProjectTask> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -47,7 +47,9 @@ namespace Bamboo.Core.Application.Services
             //     child_tasks.action_archive()
             // return super().action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> CheckNoCyclicDependenciesInternalAsync()
@@ -873,6 +875,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> ConvertHoursToDaysInternalAsync(object time)
         {
             /*
@@ -885,7 +888,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> ConvertToSubtaskAsync(Guid id)
+        public async Task<ProjectTask> ConvertToSubtaskAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -909,10 +912,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ConvertToTaskAsync(Guid id)
+        public async Task<ProjectTask> ConvertToTaskAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project_todo, FILE: project_task.py) ---
@@ -926,10 +931,12 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_window',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ConvertToTemplateAsync(Guid id)
+        public async Task<ProjectTask> ConvertToTemplateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -967,10 +974,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> CopyDataAsync(Guid id, ProjectTaskCopyDataRequestDto input)
+        public async Task<ProjectTask> CopyDataAsync(ProjectTaskCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1027,10 +1036,12 @@ namespace Bamboo.Core.Application.Services
             //             del vals[field]
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<ProjectTask> CreateAsync(ProjectTask entity, List<string> fields)
+        public override async Task<ProjectTask> CreateAsync(CreateRequestDto<ProjectTask> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1176,10 +1187,10 @@ namespace Bamboo.Core.Application.Services
             //     tasks._ensure_sale_order_linked(list(sol_ids))
             // return tasks
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<ProjectTask> CreateFromTemplateAsync(Guid id, ProjectTaskCreateFromTemplateRequestDto input)
+        public async Task<ProjectTask> CreateFromTemplateAsync(ProjectTaskCreateFromTemplateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1196,7 +1207,9 @@ namespace Bamboo.Core.Application.Services
             //           } | values
             // return self.with_context(copy_from_template=True).copy(default=default).id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> CreateTaskMappingInternalAsync(object copied_tasks)
@@ -1251,6 +1264,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> DefaultCompanyIdInternalAsync()
         {
             /*
@@ -1263,7 +1277,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<ProjectTask> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<ProjectTask> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1320,9 +1335,10 @@ namespace Bamboo.Core.Application.Services
             //         default["sale_line_id"] = sol.id
             // return default
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> DefaultUserIdsInternalAsync()
         {
             /*
@@ -1333,7 +1349,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> DependentTasksAsync(Guid id)
+        public async Task<ProjectTask> DependentTasksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1348,7 +1364,9 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> DomainSaleLineIdInternalAsync()
@@ -1549,6 +1567,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> GetAllowedAccessParamsInternalAsync()
         {
             /*
@@ -1608,6 +1627,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> GetDefaultPersonalStageCreateValsInternalAsync(Guid user_id)
         {
             /*
@@ -1640,7 +1660,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> GetEmptyListHelpAsync(Guid id, ProjectTaskGetEmptyListHelpRequestDto input)
+        [ApiModel]
+        public async Task<ProjectTask> GetEmptyListHelpAsync(ProjectTaskGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1658,7 +1679,9 @@ namespace Bamboo.Core.Application.Services
             // )
             // return super().get_empty_list_help(help_message)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> GetGroupPatternInternalAsync()
@@ -1708,7 +1731,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<ProjectTask> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1718,7 +1742,9 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/project/static/xls/tasks_import_template.xlsx',
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> GetLastSolOfCustomerDomainInternalAsync()
@@ -1746,7 +1772,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> GetMentionSuggestionsAsync(Guid id, ProjectTaskGetMentionSuggestionsRequestDto input)
+        public async Task<ProjectTask> GetMentionSuggestionsAsync(ProjectTaskGetMentionSuggestionsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1776,7 +1802,9 @@ namespace Bamboo.Core.Application.Services
             //     .get_result()
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> GetPortalTotalHoursDictInternalAsync()
@@ -1814,6 +1842,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> GetRecurrenceFieldsInternalAsync()
         {
             /*
@@ -1929,6 +1958,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> GetTemplateFieldBlacklistInternalAsync()
         {
             /*
@@ -1944,6 +1974,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> GetThreadWithAccessInternalAsync(Guid thread_id)
         {
             /*
@@ -1998,7 +2029,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> GetTodoViewsIdAsync(Guid id)
+        [ApiModel]
+        public async Task<ProjectTask> GetTodoViewsIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project_todo, FILE: project_task.py) ---
@@ -2017,10 +2049,13 @@ namespace Bamboo.Core.Application.Services
             //     (self.env['ir.model.data']._xmlid_to_res_id("project_todo.project_task_view_todo_activity"), "activity"),
             // ]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> GetUnusualDaysAsync(Guid id, ProjectTaskGetUnusualDaysRequestDto input)
+        [ApiModel]
+        public async Task<ProjectTask> GetUnusualDaysAsync(ProjectTaskGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2031,7 +2066,9 @@ namespace Bamboo.Core.Application.Services
             //     datetime.combine(fields.Date.from_string(date_to), time.max).replace(tzinfo=UTC)
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> GetVersionedFieldsInternalAsync()
@@ -2044,6 +2081,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> GetViewCacheKeyInternalAsync(Guid view_id, object view_type)
         {
             /*
@@ -2057,6 +2095,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> GroupExpandSalesOrderInternalAsync(object sales_orders, object domain)
         {
             /*
@@ -2177,14 +2216,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> IsBlockedByDependencesAsync(Guid id)
+        public async Task<ProjectTask> IsBlockedByDependencesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def is_blocked_by_dependences(self):
             // return any(blocking_task.state not in CLOSED_STATES for blocking_task in self.depend_on_ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> IsRecurrenceValidInternalAsync()
@@ -2263,7 +2304,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> MessageNewAsync(Guid id, ProjectTaskMessageNewRequestDto input)
+        [ApiModel]
+        public async Task<ProjectTask> MessageNewAsync(ProjectTaskMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2303,12 +2345,14 @@ namespace Bamboo.Core.Application.Services
             //     task.message_subscribe(partners.ids)
             // return task
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> MessagePostAfterHookInternalAsync(object message, object msg_vals)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def _message_post_after_hook(self, message, msg_vals):
             // if message.attachment_ids and not self.displayed_image_id:
@@ -2341,11 +2385,11 @@ namespace Bamboo.Core.Application.Services
             //     self.description = html_sanitize(cleaned_html)
             // 
             // return super()._message_post_after_hook(message, msg_vals)
-            #endif
+#endif
             return default;
         }
 
-        public async Task<ProjectTask> MessageSubscribeAsync(Guid id, ProjectTaskMessageSubscribeRequestDto input)
+        public async Task<ProjectTask> MessageSubscribeAsync(ProjectTaskMessageSubscribeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2360,10 +2404,12 @@ namespace Bamboo.Core.Application.Services
             //         super().message_subscribe(project_follower.partner_id.ids, task_subtypes)
             // return super().message_subscribe(partner_ids, subtype_ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> MessageUpdateAsync(Guid id, ProjectTaskMessageUpdateRequestDto input)
+        public async Task<ProjectTask> MessageUpdateAsync(ProjectTaskMessageUpdateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2373,7 +2419,9 @@ namespace Bamboo.Core.Application.Services
             //     task.message_subscribe(partners.ids)
             // return super().message_update(msg_dict, update_vals=update_vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> NotifyByEmailGetHeadersInternalAsync(object headers)
@@ -2479,7 +2527,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> OPENSTATESAsync(Guid id)
+        public async Task<ProjectTask> OPENSTATESAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2487,7 +2535,9 @@ namespace Bamboo.Core.Application.Services
             // """ Return a list of the technical names complementing the CLOSED_STATES, a.k.a the open states """
             // return list(set(self._fields['state'].get_values(self.env)) - set(CLOSED_STATES))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> OnchangePartnerIdInternalAsync()
@@ -2523,7 +2573,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> OpenParentTaskAsync(Guid id)
+        public async Task<ProjectTask> OpenParentTaskAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2537,10 +2587,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': self.env.context
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> OpenRatingsAsync(Guid id)
+        public async Task<ProjectTask> OpenRatingsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2555,10 +2607,12 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> OpenTaskAsync(Guid id)
+        public async Task<ProjectTask> OpenTaskAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2571,10 +2625,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': self.env.context
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> PlanTaskInCalendarAsync(Guid id, ProjectTaskPlanTaskInCalendarRequestDto input)
+        public async Task<ProjectTask> PlanTaskInCalendarAsync(ProjectTaskPlanTaskInCalendarRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2582,7 +2638,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.write(vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> PopulateMissingPersonalStagesInternalAsync()
@@ -2610,6 +2668,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> PortalAccessibleFieldsInternalAsync()
         {
             /*
@@ -2650,7 +2709,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> ProjectSharingOpenBlockingAsync(Guid id)
+        public async Task<ProjectTask> ProjectSharingOpenBlockingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2664,10 +2723,12 @@ namespace Bamboo.Core.Application.Services
             //     action['res_id'] = blockings.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ProjectSharingOpenSubtasksAsync(Guid id)
+        public async Task<ProjectTask> ProjectSharingOpenSubtasksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2687,10 +2748,12 @@ namespace Bamboo.Core.Application.Services
             //     'url': f'/my/projects/{self.project_id.id}/task/{self.id}/subtasks' if len(subtasks) > 1 else subtasks.get_portal_url(query_string='project_sharing=1'),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ProjectSharingOpenTaskAsync(Guid id)
+        public async Task<ProjectTask> ProjectSharingOpenTaskAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2699,10 +2762,12 @@ namespace Bamboo.Core.Application.Services
             // action['views'] = [[self.env.ref('project.project_sharing_project_task_view_form').id, 'form']]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ProjectSharingRecurringTasksAsync(Guid id)
+        public async Task<ProjectTask> ProjectSharingRecurringTasksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2727,10 +2792,12 @@ namespace Bamboo.Core.Application.Services
             //     'url':  f'/my/projects/{self.project_id.id}/task/{self.id}/recurrent_tasks',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ProjectSharingToggleIsFollowerAsync(Guid id)
+        public async Task<ProjectTask> ProjectSharingToggleIsFollowerAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2744,10 +2811,12 @@ namespace Bamboo.Core.Application.Services
             //     self.sudo().message_subscribe(self.env.user.partner_id.ids)
             // return not is_follower
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ProjectSharingViewParentTaskAsync(Guid id)
+        public async Task<ProjectTask> ProjectSharingViewParentTaskAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2774,10 +2843,12 @@ namespace Bamboo.Core.Application.Services
             // action['search_view_id'] = self.env.ref("project.project_sharing_project_task_view_search").id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ProjectSharingViewSoAsync(Guid id)
+        public async Task<ProjectTask> ProjectSharingViewSoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_task.py) ---
@@ -2791,10 +2862,12 @@ namespace Bamboo.Core.Application.Services
             //     "url": self.sale_order_id.access_url,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> RatingApplyAsync(Guid id, ProjectTaskRatingApplyRequestDto input)
+        public async Task<ProjectTask> RatingApplyAsync(ProjectTaskRatingApplyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2808,7 +2881,9 @@ namespace Bamboo.Core.Application.Services
             //     self.write({'state': state})
             // return rating
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> RatingApplyGetDefaultSubtypeIdInternalAsync()
@@ -2860,6 +2935,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<List<object>> ReadGroupInternalAsync(object domain, object groupby, object aggregates, object having, object offset, object limit, object order)
         {
             /*
@@ -2879,6 +2955,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> ReadGroupPersonalStageTypeIdsInternalAsync(object stages, object domain)
         {
             /*
@@ -2889,6 +2966,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> ReadGroupStageIdsInternalAsync(object stages, object domain)
         {
             /*
@@ -2905,7 +2983,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> RecurringTasksAsync(Guid id)
+        public async Task<ProjectTask> RecurringTasksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2919,10 +2997,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('recurrence_id', 'in', self.recurrence_id.ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> RedirectToProjectTaskFormAsync(Guid id)
+        public async Task<ProjectTask> RedirectToProjectTaskFormAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2934,7 +3014,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> ResolveCopiedDependenciesInternalAsync(object copied_tasks)
@@ -3102,6 +3184,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> SearchPersonalStageIdInternalAsync(object @operator, object @value)
         {
             /*
@@ -3158,6 +3241,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> SearchRemainingHoursSoInternalAsync(object @operator, object @value)
         {
             /*
@@ -3168,6 +3252,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> SearchTaskToInvoiceInternalAsync(object @operator, object @value)
         {
             /*
@@ -3260,7 +3345,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> StageFindAsync(Guid id, ProjectTaskStageFindRequestDto input)
+        public async Task<ProjectTask> StageFindAsync(ProjectTaskStageFindRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -3285,10 +3370,12 @@ namespace Bamboo.Core.Application.Services
             // # perform search, return the first found
             // return self.env['project.task.type'].search(search_domain, order=order, limit=1).id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> TASKPORTALREADABLEFIELDSAsync(Guid id)
+        public async Task<ProjectTask> TASKPORTALREADABLEFIELDSAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_task.py) ---
@@ -3307,19 +3394,24 @@ namespace Bamboo.Core.Application.Services
             //     'remaining_hours_so',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> TASKPORTALWRITABLEFIELDSAsync(Guid id)
+        public async Task<ProjectTask> TASKPORTALWRITABLEFIELDSAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def TASK_PORTAL_WRITABLE_FIELDS(self):
             // return PROJECT_TASK_WRITABLE_FIELDS
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectTask> TaskMessageAutoSubscribeNotifyInternalAsync(object users_per_task)
         {
             /*
@@ -3398,7 +3490,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> UndoConvertToTemplateAsync(Guid id)
+        public async Task<ProjectTask> UndoConvertToTemplateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -3419,7 +3511,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> UnlinkExceptContainsEntriesInternalAsync()
@@ -3462,7 +3556,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> UnlinkRecurrenceAsync(Guid id)
+        public async Task<ProjectTask> UnlinkRecurrenceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -3470,7 +3564,9 @@ namespace Bamboo.Core.Application.Services
             // self.recurrence_id.task_ids.recurring_task = False
             // self.recurrence_id.unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTask> UnsubscribePortalUsersInternalAsync()
@@ -3493,7 +3589,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> UpdateDateEndAsync(Guid id, ProjectTaskUpdateDateEndRequestDto input)
+        public async Task<ProjectTask> UpdateDateEndAsync(ProjectTaskUpdateDateEndRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -3503,10 +3599,12 @@ namespace Bamboo.Core.Application.Services
             //     return {'date_end': fields.Datetime.now()}
             // return {'date_end': False}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ViewSoAsync(Guid id)
+        public async Task<ProjectTask> ViewSoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_task.py) ---
@@ -3526,10 +3624,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return action_window
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectTask> ViewSubtaskTimesheetAsync(Guid id)
+        public async Task<ProjectTask> ViewSubtaskTimesheetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_task.py) ---
@@ -3571,10 +3671,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ProjectTask entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ProjectTask> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -3761,7 +3863,7 @@ namespace Bamboo.Core.Application.Services
             //     self._ensure_sale_order_linked([sol_id])
             // return task
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

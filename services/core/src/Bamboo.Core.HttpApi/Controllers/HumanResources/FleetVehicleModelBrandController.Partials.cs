@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-brand-model")]
-        public async Task<IActionResult> ActionBrandModelAsync(Guid id)
+        [Route("action-brand-model")]
+        public async Task<IActionResult> ActionBrandModelAsync(Guid[] ids)
         {
-            var result = await _appService.BrandModelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BrandModelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-brand-form")]
-        public async Task<IActionResult> ActionOpenBrandFormAsync(Guid id)
+        [Route("action-open-brand-form")]
+        public async Task<IActionResult> ActionOpenBrandFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenBrandFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenBrandFormAsync(ids);
             return Ok(result);
         }
     }

@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBlogPostAppService : IGenericApplicationService<BlogPost>
     {
-        Task<BlogPost> CopyDataAsync(Guid id, BlogPostCopyDataRequestDto input);
+        Task<BlogPost> CopyDataAsync(BlogPostCopyDataRequestDto input);
     }
 }

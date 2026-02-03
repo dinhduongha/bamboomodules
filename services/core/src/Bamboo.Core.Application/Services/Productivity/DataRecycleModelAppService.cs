@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("DataRecycle", Category = "Productivity", Depends = new[] { "mail" })]
-    public partial class DataRecycleModelAppService : GenericApplicationService<DataRecycleModel>, IDataRecycleModelAppService
+    public partial class DataRecycleModelAppService : GenericAppService<DataRecycleModel>, IDataRecycleModelAppService
     {
 
         public DataRecycleModelAppService(IRepository<DataRecycleModel, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -88,6 +88,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DataRecycleModel> NotifyRecordsToRecycleInternalAsync()
         {
             /*
@@ -112,7 +113,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DataRecycleModel> OpenRecordsAsync(Guid id)
+        public async Task<DataRecycleModel> OpenRecordsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: data_recycle, FILE: data_recycle_model.py) ---
@@ -122,10 +123,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(ast.literal_eval(action.get('context')), searchpanel_default_recycle_model_id=self.id)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DataRecycleModel> RecycleRecordsAsync(Guid id)
+        public async Task<DataRecycleModel> RecycleRecordsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: data_recycle, FILE: data_recycle_model.py) ---
@@ -135,7 +138,9 @@ namespace Bamboo.Core.Application.Services
             //     return self.open_records()
             // return
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DataRecycleModel> RecycleRecordsInternalAsync(object batch_commits)

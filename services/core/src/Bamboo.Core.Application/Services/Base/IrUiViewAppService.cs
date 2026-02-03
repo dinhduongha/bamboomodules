@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrUiViewAppService : GenericApplicationService<IrUiView>, IIrUiViewAppService
+    public partial class IrUiViewAppService : GenericAppService<IrUiView>, IIrUiViewAppService
     {
         private readonly IWebsiteSeoMetadataAppService _websiteSeoMetadataAppService;
         public IrUiViewAppService(IRepository<IrUiView, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsiteSeoMetadataAppService websiteSeoMetadataAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -84,7 +84,7 @@ namespace Bamboo.Core.Application.Services
 
         protected async Task<IrUiView> AddValidationFlagInternalAsync(object combined_arch, object view, object arch)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
             // def _add_validation_flag(self, combined_arch, view=None, arch=None):
             // """ Add a validation flag on elements in ``combined_arch`` or ``arch``.
@@ -131,11 +131,12 @@ namespace Bamboo.Core.Application.Services
             //         #       <attribute name="__validate__">1</attribute>    <!-- add this -->
             //         #   </field>
             //         node.append(E.attribute('1', name='__validate__'))
-            #endif
+#endif
             return default;
         }
 
-        public async Task<IrUiView> ApplyInheritanceSpecsAsync(Guid id, IrUiViewApplyInheritanceSpecsRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> ApplyInheritanceSpecsAsync(IrUiViewApplyInheritanceSpecsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -165,9 +166,12 @@ namespace Bamboo.Core.Application.Services
             //     self._raise_view_error(str(e), specs_tree)
             // return source
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> AreArchsEqualInternalAsync(object arch1, object arch2)
         {
             /*
@@ -340,7 +344,7 @@ namespace Bamboo.Core.Application.Services
 
         protected async Task<IrUiView> CheckXmlInternalAsync()
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
             // def _check_xml(self):
             // # Sanity checks: the view should not break anything upon rendering!
@@ -450,7 +454,7 @@ namespace Bamboo.Core.Application.Services
             //             ))
             // 
             // return True
-            #endif
+#endif
             return default;
         }
 
@@ -803,9 +807,10 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> CopyCustomSnippetTranslationsInternalAsync(object record, object html_field)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
             // def _copy_custom_snippet_translations(self, record, html_field):
             // """ Given a ``record`` and its HTML ``field``, detect any
@@ -825,11 +830,11 @@ namespace Bamboo.Core.Application.Services
             //     custom_snippet_view = self.search([('name', '=', custom_snippet_name)], limit=1)
             //     if custom_snippet_view:
             //         self._copy_field_terms_translations(custom_snippet_view, 'arch_db', record, html_field)
-            #endif
+#endif
             return default;
         }
 
-        public async Task<IrUiView> CopyDataAsync(Guid id, IrUiViewCopyDataRequestDto input)
+        public async Task<IrUiView> CopyDataAsync(IrUiViewCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -842,9 +847,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['key'] = default.get('key', view.key + '_%s' % str(uuid.uuid4())[:6])
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> CopyFieldTermsTranslationsInternalAsync(object records_from, object name_field_from, object record_to, object name_field_to)
         {
             /*
@@ -964,7 +972,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<IrUiView> CreateAsync(IrUiView entity, List<string> fields)
+        public override async Task<IrUiView> CreateAsync(CreateRequestDto<IrUiView> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_ui_view.py) ---
@@ -1043,7 +1051,7 @@ namespace Bamboo.Core.Application.Services
             // result.with_context(ir_ui_view_partial_validation=True)._check_xml()
             // return result
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<IrUiView> CreateWebsiteSpecificPagesForViewInternalAsync(object new_view, object website)
@@ -1062,7 +1070,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> DefaultViewAsync(Guid id, IrUiViewDefaultViewRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> DefaultViewAsync(IrUiViewDefaultViewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -1077,10 +1086,13 @@ namespace Bamboo.Core.Application.Services
             // """
             // return self.search(self._get_default_view_domain(model, view_type), limit=1).id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> DeleteSnippetAsync(Guid id, IrUiViewDeleteSnippetRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> DeleteSnippetAsync(IrUiViewDeleteSnippetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -1091,10 +1103,12 @@ namespace Bamboo.Core.Application.Services
             // snippet_addition_view = self.search([('key', '=', custom_key)])
             // (snippet_addition_view | snippet_view).unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> DistributeBrandingAsync(Guid id, IrUiViewDistributeBrandingRequestDto input)
+        public async Task<IrUiView> DistributeBrandingAsync(IrUiViewDistributeBrandingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -1165,7 +1179,9 @@ namespace Bamboo.Core.Application.Services
             //                     child, distributed_branding,
             //                     parent_xpath=node_path, index_map=indexes)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> EditableNodeInternalAsync(object node, object name_manager)
@@ -1214,26 +1230,33 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> ExtractEmbeddedFieldsAsync(Guid id, IrUiViewExtractEmbeddedFieldsRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> ExtractEmbeddedFieldsAsync(IrUiViewExtractEmbeddedFieldsRequestDto input)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
             // def extract_embedded_fields(self, arch):
             // return arch.xpath('//*[@data-oe-model != "ir.ui.view"]')
-            #endif
-            var entity = await Repository.GetAsync(id); return entity;
+#endif
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> ExtractOeStructuresAsync(Guid id, IrUiViewExtractOeStructuresRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> ExtractOeStructuresAsync(IrUiViewExtractOeStructuresRequestDto input)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
             // def extract_oe_structures(self, arch):
             // return arch.xpath('//*[hasclass("oe_structure")][contains(@id, "oe_structure")]')
-            #endif
-            var entity = await Repository.GetAsync(id); return entity;
+#endif
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> FetchTemplateViewsInternalAsync(object ids_or_xmlids)
         {
             /*
@@ -1312,7 +1335,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> FilterDuplicateAsync(Guid id)
+        public async Task<IrUiView> FilterDuplicateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_ui_view.py) ---
@@ -1341,7 +1364,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self.browse().union(*most_specific_views)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> FilterLoadedViewsInternalAsync(List<Guid> check_view_ids)
@@ -1385,6 +1410,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> GetAllowedRootAttrsInternalAsync()
         {
             /*
@@ -1422,6 +1448,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> GetCachedTemplateInfoInternalAsync(object id_or_xmlid, object _view)
         {
             /*
@@ -1460,6 +1487,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> GetCachedTemplatePrefetchedKeysInternalAsync()
         {
             /*
@@ -1512,7 +1540,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> GetCombinedArchAsync(Guid id)
+        public async Task<IrUiView> GetCombinedArchAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -1520,7 +1548,9 @@ namespace Bamboo.Core.Application.Services
             // """ Return the arch of ``self`` (as a string) combined with its inherited views. """
             // return etree.tostring(self._get_combined_arch(), encoding='unicode')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> GetCombinedArchInternalAsync()
@@ -1593,7 +1623,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> GetDefaultLangCodeAsync(Guid id)
+        [ApiModel]
+        public async Task<IrUiView> GetDefaultLangCodeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -1608,9 +1639,12 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return super().get_default_lang_code()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> GetDefaultViewDomainInternalAsync(object model, object view_type)
         {
             /*
@@ -1621,6 +1655,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> GetFilterXmlidQueryInternalAsync()
         {
             /*
@@ -1659,6 +1694,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> GetInheritingViewsDomainInternalAsync()
         {
             /*
@@ -1770,7 +1806,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> GetRelatedViewsAsync(Guid id, IrUiViewGetRelatedViewsRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> GetRelatedViewsAsync(IrUiViewGetRelatedViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -1804,9 +1841,12 @@ namespace Bamboo.Core.Application.Services
             //     lang=current_website.default_lang_id.code,
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> GetSnippetAdditionViewKeyInternalAsync(object template_key, object key)
         {
             /*
@@ -1835,6 +1875,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<object> GetTemplateDomainInternalAsync(List<string> xmlids)
         {
             /*
@@ -1871,6 +1912,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<string> GetTemplateOrderInternalAsync()
         {
             /*
@@ -1884,6 +1926,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> GetTemplateViewInternalAsync(object id_or_xmlid, object raise_if_not_found)
         {
             /*
@@ -1912,7 +1955,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> GetViewHierarchyAsync(Guid id)
+        public async Task<IrUiView> GetViewHierarchyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_ui_view.py) ---
@@ -1928,10 +1971,12 @@ namespace Bamboo.Core.Application.Services
             //     'hierarchy': top_level_view._build_hierarchy_datastructure()
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> GetViewInfoAsync(Guid id)
+        public async Task<IrUiView> GetViewInfoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_ui_view.py) ---
@@ -1948,7 +1993,9 @@ namespace Bamboo.Core.Application.Services
             //     if type_ != 'qweb' and type_ in _view_info
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> GetViewInfoInternalAsync()
@@ -1998,7 +2045,7 @@ namespace Bamboo.Core.Application.Services
 
         protected async Task<IrUiView> GetX2manyMissingViewArchsInternalAsync(object field, object field_node, object node_info)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
             // def _get_x2many_missing_view_archs(self, field, field_node, node_info):
             // """
@@ -2025,7 +2072,7 @@ namespace Bamboo.Core.Application.Services
             // })
             // 
             // return [comodel._get_view(view_type=view_type) for view_type in missing_view_types]
-            #endif
+#endif
             return default;
         }
 
@@ -2073,7 +2120,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> InheritBrandingAsync(Guid id, IrUiViewInheritBrandingRequestDto input)
+        public async Task<IrUiView> InheritBrandingAsync(IrUiViewInheritBrandingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -2092,7 +2139,9 @@ namespace Bamboo.Core.Application.Services
             //         node.set('data-oe-field', 'arch')
             // return specs_tree
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> InverseArchBaseInternalAsync()
@@ -2145,7 +2194,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> IsNodeBrandedAsync(Guid id, IrUiViewIsNodeBrandedRequestDto input)
+        public async Task<IrUiView> IsNodeBrandedAsync(IrUiViewIsNodeBrandedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -2166,7 +2215,9 @@ namespace Bamboo.Core.Application.Services
             //     and node.target == 'apply-inheritance-specs-node-removal'
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> IsQwebBasedViewInternalAsync(object view_type)
@@ -2240,7 +2291,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> LocateNodeAsync(Guid id, IrUiViewLocateNodeRequestDto input)
+        public async Task<IrUiView> LocateNodeAsync(IrUiViewLocateNodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -2259,7 +2310,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // return locate_node(arch, spec)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> LogViewWarningInternalAsync(object message, object node)
@@ -2361,7 +2414,7 @@ namespace Bamboo.Core.Application.Services
 
         protected async Task<IrUiView> PostprocessAccessRightsInternalAsync(object tree)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
             // def _postprocess_access_rights(self, tree):
             // """
@@ -2429,11 +2482,11 @@ namespace Bamboo.Core.Application.Services
             //                         node.set(action, 'False')
             // 
             // return tree
-            #endif
+#endif
             return default;
         }
 
-        public async Task<IrUiView> PostprocessAndFieldsAsync(Guid id, IrUiViewPostprocessAndFieldsRequestDto input)
+        public async Task<IrUiView> PostprocessAndFieldsAsync(IrUiViewPostprocessAndFieldsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -2463,7 +2516,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return arch, models
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> PostprocessAttributesInternalAsync(object node, object name_manager, object node_info)
@@ -2484,7 +2539,7 @@ namespace Bamboo.Core.Application.Services
 
         protected async Task<IrUiView> PostprocessDebugInternalAsync(object tree)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
             // def _postprocess_debug(self, tree):
             // """ Apply debug mode by making nodes invisible. """
@@ -2495,13 +2550,13 @@ namespace Bamboo.Core.Application.Services
             //         node.attrib['invisible'] = '1'
             //         node.attrib['column_invisible'] = '1'
             // return tree
-            #endif
+#endif
             return default;
         }
 
         protected async Task<IrUiView> PostprocessDebugToCacheInternalAsync(object tree)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
             // def _postprocess_debug_to_cache(self, tree):
             // """ Transform attribute groups="base.group_no_one" into a specific
@@ -2529,7 +2584,7 @@ namespace Bamboo.Core.Application.Services
             //         node.attrib['groups'] = ','.join(
             //             group for group in groups if not group.endswith('base.group_no_one')
             //         )
-            #endif
+#endif
             return default;
         }
 
@@ -2911,7 +2966,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> RenameSnippetAsync(Guid id, IrUiViewRenameSnippetRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> RenameSnippetAsync(IrUiViewRenameSnippetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -2924,10 +2980,13 @@ namespace Bamboo.Core.Application.Services
             //     snippet_addition_view.name = name + ' Block'
             // snippet_view.name = name
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> RenderPublicAssetAsync(Guid id, IrUiViewRenderPublicAssetRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> RenderPublicAssetAsync(IrUiViewRenderPublicAssetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_ui_view.py) ---
@@ -2941,7 +3000,9 @@ namespace Bamboo.Core.Application.Services
             // self._get_template_view(template).sudo()._check_view_access()
             // return self.env['ir.qweb'].sudo()._render(template, values)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> RenderTemplateInternalAsync(object template, object values)
@@ -2964,7 +3025,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> ReplaceArchSectionAsync(Guid id, IrUiViewReplaceArchSectionRequestDto input)
+        public async Task<IrUiView> ReplaceArchSectionAsync(IrUiViewReplaceArchSectionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -2999,10 +3060,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return arch
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> ResetArchAsync(Guid id, IrUiViewResetArchRequestDto input)
+        public async Task<IrUiView> ResetArchAsync(IrUiViewResetArchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -3022,10 +3085,12 @@ namespace Bamboo.Core.Application.Services
             //         # Don't save current arch in previous since we reset, this arch is probably broken
             //         view.with_context(no_save_prev=True, lang=None).write(write_dict)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> SaveAsync(Guid id, IrUiViewSaveRequestDto input)
+        public async Task<IrUiView> SaveAsync(IrUiViewSaveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -3112,10 +3177,13 @@ namespace Bamboo.Core.Application.Services
             //         self = website_specific_view
             // super().save(value, xpath=xpath)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> SaveEmbeddedFieldAsync(Guid id, IrUiViewSaveEmbeddedFieldRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> SaveEmbeddedFieldAsync(IrUiViewSaveEmbeddedFieldRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -3146,12 +3214,14 @@ namespace Bamboo.Core.Application.Services
             //         value=el.text_content().strip(),
             //     ))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> SaveOeStructureAsync(Guid id, IrUiViewSaveOeStructureRequestDto input)
+        public async Task<IrUiView> SaveOeStructureAsync(IrUiViewSaveOeStructureRequestDto input)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
             // def save_oe_structure(self, el):
             // self.ensure_one()
@@ -3183,10 +3253,13 @@ namespace Bamboo.Core.Application.Services
             // self._copy_custom_snippet_translations(oe_structure_view, 'arch_db')
             // 
             // return True
-            #endif
-            var entity = await Repository.GetAsync(id); return entity;
+#endif
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> SaveOeStructureHookInternalAsync()
         {
             /*
@@ -3202,7 +3275,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> SaveSnippetAsync(Guid id, IrUiViewSaveSnippetRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> SaveSnippetAsync(IrUiViewSaveSnippetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -3283,7 +3357,9 @@ namespace Bamboo.Core.Application.Services
             // self.create(snippet_addition_view_values)
             // return name
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrUiView> SearchModelDataIdInternalAsync(object @operator, object @value)
@@ -3301,6 +3377,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> SetNoupdateInternalAsync()
         {
             /*
@@ -3333,6 +3410,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> SnippetSaveViewValuesHookInternalAsync()
         {
             /*
@@ -3350,7 +3428,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> ToEmptyOeStructureAsync(Guid id, IrUiViewToEmptyOeStructureRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> ToEmptyOeStructureAsync(IrUiViewToEmptyOeStructureRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -3359,10 +3438,13 @@ namespace Bamboo.Core.Application.Services
             // out.tail = el.tail
             // return out
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrUiView> ToFieldRefAsync(Guid id, IrUiViewToFieldRefRequestDto input)
+        [ApiModel]
+        public async Task<IrUiView> ToFieldRefAsync(IrUiViewToFieldRefRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: html_editor, FILE: ir_ui_view.py) ---
@@ -3376,7 +3458,9 @@ namespace Bamboo.Core.Application.Services
             // out.tail = el.tail
             // return out
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         public override async Task<object> UnlinkAsync(List<Guid> ids)
@@ -3432,7 +3516,7 @@ namespace Bamboo.Core.Application.Services
 
         protected async Task<IrUiView> ValidInheritanceInternalAsync(object arch)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
             // def _valid_inheritance(self, arch):
             // """ Check whether view inheritance is based on translated attribute. """
@@ -3455,7 +3539,7 @@ namespace Bamboo.Core.Application.Services
             //                 message = "View inheritance may not use attribute %r as a selector." % attr
             //                 self._raise_view_error(message, node)
             // return True
-            #endif
+#endif
             return default;
         }
 
@@ -3615,6 +3699,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> ValidateCustomViewsInternalAsync(object model)
         {
             /*
@@ -3754,6 +3839,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> ValidateModuleViewsInternalAsync(object module)
         {
             /*
@@ -4320,6 +4406,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> ViewGetInheritedChildrenInternalAsync(object view)
         {
             /*
@@ -4337,6 +4424,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrUiView> ViewsGetInternalAsync(Guid view_id, object get_children, object bundles, object root, object visited)
         {
             /*
@@ -4397,7 +4485,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrUiView entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<IrUiView> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_ui_view.py) ---
@@ -4523,7 +4611,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

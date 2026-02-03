@@ -10,34 +10,34 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductProductAppService : IGenericApplicationService<ProductProduct>
     {
-        Task<ProductProduct> ArchiveAsync(Guid id);
-        Task<ProductProduct> BomCostAsync(Guid id);
-        Task<ProductProduct> ButtonBomCostAsync(Guid id);
-        Task<ProductProduct> FilterHasRoutesAsync(Guid id);
-        Task<ProductProduct> GetComponentsAsync(Guid id);
-        Task<ProductProduct> GetContextualPriceAsync(Guid id);
-        Task<ProductProduct> GetEmptyListHelpAsync(Guid id, ProductProductGetEmptyListHelpRequestDto input);
-        Task<ProductProduct> GetProductMultilineDescriptionSaleAsync(Guid id);
-        Task<ProductProduct> GetTotalRoutesAsync(Guid id);
-        Task<ProductProduct> OpenDocumentsAsync(Guid id);
-        Task<ProductProduct> OpenLabelLayoutAsync(Guid id);
-        Task<ProductProduct> OpenProductLotAsync(Guid id);
-        Task<ProductProduct> OpenProductTemplateAsync(Guid id);
-        Task<ProductProduct> OpenQuantsAsync(Guid id);
-        Task<ProductProduct> OpenWebsiteUrlAsync(Guid id);
-        Task<ProductProduct> ProductForecastReportAsync(Guid id);
-        Task<ProductProduct> UnarchiveAsync(Guid id);
-        Task<ProductProduct> UsedInBomAsync(Guid id);
-        Task<ProductProduct> ViewBomAsync(Guid id);
-        Task<ProductProduct> ViewHeaderGetAsync(Guid id, ProductProductViewHeaderGetRequestDto input);
-        Task<ProductProduct> ViewMosAsync(Guid id);
-        Task<ProductProduct> ViewOrderpointsAsync(Guid id);
-        Task<ProductProduct> ViewPoAsync(Guid id);
-        Task<ProductProduct> ViewRelatedPutawayRulesAsync(Guid id);
-        Task<ProductProduct> ViewRoutesAsync(Guid id);
-        Task<ProductProduct> ViewSalesAsync(Guid id);
-        Task<ProductProduct> ViewStockMoveLinesAsync(Guid id);
-        Task<ProductProduct> ViewStorageCategoryCapacityAsync(Guid id);
-        Task<ProductProduct> WebsitePublishButtonAsync(Guid id);
+        Task<ProductProduct> ArchiveAsync(Guid[] ids);
+        Task<ProductProduct> BomCostAsync(Guid[] ids);
+        Task<ProductProduct> ButtonBomCostAsync(Guid[] ids);
+        Task<ProductProduct> FilterHasRoutesAsync(Guid[] ids);
+        Task<ProductProduct> GetComponentsAsync(Guid[] ids);
+        Task<ProductProduct> GetContextualPriceAsync(Guid[] ids);
+        Task<ProductProduct> GetEmptyListHelpAsync(ProductProductGetEmptyListHelpRequestDto input);
+        Task<ProductProduct> GetProductMultilineDescriptionSaleAsync(Guid[] ids);
+        Task<ProductProduct> GetTotalRoutesAsync(Guid[] ids);
+        Task<ProductProduct> OpenDocumentsAsync(Guid[] ids);
+        Task<ProductProduct> OpenLabelLayoutAsync(Guid[] ids);
+        Task<ProductProduct> OpenProductLotAsync(Guid[] ids);
+        Task<ProductProduct> OpenProductTemplateAsync(Guid[] ids);
+        Task<ProductProduct> OpenQuantsAsync(Guid[] ids);
+        Task<ProductProduct> OpenWebsiteUrlAsync(Guid[] ids);
+        Task<ProductProduct> ProductForecastReportAsync(Guid[] ids);
+        Task<ProductProduct> UnarchiveAsync(Guid[] ids);
+        Task<ProductProduct> UsedInBomAsync(Guid[] ids);
+        Task<ProductProduct> ViewBomAsync(Guid[] ids);
+        Task<ProductProduct> ViewHeaderGetAsync(ProductProductViewHeaderGetRequestDto input);
+        Task<ProductProduct> ViewMosAsync(Guid[] ids);
+        Task<ProductProduct> ViewOrderpointsAsync(Guid[] ids);
+        Task<ProductProduct> ViewPoAsync(Guid[] ids);
+        Task<ProductProduct> ViewRelatedPutawayRulesAsync(Guid[] ids);
+        Task<ProductProduct> ViewRoutesAsync(Guid[] ids);
+        Task<ProductProduct> ViewSalesAsync(Guid[] ids);
+        Task<ProductProduct> ViewStockMoveLinesAsync(Guid[] ids);
+        Task<ProductProduct> ViewStorageCategoryCapacityAsync(Guid[] ids);
+        Task<ProductProduct> WebsitePublishButtonAsync(Guid[] ids);
     }
 }

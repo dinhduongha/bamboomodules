@@ -34,13 +34,13 @@ public partial class DmsAIInsight : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? DemandForecastId { get; set; }
 
     [Column("insight_type")]
-    public string InsightType { get; set; } = null!;
+    public string? InsightType { get; set; } = null!;
 
     [Column("insight_text")]
-    public string InsightText { get; set; } = null!;
+    public string? InsightText { get; set; } = null!;
 
     [Column("confidence_score")]
-    public decimal ConfidenceScore { get; set; }
+    public decimal? ConfidenceScore { get; set; }
 
     [Column("generated_at")]
     public DateTimeOffset? GeneratedAt { get; set; }
@@ -56,4 +56,12 @@ public partial class DmsAIInsight : FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
 }

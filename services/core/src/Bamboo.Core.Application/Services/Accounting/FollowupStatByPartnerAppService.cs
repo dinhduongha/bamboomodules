@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountFollowup", Category = "Accounting", Depends = new[] { "account", "mail" })]
-    public partial class FollowupStatByPartnerAppService : GenericApplicationService<FollowupStatByPartner>, IFollowupStatByPartnerAppService
+    public partial class FollowupStatByPartnerAppService : GenericAppService<FollowupStatByPartner>, IFollowupStatByPartnerAppService
     {
 
         public FollowupStatByPartnerAppService(IRepository<FollowupStatByPartner, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -38,7 +38,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FollowupStatByPartner> InitAsync(Guid id)
+        [ApiModel]
+        public async Task<FollowupStatByPartner> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: followup_partner.py) ---
@@ -66,7 +67,9 @@ namespace Bamboo.Core.Application.Services
             //             l.partner_id, l.company_id
             //     )""")
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

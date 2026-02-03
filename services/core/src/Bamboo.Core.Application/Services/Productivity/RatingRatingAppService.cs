@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Rating", Category = "Productivity", Depends = new[] { "mail" })]
-    public partial class RatingRatingAppService : GenericApplicationService<RatingRating>, IRatingRatingAppService
+    public partial class RatingRatingAppService : GenericAppService<RatingRating>, IRatingRatingAppService
     {
 
         public RatingRatingAppService(IRepository<RatingRating, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -179,7 +179,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<RatingRating> CreateAsync(RatingRating entity, List<string> fields)
+        public override async Task<RatingRating> CreateAsync(CreateRequestDto<RatingRating> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: portal_rating, FILE: rating_rating.py) ---
@@ -199,9 +199,10 @@ namespace Bamboo.Core.Application.Services
             //         values['rated_on'] = fields.Datetime.now()
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
+        [ApiModel]
         protected async Task<RatingRating> DefaultAccessTokenInternalAsync()
         {
             /*
@@ -246,7 +247,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RatingRating> OpenRatedObjectAsync(Guid id)
+        public async Task<RatingRating> OpenRatedObjectAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: rating_rating.py) ---
@@ -274,10 +275,12 @@ namespace Bamboo.Core.Application.Services
             //     'views': [[False, 'form']]
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RatingRating> ResetAsync(Guid id)
+        public async Task<RatingRating> ResetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: rating, FILE: rating.py) ---
@@ -290,9 +293,12 @@ namespace Bamboo.Core.Application.Services
             //         'consumed': False,
             //     })
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<RatingRating> SelectionTargetModelInternalAsync()
         {
             /*
@@ -332,7 +338,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, RatingRating entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<RatingRating> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: portal_rating, FILE: rating_rating.py) ---
@@ -347,7 +353,7 @@ namespace Bamboo.Core.Application.Services
             //     vals['rated_on'] = fields.Datetime.now()
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

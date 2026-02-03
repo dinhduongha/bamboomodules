@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAnalyticPlanAppService : IGenericApplicationService<AccountAnalyticPlan>
     {
-        Task<AccountAnalyticPlan> GetRelevantPlansAsync(Guid id);
-        Task<AccountAnalyticPlan> ViewAnalyticalAccountsAsync(Guid id);
-        Task<AccountAnalyticPlan> ViewChildrenPlansAsync(Guid id);
+        Task<AccountAnalyticPlan> GetRelevantPlansAsync(Guid[] ids);
+        Task<AccountAnalyticPlan> ViewAnalyticalAccountsAsync(Guid[] ids);
+        Task<AccountAnalyticPlan> ViewChildrenPlansAsync(Guid[] ids);
     }
 }

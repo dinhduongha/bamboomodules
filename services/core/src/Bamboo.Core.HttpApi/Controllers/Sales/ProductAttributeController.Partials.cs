@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-product-template-attribute-lines")]
-        public async Task<IActionResult> ActionOpenProductTemplateAttributeLinesAsync(Guid id)
+        [Route("action-open-product-template-attribute-lines")]
+        public async Task<IActionResult> ActionOpenProductTemplateAttributeLinesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenProductTemplateAttributeLinesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenProductTemplateAttributeLinesAsync(ids);
             return Ok(result);
         }
     }

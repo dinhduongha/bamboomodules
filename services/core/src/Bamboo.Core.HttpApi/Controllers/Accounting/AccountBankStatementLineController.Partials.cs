@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-undo-reconciliation")]
-        public async Task<IActionResult> ActionUndoReconciliationAsync(Guid id)
+        [Route("action-undo-reconciliation")]
+        public async Task<IActionResult> ActionUndoReconciliationAsync(Guid[] ids)
         {
-            var result = await _appService.UndoReconciliationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UndoReconciliationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/formatted-read-group")]
-        public async Task<IActionResult> FormattedReadGroupAsync(Guid id, [FromBody] AccountBankStatementLineFormattedReadGroupRequestDto input)
+        [Route("formatted-read-group")]
+        public async Task<IActionResult> FormattedReadGroupAsync(AccountBankStatementLineFormattedReadGroupRequestDto input)
         {
-            var result = await _appService.FormattedReadGroupAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormattedReadGroupAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/new")]
-        public async Task<IActionResult> NewAsync(Guid id, [FromBody] AccountBankStatementLineNewRequestDto input)
+        [Route("new")]
+        public async Task<IActionResult> NewAsync(AccountBankStatementLineNewRequestDto input)
         {
-            var result = await _appService.NewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.NewAsync(input);
             return Ok(result);
         }
     }

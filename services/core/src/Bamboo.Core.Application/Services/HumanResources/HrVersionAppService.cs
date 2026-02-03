@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Hr", Category = "HumanResources", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
-    public partial class HrVersionAppService : GenericApplicationService<HrVersion>, IHrVersionAppService
+    public partial class HrVersionAppService : GenericAppService<HrVersion>, IHrVersionAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -55,7 +55,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrVersion> CheckContractFinishedAsync(Guid id)
+        public async Task<HrVersion> CheckContractFinishedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_version.py) ---
@@ -63,7 +63,9 @@ namespace Bamboo.Core.Application.Services
             // if self.contract_date_start and not self.contract_date_end:
             //     raise ValidationError(self.env._("Before creating a new contract, close the current one by setting an end date."))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrVersion> CheckContractsInternalAsync()
@@ -402,7 +404,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<HrVersion> CreateAsync(HrVersion entity, List<string> fields)
+        public override async Task<HrVersion> CreateAsync(CreateRequestDto<HrVersion> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_version.py) ---
@@ -453,9 +455,10 @@ namespace Bamboo.Core.Application.Services
             //                    "them. Please review these leaves and/or allocations before changing the contract."))
             // return created_versions
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
+        [ApiModel]
         protected async Task<HrVersion> CronGenerateMissingWorkEntriesInternalAsync()
         {
             /*
@@ -508,6 +511,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrVersion> DomainCurrentCountriesInternalAsync()
         {
             /*
@@ -521,7 +525,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrVersion> GenerateWorkEntriesAsync(Guid id, HrVersionGenerateWorkEntriesRequestDto input)
+        public async Task<HrVersion> GenerateWorkEntriesAsync(HrVersionGenerateWorkEntriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_version.py) ---
@@ -551,7 +555,9 @@ namespace Bamboo.Core.Application.Services
             //         date_start_tz, date_stop_tz, force=force)
             // return new_work_entries
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrVersion> GenerateWorkEntriesInternalAsync(object date_start, object date_stop, object force)
@@ -639,6 +645,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrVersion> GenerateWorkEntriesPostprocessAdaptToCalendarInternalAsync(object vals)
         {
             /*
@@ -655,6 +662,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrVersion> GenerateWorkEntriesPostprocessInternalAsync(object vals_list)
         {
             /*
@@ -889,7 +897,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrVersion> GetFormviewActionAsync(Guid id, HrVersionGetFormviewActionRequestDto input)
+        public async Task<HrVersion> GetFormviewActionAsync(HrVersionGetFormviewActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_version.py) ---
@@ -913,7 +921,9 @@ namespace Bamboo.Core.Application.Services
             //         res['context'] = dict(context, form_view_ref='hr.hr_contract_template_form_view')
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrVersion> GetHrResponsibleDomainInternalAsync()
@@ -1096,6 +1106,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrVersion> GetMaritalStatusSelectionInternalAsync()
         {
             /*
@@ -1275,7 +1286,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrVersion> GetValuesFromContractTemplateAsync(Guid id, HrVersionGetValuesFromContractTemplateRequestDto input)
+        public async Task<HrVersion> GetValuesFromContractTemplateAsync(HrVersionGetValuesFromContractTemplateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_version.py) ---
@@ -1291,7 +1302,9 @@ namespace Bamboo.Core.Application.Services
             //         if field in whitelist and not self.env['hr.version']._fields[field].related
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrVersion> GetVersionWorkEntriesValuesInternalAsync(object date_start, object date_stop)
@@ -1468,6 +1481,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrVersion> GetVersionsByEmployeeAndDateInternalAsync(object employee_dates)
         {
             /*
@@ -1501,6 +1515,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrVersion> GetWhitelistFieldsFromTemplateInternalAsync()
         {
             /*
@@ -1566,7 +1581,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrVersion> HasStaticWorkEntriesAsync(Guid id)
+        public async Task<HrVersion> HasStaticWorkEntriesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_version.py) ---
@@ -1576,7 +1591,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.work_entry_source == 'calendar'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrVersion> InverseJobTitleInternalAsync()
@@ -1672,7 +1689,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrVersion> OpenVersionAsync(Guid id)
+        public async Task<HrVersion> OpenVersionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_version.py) ---
@@ -1690,7 +1707,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrVersion> PopulateAllNewLeaveValsFromSplitLeaveInternalAsync(object all_new_leave_origin, object all_new_leave_vals, object overlapping_contracts, object leave, object leaves_state)
@@ -1838,7 +1857,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, HrVersion entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<HrVersion> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_version.py) ---
@@ -1955,7 +1974,7 @@ namespace Bamboo.Core.Application.Services
             //             version_sudo._recompute_work_entries(date_from, date_to)
             // return result
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

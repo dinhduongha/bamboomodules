@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseAutomationModule", Category = "Sales", Depends = new[] { "base", "digest", "resource", "mail", "sms" })]
-    public partial class BaseAutomationAppService : GenericApplicationService<BaseAutomation>, IBaseAutomationAppService
+    public partial class BaseAutomationAppService : GenericAppService<BaseAutomation>, IBaseAutomationAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -29,6 +29,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
+        [ApiModel]
         protected async Task<BaseAutomation> AddPostmortemInternalAsync(object e)
         {
             /*
@@ -358,6 +359,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseAutomation> CronProcessTimeBasedActionsInternalAsync()
         {
             /*
@@ -525,6 +527,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseAutomation> GetCalendarInternalAsync(object automation, object record)
         {
             /*
@@ -724,7 +727,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseAutomation> OpenScheduledActionAsync(Guid id)
+        public async Task<BaseAutomation> OpenScheduledActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
@@ -741,7 +744,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': cron.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BaseAutomation> PrepareLogginValuesInternalAsync()
@@ -1051,7 +1056,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseAutomation> RotateWebhookUuidAsync(Guid id)
+        public async Task<BaseAutomation> RotateWebhookUuidAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
@@ -1059,7 +1064,9 @@ namespace Bamboo.Core.Application.Services
             // for automation in self:
             //     automation.webhook_uuid = str(uuid4())
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BaseAutomation> SearchTimeBasedAutomationRecordsInternalAsync()
@@ -1213,7 +1220,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseAutomation> ViewWebhookLogsAsync(Guid id)
+        public async Task<BaseAutomation> ViewWebhookLogsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: base_automation.py) ---
@@ -1227,7 +1234,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('path', '=', "base_automation(%s)" % self.id)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

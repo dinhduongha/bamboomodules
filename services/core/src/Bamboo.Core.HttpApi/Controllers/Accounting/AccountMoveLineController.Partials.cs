@@ -11,186 +11,209 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-from-catalog")]
-        public async Task<IActionResult> ActionAddFromCatalogAsync(Guid id)
+        [Route("action-add-from-catalog")]
+        public async Task<IActionResult> ActionAddFromCatalogAsync(Guid[] ids)
         {
-            var result = await _appService.AddFromCatalogAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddFromCatalogAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-automatic-entry")]
-        public async Task<IActionResult> ActionAutomaticEntryAsync(Guid id, [FromBody] AccountMoveLineAutomaticEntryRequestDto input)
+        [Route("action-automatic-entry")]
+        public async Task<IActionResult> ActionAutomaticEntryAsync(AccountMoveLineAutomaticEntryRequestDto input)
         {
-            var result = await _appService.AutomaticEntryAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AutomaticEntryAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-business-doc")]
-        public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid id)
+        [Route("action-open-business-doc")]
+        public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid[] ids)
         {
-            var result = await _appService.OpenBusinessDocAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenBusinessDocAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-payment-items-register-payment")]
-        public async Task<IActionResult> ActionPaymentItemsRegisterPaymentAsync(Guid id)
+        [Route("action-payment-items-register-payment")]
+        public async Task<IActionResult> ActionPaymentItemsRegisterPaymentAsync(Guid[] ids)
         {
-            var result = await _appService.PaymentItemsRegisterPaymentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PaymentItemsRegisterPaymentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-register-payment")]
-        public async Task<IActionResult> ActionRegisterPaymentAsync(Guid id, [FromBody] AccountMoveLineRegisterPaymentRequestDto input)
+        [Route("action-register-payment")]
+        public async Task<IActionResult> ActionRegisterPaymentAsync(AccountMoveLineRegisterPaymentRequestDto input)
         {
-            var result = await _appService.RegisterPaymentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RegisterPaymentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unreconcile-match-entries")]
-        public async Task<IActionResult> ActionUnreconcileMatchEntriesAsync(Guid id)
+        [Route("action-unreconcile-match-entries")]
+        public async Task<IActionResult> ActionUnreconcileMatchEntriesAsync(Guid[] ids)
         {
-            var result = await _appService.UnreconcileMatchEntriesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnreconcileMatchEntriesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/asset-create")]
-        public async Task<IActionResult> AssetCreateAsync(Guid id)
+        [Route("asset-create")]
+        public async Task<IActionResult> AssetCreateAsync(Guid[] ids)
         {
-            var result = await _appService.AssetCreateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AssetCreateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountMoveLineCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(AccountMoveLineCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/flush-model")]
-        public async Task<IActionResult> FlushModelAsync(Guid id, [FromBody] AccountMoveLineFlushModelRequestDto input)
+        [Route("flush-model")]
+        public async Task<IActionResult> FlushModelAsync(AccountMoveLineFlushModelRequestDto input)
         {
-            var result = await _appService.FlushModelAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FlushModelAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/flush-recordset")]
-        public async Task<IActionResult> FlushRecordsetAsync(Guid id, [FromBody] AccountMoveLineFlushRecordsetRequestDto input)
+        [Route("flush-recordset")]
+        public async Task<IActionResult> FlushRecordsetAsync(AccountMoveLineFlushRecordsetRequestDto input)
         {
-            var result = await _appService.FlushRecordsetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FlushRecordsetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-column-to-exclude-for-colspan-calculation")]
-        public async Task<IActionResult> GetColumnToExcludeForColspanCalculationAsync(Guid id, [FromBody] AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto input)
+        [Route("get-column-to-exclude-for-colspan-calculation")]
+        public async Task<IActionResult> GetColumnToExcludeForColspanCalculationAsync(AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto input)
         {
-            var result = await _appService.GetColumnToExcludeForColspanCalculationAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetColumnToExcludeForColspanCalculationAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-invoice-line-account")]
-        public async Task<IActionResult> GetInvoiceLineAccountAsync(Guid id, [FromBody] AccountMoveLineGetInvoiceLineAccountRequestDto input)
+        [Route("get-invoice-line-account")]
+        public async Task<IActionResult> GetInvoiceLineAccountAsync(AccountMoveLineGetInvoiceLineAccountRequestDto input)
         {
-            var result = await _appService.GetInvoiceLineAccountAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetInvoiceLineAccountAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-parent-section-line")]
-        public async Task<IActionResult> GetParentSectionLineAsync(Guid id)
+        [Route("get-parent-section-line")]
+        public async Task<IActionResult> GetParentSectionLineAsync(Guid[] ids)
         {
-            var result = await _appService.GetParentSectionLineAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetParentSectionLineAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-section-subtotal")]
-        public async Task<IActionResult> GetSectionSubtotalAsync(Guid id)
+        [Route("get-section-subtotal")]
+        public async Task<IActionResult> GetSectionSubtotalAsync(Guid[] ids)
         {
-            var result = await _appService.GetSectionSubtotalAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetSectionSubtotalAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-views")]
-        public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] AccountMoveLineGetViewsRequestDto input)
+        [Route("get-views")]
+        public async Task<IActionResult> GetViewsAsync(AccountMoveLineGetViewsRequestDto input)
         {
-            var result = await _appService.GetViewsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetViewsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/invalidate-model")]
-        public async Task<IActionResult> InvalidateModelAsync(Guid id, [FromBody] AccountMoveLineInvalidateModelRequestDto input)
+        [Route("invalidate-model")]
+        public async Task<IActionResult> InvalidateModelAsync(AccountMoveLineInvalidateModelRequestDto input)
         {
-            var result = await _appService.InvalidateModelAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.InvalidateModelAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/invalidate-recordset")]
-        public async Task<IActionResult> InvalidateRecordsetAsync(Guid id, [FromBody] AccountMoveLineInvalidateRecordsetRequestDto input)
+        [Route("invalidate-recordset")]
+        public async Task<IActionResult> InvalidateRecordsetAsync(AccountMoveLineInvalidateRecordsetRequestDto input)
         {
-            var result = await _appService.InvalidateRecordsetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.InvalidateRecordsetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-asset-category-id")]
-        public async Task<IActionResult> OnchangeAssetCategoryIdAsync(Guid id)
+        [Route("onchange-asset-category-id")]
+        public async Task<IActionResult> OnchangeAssetCategoryIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeAssetCategoryIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeAssetCategoryIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-reconcile-view")]
-        public async Task<IActionResult> OpenReconcileViewAsync(Guid id)
+        [Route("open-reconcile-view")]
+        public async Task<IActionResult> OpenReconcileViewAsync(Guid[] ids)
         {
-            var result = await _appService.OpenReconcileViewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenReconcileViewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/reconcile")]
-        public async Task<IActionResult> ReconcileAsync(Guid id)
+        [Route("reconcile")]
+        public async Task<IActionResult> ReconcileAsync(Guid[] ids)
         {
-            var result = await _appService.ReconcileAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReconcileAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/remove-move-reconcile")]
-        public async Task<IActionResult> RemoveMoveReconcileAsync(Guid id)
+        [Route("remove-move-reconcile")]
+        public async Task<IActionResult> RemoveMoveReconcileAsync(Guid[] ids)
         {
-            var result = await _appService.RemoveMoveReconcileAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RemoveMoveReconcileAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-fetch")]
-        public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] AccountMoveLineSearchFetchRequestDto input)
+        [Route("search-fetch")]
+        public async Task<IActionResult> SearchFetchAsync(AccountMoveLineSearchFetchRequestDto input)
         {
-            var result = await _appService.SearchFetchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchFetchAsync(input);
             return Ok(result);
         }
     }

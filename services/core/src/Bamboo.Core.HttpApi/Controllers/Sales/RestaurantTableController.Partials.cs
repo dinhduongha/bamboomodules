@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/are-orders-still-in-draft")]
-        public async Task<IActionResult> AreOrdersStillInDraftAsync(Guid id)
+        [Route("are-orders-still-in-draft")]
+        public async Task<IActionResult> AreOrdersStillInDraftAsync(Guid[] ids)
         {
-            var result = await _appService.AreOrdersStillInDraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AreOrdersStillInDraftAsync(ids);
             return Ok(result);
         }
     }

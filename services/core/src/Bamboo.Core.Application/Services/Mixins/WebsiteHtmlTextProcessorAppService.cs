@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> CalculateTranslationRatioInternalAsync<TEntity>(IEnumerable<TEntity> entities, object generated_content, object translated_content) where TEntity : IEntity<Guid>, IWebsiteHtmlTextProcessorable
         {
             /*
@@ -209,6 +210,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRenderedSnippetsContentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object snippets) where TEntity : IEntity<Guid>, IWebsiteHtmlTextProcessorable
         {
             /*
@@ -246,6 +248,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSnippetContentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object snippet_key) where TEntity : IEntity<Guid>, IWebsiteHtmlTextProcessorable
         {
             /*
@@ -367,6 +370,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> UpdateSnippetContentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object generated_content, object snippet_key, object snippet_html) where TEntity : IEntity<Guid>, IWebsiteHtmlTextProcessorable
         {
             /*
@@ -395,6 +399,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WithProcessingContextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object IrQweb, object cta_data, object text_generation_target_lang, object text_must_be_translated_for_openai) where TEntity : IEntity<Guid>, IWebsiteHtmlTextProcessorable
         {
             /*

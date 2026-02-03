@@ -10,12 +10,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IGamificationChallengeAppService : IGenericApplicationService<GamificationChallenge>
     {
-        Task<GamificationChallenge> AcceptChallengeAsync(Guid id);
-        Task<GamificationChallenge> CheckAsync(Guid id);
-        Task<GamificationChallenge> DiscardChallengeAsync(Guid id);
-        Task<GamificationChallenge> ReportProgressAsync(Guid id);
-        Task<GamificationChallenge> ReportProgressAsync(Guid id, GamificationChallengeReportProgressRequestDto input);
-        Task<GamificationChallenge> StartAsync(Guid id);
-        Task<GamificationChallenge> ViewUsersAsync(Guid id);
+        Task<GamificationChallenge> AcceptChallengeAsync(Guid[] ids);
+        Task<GamificationChallenge> CheckAsync(Guid[] ids);
+        Task<GamificationChallenge> DiscardChallengeAsync(Guid[] ids);
+        Task<GamificationChallenge> ReportProgressAsync(Guid[] ids);
+        Task<GamificationChallenge> ReportProgressAsync(GamificationChallengeReportProgressRequestDto input);
+        Task<GamificationChallenge> StartAsync(Guid[] ids);
+        Task<GamificationChallenge> ViewUsersAsync(Guid[] ids);
     }
 }

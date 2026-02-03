@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProjectMilestoneAppService : IGenericApplicationService<ProjectMilestone>
     {
-        Task<ProjectMilestone> ToggleIsReachedAsync(Guid id, ProjectMilestoneToggleIsReachedRequestDto input);
-        Task<ProjectMilestone> ViewSaleOrderAsync(Guid id);
-        Task<ProjectMilestone> ViewTasksAsync(Guid id);
+        Task<ProjectMilestone> ToggleIsReachedAsync(ProjectMilestoneToggleIsReachedRequestDto input);
+        Task<ProjectMilestone> ViewSaleOrderAsync(Guid[] ids);
+        Task<ProjectMilestone> ViewTasksAsync(Guid[] ids);
     }
 }

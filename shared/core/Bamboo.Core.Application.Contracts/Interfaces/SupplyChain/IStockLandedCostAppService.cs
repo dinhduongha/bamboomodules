@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockLandedCostAppService : IGenericApplicationService<StockLandedCost>
     {
-        Task<StockLandedCost> ButtonCancelAsync(Guid id);
-        Task<StockLandedCost> ButtonValidateAsync(Guid id);
-        Task<StockLandedCost> ComputeLandedCostAsync(Guid id);
-        Task<StockLandedCost> GetValuationLinesAsync(Guid id);
+        Task<StockLandedCost> ButtonCancelAsync(Guid[] ids);
+        Task<StockLandedCost> ButtonValidateAsync(Guid[] ids);
+        Task<StockLandedCost> ComputeLandedCostAsync(Guid[] ids);
+        Task<StockLandedCost> GetValuationLinesAsync(Guid[] ids);
     }
 }

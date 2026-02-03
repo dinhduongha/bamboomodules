@@ -31,7 +31,7 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.BotToken).HasColumnName("bot_token");
             entity.Property(e => e.WebhookUrl).HasColumnName("webhook_url");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.MessageTemplateJson).HasColumnName("message_template_json");
+            entity.Property(e => e.MessageTemplate);
 
             entity.Property(e => e.CreationTime)
                 .HasDefaultValueSql("now()")

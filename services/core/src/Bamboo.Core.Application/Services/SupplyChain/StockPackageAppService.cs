@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockPackageAppService : GenericApplicationService<StockPackage>, IStockPackageAppService
+    public partial class StockPackageAppService : GenericAppService<StockPackage>, IStockPackageAppService
     {
 
         public StockPackageAppService(IRepository<StockPackage, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<StockPackage> AddToPickingAsync(Guid id)
+        public async Task<StockPackage> AddToPickingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package.py) ---
@@ -36,7 +36,9 @@ namespace Bamboo.Core.Application.Services
             // if picking and self:
             //     picking.action_add_entire_packs(self.ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPackage> ApplyDestToPackageInternalAsync(List<Guid> processed_package_ids)
@@ -563,7 +565,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPackage> PutInPackAsync(Guid id)
+        public async Task<StockPackage> PutInPackAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package.py) ---
@@ -589,10 +591,12 @@ namespace Bamboo.Core.Application.Services
             // package.move_line_ids._apply_putaway_strategy()
             // return package._post_put_in_pack_hook()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPackage> RemovePackageAsync(Guid id)
+        public async Task<StockPackage> RemovePackageAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package.py) ---
@@ -634,7 +638,9 @@ namespace Bamboo.Core.Application.Services
             // self.env['stock.move.line'].browse(all_move_line_ids - move_line_ids_to_unlink)._apply_putaway_strategy()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPackage> SearchAllChildrenPackageIdsInternalAsync(object @operator, object @value)
@@ -755,7 +761,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPackage> UnpackAsync(Guid id)
+        public async Task<StockPackage> UnpackAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package.py) ---
@@ -770,10 +776,12 @@ namespace Bamboo.Core.Application.Services
             //     # 2 packages of 50, then reserve 100 => a quant of -50 is created at transfer validation.
             //     quants._quant_tasks()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPackage> ViewPickingAsync(Guid id)
+        public async Task<StockPackage> ViewPickingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package.py) ---
@@ -784,7 +792,9 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('id', 'in', pickings.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

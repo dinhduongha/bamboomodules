@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/make-key")]
-        public async Task<IActionResult> MakeKeyAsync(Guid id, [FromBody] AuthPasskeyKeyCreateMakeKeyRequestDto input)
+        [Route("make-key")]
+        public async Task<IActionResult> MakeKeyAsync(AuthPasskeyKeyCreateMakeKeyRequestDto input)
         {
-            var result = await _appService.MakeKeyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MakeKeyAsync(input);
             return Ok(result);
         }
     }

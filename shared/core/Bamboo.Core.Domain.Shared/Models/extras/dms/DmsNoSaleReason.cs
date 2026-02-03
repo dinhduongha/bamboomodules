@@ -24,11 +24,17 @@ public partial class DmsNoSaleReason : FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
+
     [Column("outlet_visit_id")]
     public Guid OutletVisitId { get; set; }
 
     [Column("reason")]
-    public string Reason { get; set; } = "out_of_stock";
+    public string? Reason { get; set; } = "out_of_stock";
 
     [Column("notes")]
     public string? Notes { get; set; }
@@ -48,4 +54,12 @@ public partial class DmsNoSaleReason : FullAuditedAggregateRoot<Guid>, IEntityDt
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("OutletVisitId")]
     public virtual DmsOutletVisit? OutletVisit { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
 }

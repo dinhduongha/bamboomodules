@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/update-notification")]
-        public async Task<IActionResult> UpdateNotificationAsync(Guid id, [FromBody] PublisherWarrantyContractUpdateNotificationRequestDto input)
+        [Route("update-notification")]
+        public async Task<IActionResult> UpdateNotificationAsync(PublisherWarrantyContractUpdateNotificationRequestDto input)
         {
-            var result = await _appService.UpdateNotificationAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpdateNotificationAsync(input);
             return Ok(result);
         }
     }

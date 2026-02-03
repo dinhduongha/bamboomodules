@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public partial class ProjectMilestoneAppService : GenericApplicationService<ProjectMilestone>, IProjectMilestoneAppService
+    public partial class ProjectMilestoneAppService : GenericAppService<ProjectMilestone>, IProjectMilestoneAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public ProjectMilestoneAppService(IRepository<ProjectMilestone, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -217,6 +217,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectMilestone> GetFieldsToExportInternalAsync()
         {
             /*
@@ -243,7 +244,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectMilestone> ToggleIsReachedAsync(Guid id, ProjectMilestoneToggleIsReachedRequestDto input)
+        public async Task<ProjectMilestone> ToggleIsReachedAsync(ProjectMilestoneToggleIsReachedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_milestone.py) ---
@@ -252,10 +253,12 @@ namespace Bamboo.Core.Application.Services
             // self.update({'is_reached': is_reached})
             // return self._get_data()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectMilestone> ViewSaleOrderAsync(Guid id)
+        public async Task<ProjectMilestone> ViewSaleOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: project_milestone.py) ---
@@ -269,10 +272,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProjectMilestone> ViewTasksAsync(Guid id)
+        public async Task<ProjectMilestone> ViewTasksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_milestone.py) ---
@@ -287,7 +292,9 @@ namespace Bamboo.Core.Application.Services
             //         action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

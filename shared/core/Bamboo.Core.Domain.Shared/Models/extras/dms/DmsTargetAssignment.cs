@@ -24,8 +24,11 @@ public partial class DmsTargetAssignment : FullAuditedAggregateRoot<Guid>, IEnti
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
     [Column("user_id")]
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     [Column("period")]
     public string Period { get; set; } = "month";

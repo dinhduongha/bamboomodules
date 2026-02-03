@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountPaymentTermAppService : GenericApplicationService<AccountPaymentTerm>, IAccountPaymentTermAppService
+    public partial class AccountPaymentTermAppService : GenericAppService<AccountPaymentTerm>, IAccountPaymentTermAppService
     {
 
         public AccountPaymentTermAppService(IRepository<AccountPaymentTerm, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -237,7 +237,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPaymentTerm> CopyDataAsync(Guid id, AccountPaymentTermCopyDataRequestDto input)
+        public async Task<AccountPaymentTerm> CopyDataAsync(AccountPaymentTermCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment_term.py) ---
@@ -246,7 +246,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=_("%s (copy)", line.name)) for line, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPaymentTerm> DefaultExampleDateInternalAsync()
@@ -269,6 +271,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountPaymentTerm> GetAmountByDateInternalAsync(object terms)
         {
             /*

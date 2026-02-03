@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockMoveLineAppService : IGenericApplicationService<StockMoveLine>
     {
-        Task<StockMoveLine> GetMoveLineQuantMatchAsync(Guid id, StockMoveLineGetMoveLineQuantMatchRequestDto input);
-        Task<StockMoveLine> OpenAddToWaveAsync(Guid id);
-        Task<StockMoveLine> OpenReferenceAsync(Guid id);
-        Task<StockMoveLine> PutInPackAsync(Guid id);
-        Task<StockMoveLine> RevertInventoryAsync(Guid id);
+        Task<StockMoveLine> GetMoveLineQuantMatchAsync(StockMoveLineGetMoveLineQuantMatchRequestDto input);
+        Task<StockMoveLine> OpenAddToWaveAsync(Guid[] ids);
+        Task<StockMoveLine> OpenReferenceAsync(Guid[] ids);
+        Task<StockMoveLine> PutInPackAsync(Guid[] ids);
+        Task<StockMoveLine> RevertInventoryAsync(Guid[] ids);
     }
 }

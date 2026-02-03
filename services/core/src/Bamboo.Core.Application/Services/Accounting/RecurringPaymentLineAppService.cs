@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmRecurringPayments", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class RecurringPaymentLineAppService : GenericApplicationService<RecurringPaymentLine>, IRecurringPaymentLineAppService
+    public partial class RecurringPaymentLineAppService : GenericAppService<RecurringPaymentLine>, IRecurringPaymentLineAppService
     {
 
         public RecurringPaymentLineAppService(IRepository<RecurringPaymentLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<RecurringPaymentLine> CreatePaymentAsync(Guid id)
+        public async Task<RecurringPaymentLine> CreatePaymentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---
@@ -47,7 +47,9 @@ namespace Bamboo.Core.Application.Services
             //         payment.action_post()
             //     self.write({'state': 'done', 'payment_id': payment.id})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

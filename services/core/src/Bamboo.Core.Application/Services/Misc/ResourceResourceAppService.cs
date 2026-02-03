@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Resource", Category = "Misc", Depends = new[] { "base", "web" })]
-    public partial class ResourceResourceAppService : GenericApplicationService<ResourceResource>, IResourceResourceAppService
+    public partial class ResourceResourceAppService : GenericAppService<ResourceResource>, IResourceResourceAppService
     {
 
         public ResourceResourceAppService(IRepository<ResourceResource, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -122,7 +122,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceResource> CopyDataAsync(Guid id, ResourceResourceCopyDataRequestDto input)
+        public async Task<ResourceResource> CopyDataAsync(ResourceResourceCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_resource.py) ---
@@ -130,7 +130,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", resource.name)) for resource, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResourceResource> DefaultColorInternalAsync()
@@ -204,14 +206,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceResource> GetAvatarCardDataAsync(Guid id, ResourceResourceGetAvatarCardDataRequestDto input)
+        public async Task<ResourceResource> GetAvatarCardDataAsync(ResourceResourceGetAvatarCardDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource_mail, FILE: resource_resource.py) ---
             // def get_avatar_card_data(self, fields):
             // return self.read(fields)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResourceResource> GetCalendarAtInternalAsync(object date_target, object tz)

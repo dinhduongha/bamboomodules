@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteForum", Category = "Website", Depends = new[] { "auth_signup", "website_mail", "website_profile" })]
-    public partial class ForumPostAppService : GenericApplicationService<ForumPost>, IForumPostAppService
+    public partial class ForumPostAppService : GenericAppService<ForumPost>, IForumPostAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsiteSearchableMixinAppService _websiteSearchableMixinAppService;
@@ -42,7 +42,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> CloseAsync(Guid id, ForumPostCloseRequestDto input)
+        public async Task<ForumPost> CloseAsync(ForumPostCloseRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -77,7 +77,9 @@ namespace Bamboo.Core.Application.Services
             // })
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ForumPost> ComputeChildCountInternalAsync()
@@ -253,7 +255,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> ConvertAnswerToCommentAsync(Guid id)
+        public async Task<ForumPost> ConvertAnswerToCommentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -288,10 +290,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return new_message
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ForumPost> ConvertCommentToAnswerAsync(Guid id, ForumPostConvertCommentToAnswerRequestDto input)
+        [ApiModel]
+        public async Task<ForumPost> ConvertCommentToAnswerAsync(ForumPostConvertCommentToAnswerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -338,7 +343,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return new_post
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ForumPost> DefaultWebsiteMetaInternalAsync()
@@ -522,7 +529,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> GoToWebsiteAsync(Guid id)
+        public async Task<ForumPost> GoToWebsiteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -532,7 +539,9 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // return self.env['website'].get_client_action(self.website_url)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ForumPost> MailGetOperationForMailMessageOperationInternalAsync(object message_operation)
@@ -549,7 +558,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> MarkAsOffensiveBatchAsync(Guid id, ForumPostMarkAsOffensiveBatchRequestDto input)
+        public async Task<ForumPost> MarkAsOffensiveBatchAsync(ForumPostMarkAsOffensiveBatchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -566,7 +575,9 @@ namespace Bamboo.Core.Application.Services
             // _logger.info('User %s marked as spams (in batch): %s' % (self.env.uid, spams))
             // return spams._mark_as_offensive(reason_id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ForumPost> MarkAsOffensiveInternalAsync(Guid reason_id)
@@ -593,7 +604,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> MessagePostAsync(Guid id)
+        public async Task<ForumPost> MessagePostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -618,7 +629,9 @@ namespace Bamboo.Core.Application.Services
             //         kwargs['force_record_name'] = self.parent_id.name
             // return super().message_post(message_type=message_type, **kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ForumPost> NotifyGetRecipientsGroupsInternalAsync(object message, object model_description, object msg_vals)
@@ -711,7 +724,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> ReopenAsync(Guid id)
+        public async Task<ForumPost> ReopenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -736,7 +749,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // self.sudo().write({'state': 'active'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ForumPost> SearchCanViewInternalAsync(object @operator, object @value)
@@ -770,6 +785,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ForumPost> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*
@@ -868,7 +884,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> UnlinkCommentAsync(Guid id, ForumPostUnlinkCommentRequestDto input)
+        public async Task<ForumPost> UnlinkCommentAsync(ForumPostUnlinkCommentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -894,7 +910,9 @@ namespace Bamboo.Core.Application.Services
             //     result.append(comment_sudo.unlink())
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ForumPost> UnlinkIfEnoughKarmaInternalAsync()
@@ -943,7 +961,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> ValidateAsync(Guid id)
+        public async Task<ForumPost> ValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -966,10 +984,12 @@ namespace Bamboo.Core.Application.Services
             //     post.sudo()._notify_state_update()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ForumPost> VoteAsync(Guid id, ForumPostVoteRequestDto input)
+        public async Task<ForumPost> VoteAsync(ForumPostVoteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -988,7 +1008,9 @@ namespace Bamboo.Core.Application.Services
             //     Vote.create({'post_id': self.id, 'vote': new_vote_value})
             // return {'vote_count': self.vote_count, 'user_vote': new_vote_value}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -11,130 +11,146 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-close-dialog")]
-        public async Task<IActionResult> ActionCloseDialogAsync(Guid id)
+        [Route("action-close-dialog")]
+        public async Task<IActionResult> ActionCloseDialogAsync(Guid[] ids)
         {
-            var result = await _appService.CloseDialogAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CloseDialogAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-calendar-event")]
-        public async Task<IActionResult> ActionCreateCalendarEventAsync(Guid id)
+        [Route("action-create-calendar-event")]
+        public async Task<IActionResult> ActionCreateCalendarEventAsync(Guid[] ids)
         {
-            var result = await _appService.CreateCalendarEventAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateCalendarEventAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-done")]
-        public async Task<IActionResult> ActionDoneAsync(Guid id)
+        [Route("action-done")]
+        public async Task<IActionResult> ActionDoneAsync(Guid[] ids)
         {
-            var result = await _appService.DoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-done-redirect-to-other")]
-        public async Task<IActionResult> ActionDoneRedirectToOtherAsync(Guid id)
+        [Route("action-done-redirect-to-other")]
+        public async Task<IActionResult> ActionDoneRedirectToOtherAsync(Guid[] ids)
         {
-            var result = await _appService.DoneRedirectToOtherAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoneRedirectToOtherAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-done-schedule-next")]
-        public async Task<IActionResult> ActionDoneScheduleNextAsync(Guid id)
+        [Route("action-done-schedule-next")]
+        public async Task<IActionResult> ActionDoneScheduleNextAsync(Guid[] ids)
         {
-            var result = await _appService.DoneScheduleNextAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoneScheduleNextAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-feedback")]
-        public async Task<IActionResult> ActionFeedbackAsync(Guid id, [FromBody] MailActivityFeedbackRequestDto input)
+        [Route("action-feedback")]
+        public async Task<IActionResult> ActionFeedbackAsync(MailActivityFeedbackRequestDto input)
         {
-            var result = await _appService.FeedbackAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FeedbackAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-feedback-schedule-next")]
-        public async Task<IActionResult> ActionFeedbackScheduleNextAsync(Guid id, [FromBody] MailActivityFeedbackScheduleNextRequestDto input)
+        [Route("action-feedback-schedule-next")]
+        public async Task<IActionResult> ActionFeedbackScheduleNextAsync(MailActivityFeedbackScheduleNextRequestDto input)
         {
-            var result = await _appService.FeedbackScheduleNextAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FeedbackScheduleNextAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-notify")]
-        public async Task<IActionResult> ActionNotifyAsync(Guid id)
+        [Route("action-notify")]
+        public async Task<IActionResult> ActionNotifyAsync(Guid[] ids)
         {
-            var result = await _appService.NotifyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.NotifyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-document")]
-        public async Task<IActionResult> ActionOpenDocumentAsync(Guid id)
+        [Route("action-open-document")]
+        public async Task<IActionResult> ActionOpenDocumentAsync(Guid[] ids)
         {
-            var result = await _appService.OpenDocumentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenDocumentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reschedule-nextweek")]
-        public async Task<IActionResult> ActionRescheduleNextweekAsync(Guid id)
+        [Route("action-reschedule-nextweek")]
+        public async Task<IActionResult> ActionRescheduleNextweekAsync(Guid[] ids)
         {
-            var result = await _appService.RescheduleNextweekAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RescheduleNextweekAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reschedule-today")]
-        public async Task<IActionResult> ActionRescheduleTodayAsync(Guid id)
+        [Route("action-reschedule-today")]
+        public async Task<IActionResult> ActionRescheduleTodayAsync(Guid[] ids)
         {
-            var result = await _appService.RescheduleTodayAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RescheduleTodayAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reschedule-tomorrow")]
-        public async Task<IActionResult> ActionRescheduleTomorrowAsync(Guid id)
+        [Route("action-reschedule-tomorrow")]
+        public async Task<IActionResult> ActionRescheduleTomorrowAsync(Guid[] ids)
         {
-            var result = await _appService.RescheduleTomorrowAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RescheduleTomorrowAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/activity-format")]
-        public async Task<IActionResult> ActivityFormatAsync(Guid id)
+        [Route("activity-format")]
+        public async Task<IActionResult> ActivityFormatAsync(Guid[] ids)
         {
-            var result = await _appService.ActivityFormatAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ActivityFormatAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-activity-data")]
-        public async Task<IActionResult> GetActivityDataAsync(Guid id, [FromBody] MailActivityGetActivityDataRequestDto input)
+        [Route("get-activity-data")]
+        public async Task<IActionResult> GetActivityDataAsync(MailActivityGetActivityDataRequestDto input)
         {
-            var result = await _appService.GetActivityDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetActivityDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unlink-w-meeting")]
-        public async Task<IActionResult> UnlinkWMeetingAsync(Guid id)
+        [Route("unlink-w-meeting")]
+        public async Task<IActionResult> UnlinkWMeetingAsync(Guid[] ids)
         {
-            var result = await _appService.UnlinkWMeetingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnlinkWMeetingAsync(ids);
             return Ok(result);
         }
     }

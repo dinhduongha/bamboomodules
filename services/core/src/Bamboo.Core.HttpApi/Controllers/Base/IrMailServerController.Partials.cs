@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-retrieve-max-email-size")]
-        public async Task<IActionResult> ActionRetrieveMaxEmailSizeAsync(Guid id)
+        [Route("action-retrieve-max-email-size")]
+        public async Task<IActionResult> ActionRetrieveMaxEmailSizeAsync(Guid[] ids)
         {
-            var result = await _appService.RetrieveMaxEmailSizeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RetrieveMaxEmailSizeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send-email")]
-        public async Task<IActionResult> SendEmailAsync(Guid id, [FromBody] IrMailServerSendEmailRequestDto input)
+        [Route("send-email")]
+        public async Task<IActionResult> SendEmailAsync(IrMailServerSendEmailRequestDto input)
         {
-            var result = await _appService.SendEmailAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SendEmailAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/test-smtp-connection")]
-        public async Task<IActionResult> TestSmtpConnectionAsync(Guid id, [FromBody] IrMailServerTestSmtpConnectionRequestDto input)
+        [Route("test-smtp-connection")]
+        public async Task<IActionResult> TestSmtpConnectionAsync(IrMailServerTestSmtpConnectionRequestDto input)
         {
-            var result = await _appService.TestSmtpConnectionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.TestSmtpConnectionAsync(input);
             return Ok(result);
         }
     }

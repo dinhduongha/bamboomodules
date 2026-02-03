@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IGamificationBadgeUserAppService : IGenericApplicationService<GamificationBadgeUser>
     {
-        Task<GamificationBadgeUser> OpenBadgeAsync(Guid id);
+        Task<GamificationBadgeUser> OpenBadgeAsync(Guid[] ids);
     }
 }

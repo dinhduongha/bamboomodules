@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/compute-arch-fs")]
-        public async Task<IActionResult> ComputeArchFsAsync(Guid id)
+        [Route("compute-arch-fs")]
+        public async Task<IActionResult> ComputeArchFsAsync(Guid[] ids)
         {
-            var result = await _appService.ComputeArchFsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ComputeArchFsAsync(ids);
             return Ok(result);
         }
     }

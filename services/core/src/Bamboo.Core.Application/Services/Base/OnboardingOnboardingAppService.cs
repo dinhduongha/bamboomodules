@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Onboarding", Category = "Base", Depends = new[] { "web" })]
-    public partial class OnboardingOnboardingAppService : GenericApplicationService<OnboardingOnboarding>, IOnboardingOnboardingAppService
+    public partial class OnboardingOnboardingAppService : GenericAppService<OnboardingOnboarding>, IOnboardingOnboardingAppService
     {
 
         public OnboardingOnboardingAppService(IRepository<OnboardingOnboarding, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<OnboardingOnboarding> CloseAsync(Guid id)
+        public async Task<OnboardingOnboarding> CloseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_onboarding.py) ---
@@ -35,30 +35,39 @@ namespace Bamboo.Core.Application.Services
             // """Close the onboarding panel."""
             // self.current_progress_id.action_close()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboarding> ClosePanelAccountDashboardAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboarding> ClosePanelAccountDashboardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding.py) ---
             // def action_close_panel_account_dashboard(self):
             // self.action_close_panel('account.onboarding_onboarding_account_dashboard')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboarding> ClosePanelAccountInvoiceAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboarding> ClosePanelAccountInvoiceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding.py) ---
             // def action_close_panel_account_invoice(self):
             // self.action_close_panel('account.onboarding_onboarding_account_invoice')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboarding> ClosePanelAsync(Guid id, OnboardingOnboardingClosePanelRequestDto input)
+        [ApiModel]
+        public async Task<OnboardingOnboarding> ClosePanelAsync(OnboardingOnboardingClosePanelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_onboarding.py) ---
@@ -70,7 +79,9 @@ namespace Bamboo.Core.Application.Services
             // if onboarding := self.env.ref(xmlid, raise_if_not_found=False):
             //     onboarding.action_close()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<OnboardingOnboarding> ComputeCurrentProgressInternalAsync()
@@ -160,7 +171,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<OnboardingOnboarding> RefreshProgressIdsAsync(Guid id)
+        public async Task<OnboardingOnboarding> RefreshProgressIdsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_onboarding.py) ---
@@ -176,7 +187,9 @@ namespace Bamboo.Core.Application.Services
             // onboardings_to_refresh_progress.progress_ids.unlink()
             // onboardings_to_refresh_progress._create_progress()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<OnboardingOnboarding> SearchOrCreateProgressInternalAsync()
@@ -192,14 +205,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<OnboardingOnboarding> ToggleVisibilityAsync(Guid id)
+        public async Task<OnboardingOnboarding> ToggleVisibilityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_onboarding.py) ---
             // def action_toggle_visibility(self):
             // self.current_progress_id.action_toggle_visibility()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

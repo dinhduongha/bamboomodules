@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Bamboo.Core.EntityFrameworkCore
 {
-    
+
     /* This class is needed for EF Core console commands
     * (like Add-Migration and Update-Database commands) */
     public class CoreDbContextFactory : IDesignTimeDbContextFactory<CoreDbContext>
@@ -29,7 +29,7 @@ namespace Bamboo.Core.EntityFrameworkCore
             var connectionString = configuration.GetConnectionString(CoreDbProperties.ConnectionStringName);
 
             var builder = new DbContextOptionsBuilder<CoreDbContext>()
-                .UseNpgsql(connectionString);
+                .UseNpgsql(connectionString, x => x.UseNetTopologySuite());
 
             return new CoreDbContext(builder.Options);
         }

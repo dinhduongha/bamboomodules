@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/lead-vals-from-response")]
-        public async Task<IActionResult> LeadValsFromResponseAsync(Guid id, [FromBody] CrmIapLeadHelpersLeadValsFromResponseRequestDto input)
+        [Route("lead-vals-from-response")]
+        public async Task<IActionResult> LeadValsFromResponseAsync(CrmIapLeadHelpersLeadValsFromResponseRequestDto input)
         {
-            var result = await _appService.LeadValsFromResponseAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LeadValsFromResponseAsync(input);
             return Ok(result);
         }
     }

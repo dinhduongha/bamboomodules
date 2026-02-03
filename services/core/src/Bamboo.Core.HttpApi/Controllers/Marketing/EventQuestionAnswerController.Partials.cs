@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-rule-button")]
-        public async Task<IActionResult> ActionAddRuleButtonAsync(Guid id)
+        [Route("action-add-rule-button")]
+        public async Task<IActionResult> ActionAddRuleButtonAsync(Guid[] ids)
         {
-            var result = await _appService.AddRuleButtonAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddRuleButtonAsync(ids);
             return Ok(result);
         }
     }

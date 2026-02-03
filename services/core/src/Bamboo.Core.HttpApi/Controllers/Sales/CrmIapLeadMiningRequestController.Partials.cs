@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-buy-credits")]
-        public async Task<IActionResult> ActionBuyCreditsAsync(Guid id)
+        [Route("action-buy-credits")]
+        public async Task<IActionResult> ActionBuyCreditsAsync(Guid[] ids)
         {
-            var result = await _appService.BuyCreditsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.BuyCreditsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-draft")]
-        public async Task<IActionResult> ActionDraftAsync(Guid id)
+        [Route("action-draft")]
+        public async Task<IActionResult> ActionDraftAsync(Guid[] ids)
         {
-            var result = await _appService.DraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DraftAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-get-lead-action")]
-        public async Task<IActionResult> ActionGetLeadActionAsync(Guid id)
+        [Route("action-get-lead-action")]
+        public async Task<IActionResult> ActionGetLeadActionAsync(Guid[] ids)
         {
-            var result = await _appService.GetLeadActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetLeadActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-get-opportunity-action")]
-        public async Task<IActionResult> ActionGetOpportunityActionAsync(Guid id)
+        [Route("action-get-opportunity-action")]
+        public async Task<IActionResult> ActionGetOpportunityActionAsync(Guid[] ids)
         {
-            var result = await _appService.GetOpportunityActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetOpportunityActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-submit")]
-        public async Task<IActionResult> ActionSubmitAsync(Guid id)
+        [Route("action-submit")]
+        public async Task<IActionResult> ActionSubmitAsync(Guid[] ids)
         {
-            var result = await _appService.SubmitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SubmitAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-empty-list-help")]
-        public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] CrmIapLeadMiningRequestGetEmptyListHelpRequestDto input)
+        [Route("get-empty-list-help")]
+        public async Task<IActionResult> GetEmptyListHelpAsync(CrmIapLeadMiningRequestGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetEmptyListHelpAsync(input);
             return Ok(result);
         }
     }

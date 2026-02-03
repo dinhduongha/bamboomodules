@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
-    public partial class PosOrderLineAppService : GenericApplicationService<PosOrderLine>, IPosOrderLineAppService
+    public partial class PosOrderLineAppService : GenericAppService<PosOrderLine>, IPosOrderLineAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public PosOrderLineAppService(IRepository<PosOrderLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -140,7 +140,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<PosOrderLine> CreateAsync(PosOrderLine entity, List<string> fields)
+        public override async Task<PosOrderLine> CreateAsync(CreateRequestDto<PosOrderLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
@@ -167,7 +167,7 @@ namespace Bamboo.Core.Application.Services
             //         del vals['combo_parent_uuid']
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<PosOrderLine> GetDiscountAmountInternalAsync()
@@ -182,7 +182,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosOrderLine> GetExistingLotsAsync(Guid id, PosOrderLineGetExistingLotsRequestDto input)
+        [ApiModel]
+        public async Task<PosOrderLine> GetExistingLotsAsync(PosOrderLineGetExistingLotsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
@@ -225,7 +226,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosOrderLine> GetStockMovesToConsiderInternalAsync(object stock_moves, object product)
@@ -261,6 +264,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosOrderLine> IsFieldAcceptedInternalAsync(object field)
         {
             /*
@@ -336,6 +340,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosOrderLine> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -346,6 +351,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosOrderLine> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -580,7 +586,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, PosOrderLine entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<PosOrderLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
@@ -607,7 +613,7 @@ namespace Bamboo.Core.Application.Services
             //     del vals['combo_parent_uuid']
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

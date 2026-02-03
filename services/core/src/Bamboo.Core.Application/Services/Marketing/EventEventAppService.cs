@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
-    public partial class EventEventAppService : GenericApplicationService<EventEvent>, IEventEventAppService
+    public partial class EventEventAppService : GenericAppService<EventEvent>, IEventEventAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -988,7 +988,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<EventEvent> CopyAsync(Guid id, List<string> fields, EventEvent defaultValues = null)
+        public override async Task<EventEvent> CopyAsync(CopyRequestDto<EventEvent> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
@@ -997,10 +997,10 @@ namespace Bamboo.Core.Application.Services
             // res.copy_event_menus(self)
             // return res
             */
-            return await base.CopyAsync(id, fields, defaultValues);
+            return await base.CopyAsync(input);
         }
 
-        public async Task<EventEvent> CopyDataAsync(Guid id, EventEventCopyDataRequestDto input)
+        public async Task<EventEvent> CopyDataAsync(EventEventCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
@@ -1008,10 +1008,12 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", event.name)) for event, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventEvent> CopyEventMenusAsync(Guid id, EventEventCopyEventMenusRequestDto input)
+        public async Task<EventEvent> CopyEventMenusAsync(EventEventCopyEventMenusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
@@ -1038,10 +1040,12 @@ namespace Bamboo.Core.Application.Services
             // for new_event in self:
             //     (new_event.track_menu_ids + new_event.track_proposal_menu_ids).menu_id.parent_id = new_event.menu_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<EventEvent> CreateAsync(EventEvent entity, List<string> fields)
+        public override async Task<EventEvent> CreateAsync(CreateRequestDto<EventEvent> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
@@ -1050,7 +1054,7 @@ namespace Bamboo.Core.Application.Services
             // events._update_website_menus()
             // return events
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<EventEvent> CreateMenuInternalAsync(object sequence, object name, object url, Guid xml_id, object menu_type, object parent_menu_type)
@@ -1178,6 +1182,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventEvent> FetchIsParticipatingEventsInternalAsync()
         {
             /*
@@ -1236,7 +1241,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> GenerateLeadsAsync(Guid id, EventEventGenerateLeadsRequestDto input)
+        public async Task<EventEvent> GenerateLeadsAsync(EventEventGenerateLeadsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_event.py) ---
@@ -1281,17 +1286,21 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventEvent> GetBackendMenuIdAsync(Guid id)
+        public async Task<EventEvent> GetBackendMenuIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def get_backend_menu_id(self):
             // return self.env.ref('event.event_main_menu').id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventEvent> GetBoothStatCountInternalAsync()
@@ -1448,14 +1457,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> GetKioskUrlAsync(Guid id)
+        public async Task<EventEvent> GetKioskUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
             // def get_kiosk_url(self):
             // return self.get_base_url() + "/odoo/registration-desk"
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventEvent> GetMenuTypeFieldMatchingInternalAsync()
@@ -1588,7 +1599,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> GetSlotTicketsAvailabilityPosAsync(Guid id, EventEventGetSlotTicketsAvailabilityPosRequestDto input)
+        public async Task<EventEvent> GetSlotTicketsAvailabilityPosAsync(EventEventGetSlotTicketsAvailabilityPosRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_event.py) ---
@@ -1603,7 +1614,9 @@ namespace Bamboo.Core.Application.Services
             // ]
             // return self._get_seats_availability(slot_tickets)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventEvent> GetTicketsAccessHashInternalAsync(List<Guid> registration_ids)
@@ -1670,7 +1683,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> GoogleMapLinkAsync(Guid id, EventEventGoogleMapLinkRequestDto input)
+        public async Task<EventEvent> GoogleMapLinkAsync(EventEventGoogleMapLinkRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
@@ -1678,7 +1691,9 @@ namespace Bamboo.Core.Application.Services
             // """ Temporary method for stable """
             // return self._google_map_link(zoom=zoom)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventEvent> GoogleMapLinkInternalAsync(object zoom)
@@ -1705,7 +1720,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> InviteContactsAsync(Guid id)
+        public async Task<EventEvent> InviteContactsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_event, FILE: event_event.py) ---
@@ -1728,9 +1743,12 @@ namespace Bamboo.Core.Application.Services
             // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<EventEvent> LangGetInternalAsync()
         {
             /*
@@ -1741,6 +1759,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventEvent> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -1751,6 +1770,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventEvent> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -1778,7 +1798,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> MassMailingAttendeesAsync(Guid id)
+        public async Task<EventEvent> MassMailingAttendeesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_event, FILE: event_event.py) ---
@@ -1802,10 +1822,12 @@ namespace Bamboo.Core.Application.Services
             // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventEvent> MassMailingTrackSpeakersAsync(Guid id)
+        public async Task<EventEvent> MassMailingTrackSpeakersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_track, FILE: event_event.py) ---
@@ -1830,7 +1852,9 @@ namespace Bamboo.Core.Application.Services
             // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventEvent> OnchangeEventUrlInternalAsync()
@@ -1866,7 +1890,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> OpenSlotCalendarAsync(Guid id)
+        public async Task<EventEvent> OpenSlotCalendarAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
@@ -1897,7 +1921,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventEvent> SearchAddressSearchInternalAsync(object @operator, object @value)
@@ -1923,6 +1949,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventEvent> SearchBuildDatesInternalAsync()
         {
             /*
@@ -1966,6 +1993,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventEvent> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*
@@ -2082,6 +2110,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventEvent> SearchIsParticipatingInternalAsync(object @operator, object @value)
         {
             /*
@@ -2094,6 +2123,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventEvent> SearchIsVisibleOnWebsiteInternalAsync(object @operator, object @value)
         {
             /*
@@ -2130,7 +2160,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> SetDoneAsync(Guid id)
+        public async Task<EventEvent> SetDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
@@ -2144,7 +2174,9 @@ namespace Bamboo.Core.Application.Services
             // if first_ended_stage:
             //     self.write({'stage_id': first_ended_stage.id})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventEvent> SetTzContextInternalAsync()
@@ -2183,54 +2215,64 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> ToggleBoothMenuAsync(Guid id, EventEventToggleBoothMenuRequestDto input)
+        public async Task<EventEvent> ToggleBoothMenuAsync(EventEventToggleBoothMenuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_booth, FILE: event_event.py) ---
             // def toggle_booth_menu(self, val):
             // self.booth_menu = val
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventEvent> ToggleExhibitorMenuAsync(Guid id, EventEventToggleExhibitorMenuRequestDto input)
+        public async Task<EventEvent> ToggleExhibitorMenuAsync(EventEventToggleExhibitorMenuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_event.py) ---
             // def toggle_exhibitor_menu(self, val):
             // self.exhibitor_menu = val
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventEvent> ToggleWebsiteMenuAsync(Guid id, EventEventToggleWebsiteMenuRequestDto input)
+        public async Task<EventEvent> ToggleWebsiteMenuAsync(EventEventToggleWebsiteMenuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def toggle_website_menu(self, val):
             // self.website_menu = val
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventEvent> ToggleWebsiteTrackAsync(Guid id, EventEventToggleWebsiteTrackRequestDto input)
+        public async Task<EventEvent> ToggleWebsiteTrackAsync(EventEventToggleWebsiteTrackRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_event.py) ---
             // def toggle_website_track(self, val):
             // self.website_track = val
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventEvent> ToggleWebsiteTrackProposalAsync(Guid id, EventEventToggleWebsiteTrackProposalRequestDto input)
+        public async Task<EventEvent> ToggleWebsiteTrackProposalAsync(EventEventToggleWebsiteTrackProposalRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_event.py) ---
             // def toggle_website_track_proposal(self, val):
             // self.website_track_proposal = val
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventEvent> TrackSubtypeInternalAsync(object init_values)
@@ -2376,7 +2418,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> ViewLinkedOrdersAsync(Guid id)
+        public async Task<EventEvent> ViewLinkedOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_event.py) ---
@@ -2389,10 +2431,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // return sale_order_action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, EventEvent entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<EventEvent> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
@@ -2403,7 +2447,7 @@ namespace Bamboo.Core.Application.Services
             // self._update_website_menus(menus_update_by_field=menus_update_by_field)
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

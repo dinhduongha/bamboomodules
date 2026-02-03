@@ -29,7 +29,7 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.ZoneCode).HasColumnName("zone_code");
             entity.Property(e => e.ZoneName).HasColumnName("zone_name");
             entity.Property(e => e.Priority).HasColumnName("priority");
-            entity.Property(e => e.PolygonGeoJson).HasColumnName("polygon_geo_json");
+            entity.Property(e => e.GeoJsonPolygon);
 
             entity.Property(e => e.CreationTime)
                 .HasDefaultValueSql("now()")

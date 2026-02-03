@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-matched-serial")]
-        public async Task<IActionResult> ActionOpenMatchedSerialAsync(Guid id)
+        [Route("action-open-matched-serial")]
+        public async Task<IActionResult> ActionOpenMatchedSerialAsync(Guid[] ids)
         {
-            var result = await _appService.OpenMatchedSerialAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenMatchedSerialAsync(ids);
             return Ok(result);
         }
     }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrHolidays", Category = "HumanResources", Depends = new[] { "hr", "calendar", "resource" })]
-    public partial class HrLeaveAllocationAppService : GenericApplicationService<HrLeaveAllocation>, IHrLeaveAllocationAppService
+    public partial class HrLeaveAllocationAppService : GenericAppService<HrLeaveAllocation>, IHrLeaveAllocationAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -49,7 +49,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAllocation> ActivityUpdateAsync(Guid id)
+        public async Task<HrLeaveAllocation> ActivityUpdateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---
@@ -103,7 +103,9 @@ namespace Bamboo.Core.Application.Services
             // if activity_vals:
             //     self.env['mail.activity'].create(activity_vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveAllocation> AddDaysToAllocationInternalAsync(object current_level, object current_level_maximum_leave, object leaves_taken, object period_start, object period_end)
@@ -128,7 +130,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAllocation> AddFollowerAsync(Guid id, HrLeaveAllocationAddFollowerRequestDto input)
+        public async Task<HrLeaveAllocation> AddFollowerAsync(HrLeaveAllocationAddFollowerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---
@@ -137,7 +139,9 @@ namespace Bamboo.Core.Application.Services
             // if employee.user_id:
             //     self.message_subscribe(partner_ids=employee.user_id.partner_id.ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveAllocation> AddLastcallsInternalAsync()
@@ -175,7 +179,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAllocation> ApproveAsync(Guid id)
+        public async Task<HrLeaveAllocation> ApproveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---
@@ -196,7 +200,9 @@ namespace Bamboo.Core.Application.Services
             // self.activity_update()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveAllocation> CheckApprovalUpdateInternalAsync(object state, object raise_if_not_possible)
@@ -526,7 +532,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<HrLeaveAllocation> CreateAsync(HrLeaveAllocation entity, List<string> fields)
+        public override async Task<HrLeaveAllocation> CreateAsync(CreateRequestDto<HrLeaveAllocation> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---
@@ -563,10 +569,11 @@ namespace Bamboo.Core.Application.Services
             //             raise ValidationError(_('The employee does not have enough overtime hours to request this leave.'))
             // return res
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public override async Task<HrLeaveAllocation> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<HrLeaveAllocation> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave_allocation.py) ---
@@ -581,7 +588,7 @@ namespace Bamboo.Core.Application.Services
             //     res['holiday_status_id'] = leave_type.id
             // return res
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
         protected async Task<HrLeaveAllocation> DefaultHolidayStatusIdInternalAsync()
@@ -903,7 +910,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAllocation> MessageSubscribeAsync(Guid id, HrLeaveAllocationMessageSubscribeRequestDto input)
+        public async Task<HrLeaveAllocation> MessageSubscribeAsync(HrLeaveAllocationMessageSubscribeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---
@@ -914,7 +921,9 @@ namespace Bamboo.Core.Application.Services
             //     return super(HrLeaveAllocation, self.sudo()).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
             // return super().message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveAllocation> OnchangeAllocationTypeInternalAsync()
@@ -1195,7 +1204,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAllocation> RefuseAsync(Guid id)
+        public async Task<HrLeaveAllocation> RefuseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---
@@ -1212,7 +1221,9 @@ namespace Bamboo.Core.Application.Services
             // res = super().action_refuse()
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveAllocation> TrackSubtypeInternalAsync(object init_values)
@@ -1253,6 +1264,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrLeaveAllocation> UpdateAccrualInternalAsync()
         {
             /*
@@ -1273,7 +1285,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, HrLeaveAllocation entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<HrLeaveAllocation> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---
@@ -1327,7 +1339,7 @@ namespace Bamboo.Core.Application.Services
             //         raise ValidationError(_('The employee does not have enough overtime hours to request this leave.'))
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

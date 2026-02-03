@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISmsTemplateAppService : IGenericApplicationService<SmsTemplate>
     {
-        Task<SmsTemplate> CopyDataAsync(Guid id, SmsTemplateCopyDataRequestDto input);
-        Task<SmsTemplate> CreateSidebarActionAsync(Guid id);
-        Task<SmsTemplate> UnlinkSidebarActionAsync(Guid id);
+        Task<SmsTemplate> CopyDataAsync(SmsTemplateCopyDataRequestDto input);
+        Task<SmsTemplate> CreateSidebarActionAsync(Guid[] ids);
+        Task<SmsTemplate> UnlinkSidebarActionAsync(Guid[] ids);
     }
 }

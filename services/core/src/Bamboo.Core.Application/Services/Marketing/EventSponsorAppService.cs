@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteEventExhibitor", Category = "Marketing", Depends = new[] { "website_event" })]
-    public partial class EventSponsorAppService : GenericApplicationService<EventSponsor>, IEventSponsorAppService
+    public partial class EventSponsorAppService : GenericAppService<EventSponsor>, IEventSponsorAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -196,17 +196,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventSponsor> GetBackendMenuIdAsync(Guid id)
+        public async Task<EventSponsor> GetBackendMenuIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
             // def get_backend_menu_id(self):
             // return self.env.ref('event.event_main_menu').id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventSponsor> GetBaseUrlAsync(Guid id)
+        public async Task<EventSponsor> GetBaseUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_sponsor.py) ---
@@ -214,9 +216,12 @@ namespace Bamboo.Core.Application.Services
             // """As website_id is not defined on this record, we rely on event website_id for base URL."""
             // return self.event_id.get_base_url()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<EventSponsor> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductAttributeValueAppService : GenericApplicationService<ProductAttributeValue>, IProductAttributeValueAppService
+    public partial class ProductAttributeValueAppService : GenericAppService<ProductAttributeValue>, IProductAttributeValueAppService
     {
 
         public ProductAttributeValueAppService(IRepository<ProductAttributeValue, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ProductAttributeValue> AddToProductsAsync(Guid id)
+        public async Task<ProductAttributeValue> AddToProductsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_attribute_value.py) ---
@@ -44,10 +44,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ProductAttributeValue> CheckIsUsedOnProductsAsync(Guid id)
+        public async Task<ProductAttributeValue> CheckIsUsedOnProductsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_attribute_value.py) ---
@@ -61,7 +63,9 @@ namespace Bamboo.Core.Application.Services
             //     )
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductAttributeValue> ComputeDefaultExtraPriceChangedInternalAsync()
@@ -138,7 +142,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductAttributeValue> UpdatePricesAsync(Guid id)
+        public async Task<ProductAttributeValue> UpdatePricesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_attribute_value.py) ---
@@ -156,7 +160,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductAttributeValue> WithoutNoVariantAttributesInternalAsync()

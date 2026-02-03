@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-close")]
-        public async Task<IActionResult> ActionCloseAsync(Guid id)
+        [Route("action-close")]
+        public async Task<IActionResult> ActionCloseAsync(Guid[] ids)
         {
-            var result = await _appService.CloseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CloseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-toggle-visibility")]
-        public async Task<IActionResult> ActionToggleVisibilityAsync(Guid id)
+        [Route("action-toggle-visibility")]
+        public async Task<IActionResult> ActionToggleVisibilityAsync(Guid[] ids)
         {
-            var result = await _appService.ToggleVisibilityAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ToggleVisibilityAsync(ids);
             return Ok(result);
         }
     }

@@ -25,14 +25,23 @@ public partial class DmsOutletVisit : FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
+
     [Column("partner_id")]
     public Guid PartnerId { get; set; }
 
-    [Column("user_id")]
-    public Guid UserId { get; set; }
-
     [Column("visit_date_time")]
-    public DateTime VisitDateTime { get; set; }
+    public DateTimeOffset? VisitDateTime { get; set; }
+
+    [Column("visit_status")]
+    public string? VisitStatus { get; set; } = "pending";
+
+    [Column("check_in_h3")]
+    public string? CheckInH3 { get; set; }
 
     [Column("check_in_latitude")]
     public decimal? CheckInLatitude { get; set; }
@@ -44,10 +53,16 @@ public partial class DmsOutletVisit : FullAuditedAggregateRoot<Guid>, IEntityDto
     public decimal? CheckInAccuracy { get; set; }
 
     [Column("geo_status")]
-    public string GeoStatus { get; set; } = "inside";
+    public string? GeoStatus { get; set; } = "inside";
 
     [Column("duration_minutes")]
-    public int DurationMinutes { get; set; }
+    public long? DurationMinutes { get; set; }
+
+    [Column("geom_check_in")]
+    public NetTopologySuite.Geometries.Point? GeomCheckInPoint { get; set; }
+
+    [Column("geom_check_out")]
+    public NetTopologySuite.Geometries.Point? GeomCheckOutPoint { get; set; }
 
     [Column("check_out_latitude")]
     public decimal? CheckOutLatitude { get; set; }
@@ -55,14 +70,11 @@ public partial class DmsOutletVisit : FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("check_out_longitude")]
     public decimal? CheckOutLongitude { get; set; }
 
-    [Column("visit_status")]
-    public string VisitStatus { get; set; } = "pending";
-
-    [Column("photos_json")]
-    public string? PhotosJson { get; set; }
+    [Column("photos", TypeName = "jsonb")]
+    public Dictionary<string, object>? Photos { get; set; }
 
     [Column("order_created")]
-    public bool OrderCreated { get; set; }
+    public bool? OrderCreated { get; set; }
 
     [Column("no_sale_reason_id")]
     public Guid? NoSaleReasonId { get; set; }
@@ -80,10 +92,34 @@ public partial class DmsOutletVisit : FullAuditedAggregateRoot<Guid>, IEntityDto
     public override DateTime? LastModificationTime { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("CreatorId")]
+    [NotMapped]
+    public virtual ResUsers? CreateU { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("LastModifierId")]
+
+    [NotMapped]
+    public virtual ResUsers? WriteU { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? ResPartner { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TeamId")]
+    public virtual ResTeam? Team { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }
+
 }

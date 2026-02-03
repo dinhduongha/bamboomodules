@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Barcodes", Category = "SupplyChain", Depends = new[] { "web" })]
-    public partial class BarcodeNomenclatureAppService : GenericApplicationService<BarcodeNomenclature>, IBarcodeNomenclatureAppService
+    public partial class BarcodeNomenclatureAppService : GenericAppService<BarcodeNomenclature>, IBarcodeNomenclatureAppService
     {
 
         public BarcodeNomenclatureAppService(IRepository<BarcodeNomenclature, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -42,6 +42,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BarcodeNomenclature> ConvertUriGtinDataIntoTrackingNumberInternalAsync(object base_code, object data)
         {
             /*
@@ -72,6 +73,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BarcodeNomenclature> ConvertUriSsccDataIntoPackageInternalAsync(object base_code, object data)
         {
             /*
@@ -93,7 +95,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BarcodeNomenclature> Gs1DateToDateAsync(Guid id, BarcodeNomenclatureGs1DateToDateRequestDto input)
+        [ApiModel]
+        public async Task<BarcodeNomenclature> Gs1DateToDateAsync(BarcodeNomenclatureGs1DateToDateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes_gs1_nomenclature, FILE: barcode_nomenclature.py) ---
@@ -128,10 +131,12 @@ namespace Bamboo.Core.Application.Services
             //         ))
             // return date.date()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BarcodeNomenclature> Gs1DecomposeExtendedAsync(Guid id, BarcodeNomenclatureGs1DecomposeExtendedRequestDto input)
+        public async Task<BarcodeNomenclature> Gs1DecomposeExtendedAsync(BarcodeNomenclatureGs1DecomposeExtendedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes_gs1_nomenclature, FILE: barcode_nomenclature.py) ---
@@ -173,10 +178,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return results
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BarcodeNomenclature> MatchPatternAsync(Guid id, BarcodeNomenclatureMatchPatternRequestDto input)
+        public async Task<BarcodeNomenclature> MatchPatternAsync(BarcodeNomenclatureMatchPatternRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes, FILE: barcode_nomenclature.py) ---
@@ -223,10 +230,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return match
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BarcodeNomenclature> ParseBarcodeAsync(Guid id, BarcodeNomenclatureParseBarcodeRequestDto input)
+        public async Task<BarcodeNomenclature> ParseBarcodeAsync(BarcodeNomenclatureParseBarcodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes, FILE: barcode_nomenclature.py) ---
@@ -235,10 +244,12 @@ namespace Bamboo.Core.Application.Services
             //     return self.parse_uri(barcode)
             // return self.parse_nomenclature_barcode(barcode)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BarcodeNomenclature> ParseGs1RulePatternAsync(Guid id, BarcodeNomenclatureParseGs1RulePatternRequestDto input)
+        public async Task<BarcodeNomenclature> ParseGs1RulePatternAsync(BarcodeNomenclatureParseGs1RulePatternRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes_gs1_nomenclature, FILE: barcode_nomenclature.py) ---
@@ -277,10 +288,12 @@ namespace Bamboo.Core.Application.Services
             //     result['value'] = match.group(2)
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BarcodeNomenclature> ParseNomenclatureBarcodeAsync(Guid id, BarcodeNomenclatureParseNomenclatureBarcodeRequestDto input)
+        public async Task<BarcodeNomenclature> ParseNomenclatureBarcodeAsync(BarcodeNomenclatureParseNomenclatureBarcodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes, FILE: barcode_nomenclature.py) ---
@@ -342,10 +355,13 @@ namespace Bamboo.Core.Application.Services
             //     return self.gs1_decompose_extended(barcode)
             // return super().parse_nomenclature_barcode(barcode)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BarcodeNomenclature> ParseUriAsync(Guid id, BarcodeNomenclatureParseUriRequestDto input)
+        [ApiModel]
+        public async Task<BarcodeNomenclature> ParseUriAsync(BarcodeNomenclatureParseUriRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes, FILE: barcode_nomenclature.py) ---
@@ -372,9 +388,12 @@ namespace Bamboo.Core.Application.Services
             //         barcode = self._convert_uri_sscc_data_into_package(barcode, data[1:])
             // return barcode
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<BarcodeNomenclature> PreprocessGs1SearchArgsInternalAsync(object domain, object barcode_types, object field)
         {
             /*
@@ -446,7 +465,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BarcodeNomenclature> SanitizeEanAsync(Guid id, BarcodeNomenclatureSanitizeEanRequestDto input)
+        [ApiModel]
+        public async Task<BarcodeNomenclature> SanitizeEanAsync(BarcodeNomenclatureSanitizeEanRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes, FILE: barcode_nomenclature.py) ---
@@ -458,10 +478,13 @@ namespace Bamboo.Core.Application.Services
             // ean = ean[0:13].zfill(13)
             // return ean[0:-1] + str(get_barcode_check_digit(ean))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BarcodeNomenclature> SanitizeUpcAsync(Guid id, BarcodeNomenclatureSanitizeUpcRequestDto input)
+        [ApiModel]
+        public async Task<BarcodeNomenclature> SanitizeUpcAsync(BarcodeNomenclatureSanitizeUpcRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: barcodes, FILE: barcode_nomenclature.py) ---
@@ -472,7 +495,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // return self.sanitize_ean('0' + upc)[1:]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BarcodeNomenclature> UnlinkExceptDefaultInternalAsync()

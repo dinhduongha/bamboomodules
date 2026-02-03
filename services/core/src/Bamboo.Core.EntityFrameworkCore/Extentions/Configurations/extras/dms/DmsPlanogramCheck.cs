@@ -30,7 +30,7 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.PlanogramId).HasColumnName("planogram_id");
             entity.Property(e => e.PhotoUrl).HasColumnName("photo_url");
             entity.Property(e => e.ComplianceScore).HasColumnName("compliance_score");
-            entity.Property(e => e.DetectedIssuesJson).HasColumnName("detected_issues_json");
+            entity.Property(e => e.DetectedIssues);
             entity.Property(e => e.Status).HasColumnName("status");
 
             entity.Property(e => e.CreationTime)

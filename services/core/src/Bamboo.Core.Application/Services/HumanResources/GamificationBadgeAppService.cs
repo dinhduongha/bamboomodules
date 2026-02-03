@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Gamification", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class GamificationBadgeAppService : GenericApplicationService<GamificationBadge>, IGamificationBadgeAppService
+    public partial class GamificationBadgeAppService : GenericAppService<GamificationBadge>, IGamificationBadgeAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -61,7 +61,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationBadge> CheckGrantingAsync(Guid id)
+        public async Task<GamificationBadge> CheckGrantingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_badge.py) ---
@@ -86,7 +86,9 @@ namespace Bamboo.Core.Application.Services
             //     _logger.error("Unknown badge status code: %s" % status_code)
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationBadge> ComputeGrantedEmployeesCountInternalAsync()
@@ -141,7 +143,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationBadge> GetGrantedEmployeesAsync(Guid id)
+        public async Task<GamificationBadge> GetGrantedEmployeesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_gamification, FILE: gamification.py) ---
@@ -155,7 +157,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('id', 'in', employee_ids)]
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationBadge> GetOwnersInfoInternalAsync()

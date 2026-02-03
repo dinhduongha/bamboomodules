@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountEdiDocumentAppService : IGenericApplicationService<AccountEdiDocument>
     {
-        Task<AccountEdiDocument> ExportXmlAsync(Guid id);
+        Task<AccountEdiDocument> ExportXmlAsync(Guid[] ids);
     }
 }

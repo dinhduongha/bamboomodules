@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ChangePasswordOwnAppService : GenericApplicationService<ChangePasswordOwn>, IChangePasswordOwnAppService
+    public partial class ChangePasswordOwnAppService : GenericAppService<ChangePasswordOwn>, IChangePasswordOwnAppService
     {
 
         public ChangePasswordOwnAppService(IRepository<ChangePasswordOwn, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ChangePasswordOwn> ChangePasswordAsync(Guid id)
+        public async Task<ChangePasswordOwn> ChangePasswordAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -37,7 +37,9 @@ namespace Bamboo.Core.Application.Services
             // # would be great to update the session id in-place, but it seems dicey
             // return {'type': 'ir.actions.client', 'tag': 'reload'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ChangePasswordOwn> CheckPasswordConfirmationInternalAsync()

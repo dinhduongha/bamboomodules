@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-to-products")]
-        public async Task<IActionResult> ActionAddToProductsAsync(Guid id)
+        [Route("action-add-to-products")]
+        public async Task<IActionResult> ActionAddToProductsAsync(Guid[] ids)
         {
-            var result = await _appService.AddToProductsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddToProductsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-update-prices")]
-        public async Task<IActionResult> ActionUpdatePricesAsync(Guid id)
+        [Route("action-update-prices")]
+        public async Task<IActionResult> ActionUpdatePricesAsync(Guid[] ids)
         {
-            var result = await _appService.UpdatePricesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdatePricesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-is-used-on-products")]
-        public async Task<IActionResult> CheckIsUsedOnProductsAsync(Guid id)
+        [Route("check-is-used-on-products")]
+        public async Task<IActionResult> CheckIsUsedOnProductsAsync(Guid[] ids)
         {
-            var result = await _appService.CheckIsUsedOnProductsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckIsUsedOnProductsAsync(ids);
             return Ok(result);
         }
     }

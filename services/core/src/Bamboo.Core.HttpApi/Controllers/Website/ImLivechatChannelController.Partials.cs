@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-join")]
-        public async Task<IActionResult> ActionJoinAsync(Guid id)
+        [Route("action-join")]
+        public async Task<IActionResult> ActionJoinAsync(Guid[] ids)
         {
-            var result = await _appService.JoinAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.JoinAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-quit")]
-        public async Task<IActionResult> ActionQuitAsync(Guid id)
+        [Route("action-quit")]
+        public async Task<IActionResult> ActionQuitAsync(Guid[] ids)
         {
-            var result = await _appService.QuitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.QuitAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-chatbot-scripts")]
-        public async Task<IActionResult> ActionViewChatbotScriptsAsync(Guid id)
+        [Route("action-view-chatbot-scripts")]
+        public async Task<IActionResult> ActionViewChatbotScriptsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewChatbotScriptsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewChatbotScriptsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-rating")]
-        public async Task<IActionResult> ActionViewRatingAsync(Guid id)
+        [Route("action-view-rating")]
+        public async Task<IActionResult> ActionViewRatingAsync(Guid[] ids)
         {
-            var result = await _appService.ViewRatingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewRatingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-livechat-info")]
-        public async Task<IActionResult> GetLivechatInfoAsync(Guid id, [FromBody] ImLivechatChannelGetLivechatInfoRequestDto input)
+        [Route("get-livechat-info")]
+        public async Task<IActionResult> GetLivechatInfoAsync(ImLivechatChannelGetLivechatInfoRequestDto input)
         {
-            var result = await _appService.GetLivechatInfoAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetLivechatInfoAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/web-read")]
-        public async Task<IActionResult> WebReadAsync(Guid id, [FromBody] ImLivechatChannelWebReadRequestDto input)
+        [Route("web-read")]
+        public async Task<IActionResult> WebReadAsync(ImLivechatChannelWebReadRequestDto input)
         {
-            var result = await _appService.WebReadAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.WebReadAsync(input);
             return Ok(result);
         }
     }

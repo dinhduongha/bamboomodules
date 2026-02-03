@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/button-block")]
-        public async Task<IActionResult> ButtonBlockAsync(Guid id)
+        [Route("button-block")]
+        public async Task<IActionResult> ButtonBlockAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonBlockAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonBlockAsync(ids);
             return Ok(result);
         }
     }

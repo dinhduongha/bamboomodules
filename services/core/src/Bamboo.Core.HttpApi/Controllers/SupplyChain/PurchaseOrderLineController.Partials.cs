@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-from-catalog")]
-        public async Task<IActionResult> ActionAddFromCatalogAsync(Guid id)
+        [Route("action-add-from-catalog")]
+        public async Task<IActionResult> ActionAddFromCatalogAsync(Guid[] ids)
         {
-            var result = await _appService.AddFromCatalogAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddFromCatalogAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-choose")]
-        public async Task<IActionResult> ActionChooseAsync(Guid id)
+        [Route("action-choose")]
+        public async Task<IActionResult> ActionChooseAsync(Guid[] ids)
         {
-            var result = await _appService.ChooseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ChooseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-clear-quantities")]
-        public async Task<IActionResult> ActionClearQuantitiesAsync(Guid id)
+        [Route("action-clear-quantities")]
+        public async Task<IActionResult> ActionClearQuantitiesAsync(Guid[] ids)
         {
-            var result = await _appService.ClearQuantitiesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ClearQuantitiesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-order")]
-        public async Task<IActionResult> ActionOpenOrderAsync(Guid id)
+        [Route("action-open-order")]
+        public async Task<IActionResult> ActionOpenOrderAsync(Guid[] ids)
         {
-            var result = await _appService.OpenOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-product-forecast-report")]
-        public async Task<IActionResult> ActionProductForecastReportAsync(Guid id)
+        [Route("action-product-forecast-report")]
+        public async Task<IActionResult> ActionProductForecastReportAsync(Guid[] ids)
         {
-            var result = await _appService.ProductForecastReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProductForecastReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-parent-section-line")]
-        public async Task<IActionResult> GetParentSectionLineAsync(Guid id)
+        [Route("get-parent-section-line")]
+        public async Task<IActionResult> GetParentSectionLineAsync(Guid[] ids)
         {
-            var result = await _appService.GetParentSectionLineAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetParentSectionLineAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-product-id")]
-        public async Task<IActionResult> OnchangeProductIdAsync(Guid id)
+        [Route("onchange-product-id")]
+        public async Task<IActionResult> OnchangeProductIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeProductIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeProductIdAsync(ids);
             return Ok(result);
         }
     }

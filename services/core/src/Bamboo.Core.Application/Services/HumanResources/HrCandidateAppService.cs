@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrRecruitment", Category = "HumanResources", Depends = new[] { "hr", "calendar", "utm", "attachment_indexation", "web_tour", "digest" })]
-    public partial class HrCandidateAppService : GenericApplicationService<HrCandidate>, IHrCandidateAppService
+    public partial class HrCandidateAppService : GenericAppService<HrCandidate>, IHrCandidateAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadBlacklistAppService _mailThreadBlacklistAppService;
@@ -248,7 +248,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrCandidate> CreateApplicationAsync(Guid id)
+        public async Task<HrCandidate> CreateApplicationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment_skills, FILE: hr_candidate.py) ---
@@ -262,10 +262,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = literal_eval(action['context'].replace('active_id', str(job.id)))
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrCandidate> CreateEmployeeFromCandidateAsync(Guid id)
+        public async Task<HrCandidate> CreateEmployeeFromCandidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
@@ -287,10 +289,12 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = employee.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrCandidate> CreateMeetingAsync(Guid id)
+        public async Task<HrCandidate> CreateMeetingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
@@ -329,7 +333,9 @@ namespace Bamboo.Core.Application.Services
             // }
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrCandidate> GetEmployeeCreateValsInternalAsync()
@@ -394,7 +400,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrCandidate> InitAsync(Guid id)
+        public async Task<HrCandidate> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
@@ -404,7 +410,9 @@ namespace Bamboo.Core.Application.Services
             //     ON hr_candidate(email_normalized, partner_phone_sanitized);
             // """)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrCandidate> InversePartnerEmailInternalAsync()
@@ -431,7 +439,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrCandidate> OpenApplicationsAsync(Guid id)
+        public async Task<HrCandidate> OpenApplicationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
@@ -449,10 +457,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrCandidate> OpenAttachmentsAsync(Guid id)
+        public async Task<HrCandidate> OpenAttachmentsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
@@ -475,10 +485,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('res_model', '=', 'hr.candidate'), ('res_id', 'in', self.ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrCandidate> OpenEmployeeAsync(Guid id)
+        public async Task<HrCandidate> OpenEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
@@ -492,10 +504,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.employee_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrCandidate> OpenSimilarCandidatesAsync(Guid id)
+        public async Task<HrCandidate> OpenSimilarCandidatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
@@ -514,7 +528,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrCandidate> PhoneGetNumberFieldsInternalAsync()
@@ -527,7 +543,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrCandidate> SendEmailAsync(Guid id)
+        public async Task<HrCandidate> SendEmailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_candidate.py) ---
@@ -543,7 +559,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrCandidate> UnlinkExceptLinkedEmployeeInternalAsync()

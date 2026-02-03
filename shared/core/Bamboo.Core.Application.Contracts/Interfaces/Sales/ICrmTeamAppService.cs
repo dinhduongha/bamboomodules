@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICrmTeamAppService : IGenericApplicationService<CrmTeam>
     {
-        Task<CrmTeam> AssignLeadsAsync(Guid id);
-        Task<CrmTeam> GetAbandonedCartsAsync(Guid id);
-        Task<CrmTeam> OpenLeadsAsync(Guid id);
-        Task<CrmTeam> OpenUnassignedLeadsAsync(Guid id);
-        Task<CrmTeam> OpportunityForecastAsync(Guid id);
-        Task<CrmTeam> PrimaryChannelButtonAsync(Guid id);
-        Task<CrmTeam> UpdateInvoicedTargetAsync(Guid id, CrmTeamUpdateInvoicedTargetRequestDto input);
-        Task<CrmTeam> YourPipelineAsync(Guid id);
+        Task<CrmTeam> AssignLeadsAsync(Guid[] ids);
+        Task<CrmTeam> GetAbandonedCartsAsync(Guid[] ids);
+        Task<CrmTeam> OpenLeadsAsync(Guid[] ids);
+        Task<CrmTeam> OpenUnassignedLeadsAsync(Guid[] ids);
+        Task<CrmTeam> OpportunityForecastAsync(Guid[] ids);
+        Task<CrmTeam> PrimaryChannelButtonAsync(Guid[] ids);
+        Task<CrmTeam> UpdateInvoicedTargetAsync(CrmTeamUpdateInvoicedTargetRequestDto input);
+        Task<CrmTeam> YourPipelineAsync(Guid[] ids);
     }
 }

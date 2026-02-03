@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-confirm-orders")]
-        public async Task<IActionResult> ActionConfirmOrdersAsync(Guid id)
+        [Route("action-confirm-orders")]
+        public async Task<IActionResult> ActionConfirmOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.ConfirmOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfirmOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-orders")]
-        public async Task<IActionResult> ActionSendOrdersAsync(Guid id)
+        [Route("action-send-orders")]
+        public async Task<IActionResult> ActionSendOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.SendOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendOrdersAsync(ids);
             return Ok(result);
         }
     }

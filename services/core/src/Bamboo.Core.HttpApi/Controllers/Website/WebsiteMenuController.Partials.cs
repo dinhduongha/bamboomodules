@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-tree")]
-        public async Task<IActionResult> GetTreeAsync(Guid id, [FromBody] WebsiteMenuGetTreeRequestDto input)
+        [Route("get-tree")]
+        public async Task<IActionResult> GetTreeAsync(WebsiteMenuGetTreeRequestDto input)
         {
-            var result = await _appService.GetTreeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetTreeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/save")]
-        public async Task<IActionResult> SaveAsync(Guid id, [FromBody] WebsiteMenuSaveRequestDto input)
+        [Route("save")]
+        public async Task<IActionResult> SaveAsync(WebsiteMenuSaveRequestDto input)
         {
-            var result = await _appService.SaveAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SaveAsync(input);
             return Ok(result);
         }
     }

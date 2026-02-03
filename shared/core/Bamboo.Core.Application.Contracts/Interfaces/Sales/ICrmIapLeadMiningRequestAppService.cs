@@ -10,11 +10,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICrmIapLeadMiningRequestAppService : IGenericApplicationService<CrmIapLeadMiningRequest>
     {
-        Task<CrmIapLeadMiningRequest> BuyCreditsAsync(Guid id);
-        Task<CrmIapLeadMiningRequest> DraftAsync(Guid id);
-        Task<CrmIapLeadMiningRequest> GetEmptyListHelpAsync(Guid id, CrmIapLeadMiningRequestGetEmptyListHelpRequestDto input);
-        Task<CrmIapLeadMiningRequest> GetLeadActionAsync(Guid id);
-        Task<CrmIapLeadMiningRequest> GetOpportunityActionAsync(Guid id);
-        Task<CrmIapLeadMiningRequest> SubmitAsync(Guid id);
+        Task<CrmIapLeadMiningRequest> BuyCreditsAsync(Guid[] ids);
+        Task<CrmIapLeadMiningRequest> DraftAsync(Guid[] ids);
+        Task<CrmIapLeadMiningRequest> GetEmptyListHelpAsync(CrmIapLeadMiningRequestGetEmptyListHelpRequestDto input);
+        Task<CrmIapLeadMiningRequest> GetLeadActionAsync(Guid[] ids);
+        Task<CrmIapLeadMiningRequest> GetOpportunityActionAsync(Guid[] ids);
+        Task<CrmIapLeadMiningRequest> SubmitAsync(Guid[] ids);
     }
 }

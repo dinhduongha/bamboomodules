@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventQuestionAnswerAppService : IGenericApplicationService<EventQuestionAnswer>
     {
-        Task<EventQuestionAnswer> AddRuleButtonAsync(Guid id);
+        Task<EventQuestionAnswer> AddRuleButtonAsync(Guid[] ids);
     }
 }

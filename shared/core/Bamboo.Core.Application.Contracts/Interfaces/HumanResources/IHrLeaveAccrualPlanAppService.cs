@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrLeaveAccrualPlanAppService : IGenericApplicationService<HrLeaveAccrualPlan>
     {
-        Task<HrLeaveAccrualPlan> CopyDataAsync(Guid id, HrLeaveAccrualPlanCopyDataRequestDto input);
-        Task<HrLeaveAccrualPlan> CreateAccrualPlanLevelAsync(Guid id);
-        Task<HrLeaveAccrualPlan> OpenAccrualPlanEmployeesAsync(Guid id);
-        Task<HrLeaveAccrualPlan> OpenAccrualPlanLevelAsync(Guid id, HrLeaveAccrualPlanOpenAccrualPlanLevelRequestDto input);
+        Task<HrLeaveAccrualPlan> CopyDataAsync(HrLeaveAccrualPlanCopyDataRequestDto input);
+        Task<HrLeaveAccrualPlan> CreateAccrualPlanLevelAsync(Guid[] ids);
+        Task<HrLeaveAccrualPlan> OpenAccrualPlanEmployeesAsync(Guid[] ids);
+        Task<HrLeaveAccrualPlan> OpenAccrualPlanLevelAsync(HrLeaveAccrualPlanOpenAccrualPlanLevelRequestDto input);
     }
 }

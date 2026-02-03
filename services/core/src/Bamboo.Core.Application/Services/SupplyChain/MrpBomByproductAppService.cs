@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mrp", Category = "SupplyChain", Depends = new[] { "product", "stock", "resource" })]
-    public partial class MrpBomByproductAppService : GenericApplicationService<MrpBomByproduct>, IMrpBomByproductAppService
+    public partial class MrpBomByproductAppService : GenericAppService<MrpBomByproduct>, IMrpBomByproductAppService
     {
 
         public MrpBomByproductAppService(IRepository<MrpBomByproduct, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<MrpBomByproduct> AddFromCatalogAsync(Guid id)
+        public async Task<MrpBomByproduct> AddFromCatalogAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
@@ -34,7 +34,9 @@ namespace Bamboo.Core.Application.Services
             // bom = self.env['mrp.bom'].browse(self.env.context.get('order_id'))
             // return bom.with_context(child_field='byproduct_ids').action_add_from_catalog()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpBomByproduct> ComputeProductUomIdInternalAsync()

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
-    public partial class PosPaymentAppService : GenericApplicationService<PosPayment>, IPosPaymentAppService
+    public partial class PosPaymentAppService : GenericAppService<PosPayment>, IPosPaymentAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public PosPaymentAppService(IRepository<PosPayment, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -106,7 +106,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<PosPayment> CreateAsync(PosPayment entity, List<string> fields)
+        public override async Task<PosPayment> CreateAsync(CreateRequestDto<PosPayment> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_payment.py) ---
@@ -138,7 +138,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<PosPayment> CreatePaymentMovesInternalAsync(object is_reverse)
@@ -237,6 +237,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosPayment> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -268,7 +269,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, PosPayment entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<PosPayment> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_payment.py) ---
@@ -277,7 +278,7 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("Cannot edit a POS online payment essential data."))
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

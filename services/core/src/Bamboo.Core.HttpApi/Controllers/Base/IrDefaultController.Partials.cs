@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/discard-records")]
-        public async Task<IActionResult> DiscardRecordsAsync(Guid id, [FromBody] IrDefaultDiscardRecordsRequestDto input)
+        [Route("discard-records")]
+        public async Task<IActionResult> DiscardRecordsAsync(IrDefaultDiscardRecordsRequestDto input)
         {
-            var result = await _appService.DiscardRecordsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DiscardRecordsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/discard-values")]
-        public async Task<IActionResult> DiscardValuesAsync(Guid id, [FromBody] IrDefaultDiscardValuesRequestDto input)
+        [Route("discard-values")]
+        public async Task<IActionResult> DiscardValuesAsync(IrDefaultDiscardValuesRequestDto input)
         {
-            var result = await _appService.DiscardValuesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DiscardValuesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set")]
-        public async Task<IActionResult> SetAsync(Guid id, [FromBody] IrDefaultSetRequestDto input)
+        [Route("set")]
+        public async Task<IActionResult> SetAsync(IrDefaultSetRequestDto input)
         {
-            var result = await _appService.SetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetAsync(input);
             return Ok(result);
         }
     }

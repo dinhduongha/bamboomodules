@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
-    public partial class PosSessionAppService : GenericApplicationService<PosSession>, IPosSessionAppService
+    public partial class PosSessionAppService : GenericAppService<PosSession>, IPosSessionAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -276,6 +276,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosSession> AlertOldSessionInternalAsync()
         {
             /*
@@ -475,7 +476,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> CloseSessionFromUiAsync(Guid id, PosSessionCloseSessionFromUiRequestDto input)
+        public async Task<PosSession> CloseSessionFromUiAsync(PosSessionCloseSessionFromUiRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -518,7 +519,9 @@ namespace Bamboo.Core.Application.Services
             //     self.post_close_register_message()
             // return {'successful': True}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> ComputeCashBalanceInternalAsync()
@@ -1113,7 +1116,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> DeleteCashInOutAsync(Guid id, PosSessionDeleteCashInOutRequestDto input)
+        public async Task<PosSession> DeleteCashInOutAsync(PosSessionDeleteCashInOutRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1129,10 +1132,12 @@ namespace Bamboo.Core.Application.Services
             // absl.unlink()
             // self.log_partner_message(partner_id, action, "CASH_IN_OUT_UNLINK")
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> DeleteOpeningControlSessionAsync(Guid id)
+        public async Task<PosSession> DeleteOpeningControlSessionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1149,10 +1154,12 @@ namespace Bamboo.Core.Application.Services
             //     'status': 'success',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> FilterLocalDataAsync(Guid id, PosSessionFilterLocalDataRequestDto input)
+        public async Task<PosSession> FilterLocalDataAsync(PosSessionFilterLocalDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1167,10 +1174,12 @@ namespace Bamboo.Core.Application.Services
             //     response[model] = list(non_existent_ids | inactive_ids)
             // return response
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> FindProductByBarcodeAsync(Guid id, PosSessionFindProductByBarcodeRequestDto input)
+        public async Task<PosSession> FindProductByBarcodeAsync(PosSessionFindProductByBarcodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1184,7 +1193,9 @@ namespace Bamboo.Core.Application.Services
             //     ('sale_ok', '=', True),
             // ])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> GetAttributesByPtalIdInternalAsync()
@@ -1250,7 +1261,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> GetCashInOutListAsync(Guid id)
+        public async Task<PosSession> GetCashInOutListAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1285,7 +1296,9 @@ namespace Bamboo.Core.Application.Services
             //             cash_in_out['cashier_name'] = cash_move.partner_id.name
             // return cash_in_out_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> GetClosedOrdersInternalAsync()
@@ -1298,7 +1311,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> GetClosingControlDataAsync(Guid id)
+        public async Task<PosSession> GetClosingControlDataAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1363,7 +1376,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return data
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> GetCombineReceivableValsInternalAsync(object payment_method, object amount, object amount_converted)
@@ -1516,7 +1531,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> GetPosUiProductPricelistItemByProductAsync(Guid id, PosSessionGetPosUiProductPricelistItemByProductRequestDto input)
+        public async Task<PosSession> GetPosUiProductPricelistItemByProductAsync(PosSessionGetPosUiProductPricelistItemByProductRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1543,7 +1558,9 @@ namespace Bamboo.Core.Application.Services
             //     'product.pricelist': pricelist.read(pricelist_fields, load=False)
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> GetReceivableAccountInternalAsync(object payment_method)
@@ -1653,7 +1670,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> GetSessionOrdersAsync(Guid id)
+        public async Task<PosSession> GetSessionOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1662,7 +1679,9 @@ namespace Bamboo.Core.Application.Services
             //     not (o.preset_time and o.preset_time.date() > fields.Date.today())
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> GetSplitReceivableOpValsInternalAsync(object payment, object amount, object amount_converted)
@@ -1773,7 +1792,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> GetTotalDiscountAsync(Guid id)
+        public async Task<PosSession> GetTotalDiscountAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1784,7 +1803,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return amount
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> GetTotalInvoiceInternalAsync()
@@ -1801,7 +1822,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> LoadDataAsync(Guid id, PosSessionLoadDataRequestDto input)
+        public async Task<PosSession> LoadDataAsync(PosSessionLoadDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1821,10 +1842,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return response
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> LoadDataParamsAsync(Guid id)
+        public async Task<PosSession> LoadDataParamsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1845,9 +1868,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return response
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<PosSession> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -1858,6 +1884,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosSession> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -1871,6 +1898,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosSession> LoadPosDataModelsInternalAsync(Guid config_id)
         {
             /*
@@ -1945,6 +1973,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosSession> LoadPosDataRelationsInternalAsync(object model, object fields)
         {
             /*
@@ -1996,6 +2025,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosSession> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -2018,7 +2048,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> LogPartnerMessageAsync(Guid id, PosSessionLogPartnerMessageRequestDto input)
+        public async Task<PosSession> LogPartnerMessageAsync(PosSessionLogPartnerMessageRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2032,10 +2062,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // self.message_post(body=body, author_id=partner_id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> OpenFrontendCbAsync(Guid id)
+        public async Task<PosSession> OpenFrontendCbAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2051,7 +2083,9 @@ namespace Bamboo.Core.Application.Services
             //     return {}
             // return self.config_id.open_ui()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> PosHasValidProductInternalAsync()
@@ -2064,7 +2098,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> PosSessionCloseAsync(Guid id, PosSessionPosSessionCloseRequestDto input)
+        public async Task<PosSession> PosSessionCloseAsync(PosSessionPosSessionCloseRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2075,10 +2109,12 @@ namespace Bamboo.Core.Application.Services
             // # needs to be validated.
             // return self._validate_session(balancing_account, amount_to_balance, bank_payment_method_diffs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> PosSessionClosingControlAsync(Guid id, PosSessionPosSessionClosingControlRequestDto input)
+        public async Task<PosSession> PosSessionClosingControlAsync(PosSessionPosSessionClosingControlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2106,10 +2142,12 @@ namespace Bamboo.Core.Application.Services
             // 
             //     return session.action_pos_session_validate(balancing_account, amount_to_balance, bank_payment_method_diffs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> PosSessionOpenAsync(Guid id)
+        public async Task<PosSession> PosSessionOpenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2123,10 +2161,12 @@ namespace Bamboo.Core.Application.Services
             //     session.write(values)
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> PosSessionValidateAsync(Guid id, PosSessionPosSessionValidateRequestDto input)
+        public async Task<PosSession> PosSessionValidateAsync(PosSessionPosSessionValidateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2134,7 +2174,9 @@ namespace Bamboo.Core.Application.Services
             // bank_payment_method_diffs = bank_payment_method_diffs or {}
             // return self.action_pos_session_close(balancing_account, amount_to_balance, bank_payment_method_diffs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> PostCashDetailsMessageInternalAsync(object state, object expected, object difference, object notes)
@@ -2155,7 +2197,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> PostCloseRegisterMessageAsync(Guid id)
+        public async Task<PosSession> PostCloseRegisterMessageAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2168,10 +2210,12 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return super().post_close_register_message()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> PostClosingCashDetailsAsync(Guid id, PosSessionPostClosingCashDetailsRequestDto input)
+        public async Task<PosSession> PostClosingCashDetailsAsync(PosSessionPostClosingCashDetailsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2201,7 +2245,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return {'successful': True}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> PostStatementDifferenceInternalAsync(object amount)
@@ -2395,6 +2441,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PosSession> SetLastOrderPreparationChangeInternalAsync(List<Guid> order_ids)
         {
             /*
@@ -2420,7 +2467,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> SetOpeningControlAsync(Guid id, PosSessionSetOpeningControlRequestDto input)
+        public async Task<PosSession> SetOpeningControlAsync(PosSessionSetOpeningControlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2442,7 +2489,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // self.name = (self.config_id.name if sequence.prefix == '/' else '') + sequence.next_by_code('pos.session') + (self.name if self.name != '/' else '')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> SetOpeningControlDataInternalAsync(int cashbox_value, string notes)
@@ -2475,7 +2524,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> ShowCashRegisterAsync(Guid id)
+        public async Task<PosSession> ShowCashRegisterAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2488,10 +2537,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('id', 'in', self.statement_line_ids.ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> ShowJournalItemsAsync(Guid id)
+        public async Task<PosSession> ShowJournalItemsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2512,10 +2563,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> ShowPaymentsListAsync(Guid id)
+        public async Task<PosSession> ShowPaymentsListAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2529,10 +2582,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'search_default_group_by_payment_method': 1}
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> StockPickingAsync(Guid id)
+        public async Task<PosSession> StockPickingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2544,10 +2599,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('id', 'in', self.picking_ids.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PosSession> TryCashInOutAsync(Guid id, PosSessionTryCashInOutRequestDto input)
+        public async Task<PosSession> TryCashInOutAsync(PosSessionTryCashInOutRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2564,7 +2621,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // self.env['account.bank.statement.line'].with_context(no_retrieve_partner=True).create(vals_list)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> UpdateAmountsInternalAsync(object old_amounts, object amounts_to_add, object date, object round, object force_company_currency)
@@ -2635,7 +2694,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> UpdateClosingControlStateSessionAsync(Guid id, PosSessionUpdateClosingControlStateSessionRequestDto input)
+        public async Task<PosSession> UpdateClosingControlStateSessionAsync(PosSessionUpdateClosingControlStateSessionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2647,7 +2706,9 @@ namespace Bamboo.Core.Application.Services
             // self.write({'state': 'closing_control', 'stop_at': fields.Datetime.now(), 'closing_notes': notes})
             // self._post_cash_details_message('Closing', self.cash_register_balance_end, self.cash_register_difference, notes)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PosSession> ValidateSessionInternalAsync(object balancing_account, object amount_to_balance, object bank_payment_method_diffs)
@@ -2719,7 +2780,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> ViewOrderAsync(Guid id)
+        public async Task<PosSession> ViewOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2736,7 +2797,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('session_id', 'in', self.ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

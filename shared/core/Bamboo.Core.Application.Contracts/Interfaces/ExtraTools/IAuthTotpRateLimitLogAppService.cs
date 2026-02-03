@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAuthTotpRateLimitLogAppService : IGenericApplicationService<AuthTotpRateLimitLog>
     {
-        Task<AuthTotpRateLimitLog> InitAsync(Guid id);
+        Task<AuthTotpRateLimitLog> InitAsync(Guid[] ids);
     }
 }

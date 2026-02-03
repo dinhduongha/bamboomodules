@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrDemoAppService : IGenericApplicationService<IrDemo>
     {
-        Task<IrDemo> InstallDemoAsync(Guid id);
+        Task<IrDemo> InstallDemoAsync(Guid[] ids);
     }
 }

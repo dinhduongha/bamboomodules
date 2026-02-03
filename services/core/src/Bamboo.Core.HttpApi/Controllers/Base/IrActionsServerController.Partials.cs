@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-automation")]
-        public async Task<IActionResult> ActionOpenAutomationAsync(Guid id)
+        [Route("action-open-automation")]
+        public async Task<IActionResult> ActionOpenAutomationAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAutomationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAutomationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-parent-action")]
-        public async Task<IActionResult> ActionOpenParentActionAsync(Guid id)
+        [Route("action-open-parent-action")]
+        public async Task<IActionResult> ActionOpenParentActionAsync(Guid[] ids)
         {
-            var result = await _appService.OpenParentActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenParentActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-scheduled-action")]
-        public async Task<IActionResult> ActionOpenScheduledActionAsync(Guid id)
+        [Route("action-open-scheduled-action")]
+        public async Task<IActionResult> ActionOpenScheduledActionAsync(Guid[] ids)
         {
-            var result = await _appService.OpenScheduledActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenScheduledActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] IrActionsServerCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(IrActionsServerCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-action")]
-        public async Task<IActionResult> CreateActionAsync(Guid id)
+        [Route("create-action")]
+        public async Task<IActionResult> CreateActionAsync(Guid[] ids)
         {
-            var result = await _appService.CreateActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/history-wizard-action")]
-        public async Task<IActionResult> HistoryWizardActionAsync(Guid id)
+        [Route("history-wizard-action")]
+        public async Task<IActionResult> HistoryWizardActionAsync(Guid[] ids)
         {
-            var result = await _appService.HistoryWizardActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.HistoryWizardActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/run")]
-        public async Task<IActionResult> RunAsync(Guid id)
+        [Route("run")]
+        public async Task<IActionResult> RunAsync(Guid[] ids)
         {
-            var result = await _appService.RunAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RunAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unlink-action")]
-        public async Task<IActionResult> UnlinkActionAsync(Guid id)
+        [Route("unlink-action")]
+        public async Task<IActionResult> UnlinkActionAsync(Guid[] ids)
         {
-            var result = await _appService.UnlinkActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnlinkActionAsync(ids);
             return Ok(result);
         }
     }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("EventCrm", Category = "Marketing", Depends = new[] { "event", "crm" })]
-    public partial class EventLeadRuleAppService : GenericApplicationService<EventLeadRule>, IEventLeadRuleAppService
+    public partial class EventLeadRuleAppService : GenericAppService<EventLeadRule>, IEventLeadRuleAppService
     {
 
         public EventLeadRuleAppService(IRepository<EventLeadRule, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<EventLeadRule> ExecuteRuleAsync(Guid id)
+        public async Task<EventLeadRule> ExecuteRuleAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_lead_rule.py) ---
@@ -34,7 +34,9 @@ namespace Bamboo.Core.Application.Services
             // events = self.event_id or self.env['event.event'].search([('is_finished', '!=', True)])
             // return events.action_generate_leads(event_lead_rules=self)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventLeadRule> FilterRegistrationsInternalAsync(object registrations)

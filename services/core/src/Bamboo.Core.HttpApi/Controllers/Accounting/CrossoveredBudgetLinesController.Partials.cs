@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-budget-entries")]
-        public async Task<IActionResult> ActionOpenBudgetEntriesAsync(Guid id)
+        [Route("action-open-budget-entries")]
+        public async Task<IActionResult> ActionOpenBudgetEntriesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenBudgetEntriesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenBudgetEntriesAsync(ids);
             return Ok(result);
         }
     }

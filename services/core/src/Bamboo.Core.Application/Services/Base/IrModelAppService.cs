@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrModelAppService : GenericApplicationService<IrModel>, IIrModelAppService
+    public partial class IrModelAppService : GenericAppService<IrModel>, IIrModelAppService
     {
 
         public IrModelAppService(IRepository<IrModel, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -39,6 +39,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModel> CheckManualNameInternalAsync(object name)
         {
             /*
@@ -163,7 +164,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModel> DisplayNameForAsync(Guid id, IrModelDisplayNameForRequestDto input)
+        [ApiModel]
+        public async Task<IrModel> DisplayNameForAsync(IrModelDisplayNameForRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_model.py) ---
@@ -184,9 +186,12 @@ namespace Bamboo.Core.Application.Services
             //         not_accessible_models.append({"display_name": model, "model": model})
             // return self._display_name_for(accessible_models) + not_accessible_models
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrModel> DisplayNameForInternalAsync(object models)
         {
             /*
@@ -230,7 +235,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModel> GetAuthorizedFieldsAsync(Guid id, IrModelGetAuthorizedFieldsRequestDto input)
+        [ApiModel]
+        public async Task<IrModel> GetAuthorizedFieldsAsync(IrModelGetAuthorizedFieldsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---
@@ -303,10 +309,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return fields_get
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModel> GetAvailableModelsAsync(Guid id)
+        [ApiModel]
+        public async Task<IrModel> GetAvailableModelsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_model.py) ---
@@ -318,10 +327,13 @@ namespace Bamboo.Core.Application.Services
             // accessible_models = [model for model in self.pool if self._is_valid_for_model_selector(model)]
             // return self._display_name_for(accessible_models)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModel> GetCompatibleFormModelsAsync(Guid id)
+        [ApiModel]
+        public async Task<IrModel> GetCompatibleFormModelsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---
@@ -333,7 +345,9 @@ namespace Bamboo.Core.Application.Services
             //     ['id', 'model', 'name', 'website_form_label', 'website_form_key'],
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModel> GetDefinitionsInternalAsync(object model_names)
@@ -502,7 +516,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModel> HasSearchableParentRelationAsync(Guid id, IrModelHasSearchableParentRelationRequestDto input)
+        [ApiModel]
+        public async Task<IrModel> HasSearchableParentRelationAsync(IrModelHasSearchableParentRelationRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet, FILE: ir_model.py) ---
@@ -518,7 +533,9 @@ namespace Bamboo.Core.Application.Services
             //         result[model_name] = model._parent_store and model._parent_name in model._fields
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModel> InModulesInternalAsync()
@@ -550,6 +567,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModel> InstanciateAttrsInternalAsync(object model_data)
         {
             /*
@@ -591,6 +609,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModel> IsManualNameInternalAsync(object name)
         {
             /*
@@ -601,6 +620,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModel> IsValidForModelSelectorInternalAsync(object model)
         {
             /*
@@ -844,7 +864,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrModel entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<IrModel> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_model.py) ---
@@ -886,7 +906,7 @@ namespace Bamboo.Core.Application.Services
             //     self.pool._setup_models__(self.env.cr, [])
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

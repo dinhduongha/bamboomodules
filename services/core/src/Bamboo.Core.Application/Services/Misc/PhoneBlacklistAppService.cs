@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PhoneValidation", Category = "Misc", Depends = new[] { "base", "mail" })]
-    public partial class PhoneBlacklistAppService : GenericApplicationService<PhoneBlacklist>, IPhoneBlacklistAppService
+    public partial class PhoneBlacklistAppService : GenericAppService<PhoneBlacklist>, IPhoneBlacklistAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public PhoneBlacklistAppService(IRepository<PhoneBlacklist, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<PhoneBlacklist> AddAsync(Guid id, PhoneBlacklistAddRequestDto input)
+        public async Task<PhoneBlacklist> AddAsync(PhoneBlacklistAddRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: phone_blacklist.py) ---
@@ -35,17 +35,21 @@ namespace Bamboo.Core.Application.Services
             // sanitized = self.env.user._phone_format(number=number)
             // return self._add([sanitized], message=message)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PhoneBlacklist> AddAsync(Guid id)
+        public async Task<PhoneBlacklist> AddAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: phone_blacklist.py) ---
             // def action_add(self):
             // self.add(self.number)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PhoneBlacklist> AddInternalAsync(object numbers, object message)
@@ -77,7 +81,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PhoneBlacklist> PhoneBlacklistRemoveAsync(Guid id)
+        public async Task<PhoneBlacklist> PhoneBlacklistRemoveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: phone_blacklist.py) ---
@@ -91,10 +95,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'dialog_size': 'medium'},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PhoneBlacklist> RemoveAsync(Guid id, PhoneBlacklistRemoveRequestDto input)
+        public async Task<PhoneBlacklist> RemoveAsync(PhoneBlacklistRemoveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: phone_blacklist.py) ---
@@ -102,7 +108,9 @@ namespace Bamboo.Core.Application.Services
             // sanitized = self.env.user._phone_format(number=number)
             // return self._remove([sanitized], message=message)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PhoneBlacklist> RemoveInternalAsync(object numbers, object message)

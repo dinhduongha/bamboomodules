@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class DecimalPrecisionAppService : GenericApplicationService<DecimalPrecision>, IDecimalPrecisionAppService
+    public partial class DecimalPrecisionAppService : GenericAppService<DecimalPrecision>, IDecimalPrecisionAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public DecimalPrecisionAppService(IRepository<DecimalPrecision, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,6 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
+        [ApiModel]
         protected async Task<DecimalPrecision> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -60,7 +61,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DecimalPrecision> PrecisionGetAsync(Guid id, DecimalPrecisionPrecisionGetRequestDto input)
+        [ApiModel]
+        public async Task<DecimalPrecision> PrecisionGetAsync(DecimalPrecisionPrecisionGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: decimal_precision.py) ---
@@ -76,7 +78,9 @@ namespace Bamboo.Core.Application.Services
             // res = self.env.cr.fetchone()
             // return res[0] if res else 2
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

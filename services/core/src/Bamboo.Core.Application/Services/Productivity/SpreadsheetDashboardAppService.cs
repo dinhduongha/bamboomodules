@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("SpreadsheetDashboardModule", Category = "Productivity", Depends = new[] { "spreadsheet" })]
-    public partial class SpreadsheetDashboardAppService : GenericApplicationService<SpreadsheetDashboard>, ISpreadsheetDashboardAppService
+    public partial class SpreadsheetDashboardAppService : GenericAppService<SpreadsheetDashboard>, ISpreadsheetDashboardAppService
     {
         private readonly ISpreadsheetMixinAppService _spreadsheetMixinAppService;
         public SpreadsheetDashboardAppService(IRepository<SpreadsheetDashboard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, ISpreadsheetMixinAppService spreadsheetMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -38,7 +38,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SpreadsheetDashboard> CopyDataAsync(Guid id, SpreadsheetDashboardCopyDataRequestDto input)
+        public async Task<SpreadsheetDashboard> CopyDataAsync(SpreadsheetDashboardCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
@@ -50,7 +50,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", dashboard.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SpreadsheetDashboard> DashboardIsEmptyInternalAsync()
@@ -110,7 +112,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SpreadsheetDashboard> ToggleFavoriteAsync(Guid id)
+        public async Task<SpreadsheetDashboard> ToggleFavoriteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---
@@ -122,7 +124,9 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     self.sudo().favorite_user_ids = [Command.link(current_user_id)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

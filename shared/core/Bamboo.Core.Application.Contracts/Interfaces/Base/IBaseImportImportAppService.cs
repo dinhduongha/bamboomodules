@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBaseImportImportAppService : IGenericApplicationService<BaseImportImport>
     {
-        Task<BaseImportImport> ExecuteImportAsync(Guid id, BaseImportImportExecuteImportRequestDto input);
-        Task<BaseImportImport> GetFieldsTreeAsync(Guid id, BaseImportImportGetFieldsTreeRequestDto input);
-        Task<BaseImportImport> ParsePreviewAsync(Guid id, BaseImportImportParsePreviewRequestDto input);
+        Task<BaseImportImport> ExecuteImportAsync(BaseImportImportExecuteImportRequestDto input);
+        Task<BaseImportImport> GetFieldsTreeAsync(BaseImportImportGetFieldsTreeRequestDto input);
+        Task<BaseImportImport> ParsePreviewAsync(BaseImportImportParsePreviewRequestDto input);
     }
 }

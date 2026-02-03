@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountTaxAppService : GenericApplicationService<AccountTax>, IAccountTaxAppService
+    public partial class AccountTaxAppService : GenericAppService<AccountTax>, IAccountTaxAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
@@ -29,6 +29,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AdaptPriceUnitToAnotherTaxesInternalAsync(object price_unit, object product, object original_taxes, object new_taxes, object product_uom)
         {
             /*
@@ -84,6 +85,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AddAccountingDataInBaseLinesTaxDetailsInternalAsync(object base_lines, object company, object include_caba_tags)
         {
             /*
@@ -103,6 +105,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AddAccountingDataToBaseLineTaxDetailsInternalAsync(object base_line, object company, object include_caba_tags)
         {
             /*
@@ -245,6 +248,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AddAndRoundRawGrossTotalExcludedAndDiscountInternalAsync(object base_lines, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency, object account_discount_base_lines)
         {
             /*
@@ -369,6 +373,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AddTaxDetailsInBaseLineInternalAsync(object base_line, object company, object rounding_method)
         {
             /*
@@ -449,6 +454,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AddTaxDetailsInBaseLinesInternalAsync(object base_lines, object company)
         {
             /*
@@ -468,6 +474,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AggregateBaseLineTaxDetailsInternalAsync(object base_line, object grouping_function)
         {
             /*
@@ -600,6 +607,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AggregateBaseLinesAggregatedValuesInternalAsync(object base_lines_aggregated_values)
         {
             /*
@@ -653,6 +661,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> AggregateBaseLinesTaxDetailsInternalAsync(object base_lines, object grouping_function)
         {
             /*
@@ -676,6 +685,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> ApplyBaseLinesManualAmountsToReachInternalAsync(object base_lines, object company, object target_base_amount_currency, object target_base_amount, object target_tax_amounts_mapping)
         {
             /*
@@ -876,6 +886,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> CheckAndNormalizeFormulaInternalAsync(object formula)
         {
             /*
@@ -955,7 +966,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> ComputeAllAsync(Guid id, AccountTaxComputeAllRequestDto input)
+        public async Task<AccountTax> ComputeAllAsync(AccountTaxComputeAllRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -1077,7 +1088,9 @@ namespace Bamboo.Core.Application.Services
             //     'total_void': total_void,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountTax> ComputeCountryIdInternalAsync()
@@ -1305,6 +1318,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> ComputeSubsetBaseLinesTotalInternalAsync(object base_lines, object company)
         {
             /*
@@ -1461,7 +1475,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> CopyDataAsync(Guid id, AccountTaxCopyDataRequestDto input)
+        public async Task<AccountTax> CopyDataAsync(AccountTaxCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -1473,9 +1487,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", tax.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> DispatchGlobalDiscountLinesInternalAsync(object base_lines, object company)
         {
             /*
@@ -1549,6 +1566,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> DispatchReturnOfMerchandiseLinesInternalAsync(object base_lines, object company)
         {
             /*
@@ -1654,6 +1672,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> DispatchTaxesIntoNewBaseLinesInternalAsync(object base_lines, object company, object exclude_function)
         {
             /*
@@ -1818,6 +1837,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> DistributeDeltaAmountSmoothlyInternalAsync(object precision_digits, object delta_amount, object target_factors)
         {
             /*
@@ -1998,6 +2018,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> EvalTaxesComputationPrepareProductDefaultValuesInternalAsync(object field_names)
         {
             /*
@@ -2061,6 +2082,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> EvalTaxesComputationPrepareProductUomDefaultValuesInternalAsync(object field_names)
         {
             /*
@@ -2124,6 +2146,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> EvalTaxesComputationPrepareProductUomValuesInternalAsync(object default_product_uom_values, object product_uom)
         {
             /*
@@ -2150,6 +2173,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> EvalTaxesComputationPrepareProductValuesInternalAsync(object default_product_values, object product)
         {
             /*
@@ -2228,6 +2252,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> ExcludeTaxGroupsFromTaxTotalsSummaryInternalAsync(object tax_totals, object ids_to_exclude)
         {
             /*
@@ -2271,6 +2296,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> ExportBaseLineExtraTaxDataInternalAsync(object base_line)
         {
             /*
@@ -2331,6 +2357,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> FixBaseLinesTaxDetailsOnManualTaxAmountsInternalAsync(object base_lines, object company, object filter_function)
         {
             /*
@@ -2380,6 +2407,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> FixTaxIncludedPriceCompanyInternalAsync(object price, object prod_taxes, object line_taxes, Guid company_id)
         {
             /*
@@ -2394,6 +2422,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> FixTaxIncludedPriceInternalAsync(object price, object prod_taxes, object line_taxes)
         {
             /*
@@ -2446,16 +2475,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> FlattenTaxesHierarchyAsync(Guid id)
+        public async Task<AccountTax> FlattenTaxesHierarchyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
             // def flatten_taxes_hierarchy(self):
             // return self._flatten_taxes_and_sort_them()[0]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> GetBaseLineFieldValueFromRecordInternalAsync(object record, object field, object extra_values, object fallback, object from_base_line)
         {
             /*
@@ -2495,6 +2527,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> GetDeltaAmountToReachTargetInternalAsync(object target_amount, object target_currency, object raw_current_amount, object raw_current_amount_precision_digits)
         {
             /*
@@ -2764,7 +2797,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> GetTaxTagsAsync(Guid id, AccountTaxGetTaxTagsRequestDto input)
+        public async Task<AccountTax> GetTaxTagsAsync(AccountTaxGetTaxTagsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -2774,9 +2807,12 @@ namespace Bamboo.Core.Application.Services
             //     .filtered(lambda x: x.repartition_type == repartition_type and x.document_type == document_type)\
             //     .mapped('tag_ids')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> GetTaxTotalsSummaryInternalAsync(object base_lines, object currency, object company, object cash_rounding)
         {
             /*
@@ -3149,6 +3185,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> ImportBaseLineExtraTaxDataInternalAsync(object base_line, object extra_tax_data)
         {
             /*
@@ -3206,6 +3243,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -3216,6 +3254,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -3232,6 +3271,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> MergeTaxDetailsInternalAsync(object tax_details_1, object tax_details_2)
         {
             /*
@@ -3385,6 +3425,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> NormalizeTargetFactorsInternalAsync(object target_factors)
         {
             /*
@@ -3404,7 +3445,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> OnchangeAmountAsync(Guid id)
+        public async Task<AccountTax> OnchangeAmountAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -3412,10 +3453,12 @@ namespace Bamboo.Core.Application.Services
             // if self.amount_type in ('percent', 'division') and self.amount != 0.0 and not self.invoice_label:
             //     self.invoice_label = "{0:.4g}%".format(self.amount)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountTax> OnchangeAmountTypeAsync(Guid id)
+        public async Task<AccountTax> OnchangeAmountTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -3425,10 +3468,12 @@ namespace Bamboo.Core.Application.Services
             // if self.amount_type == 'group':
             //     self.invoice_label = None
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountTax> OnchangePriceIncludeAsync(Guid id)
+        public async Task<AccountTax> OnchangePriceIncludeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -3436,7 +3481,9 @@ namespace Bamboo.Core.Application.Services
             // if self.price_include:
             //     self.include_base_amount = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountTax> OnchangeUblCiiTaxCategoryCodeInternalAsync()
@@ -3481,6 +3528,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> PartitionBaseLinesTaxesInternalAsync(object base_lines, object partition_function)
         {
             /*
@@ -3661,6 +3709,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> PrepareBaseLineTaxRepartitionGroupingKeyInternalAsync(object base_line, object base_line_grouping_key, object tax_data, object tax_rep_data)
         {
             /*
@@ -3699,6 +3748,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> PrepareBaseLinesForDownPaymentInternalAsync(object base_lines, object company, object exclude_function)
         {
             /*
@@ -3727,6 +3777,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> PrepareDiscountableBaseLinesInternalAsync(object base_lines, object company, object exclude_function)
         {
             /*
@@ -3753,6 +3804,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> PrepareDownPaymentLinesInternalAsync(object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function)
         {
             /*
@@ -3799,6 +3851,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> PrepareGlobalDiscountLinesInternalAsync(object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function)
         {
             /*
@@ -3936,6 +3989,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> PrepareTaxLinesInternalAsync(object base_lines, object company, object tax_lines)
         {
             /*
@@ -4151,6 +4205,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> ReduceBaseLinesToTargetAmountInternalAsync(object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function, object aggregate_function)
         {
             /*
@@ -4386,6 +4441,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> ReduceBaseLinesWithGroupingFunctionInternalAsync(object base_lines, object grouping_function, object aggregate_function, object computation_key)
         {
             /*
@@ -4482,6 +4538,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> ReverseQuantityBaseLineExtraTaxDataInternalAsync(object extra_tax_data)
         {
             /*
@@ -4513,6 +4570,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> RoundBaseLinesTaxDetailsInternalAsync(object base_lines, object company, object tax_lines)
         {
             /*
@@ -4631,6 +4689,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> RoundRawTaxAmountsInternalAsync(object base_lines_aggregated_values, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency)
         {
             /*
@@ -4735,6 +4794,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> RoundRawTotalExcludedInternalAsync(object base_lines, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency)
         {
             /*
@@ -4813,6 +4873,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> RoundTaxDetailsBaseLinesInternalAsync(object base_lines, object company, object mode)
         {
             /*
@@ -4923,6 +4984,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> RoundTaxDetailsTaxAmountsFromTaxLinesInternalAsync(object base_lines, object company, object tax_lines)
         {
             /*
@@ -5008,6 +5070,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> RoundTaxDetailsTaxAmountsInternalAsync(object base_lines, object company, object mode)
         {
             /*
@@ -5148,6 +5211,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> SearchInternalAsync(object domain)
         {
             /*
@@ -5189,6 +5253,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> SplitBaseLineInternalAsync(object base_line, object company, object target_factors, object populate_function)
         {
             /*
@@ -5229,6 +5294,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> SplitTaxDataInternalAsync(object base_line, object tax_data, object company, object target_factors)
         {
             /*
@@ -5291,6 +5357,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> SplitTaxDetailsInternalAsync(object base_line, object company, object target_factors)
         {
             /*
@@ -5371,6 +5438,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> SquashGlobalDiscountLinesInternalAsync(object base_lines, object company)
         {
             /*
@@ -5399,6 +5467,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> SquashReturnOfMerchandiseLinesInternalAsync(object base_lines, object company)
         {
             /*
@@ -5474,6 +5543,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> TurnBaseLinesIsRefundFlagOffInternalAsync(object base_lines)
         {
             /*
@@ -5491,6 +5561,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountTax> TurnRemovedTaxesIntoNewBaseLinesInternalAsync(object base_lines, object company, object grouping_function, object aggregate_function)
         {
             /*
@@ -5563,7 +5634,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> ValidateTaxGroupIdAsync(Guid id)
+        public async Task<AccountTax> ValidateTaxGroupIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -5572,10 +5643,12 @@ namespace Bamboo.Core.Application.Services
             //     if record.tax_group_id.country_id and record.tax_group_id.country_id != record.country_id:
             //         raise ValidationError(_("The tax group must have the same country_id as the tax using it."))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, AccountTax entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<AccountTax> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -5601,7 +5674,7 @@ namespace Bamboo.Core.Application.Services
             //         lines_chunk.invalidate_recordset(['tax_ids'])
             // return super(AccountTax, self).write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

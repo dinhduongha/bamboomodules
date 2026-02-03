@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-operations")]
-        public async Task<IActionResult> ActionShowOperationsAsync(Guid id)
+        [Route("action-show-operations")]
+        public async Task<IActionResult> ActionShowOperationsAsync(Guid[] ids)
         {
-            var result = await _appService.ShowOperationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowOperationsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-work-order")]
-        public async Task<IActionResult> ActionWorkOrderAsync(Guid id)
+        [Route("action-work-order")]
+        public async Task<IActionResult> ActionWorkOrderAsync(Guid[] ids)
         {
-            var result = await _appService.WorkOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WorkOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-work-order-alternatives")]
-        public async Task<IActionResult> ActionWorkOrderAlternativesAsync(Guid id)
+        [Route("action-work-order-alternatives")]
+        public async Task<IActionResult> ActionWorkOrderAlternativesAsync(Guid[] ids)
         {
-            var result = await _appService.WorkOrderAlternativesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WorkOrderAlternativesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unblock")]
-        public async Task<IActionResult> UnblockAsync(Guid id)
+        [Route("unblock")]
+        public async Task<IActionResult> UnblockAsync(Guid[] ids)
         {
-            var result = await _appService.UnblockAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnblockAsync(ids);
             return Ok(result);
         }
     }

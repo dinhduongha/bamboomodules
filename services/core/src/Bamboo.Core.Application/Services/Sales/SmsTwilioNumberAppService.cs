@@ -17,8 +17,8 @@ using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("SmsTwilio", Category = "Misc", Depends = new[] { "sms" })]
-    public partial class SmsTwilioNumberAppService : GenericApplicationService<SmsTwilioNumber>, ISmsTwilioNumberAppService
+    [Module("SmsTwilio", Category = "Sales", Depends = new[] { "sms" })]
+    public partial class SmsTwilioNumberAppService : GenericAppService<SmsTwilioNumber>, ISmsTwilioNumberAppService
     {
 
         public SmsTwilioNumberAppService(IRepository<SmsTwilioNumber, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SmsTwilioNumber> UnlinkAsync(Guid id)
+        public async Task<SmsTwilioNumber> UnlinkAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: sms_twilio_number.py) ---
@@ -47,7 +47,9 @@ namespace Bamboo.Core.Application.Services
             // self.unlink()
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

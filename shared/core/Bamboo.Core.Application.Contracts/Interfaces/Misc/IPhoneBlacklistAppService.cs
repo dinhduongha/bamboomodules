@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPhoneBlacklistAppService : IGenericApplicationService<PhoneBlacklist>
     {
-        Task<PhoneBlacklist> AddAsync(Guid id, PhoneBlacklistAddRequestDto input);
-        Task<PhoneBlacklist> AddAsync(Guid id);
-        Task<PhoneBlacklist> PhoneBlacklistRemoveAsync(Guid id);
-        Task<PhoneBlacklist> RemoveAsync(Guid id, PhoneBlacklistRemoveRequestDto input);
+        Task<PhoneBlacklist> AddAsync(PhoneBlacklistAddRequestDto input);
+        Task<PhoneBlacklist> AddAsync(Guid[] ids);
+        Task<PhoneBlacklist> PhoneBlacklistRemoveAsync(Guid[] ids);
+        Task<PhoneBlacklist> RemoveAsync(PhoneBlacklistRemoveRequestDto input);
     }
 }

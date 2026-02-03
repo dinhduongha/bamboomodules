@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-provider-form")]
-        public async Task<IActionResult> ActionOpenProviderFormAsync(Guid id)
+        [Route("action-open-provider-form")]
+        public async Task<IActionResult> ActionOpenProviderFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenProviderFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenProviderFormAsync(ids);
             return Ok(result);
         }
     }

@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrDepartmentAppService : IGenericApplicationService<HrDepartment>
     {
-        Task<HrDepartment> EmployeeFromDepartmentAsync(Guid id);
-        Task<HrDepartment> GetChildrenDepartmentIdsAsync(Guid id);
-        Task<HrDepartment> GetDepartmentHierarchyAsync(Guid id);
-        Task<HrDepartment> GetFormviewActionAsync(Guid id, HrDepartmentGetFormviewActionRequestDto input);
-        Task<HrDepartment> OpenAllocationDepartmentAsync(Guid id);
-        Task<HrDepartment> OpenLeaveDepartmentAsync(Guid id);
-        Task<HrDepartment> OpenViewChildDepartmentsAsync(Guid id);
-        Task<HrDepartment> PlanFromDepartmentAsync(Guid id);
+        Task<HrDepartment> EmployeeFromDepartmentAsync(Guid[] ids);
+        Task<HrDepartment> GetChildrenDepartmentIdsAsync(Guid[] ids);
+        Task<HrDepartment> GetDepartmentHierarchyAsync(Guid[] ids);
+        Task<HrDepartment> GetFormviewActionAsync(HrDepartmentGetFormviewActionRequestDto input);
+        Task<HrDepartment> OpenAllocationDepartmentAsync(Guid[] ids);
+        Task<HrDepartment> OpenLeaveDepartmentAsync(Guid[] ids);
+        Task<HrDepartment> OpenViewChildDepartmentsAsync(Guid[] ids);
+        Task<HrDepartment> PlanFromDepartmentAsync(Guid[] ids);
     }
 }

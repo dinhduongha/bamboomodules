@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-courses")]
-        public async Task<IActionResult> ActionOpenCoursesAsync(Guid id)
+        [Route("action-open-courses")]
+        public async Task<IActionResult> ActionOpenCoursesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenCoursesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenCoursesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-last-month-attendances")]
-        public async Task<IActionResult> ActionOpenLastMonthAttendancesAsync(Guid id)
+        [Route("action-open-last-month-attendances")]
+        public async Task<IActionResult> ActionOpenLastMonthAttendancesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLastMonthAttendancesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLastMonthAttendancesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-time-off-calendar")]
-        public async Task<IActionResult> ActionOpenTimeOffCalendarAsync(Guid id)
+        [Route("action-open-time-off-calendar")]
+        public async Task<IActionResult> ActionOpenTimeOffCalendarAsync(Guid[] ids)
         {
-            var result = await _appService.OpenTimeOffCalendarAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenTimeOffCalendarAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-time-off-dashboard")]
-        public async Task<IActionResult> ActionTimeOffDashboardAsync(Guid id)
+        [Route("action-time-off-dashboard")]
+        public async Task<IActionResult> ActionTimeOffDashboardAsync(Guid[] ids)
         {
-            var result = await _appService.TimeOffDashboardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TimeOffDashboardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-timesheet-from-employee")]
-        public async Task<IActionResult> ActionTimesheetFromEmployeeAsync(Guid id)
+        [Route("action-timesheet-from-employee")]
+        public async Task<IActionResult> ActionTimesheetFromEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.TimesheetFromEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TimesheetFromEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-avatar-card-data")]
-        public async Task<IActionResult> GetAvatarCardDataAsync(Guid id, [FromBody] HrEmployeePublicGetAvatarCardDataRequestDto input)
+        [Route("get-avatar-card-data")]
+        public async Task<IActionResult> GetAvatarCardDataAsync(HrEmployeePublicGetAvatarCardDataRequestDto input)
         {
-            var result = await _appService.GetAvatarCardDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAvatarCardDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("init")]
+        public async Task<IActionResult> InitAsync(Guid[] ids)
         {
-            var result = await _appService.InitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InitAsync(ids);
             return Ok(result);
         }
     }

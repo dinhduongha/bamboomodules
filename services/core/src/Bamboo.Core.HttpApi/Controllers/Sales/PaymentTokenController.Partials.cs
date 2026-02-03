@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-linked-records-info")]
-        public async Task<IActionResult> GetLinkedRecordsInfoAsync(Guid id)
+        [Route("get-linked-records-info")]
+        public async Task<IActionResult> GetLinkedRecordsInfoAsync(Guid[] ids)
         {
-            var result = await _appService.GetLinkedRecordsInfoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetLinkedRecordsInfoAsync(ids);
             return Ok(result);
         }
     }

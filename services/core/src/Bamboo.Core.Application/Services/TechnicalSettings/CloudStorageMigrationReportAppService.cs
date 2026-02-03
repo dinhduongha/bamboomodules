@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("CloudStorageMigration", Category = "TechnicalSettings", Depends = new[] { "cloud_storage" })]
-    public partial class CloudStorageMigrationReportAppService : GenericApplicationService<CloudStorageMigrationReport>, ICloudStorageMigrationReportAppService
+    public partial class CloudStorageMigrationReportAppService : GenericAppService<CloudStorageMigrationReport>, ICloudStorageMigrationReportAppService
     {
 
         public CloudStorageMigrationReportAppService(IRepository<CloudStorageMigrationReport, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -78,7 +78,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CloudStorageMigrationReport> GetProgressAsync(Guid id)
+        public async Task<CloudStorageMigrationReport> GetProgressAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: cloud_storage_migration_report.py) ---
@@ -88,10 +88,12 @@ namespace Bamboo.Core.Application.Services
             // min_attachment_id = int(self.env.cr.fetchone()[0]) if self.env.cr.rowcount else 0
             // return min_attachment_id * 100 // max(max_attachment_id, min_attachment_id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CloudStorageMigrationReport> InitAsync(Guid id)
+        public async Task<CloudStorageMigrationReport> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: cloud_storage_migration_report.py) ---
@@ -133,7 +135,9 @@ namespace Bamboo.Core.Application.Services
             // """ % self._table
             // self.env.cr.execute(query)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

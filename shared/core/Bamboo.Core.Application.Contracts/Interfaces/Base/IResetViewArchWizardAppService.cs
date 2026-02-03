@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResetViewArchWizardAppService : IGenericApplicationService<ResetViewArchWizard>
     {
-        Task<ResetViewArchWizard> ResetViewButtonAsync(Guid id);
+        Task<ResetViewArchWizard> ResetViewButtonAsync(Guid[] ids);
     }
 }

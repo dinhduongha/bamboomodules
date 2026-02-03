@@ -10,12 +10,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResCurrencyAppService : IGenericApplicationService<ResCurrency>
     {
-        Task<ResCurrency> AmountToTextAsync(Guid id, ResCurrencyAmountToTextRequestDto input);
-        Task<ResCurrency> CompareAmountsAsync(Guid id, ResCurrencyCompareAmountsRequestDto input);
-        Task<ResCurrency> FormatAsync(Guid id, ResCurrencyFormatRequestDto input);
-        Task<ResCurrency> GetAllCurrenciesAsync(Guid id);
-        Task<ResCurrency> GetCompanyCurrencyForSpreadsheetAsync(Guid id, ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input);
-        Task<ResCurrency> IsZeroAsync(Guid id, ResCurrencyIsZeroRequestDto input);
-        Task<ResCurrency> RoundAsync(Guid id, ResCurrencyRoundRequestDto input);
+        Task<ResCurrency> AmountToTextAsync(ResCurrencyAmountToTextRequestDto input);
+        Task<ResCurrency> CompareAmountsAsync(ResCurrencyCompareAmountsRequestDto input);
+        Task<ResCurrency> FormatAsync(ResCurrencyFormatRequestDto input);
+        Task<ResCurrency> GetAllCurrenciesAsync(Guid[] ids);
+        Task<ResCurrency> GetCompanyCurrencyForSpreadsheetAsync(ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input);
+        Task<ResCurrency> IsZeroAsync(ResCurrencyIsZeroRequestDto input);
+        Task<ResCurrency> RoundAsync(ResCurrencyRoundRequestDto input);
     }
 }

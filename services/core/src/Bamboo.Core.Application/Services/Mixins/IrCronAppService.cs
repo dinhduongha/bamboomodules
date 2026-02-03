@@ -256,6 +256,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ClearScheduleInternalAsync<TEntity>(IEnumerable<TEntity> entities, object job) where TEntity : IEntity<Guid>, IIrCronable
         {
             /*
@@ -272,6 +273,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<float> CommitProgressInternalAsync<TEntity>(IEnumerable<TEntity> entities, int processed) where TEntity : IEntity<Guid>, IIrCronable
         {
             /*
@@ -348,6 +350,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IIrCronable
         {
             /*
@@ -477,6 +480,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NotifydbInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrCronable
         {
             /*
@@ -624,6 +628,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RescheduleAsapInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> job) where TEntity : IEntity<Guid>, IIrCronable
         {
             /*
@@ -642,6 +647,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RescheduleLaterInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> job) where TEntity : IEntity<Guid>, IIrCronable
         {
             /*
@@ -768,6 +774,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ToggleAsync<TEntity>(IEnumerable<TEntity> entities, object model, object domain) where TEntity : IEntity<Guid>, IIrCronable
         {
             /*
@@ -877,6 +884,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> UpdateFailureCountInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> job, object status) where TEntity : IEntity<Guid>, IIrCronable
         {
             /*

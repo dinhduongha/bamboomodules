@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResPartnerTagAppService : IGenericApplicationService<ResPartnerTag>
     {
-        Task<ResPartnerTag> GetSelectionClassAsync(Guid id);
+        Task<ResPartnerTag> GetSelectionClassAsync(Guid[] ids);
     }
 }

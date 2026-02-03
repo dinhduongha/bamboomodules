@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public partial class ThemeIrUiViewAppService : GenericApplicationService<ThemeIrUiView>, IThemeIrUiViewAppService
+    public partial class ThemeIrUiViewAppService : GenericAppService<ThemeIrUiView>, IThemeIrUiViewAppService
     {
 
         public ThemeIrUiViewAppService(IRepository<ThemeIrUiView, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ThemeIrUiView> ComputeArchFsAsync(Guid id)
+        public async Task<ThemeIrUiView> ComputeArchFsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: theme_models.py) ---
@@ -37,7 +37,9 @@ namespace Bamboo.Core.Application.Services
             // if path_info:
             //     return '/'.join(path_info[0:2])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ThemeIrUiView> ConvertToBaseModelInternalAsync(object website)

@@ -10,11 +10,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICardCampaignAppService : IGenericApplicationService<CardCampaign>
     {
-        Task<CardCampaign> PreviewAsync(Guid id);
-        Task<CardCampaign> ShareAsync(Guid id);
-        Task<CardCampaign> ViewCardsAsync(Guid id);
-        Task<CardCampaign> ViewCardsClickedAsync(Guid id);
-        Task<CardCampaign> ViewCardsSharedAsync(Guid id);
-        Task<CardCampaign> ViewMailingsAsync(Guid id);
+        Task<CardCampaign> PreviewAsync(Guid[] ids);
+        Task<CardCampaign> ShareAsync(Guid[] ids);
+        Task<CardCampaign> ViewCardsAsync(Guid[] ids);
+        Task<CardCampaign> ViewCardsClickedAsync(Guid[] ids);
+        Task<CardCampaign> ViewCardsSharedAsync(Guid[] ids);
+        Task<CardCampaign> ViewMailingsAsync(Guid[] ids);
     }
 }

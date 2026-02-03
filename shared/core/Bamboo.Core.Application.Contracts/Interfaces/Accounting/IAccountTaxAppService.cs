@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountTaxAppService : IGenericApplicationService<AccountTax>
     {
-        Task<AccountTax> ComputeAllAsync(Guid id, AccountTaxComputeAllRequestDto input);
-        Task<AccountTax> CopyDataAsync(Guid id, AccountTaxCopyDataRequestDto input);
-        Task<AccountTax> FlattenTaxesHierarchyAsync(Guid id);
-        Task<AccountTax> GetTaxTagsAsync(Guid id, AccountTaxGetTaxTagsRequestDto input);
-        Task<AccountTax> OnchangeAmountAsync(Guid id);
-        Task<AccountTax> OnchangeAmountTypeAsync(Guid id);
-        Task<AccountTax> OnchangePriceIncludeAsync(Guid id);
-        Task<AccountTax> ValidateTaxGroupIdAsync(Guid id);
+        Task<AccountTax> ComputeAllAsync(AccountTaxComputeAllRequestDto input);
+        Task<AccountTax> CopyDataAsync(AccountTaxCopyDataRequestDto input);
+        Task<AccountTax> FlattenTaxesHierarchyAsync(Guid[] ids);
+        Task<AccountTax> GetTaxTagsAsync(AccountTaxGetTaxTagsRequestDto input);
+        Task<AccountTax> OnchangeAmountAsync(Guid[] ids);
+        Task<AccountTax> OnchangeAmountTypeAsync(Guid[] ids);
+        Task<AccountTax> OnchangePriceIncludeAsync(Guid[] ids);
+        Task<AccountTax> ValidateTaxGroupIdAsync(Guid[] ids);
     }
 }

@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-create-mass-sms")]
-        public async Task<IActionResult> ActionCreateMassSmsAsync(Guid id)
+        [Route("action-create-mass-sms")]
+        public async Task<IActionResult> ActionCreateMassSmsAsync(Guid[] ids)
         {
-            var result = await _appService.CreateMassSmsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateMassSmsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-invoiced")]
-        public async Task<IActionResult> ActionRedirectToInvoicedAsync(Guid id)
+        [Route("action-redirect-to-invoiced")]
+        public async Task<IActionResult> ActionRedirectToInvoicedAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToInvoicedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToInvoicedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-leads-opportunities")]
-        public async Task<IActionResult> ActionRedirectToLeadsOpportunitiesAsync(Guid id)
+        [Route("action-redirect-to-leads-opportunities")]
+        public async Task<IActionResult> ActionRedirectToLeadsOpportunitiesAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToLeadsOpportunitiesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToLeadsOpportunitiesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-mailing-sms")]
-        public async Task<IActionResult> ActionRedirectToMailingSmsAsync(Guid id)
+        [Route("action-redirect-to-mailing-sms")]
+        public async Task<IActionResult> ActionRedirectToMailingSmsAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToMailingSmsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToMailingSmsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-quotations")]
-        public async Task<IActionResult> ActionRedirectToQuotationsAsync(Guid id)
+        [Route("action-redirect-to-quotations")]
+        public async Task<IActionResult> ActionRedirectToQuotationsAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToQuotationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToQuotationsAsync(ids);
             return Ok(result);
         }
     }

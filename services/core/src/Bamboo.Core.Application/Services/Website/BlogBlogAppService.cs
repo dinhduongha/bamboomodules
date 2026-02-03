@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteBlog", Category = "Website", Depends = new[] { "website_mail", "website_partner", "html_builder" })]
-    public partial class BlogBlogAppService : GenericApplicationService<BlogBlog>, IBlogBlogAppService
+    public partial class BlogBlogAppService : GenericAppService<BlogBlog>, IBlogBlogAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IWebsiteCoverPropertiesMixinAppService _websiteCoverPropertiesMixinAppService;
@@ -35,7 +35,7 @@ namespace Bamboo.Core.Application.Services
             _websiteSeoMetadataAppService = websiteSeoMetadataAppService;
         }
 
-        public async Task<BlogBlog> AllTagsAsync(Guid id, BlogBlogAllTagsRequestDto input)
+        public async Task<BlogBlog> AllTagsAsync(BlogBlogAllTagsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
@@ -73,7 +73,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return tag_by_blog
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BlogBlog> ComputeBlogPostCountInternalAsync()
@@ -97,7 +99,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BlogBlog> MessagePostAsync(Guid id)
+        public async Task<BlogBlog> MessagePostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---
@@ -112,9 +114,12 @@ namespace Bamboo.Core.Application.Services
             //         subtype_id = self.env.ref('mail.mt_note').id
             // return super().message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<BlogBlog> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*

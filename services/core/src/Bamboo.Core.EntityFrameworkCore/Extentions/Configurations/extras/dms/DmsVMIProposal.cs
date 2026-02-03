@@ -28,7 +28,7 @@ public static partial class ModelBuilderExtensions
 
             entity.Property(e => e.PartnerId).HasColumnName("partner_id");
             entity.Property(e => e.ProposedQty).HasColumnName("proposed_qty");
-            entity.Property(e => e.BasedOnSalesHistoryJson).HasColumnName("based_on_sales_history_json");
+            entity.Property(e => e.BasedOnSalesHistory);
             entity.Property(e => e.SeasonFactor).HasColumnName("season_factor");
             entity.Property(e => e.ApprovalStatus).HasColumnName("approval_status");
 

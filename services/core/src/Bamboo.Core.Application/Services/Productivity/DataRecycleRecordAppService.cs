@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("DataRecycle", Category = "Productivity", Depends = new[] { "mail" })]
-    public partial class DataRecycleRecordAppService : GenericApplicationService<DataRecycleRecord>, IDataRecycleRecordAppService
+    public partial class DataRecycleRecordAppService : GenericAppService<DataRecycleRecord>, IDataRecycleRecordAppService
     {
 
         public DataRecycleRecordAppService(IRepository<DataRecycleRecord, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -58,16 +58,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DataRecycleRecord> DiscardAsync(Guid id)
+        public async Task<DataRecycleRecord> DiscardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: data_recycle, FILE: data_recycle_record.py) ---
             // def action_discard(self):
             // self.write({'active': False})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<DataRecycleRecord> GetCompanyIdInternalAsync(object record)
         {
             /*
@@ -104,7 +107,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DataRecycleRecord> ValidateAsync(Guid id)
+        public async Task<DataRecycleRecord> ValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: data_recycle, FILE: data_recycle_record.py) ---
@@ -128,7 +131,9 @@ namespace Bamboo.Core.Application.Services
             //     self.env[model_name].sudo().browse(ids).unlink()
             // records_done.unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

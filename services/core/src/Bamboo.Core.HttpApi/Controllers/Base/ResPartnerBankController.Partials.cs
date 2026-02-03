@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive-bank")]
-        public async Task<IActionResult> ActionArchiveBankAsync(Guid id)
+        [Route("action-archive-bank")]
+        public async Task<IActionResult> ActionArchiveBankAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveBankAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveBankAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-allocation-wizard")]
-        public async Task<IActionResult> ActionOpenAllocationWizardAsync(Guid id)
+        [Route("action-open-allocation-wizard")]
+        public async Task<IActionResult> ActionOpenAllocationWizardAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAllocationWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAllocationWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/build-qr-code-base64")]
-        public async Task<IActionResult> BuildQrCodeBase64Async(Guid id, [FromBody] ResPartnerBankBuildQrCodeBase64RequestDto input)
+        [Route("build-qr-code-base64")]
+        public async Task<IActionResult> BuildQrCodeBase64Async(ResPartnerBankBuildQrCodeBase64RequestDto input)
         {
-            var result = await _appService.BuildQrCodeBase64Async(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.BuildQrCodeBase64Async(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/build-qr-code-url")]
-        public async Task<IActionResult> BuildQrCodeUrlAsync(Guid id, [FromBody] ResPartnerBankBuildQrCodeUrlRequestDto input)
+        [Route("build-qr-code-url")]
+        public async Task<IActionResult> BuildQrCodeUrlAsync(ResPartnerBankBuildQrCodeUrlRequestDto input)
         {
-            var result = await _appService.BuildQrCodeUrlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.BuildQrCodeUrlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-iban")]
-        public async Task<IActionResult> CheckIbanAsync(Guid id, [FromBody] ResPartnerBankCheckIbanRequestDto input)
+        [Route("check-iban")]
+        public async Task<IActionResult> CheckIbanAsync(ResPartnerBankCheckIbanRequestDto input)
         {
-            var result = await _appService.CheckIbanAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckIbanAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-available-qr-methods-in-sequence")]
-        public async Task<IActionResult> GetAvailableQrMethodsInSequenceAsync(Guid id)
+        [Route("get-available-qr-methods-in-sequence")]
+        public async Task<IActionResult> GetAvailableQrMethodsInSequenceAsync(Guid[] ids)
         {
-            var result = await _appService.GetAvailableQrMethodsInSequenceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAvailableQrMethodsInSequenceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-bban")]
-        public async Task<IActionResult> GetBbanAsync(Guid id)
+        [Route("get-bban")]
+        public async Task<IActionResult> GetBbanAsync(Guid[] ids)
         {
-            var result = await _appService.GetBbanAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBbanAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-supported-account-types")]
-        public async Task<IActionResult> GetSupportedAccountTypesAsync(Guid id)
+        [Route("get-supported-account-types")]
+        public async Task<IActionResult> GetSupportedAccountTypesAsync(Guid[] ids)
         {
-            var result = await _appService.GetSupportedAccountTypesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetSupportedAccountTypesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/retrieve-acc-type")]
-        public async Task<IActionResult> RetrieveAccTypeAsync(Guid id, [FromBody] ResPartnerBankRetrieveAccTypeRequestDto input)
+        [Route("retrieve-acc-type")]
+        public async Task<IActionResult> RetrieveAccTypeAsync(ResPartnerBankRetrieveAccTypeRequestDto input)
         {
-            var result = await _appService.RetrieveAccTypeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RetrieveAccTypeAsync(input);
             return Ok(result);
         }
     }

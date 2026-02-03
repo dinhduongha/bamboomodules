@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrDemoAppService : GenericApplicationService<IrDemo>, IIrDemoAppService
+    public partial class IrDemoAppService : GenericAppService<IrDemo>, IIrDemoAppService
     {
 
         public IrDemoAppService(IRepository<IrDemo, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<IrDemo> InstallDemoAsync(Guid id)
+        public async Task<IrDemo> InstallDemoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_demo.py) ---
@@ -39,7 +39,9 @@ namespace Bamboo.Core.Application.Services
             //     'url': '/odoo',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

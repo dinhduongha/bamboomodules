@@ -30,8 +30,8 @@ public partial class DmsVMIProposal : FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("proposed_qty")]
     public decimal ProposedQty { get; set; }
 
-    [Column("based_on_sales_history_json")]
-    public string? BasedOnSalesHistoryJson { get; set; }
+    [Column("based_on_sales_history", TypeName = "jsonb")]
+    public string? BasedOnSalesHistory { get; set; }
 
     [Column("season_factor")]
     public decimal SeasonFactor { get; set; }

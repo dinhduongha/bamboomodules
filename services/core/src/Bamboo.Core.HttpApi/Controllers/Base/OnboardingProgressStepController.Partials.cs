@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-consolidate-just-done")]
-        public async Task<IActionResult> ActionConsolidateJustDoneAsync(Guid id)
+        [Route("action-consolidate-just-done")]
+        public async Task<IActionResult> ActionConsolidateJustDoneAsync(Guid[] ids)
         {
-            var result = await _appService.ConsolidateJustDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConsolidateJustDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-just-done")]
-        public async Task<IActionResult> ActionSetJustDoneAsync(Guid id)
+        [Route("action-set-just-done")]
+        public async Task<IActionResult> ActionSetJustDoneAsync(Guid[] ids)
         {
-            var result = await _appService.SetJustDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetJustDoneAsync(ids);
             return Ok(result);
         }
     }

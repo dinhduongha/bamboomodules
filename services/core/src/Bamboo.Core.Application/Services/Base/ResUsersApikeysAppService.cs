@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResUsersApikeysAppService : GenericApplicationService<ResUsersApikeys>, IResUsersApikeysAppService
+    public partial class ResUsersApikeysAppService : GenericAppService<ResUsersApikeys>, IResUsersApikeysAppService
     {
 
         public ResUsersApikeysAppService(IRepository<ResUsersApikeys, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -157,7 +157,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersApikeys> InitAsync(Guid id)
+        public async Task<ResUsersApikeys> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -186,17 +186,21 @@ namespace Bamboo.Core.Application.Services
             //     table,
             // ))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsersApikeys> RemoveAsync(Guid id)
+        public async Task<ResUsersApikeys> RemoveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def remove(self):
             // return self._remove()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsersApikeys> RemoveInternalAsync()

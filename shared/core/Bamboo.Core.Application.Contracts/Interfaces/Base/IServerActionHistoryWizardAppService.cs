@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IServerActionHistoryWizardAppService : IGenericApplicationService<ServerActionHistoryWizard>
     {
-        Task<ServerActionHistoryWizard> RestoreRevisionAsync(Guid id);
+        Task<ServerActionHistoryWizard> RestoreRevisionAsync(Guid[] ids);
     }
 }

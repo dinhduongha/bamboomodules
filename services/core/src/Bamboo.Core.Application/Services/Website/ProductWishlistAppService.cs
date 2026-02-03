@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSaleWishlist", Category = "Website", Depends = new[] { "website_sale" })]
-    public partial class ProductWishlistAppService : GenericApplicationService<ProductWishlist>, IProductWishlistAppService
+    public partial class ProductWishlistAppService : GenericAppService<ProductWishlist>, IProductWishlistAppService
     {
 
         public ProductWishlistAppService(IRepository<ProductWishlist, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,6 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<ProductWishlist> AddToWishlistInternalAsync(Guid pricelist_id, Guid currency_id, Guid website_id, object price, Guid product_id, Guid partner_id)
         {
             /*
@@ -45,6 +46,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductWishlist> CheckWishlistFromSessionInternalAsync()
         {
             /*
@@ -76,7 +78,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductWishlist> CurrentAsync(Guid id)
+        [ApiModel]
+        public async Task<ProductWishlist> CurrentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_wishlist, FILE: product_wishlist.py) ---
@@ -97,7 +100,9 @@ namespace Bamboo.Core.Application.Services
             //         and wish.sudo().product_id.product_tmpl_id._is_add_to_cart_possible()
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductWishlist> GcSessionsInternalAsync()

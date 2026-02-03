@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockQuantPackageAppService : GenericApplicationService<StockQuantPackage>, IStockQuantPackageAppService
+    public partial class StockQuantPackageAppService : GenericAppService<StockQuantPackage>, IStockQuantPackageAppService
     {
 
         public StockQuantPackageAppService(IRepository<StockQuantPackage, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -195,7 +195,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuantPackage> UnpackAsync(Guid id)
+        public async Task<StockQuantPackage> UnpackAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -205,10 +205,12 @@ namespace Bamboo.Core.Application.Services
             // # 2 packages of 50, then reserve 100 => a quant of -50 is created at transfer validation.
             // self.quant_ids._quant_tasks()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockQuantPackage> ViewPickingAsync(Guid id)
+        public async Task<StockQuantPackage> ViewPickingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -219,7 +221,9 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('id', 'in', pickings.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

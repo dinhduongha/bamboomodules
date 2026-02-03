@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrProfileAppService : GenericApplicationService<IrProfile>, IIrProfileAppService
+    public partial class IrProfileAppService : GenericAppService<IrProfile>, IIrProfileAppService
     {
 
         public IrProfileAppService(IRepository<IrProfile, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -210,7 +210,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrProfile> SetProfilingAsync(Guid id, IrProfileSetProfilingRequestDto input)
+        [ApiModel]
+        public async Task<IrProfile> SetProfilingAsync(IrProfileSetProfilingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_profile.py) ---
@@ -262,10 +263,12 @@ namespace Bamboo.Core.Application.Services
             //     'params': request.session.get('profile_params'),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrProfile> ViewSpeedscopeAsync(Guid id)
+        public async Task<IrProfile> ViewSpeedscopeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_profile.py) ---
@@ -277,7 +280,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockQuantAppService : GenericApplicationService<StockQuant>, IStockQuantAppService
+    public partial class StockQuantAppService : GenericAppService<StockQuant>, IStockQuantAppService
     {
 
         public StockQuantAppService(IRepository<StockQuant, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<StockQuant> ApplyAllAsync(Guid id)
+        public async Task<StockQuant> ApplyAllAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -44,10 +44,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockQuant> ApplyInventoryAsync(Guid id, StockQuantApplyInventoryRequestDto input)
+        public async Task<StockQuant> ApplyInventoryAsync(StockQuantApplyInventoryRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -70,7 +72,9 @@ namespace Bamboo.Core.Application.Services
             // self._apply_inventory(date)
             // self.inventory_quantity_set = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockQuant> ApplyInventoryInternalAsync(object date)
@@ -132,7 +136,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> CheckLocationIdAsync(Guid id)
+        public async Task<StockQuant> CheckLocationIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -141,10 +145,12 @@ namespace Bamboo.Core.Application.Services
             //     if quant.location_id.usage == 'view':
             //         raise ValidationError(_('You cannot take products from or deliver products to a location of type "view" (%s).', quant.location_id.name))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockQuant> CheckLotIdAsync(Guid id)
+        public async Task<StockQuant> CheckLotIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -153,10 +159,12 @@ namespace Bamboo.Core.Application.Services
             //     if quant.lot_id.product_id and quant.lot_id.product_id != quant.product_id:
             //         raise ValidationError(_('The Lot/Serial number (%s) is linked to another product.', quant.lot_id.name))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockQuant> CheckProductIdAsync(Guid id)
+        public async Task<StockQuant> CheckProductIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -164,10 +172,12 @@ namespace Bamboo.Core.Application.Services
             // if any(not elem.product_id.is_storable for elem in self):
             //     raise ValidationError(_('Quants cannot be created for consumables or services.'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockQuant> CheckQuantityAsync(Guid id)
+        public async Task<StockQuant> CheckQuantityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -189,9 +199,12 @@ namespace Bamboo.Core.Application.Services
             //     if product.uom_id.compare(abs(qty), 1) > 0:
             //         raise ValidationError(_('The serial number has already been assigned: \n Product: %(product)s, Serial Number: %(serial_number)s', product=product.display_name, serial_number=lot.name))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> CheckSerialNumberInternalAsync(Guid product_id, Guid lot_id, Guid company_id, Guid source_location_id, Guid ref_doc_location_id)
         {
             /*
@@ -271,6 +284,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> CleanReservationsInternalAsync()
         {
             /*
@@ -313,7 +327,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> ClearInventoryQuantityAsync(Guid id)
+        public async Task<StockQuant> ClearInventoryQuantityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -323,7 +337,9 @@ namespace Bamboo.Core.Application.Services
             // self.inventory_quantity_set = False
             // self.user_id = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockQuant> ComputeAvailableQuantityInternalAsync()
@@ -617,7 +633,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> GetAggregateBarcodesAsync(Guid id)
+        public async Task<StockQuant> GetAggregateBarcodesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -685,7 +701,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return aggregate_barcodes
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockQuant> GetAvailableQuantityInternalAsync(Guid product_id, Guid location_id, Guid lot_id, Guid package_id, Guid owner_id, object strict, object allow_negative)
@@ -736,6 +754,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> GetForbiddenFieldsWriteInternalAsync()
         {
             /*
@@ -832,7 +851,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<StockQuant> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -842,9 +862,12 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/stock/static/xlsx/stock_quant.xlsx'
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> GetInventoryFieldsCreateInternalAsync()
         {
             /*
@@ -857,6 +880,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> GetInventoryFieldsWriteInternalAsync()
         {
             /*
@@ -940,6 +964,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> GetQuantsActionInternalAsync(object extend)
         {
             /*
@@ -1013,6 +1038,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> GetRemovalStrategyInternalAsync(Guid product_id, Guid location_id)
         {
             /*
@@ -1032,6 +1058,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> GetRemovalStrategyOrderInternalAsync(object removal_strategy)
         {
             /*
@@ -1142,7 +1169,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> InventoryHistoryAsync(Guid id)
+        public async Task<StockQuant> InventoryHistoryAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1175,9 +1202,12 @@ namespace Bamboo.Core.Application.Services
             //     action['context']['search_default_owner_id'] = self.owner_id.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> IsInventoryModeInternalAsync()
         {
             /*
@@ -1219,6 +1249,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> MergeQuantsInternalAsync()
         {
             /*
@@ -1272,7 +1303,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> MoveQuantsAsync(Guid id, StockQuantMoveQuantsRequestDto input)
+        public async Task<StockQuant> MoveQuantsAsync(StockQuantMoveQuantsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1311,7 +1342,9 @@ namespace Bamboo.Core.Application.Services
             // moves = self.env['stock.move'].create(move_vals)
             // moves._action_done()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockQuant> OnchangeInventoryQuantityInternalAsync()
@@ -1400,6 +1433,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> QuantTasksInternalAsync()
         {
             /*
@@ -1450,7 +1484,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> ResetAsync(Guid id)
+        public async Task<StockQuant> ResetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1468,7 +1502,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockQuant> RunLeastPackagesRemovalStrategyAstarInternalAsync(object domain, object qty)
@@ -1641,7 +1677,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> SetInventoryQuantityAsync(Guid id)
+        public async Task<StockQuant> SetInventoryQuantityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1666,7 +1702,9 @@ namespace Bamboo.Core.Application.Services
             // self.user_id = self.env.user.id
             // self.inventory_quantity_set = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockQuant> SetInventoryQuantityInternalAsync()
@@ -1690,7 +1728,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> SetInventoryQuantityZeroAsync(Guid id)
+        public async Task<StockQuant> SetInventoryQuantityZeroAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1700,7 +1738,9 @@ namespace Bamboo.Core.Application.Services
             //     self._apply_inventory()
             // self.user_id = self.env.user.id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockQuant> SetViewContextInternalAsync()
@@ -1742,6 +1782,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> ShouldExcludeForValuationInternalAsync()
         {
             /*
@@ -1757,7 +1798,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> StockQuantRelocateAsync(Guid id)
+        public async Task<StockQuant> StockQuantRelocateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1777,7 +1818,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': context,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockQuant> UnlinkExceptWrongPermissionInternalAsync()
@@ -1795,6 +1838,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> UnlinkZeroQuantsInternalAsync()
         {
             /*
@@ -1820,6 +1864,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> UpdateAvailableQuantityInternalAsync(Guid product_id, Guid location_id, object quantity, object reserved_quantity, Guid lot_id, Guid package_id, Guid owner_id, object in_date)
         {
             /*
@@ -1896,6 +1941,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockQuant> UpdateReservedQuantityInternalAsync(Guid product_id, Guid location_id, object quantity, Guid lot_id, Guid package_id, Guid owner_id, object strict)
         {
             /*
@@ -1917,7 +1963,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> ViewInventoryAsync(Guid id)
+        [ApiModel]
+        public async Task<StockQuant> ViewInventoryAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1952,10 +1999,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockQuant> ViewOrderpointsAsync(Guid id)
+        public async Task<StockQuant> ViewOrderpointsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1964,10 +2013,13 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('product_id', '=', self.product_id.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockQuant> ViewQuantsAsync(Guid id)
+        [ApiModel]
+        public async Task<StockQuant> ViewQuantsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -1976,10 +2028,12 @@ namespace Bamboo.Core.Application.Services
             // self = self._set_view_context()
             // return self._get_quants_action(extend=True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockQuant> ViewStockMovesAsync(Guid id)
+        public async Task<StockQuant> ViewStockMovesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---
@@ -2002,7 +2056,9 @@ namespace Bamboo.Core.Application.Services
             // action['context']['search_default_product_id'] = self.product_id.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

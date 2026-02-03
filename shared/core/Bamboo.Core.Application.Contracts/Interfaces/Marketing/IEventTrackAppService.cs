@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventTrackAppService : IGenericApplicationService<EventTrack>
     {
-        Task<EventTrack> AddQuizAsync(Guid id);
-        Task<EventTrack> GetBackendMenuIdAsync(Guid id);
-        Task<EventTrack> OpenTrackSpeakersListAsync(Guid id);
-        Task<EventTrack> ViewQuizAsync(Guid id);
+        Task<EventTrack> AddQuizAsync(Guid[] ids);
+        Task<EventTrack> GetBackendMenuIdAsync(Guid[] ids);
+        Task<EventTrack> OpenTrackSpeakersListAsync(Guid[] ids);
+        Task<EventTrack> ViewQuizAsync(Guid[] ids);
     }
 }

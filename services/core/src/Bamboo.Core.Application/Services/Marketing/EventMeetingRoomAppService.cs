@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteEventMeet", Category = "Marketing", Depends = new[] { "website_event_jitsi" })]
-    public partial class EventMeetingRoomAppService : GenericApplicationService<EventMeetingRoom>, IEventMeetingRoomAppService
+    public partial class EventMeetingRoomAppService : GenericAppService<EventMeetingRoom>, IEventMeetingRoomAppService
     {
         private readonly IChatRoomMixinAppService _chatRoomMixinAppService;
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
@@ -59,7 +59,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventMeetingRoom> OpenWebsiteUrlAsync(Guid id)
+        public async Task<EventMeetingRoom> OpenWebsiteUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_meet, FILE: event_meeting_room.py) ---
@@ -69,7 +69,9 @@ namespace Bamboo.Core.Application.Services
             //     return super().open_website_url()
             // return self.env['website'].get_client_action(f'/event/{self.env["ir.http"]._slug(self.event_id)}/meeting_room/{self.env["ir.http"]._slug(self)}')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

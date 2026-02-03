@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-contact")]
-        public async Task<IActionResult> ActionViewContactAsync(Guid id)
+        [Route("action-view-contact")]
+        public async Task<IActionResult> ActionViewContactAsync(Guid[] ids)
         {
-            var result = await _appService.ViewContactAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewContactAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-bounced")]
-        public async Task<IActionResult> SetBouncedAsync(Guid id, [FromBody] MailingTraceSetBouncedRequestDto input)
+        [Route("set-bounced")]
+        public async Task<IActionResult> SetBouncedAsync(MailingTraceSetBouncedRequestDto input)
         {
-            var result = await _appService.SetBouncedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetBouncedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-canceled")]
-        public async Task<IActionResult> SetCanceledAsync(Guid id, [FromBody] MailingTraceSetCanceledRequestDto input)
+        [Route("set-canceled")]
+        public async Task<IActionResult> SetCanceledAsync(MailingTraceSetCanceledRequestDto input)
         {
-            var result = await _appService.SetCanceledAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetCanceledAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-clicked")]
-        public async Task<IActionResult> SetClickedAsync(Guid id, [FromBody] MailingTraceSetClickedRequestDto input)
+        [Route("set-clicked")]
+        public async Task<IActionResult> SetClickedAsync(MailingTraceSetClickedRequestDto input)
         {
-            var result = await _appService.SetClickedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetClickedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-failed")]
-        public async Task<IActionResult> SetFailedAsync(Guid id, [FromBody] MailingTraceSetFailedRequestDto input)
+        [Route("set-failed")]
+        public async Task<IActionResult> SetFailedAsync(MailingTraceSetFailedRequestDto input)
         {
-            var result = await _appService.SetFailedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetFailedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-opened")]
-        public async Task<IActionResult> SetOpenedAsync(Guid id, [FromBody] MailingTraceSetOpenedRequestDto input)
+        [Route("set-opened")]
+        public async Task<IActionResult> SetOpenedAsync(MailingTraceSetOpenedRequestDto input)
         {
-            var result = await _appService.SetOpenedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetOpenedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-replied")]
-        public async Task<IActionResult> SetRepliedAsync(Guid id, [FromBody] MailingTraceSetRepliedRequestDto input)
+        [Route("set-replied")]
+        public async Task<IActionResult> SetRepliedAsync(MailingTraceSetRepliedRequestDto input)
         {
-            var result = await _appService.SetRepliedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetRepliedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-sent")]
-        public async Task<IActionResult> SetSentAsync(Guid id, [FromBody] MailingTraceSetSentRequestDto input)
+        [Route("set-sent")]
+        public async Task<IActionResult> SetSentAsync(MailingTraceSetSentRequestDto input)
         {
-            var result = await _appService.SetSentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetSentAsync(input);
             return Ok(result);
         }
     }

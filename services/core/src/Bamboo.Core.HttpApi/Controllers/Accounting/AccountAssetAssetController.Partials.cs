@@ -11,98 +11,110 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/compute-depreciation-board")]
-        public async Task<IActionResult> ComputeDepreciationBoardAsync(Guid id)
+        [Route("compute-depreciation-board")]
+        public async Task<IActionResult> ComputeDepreciationBoardAsync(Guid[] ids)
         {
-            var result = await _appService.ComputeDepreciationBoardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ComputeDepreciationBoardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compute-generated-entries")]
-        public async Task<IActionResult> ComputeGeneratedEntriesAsync(Guid id, [FromBody] AccountAssetAssetComputeGeneratedEntriesRequestDto input)
+        [Route("compute-generated-entries")]
+        public async Task<IActionResult> ComputeGeneratedEntriesAsync(AccountAssetAssetComputeGeneratedEntriesRequestDto input)
         {
-            var result = await _appService.ComputeGeneratedEntriesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ComputeGeneratedEntriesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountAssetAssetCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(AccountAssetAssetCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-category-id")]
-        public async Task<IActionResult> OnchangeCategoryIdAsync(Guid id)
+        [Route("onchange-category-id")]
+        public async Task<IActionResult> OnchangeCategoryIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeCategoryIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeCategoryIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-category-id-values")]
-        public async Task<IActionResult> OnchangeCategoryIdValuesAsync(Guid id, [FromBody] AccountAssetAssetOnchangeCategoryIdValuesRequestDto input)
+        [Route("onchange-category-id-values")]
+        public async Task<IActionResult> OnchangeCategoryIdValuesAsync(AccountAssetAssetOnchangeCategoryIdValuesRequestDto input)
         {
-            var result = await _appService.OnchangeCategoryIdValuesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.OnchangeCategoryIdValuesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-company-id")]
-        public async Task<IActionResult> OnchangeCompanyIdAsync(Guid id)
+        [Route("onchange-company-id")]
+        public async Task<IActionResult> OnchangeCompanyIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeCompanyIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeCompanyIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-date-first-depreciation")]
-        public async Task<IActionResult> OnchangeDateFirstDepreciationAsync(Guid id)
+        [Route("onchange-date-first-depreciation")]
+        public async Task<IActionResult> OnchangeDateFirstDepreciationAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeDateFirstDepreciationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeDateFirstDepreciationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-method-time")]
-        public async Task<IActionResult> OnchangeMethodTimeAsync(Guid id)
+        [Route("onchange-method-time")]
+        public async Task<IActionResult> OnchangeMethodTimeAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeMethodTimeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeMethodTimeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-entries")]
-        public async Task<IActionResult> OpenEntriesAsync(Guid id)
+        [Route("open-entries")]
+        public async Task<IActionResult> OpenEntriesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEntriesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEntriesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-to-close")]
-        public async Task<IActionResult> SetToCloseAsync(Guid id)
+        [Route("set-to-close")]
+        public async Task<IActionResult> SetToCloseAsync(Guid[] ids)
         {
-            var result = await _appService.SetToCloseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetToCloseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-to-draft")]
-        public async Task<IActionResult> SetToDraftAsync(Guid id)
+        [Route("set-to-draft")]
+        public async Task<IActionResult> SetToDraftAsync(Guid[] ids)
         {
-            var result = await _appService.SetToDraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetToDraftAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/validate")]
-        public async Task<IActionResult> ValidateAsync(Guid id)
+        [Route("validate")]
+        public async Task<IActionResult> ValidateAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateAsync(ids);
             return Ok(result);
         }
     }

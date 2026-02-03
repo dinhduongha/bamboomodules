@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-loyalty-cards")]
-        public async Task<IActionResult> ActionOpenLoyaltyCardsAsync(Guid id)
+        [Route("action-open-loyalty-cards")]
+        public async Task<IActionResult> ActionOpenLoyaltyCardsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLoyaltyCardsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLoyaltyCardsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-program-share")]
-        public async Task<IActionResult> ActionProgramShareAsync(Guid id)
+        [Route("action-program-share")]
+        public async Task<IActionResult> ActionProgramShareAsync(Guid[] ids)
         {
-            var result = await _appService.ProgramShareAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProgramShareAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-from-template")]
-        public async Task<IActionResult> CreateFromTemplateAsync(Guid id, [FromBody] LoyaltyProgramCreateFromTemplateRequestDto input)
+        [Route("create-from-template")]
+        public async Task<IActionResult> CreateFromTemplateAsync(LoyaltyProgramCreateFromTemplateRequestDto input)
         {
-            var result = await _appService.CreateFromTemplateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateFromTemplateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-program-templates")]
-        public async Task<IActionResult> GetProgramTemplatesAsync(Guid id)
+        [Route("get-program-templates")]
+        public async Task<IActionResult> GetProgramTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetProgramTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetProgramTemplatesAsync(ids);
             return Ok(result);
         }
     }

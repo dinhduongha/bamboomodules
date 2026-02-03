@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResPartnerBankAppService : GenericApplicationService<ResPartnerBank>, IResPartnerBankAppService
+    public partial class ResPartnerBankAppService : GenericAppService<ResPartnerBank>, IResPartnerBankAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<ResPartnerBank> ArchiveBankAsync(Guid id)
+        public async Task<ResPartnerBank> ArchiveBankAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
@@ -42,10 +42,12 @@ namespace Bamboo.Core.Application.Services
             // self.action_archive()
             // return {'type': 'ir.actions.client', 'tag': 'reload'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartnerBank> BuildQrCodeBase64Async(Guid id, ResPartnerBankBuildQrCodeBase64RequestDto input)
+        public async Task<ResPartnerBank> BuildQrCodeBase64Async(ResPartnerBankBuildQrCodeBase64RequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
@@ -55,10 +57,12 @@ namespace Bamboo.Core.Application.Services
             //     return self._get_qr_code_base64(**vals)
             // return None
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartnerBank> BuildQrCodeUrlAsync(Guid id, ResPartnerBankBuildQrCodeUrlRequestDto input)
+        public async Task<ResPartnerBank> BuildQrCodeUrlAsync(ResPartnerBankBuildQrCodeUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
@@ -68,7 +72,9 @@ namespace Bamboo.Core.Application.Services
             //     return self._get_qr_code_url(**vals)
             // return None
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartnerBank> BuildQrCodeValsInternalAsync(object amount, object free_communication, object structured_communication, object currency, object debtor_partner, object qr_method, object silent_errors)
@@ -168,7 +174,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartnerBank> CheckIbanAsync(Guid id, ResPartnerBankCheckIbanRequestDto input)
+        public async Task<ResPartnerBank> CheckIbanAsync(ResPartnerBankCheckIbanRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_iban, FILE: res_partner_bank.py) ---
@@ -179,7 +185,9 @@ namespace Bamboo.Core.Application.Services
             // except ValidationError:
             //     return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartnerBank> CheckIbanInternalAsync()
@@ -426,7 +434,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<ResPartnerBank> CreateAsync(ResPartnerBank entity, List<string> fields)
+        public override async Task<ResPartnerBank> CreateAsync(CreateRequestDto<ResPartnerBank> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
@@ -466,10 +474,11 @@ namespace Bamboo.Core.Application.Services
             //     self._sanitize_vals(vals)
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public override async Task<ResPartnerBank> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<ResPartnerBank> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
@@ -483,7 +492,7 @@ namespace Bamboo.Core.Application.Services
             // default_acc_number = self.env.context.get('default_acc_number', False) or self.env.context.get('default_name', False)
             // return super(ResPartnerBank, self.with_context(default_acc_number=default_acc_number)).default_get(fields)
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
         protected async Task<ResPartnerBank> GetAdditionalDataFieldInternalAsync(object comment)
@@ -496,7 +505,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartnerBank> GetAvailableQrMethodsInSequenceAsync(Guid id)
+        [ApiModel]
+        public async Task<ResPartnerBank> GetAvailableQrMethodsInSequenceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
@@ -508,9 +518,12 @@ namespace Bamboo.Core.Application.Services
             // all_available.sort(key=lambda x: x[2])
             // return [(code, name) for (code, name, sequence) in all_available]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartnerBank> GetAvailableQrMethodsInternalAsync()
         {
             /*
@@ -538,7 +551,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartnerBank> GetBbanAsync(Guid id)
+        public async Task<ResPartnerBank> GetBbanAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_iban, FILE: res_partner_bank.py) ---
@@ -547,7 +560,9 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(self.env._("Cannot compute the BBAN because the account number is not an IBAN."))
             // return get_bban_from_iban(self.acc_number)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartnerBank> GetCrc16InternalAsync(object data, object poly, object init)
@@ -813,16 +828,20 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartnerBank> GetSupportedAccountTypesAsync(Guid id)
+        [ApiModel]
+        public async Task<ResPartnerBank> GetSupportedAccountTypesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
             // def get_supported_account_types(self):
             // return self._get_supported_account_types()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartnerBank> GetSupportedAccountTypesInternalAsync()
         {
             /*
@@ -838,7 +857,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartnerBank> OpenAllocationWizardAsync(Guid id)
+        public async Task<ResPartnerBank> OpenAllocationWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner_bank.py) ---
@@ -846,9 +865,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.employee_id.action_open_allocation_wizard()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartnerBank> RemoveAccentsInternalAsync(object @string)
         {
             /*
@@ -859,7 +881,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartnerBank> RetrieveAccTypeAsync(Guid id, ResPartnerBankRetrieveAccTypeRequestDto input)
+        [ApiModel]
+        public async Task<ResPartnerBank> RetrieveAccTypeAsync(ResPartnerBankRetrieveAccTypeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_iban, FILE: res_partner_bank.py) ---
@@ -875,7 +898,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // return 'bank'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartnerBank> SanitizeValsInternalAsync(object vals)
@@ -916,6 +941,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartnerBank> SerializeInternalAsync(object header, object @value)
         {
             /*
@@ -951,7 +977,7 @@ namespace Bamboo.Core.Application.Services
             return await base.UnlinkAsync(ids);
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ResPartnerBank entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ResPartnerBank> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
@@ -1027,7 +1053,7 @@ namespace Bamboo.Core.Application.Services
             // self._sanitize_vals(vals)
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

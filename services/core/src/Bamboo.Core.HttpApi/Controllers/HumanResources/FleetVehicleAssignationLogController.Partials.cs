@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-get-attachment-view")]
-        public async Task<IActionResult> ActionGetAttachmentViewAsync(Guid id)
+        [Route("action-get-attachment-view")]
+        public async Task<IActionResult> ActionGetAttachmentViewAsync(Guid[] ids)
         {
-            var result = await _appService.GetAttachmentViewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAttachmentViewAsync(ids);
             return Ok(result);
         }
     }

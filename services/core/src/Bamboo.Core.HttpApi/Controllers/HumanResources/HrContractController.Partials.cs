@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-contract-form")]
-        public async Task<IActionResult> ActionOpenContractFormAsync(Guid id)
+        [Route("action-open-contract-form")]
+        public async Task<IActionResult> ActionOpenContractFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenContractFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenContractFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-contract-history")]
-        public async Task<IActionResult> ActionOpenContractHistoryAsync(Guid id)
+        [Route("action-open-contract-history")]
+        public async Task<IActionResult> ActionOpenContractHistoryAsync(Guid[] ids)
         {
-            var result = await _appService.OpenContractHistoryAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenContractHistoryAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-contract-list")]
-        public async Task<IActionResult> ActionOpenContractListAsync(Guid id)
+        [Route("action-open-contract-list")]
+        public async Task<IActionResult> ActionOpenContractListAsync(Guid[] ids)
         {
-            var result = await _appService.OpenContractListAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenContractListAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/generate-work-entries")]
-        public async Task<IActionResult> GenerateWorkEntriesAsync(Guid id, [FromBody] HrContractGenerateWorkEntriesRequestDto input)
+        [Route("generate-work-entries")]
+        public async Task<IActionResult> GenerateWorkEntriesAsync(HrContractGenerateWorkEntriesRequestDto input)
         {
-            var result = await _appService.GenerateWorkEntriesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GenerateWorkEntriesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-all-structures")]
-        public async Task<IActionResult> GetAllStructuresAsync(Guid id)
+        [Route("get-all-structures")]
+        public async Task<IActionResult> GetAllStructuresAsync(Guid[] ids)
         {
-            var result = await _appService.GetAllStructuresAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAllStructuresAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-attribute")]
-        public async Task<IActionResult> GetAttributeAsync(Guid id, [FromBody] HrContractGetAttributeRequestDto input)
+        [Route("get-attribute")]
+        public async Task<IActionResult> GetAttributeAsync(HrContractGetAttributeRequestDto input)
         {
-            var result = await _appService.GetAttributeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAttributeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-static-work-entries")]
-        public async Task<IActionResult> HasStaticWorkEntriesAsync(Guid id)
+        [Route("has-static-work-entries")]
+        public async Task<IActionResult> HasStaticWorkEntriesAsync(Guid[] ids)
         {
-            var result = await _appService.HasStaticWorkEntriesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.HasStaticWorkEntriesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-attribute-value")]
-        public async Task<IActionResult> SetAttributeValueAsync(Guid id, [FromBody] HrContractSetAttributeValueRequestDto input)
+        [Route("set-attribute-value")]
+        public async Task<IActionResult> SetAttributeValueAsync(HrContractSetAttributeValueRequestDto input)
         {
-            var result = await _appService.SetAttributeValueAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetAttributeValueAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-state")]
-        public async Task<IActionResult> UpdateStateAsync(Guid id)
+        [Route("update-state")]
+        public async Task<IActionResult> UpdateStateAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateStateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateStateAsync(ids);
             return Ok(result);
         }
     }

@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-linked-config")]
-        public async Task<IActionResult> ActionOpenLinkedConfigAsync(Guid id)
+        [Route("action-open-linked-config")]
+        public async Task<IActionResult> ActionOpenLinkedConfigAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLinkedConfigAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLinkedConfigAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-linked-orders")]
-        public async Task<IActionResult> ActionOpenLinkedOrdersAsync(Guid id)
+        [Route("action-open-linked-orders")]
+        public async Task<IActionResult> ActionOpenLinkedOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLinkedOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLinkedOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-available-slots")]
-        public async Task<IActionResult> GetAvailableSlotsAsync(Guid id)
+        [Route("get-available-slots")]
+        public async Task<IActionResult> GetAvailableSlotsAsync(Guid[] ids)
         {
-            var result = await _appService.GetAvailableSlotsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAvailableSlotsAsync(ids);
             return Ok(result);
         }
     }

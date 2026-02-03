@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrAttendanceModule", Category = "HumanResources", Depends = new[] { "hr", "barcodes" })]
-    public partial class HrAttendanceOvertimeAppService : GenericApplicationService<HrAttendanceOvertime>, IHrAttendanceOvertimeAppService
+    public partial class HrAttendanceOvertimeAppService : GenericAppService<HrAttendanceOvertime>, IHrAttendanceOvertimeAppService
     {
 
         public HrAttendanceOvertimeAppService(IRepository<HrAttendanceOvertime, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -36,7 +36,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrAttendanceOvertime> InitAsync(Guid id)
+        public async Task<HrAttendanceOvertime> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime.py) ---
@@ -47,7 +47,9 @@ namespace Bamboo.Core.Application.Services
             //     ON %s (employee_id, date)
             //     WHERE adjustment is false""" % (self._table))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

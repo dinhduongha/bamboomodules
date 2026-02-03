@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-confirm")]
-        public async Task<IActionResult> ActionConfirmAsync(Guid id, [FromBody] EventBoothConfirmRequestDto input)
+        [Route("action-confirm")]
+        public async Task<IActionResult> ActionConfirmAsync(EventBoothConfirmRequestDto input)
         {
-            var result = await _appService.ConfirmAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConfirmAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-paid")]
-        public async Task<IActionResult> ActionSetPaidAsync(Guid id)
+        [Route("action-set-paid")]
+        public async Task<IActionResult> ActionSetPaidAsync(Guid[] ids)
         {
-            var result = await _appService.SetPaidAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetPaidAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sale-order")]
-        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid id)
+        [Route("action-view-sale-order")]
+        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSaleOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSaleOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sponsor")]
-        public async Task<IActionResult> ActionViewSponsorAsync(Guid id)
+        [Route("action-view-sponsor")]
+        public async Task<IActionResult> ActionViewSponsorAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSponsorAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSponsorAsync(ids);
             return Ok(result);
         }
     }

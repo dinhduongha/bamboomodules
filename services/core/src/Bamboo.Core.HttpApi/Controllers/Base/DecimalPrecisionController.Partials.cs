@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/precision-get")]
-        public async Task<IActionResult> PrecisionGetAsync(Guid id, [FromBody] DecimalPrecisionPrecisionGetRequestDto input)
+        [Route("precision-get")]
+        public async Task<IActionResult> PrecisionGetAsync(DecimalPrecisionPrecisionGetRequestDto input)
         {
-            var result = await _appService.PrecisionGetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PrecisionGetAsync(input);
             return Ok(result);
         }
     }

@@ -24,17 +24,20 @@ public partial class DmsProvisionOrder : FullAuditedAggregateRoot<Guid>, IEntity
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
     [Column("user_id")]
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     [Column("warehouse_id")]
-    public Guid WarehouseId { get; set; }
+    public Guid? WarehouseId { get; set; }
 
     [Column("destination_location_id")]
-    public Guid DestinationLocationId { get; set; }
+    public Guid? DestinationLocationId { get; set; }
 
     [Column("state")]
-    public string State { get; set; } = "draft";
+    public string? State { get; set; } = "draft";
 
     [Column("total_qty")]
     public decimal TotalQty { get; set; }
@@ -53,6 +56,18 @@ public partial class DmsProvisionOrder : FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TeamId")]
+    public virtual ResTeam? Team { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]

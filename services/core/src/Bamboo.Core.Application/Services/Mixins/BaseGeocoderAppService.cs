@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> CallGooglemapInternalAsync<TEntity>(IEnumerable<TEntity> entities, object addr) where TEntity : IEntity<Guid>, IBaseGeocoderable
         {
             /*
@@ -69,6 +70,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CallOpenstreetmapInternalAsync<TEntity>(IEnumerable<TEntity> entities, object addr) where TEntity : IEntity<Guid>, IBaseGeocoderable
         {
             /*
@@ -98,6 +100,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CallOpenstreetmapReverseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lat, object lon) where TEntity : IEntity<Guid>, IBaseGeocoderable
         {
             /*
@@ -139,6 +142,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GeoFindAsync<TEntity>(IEnumerable<TEntity> entities, object addr) where TEntity : IEntity<Guid>, IBaseGeocoderable
         {
             /*
@@ -167,6 +171,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GeoQueryAddressAsync<TEntity>(IEnumerable<TEntity> entities, object street, object zip, object city, object state, object country) where TEntity : IEntity<Guid>, IBaseGeocoderable
         {
             /*
@@ -192,6 +197,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GeoQueryAddressDefaultInternalAsync<TEntity>(IEnumerable<TEntity> entities, object street, object zip, object city, object state, object country) where TEntity : IEntity<Guid>, IBaseGeocoderable
         {
             /*
@@ -208,6 +214,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GeoQueryAddressGooglemapInternalAsync<TEntity>(IEnumerable<TEntity> entities, object street, object zip, object city, object state, object country) where TEntity : IEntity<Guid>, IBaseGeocoderable
         {
             /*
@@ -255,6 +262,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetProviderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseGeocoderable
         {
             /*

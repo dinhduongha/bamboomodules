@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICalendarFiltersAppService : IGenericApplicationService<CalendarFilters>
     {
-        Task<CalendarFilters> UnlinkFromPartnerIdAsync(Guid id, CalendarFiltersUnlinkFromPartnerIdRequestDto input);
+        Task<CalendarFilters> UnlinkFromPartnerIdAsync(CalendarFiltersUnlinkFromPartnerIdRequestDto input);
     }
 }

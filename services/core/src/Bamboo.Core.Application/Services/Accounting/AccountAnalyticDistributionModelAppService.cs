@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Analytic", Category = "Accounting", Depends = new[] { "base", "mail", "uom" })]
-    public partial class AccountAnalyticDistributionModelAppService : GenericApplicationService<AccountAnalyticDistributionModel>, IAccountAnalyticDistributionModelAppService
+    public partial class AccountAnalyticDistributionModelAppService : GenericAppService<AccountAnalyticDistributionModel>, IAccountAnalyticDistributionModelAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         public AccountAnalyticDistributionModelAppService(IRepository<AccountAnalyticDistributionModel, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -95,6 +95,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticDistributionModel> GetApplicableModelsInternalAsync(object vals)
         {
             /*
@@ -121,6 +122,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticDistributionModel> GetDefaultSearchDomainValsInternalAsync()
         {
             /*
@@ -141,6 +143,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAnalyticDistributionModel> GetDistributionInternalAsync(object vals)
         {
             /*
@@ -162,7 +165,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticDistributionModel> ReadDistributionModelAsync(Guid id)
+        public async Task<AccountAnalyticDistributionModel> ReadDistributionModelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_distribution_model.py) ---
@@ -177,7 +180,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

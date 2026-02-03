@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/check-granting")]
-        public async Task<IActionResult> CheckGrantingAsync(Guid id)
+        [Route("check-granting")]
+        public async Task<IActionResult> CheckGrantingAsync(Guid[] ids)
         {
-            var result = await _appService.CheckGrantingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckGrantingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-granted-employees")]
-        public async Task<IActionResult> GetGrantedEmployeesAsync(Guid id)
+        [Route("get-granted-employees")]
+        public async Task<IActionResult> GetGrantedEmployeesAsync(Guid[] ids)
         {
-            var result = await _appService.GetGrantedEmployeesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetGrantedEmployeesAsync(ids);
             return Ok(result);
         }
     }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Survey", Category = "Marketing", Depends = new[] { "auth_signup", "http_routing", "mail", "web_tour", "gamification" })]
-    public partial class SurveyUserInputAppService : GenericApplicationService<SurveyUserInput>, ISurveyUserInputAppService
+    public partial class SurveyUserInputAppService : GenericAppService<SurveyUserInput>, ISurveyUserInputAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -229,7 +229,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<SurveyUserInput> CreateAsync(SurveyUserInput entity, List<string> fields)
+        public override async Task<SurveyUserInput> CreateAsync(CreateRequestDto<SurveyUserInput> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_user_input.py) ---
@@ -246,7 +246,7 @@ namespace Bamboo.Core.Application.Services
             // records._check_for_failed_attempt()
             // return records
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<SurveyUserInput> CreateLeadsFromGenerativeAnswersInternalAsync()
@@ -274,6 +274,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SurveyUserInput> GenerateInviteTokenInternalAsync()
         {
             /*
@@ -437,7 +438,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SurveyUserInput> GetPrintUrlAsync(Guid id)
+        public async Task<SurveyUserInput> GetPrintUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_user_input.py) ---
@@ -445,7 +446,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return '%s?answer_token=%s' % (self.survey_id.get_print_url(), self.access_token)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SurveyUserInput> GetSelectedSuggestedAnswersInternalAsync()
@@ -478,7 +481,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SurveyUserInput> GetStartUrlAsync(Guid id)
+        public async Task<SurveyUserInput> GetStartUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_user_input.py) ---
@@ -486,7 +489,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return '%s?answer_token=%s' % (self.survey_id.get_start_url(), self.access_token)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SurveyUserInput> IsLastSkippedPageOrQuestionInternalAsync(object page_or_question)
@@ -989,7 +994,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SurveyUserInput> PrintAnswersAsync(Guid id)
+        public async Task<SurveyUserInput> PrintAnswersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_user_input.py) ---
@@ -1006,10 +1011,12 @@ namespace Bamboo.Core.Application.Services
             //     'url': url,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SurveyUserInput> RedirectLeadAsync(Guid id)
+        public async Task<SurveyUserInput> RedirectLeadAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey_crm, FILE: survey_user_input.py) ---
@@ -1021,10 +1028,12 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = self.lead_id.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SurveyUserInput> RedirectToAttemptsAsync(Guid id)
+        public async Task<SurveyUserInput> RedirectToAttemptsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_user_input.py) ---
@@ -1045,10 +1054,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = context
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SurveyUserInput> ResendAsync(Guid id)
+        public async Task<SurveyUserInput> ResendAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_user_input.py) ---
@@ -1067,7 +1078,9 @@ namespace Bamboo.Core.Application.Services
             //     default_emails=','.join(emails)
             // ).action_send_survey()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SurveyUserInput> SaveLineChoiceInternalAsync(object question, object old_answers, object answers, object comment)
@@ -1205,7 +1218,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, SurveyUserInput entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<SurveyUserInput> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides_survey, FILE: survey_user.py) ---
@@ -1215,7 +1228,7 @@ namespace Bamboo.Core.Application.Services
             //     self._check_for_failed_attempt()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

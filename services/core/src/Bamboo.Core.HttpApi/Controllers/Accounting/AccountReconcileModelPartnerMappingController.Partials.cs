@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/validate-regex")]
-        public async Task<IActionResult> ValidateRegexAsync(Guid id)
+        [Route("validate-regex")]
+        public async Task<IActionResult> ValidateRegexAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateRegexAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateRegexAsync(ids);
             return Ok(result);
         }
     }

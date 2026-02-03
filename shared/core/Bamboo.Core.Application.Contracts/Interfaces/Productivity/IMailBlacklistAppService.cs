@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailBlacklistAppService : IGenericApplicationService<MailBlacklist>
     {
-        Task<MailBlacklist> AddAsync(Guid id);
-        Task<MailBlacklist> MailBlacklistRemoveAsync(Guid id);
+        Task<MailBlacklist> AddAsync(Guid[] ids);
+        Task<MailBlacklist> MailBlacklistRemoveAsync(Guid[] ids);
     }
 }

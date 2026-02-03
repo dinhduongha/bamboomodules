@@ -25,7 +25,7 @@ public partial class DmsMessagingChannelConfig : FullAuditedAggregateRoot<Guid>,
     public Guid? OrganizationUnitId { get; set; }
 
     [Column("channel")]
-    public string Channel { get; set; } = "whatsapp";
+    public string? Channel { get; set; } = "whatsapp";
 
     [Column("api_key")]
     public string? ApiKey { get; set; }
@@ -39,8 +39,8 @@ public partial class DmsMessagingChannelConfig : FullAuditedAggregateRoot<Guid>,
     [Column("is_active")]
     public bool IsActive { get; set; } = true;
 
-    [Column("message_template_json")]
-    public string? MessageTemplateJson { get; set; }
+    [Column("message_template", TypeName = "jsonb")]
+    public string? MessageTemplate { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -53,4 +53,8 @@ public partial class DmsMessagingChannelConfig : FullAuditedAggregateRoot<Guid>,
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
 }

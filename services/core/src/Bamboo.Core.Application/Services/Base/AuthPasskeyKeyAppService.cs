@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("AuthPasskey", Category = "Base", Depends = new[] { "base_setup", "web" })]
-    public partial class AuthPasskeyKeyAppService : GenericApplicationService<AuthPasskeyKey>, IAuthPasskeyKeyAppService
+    public partial class AuthPasskeyKeyAppService : GenericAppService<AuthPasskeyKey>, IAuthPasskeyKeyAppService
     {
 
         public AuthPasskeyKeyAppService(IRepository<AuthPasskeyKey, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AuthPasskeyKey> DeletePasskeyAsync(Guid id)
+        public async Task<AuthPasskeyKey> DeletePasskeyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: auth_passkey_key.py) ---
@@ -62,9 +62,12 @@ namespace Bamboo.Core.Application.Services
             //             request.httprequest.environ['REMOTE_ADDR'] if request else 'n/a'
             //         )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AuthPasskeyKey> GetSessionChallengeInternalAsync()
         {
             /*
@@ -78,7 +81,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AuthPasskeyKey> InitAsync(Guid id)
+        public async Task<AuthPasskeyKey> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: auth_passkey_key.py) ---
@@ -87,7 +90,9 @@ namespace Bamboo.Core.Application.Services
             // if not sql.column_exists(self.env.cr, 'auth_passkey_key', 'public_key'):
             //     self.env.cr.execute(SQL('ALTER TABLE auth_passkey_key ADD COLUMN public_key varchar'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AuthPasskeyKey> InversePublicKeyInternalAsync()
@@ -100,7 +105,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AuthPasskeyKey> RenamePasskeyAsync(Guid id)
+        public async Task<AuthPasskeyKey> RenamePasskeyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: auth_passkey_key.py) ---
@@ -118,9 +123,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AuthPasskeyKey> StartAuthInternalAsync()
         {
             /*
@@ -137,6 +145,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AuthPasskeyKey> StartRegistrationInternalAsync()
         {
             /*
@@ -159,6 +168,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AuthPasskeyKey> VerifyAuthInternalAsync(object auth, object public_key, object sign_count)
         {
             /*
@@ -179,6 +189,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AuthPasskeyKey> VerifyRegistrationOptionsInternalAsync(object registration)
         {
             /*

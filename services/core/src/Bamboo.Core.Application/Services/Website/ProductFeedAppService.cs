@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSale", Category = "Website", Depends = new[] { "website", "sale", "website_payment", "website_mail", "portal_rating", "digest", "delivery", "html_builder" })]
-    public partial class ProductFeedAppService : GenericApplicationService<ProductFeed>, IProductFeedAppService
+    public partial class ProductFeedAppService : GenericAppService<ProductFeed>, IProductFeedAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public ProductFeedAppService(IRepository<ProductFeed, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -143,7 +143,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductFeed> InvalidateCacheAsync(Guid id)
+        public async Task<ProductFeed> InvalidateCacheAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_feed.py) ---
@@ -159,7 +159,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductFeed> NotifyWebsiteManagerInternalAsync()

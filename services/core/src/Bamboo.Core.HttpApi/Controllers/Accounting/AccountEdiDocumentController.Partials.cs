@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-export-xml")]
-        public async Task<IActionResult> ActionExportXmlAsync(Guid id)
+        [Route("action-export-xml")]
+        public async Task<IActionResult> ActionExportXmlAsync(Guid[] ids)
         {
-            var result = await _appService.ExportXmlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExportXmlAsync(ids);
             return Ok(result);
         }
     }

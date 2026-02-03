@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class ResUsersSettingsVolumesAppService : GenericApplicationService<ResUsersSettingsVolumes>, IResUsersSettingsVolumesAppService
+    public partial class ResUsersSettingsVolumesAppService : GenericAppService<ResUsersSettingsVolumes>, IResUsersSettingsVolumesAppService
     {
 
         public ResUsersSettingsVolumesAppService(IRepository<ResUsersSettingsVolumes, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -58,7 +58,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersSettingsVolumes> InitAsync(Guid id)
+        public async Task<ResUsersSettingsVolumes> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings_volumes.py) ---
@@ -66,7 +66,9 @@ namespace Bamboo.Core.Application.Services
             // self.env.cr.execute("CREATE UNIQUE INDEX IF NOT EXISTS res_users_settings_volumes_partner_unique ON %s (user_setting_id, partner_id) WHERE partner_id IS NOT NULL" % self._table)
             // self.env.cr.execute("CREATE UNIQUE INDEX IF NOT EXISTS res_users_settings_volumes_guest_unique ON %s (user_setting_id, guest_id) WHERE guest_id IS NOT NULL" % self._table)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

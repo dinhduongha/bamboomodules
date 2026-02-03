@@ -18,6 +18,9 @@ public static partial class ModelBuilderExtensions
 
             entity.HasIndex(e => e.TenantId);
             entity.HasIndex(e => e.OrganizationUnitId);
+            entity.HasIndex(e => e.TeamId);
+
+            entity.Property(e => e.TeamId).HasColumnName("team_id");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("uuidv7()")
@@ -45,6 +48,8 @@ public static partial class ModelBuilderExtensions
                 .HasColumnName("write_date");
 
             entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+            entity.HasOne(d => d.Team).WithMany().HasForeignKey(d => d.TeamId).OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(d => d.User)
                 .WithMany()

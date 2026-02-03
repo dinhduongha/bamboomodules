@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public partial class WebsiteVisitorAppService : GenericApplicationService<WebsiteVisitor>, IWebsiteVisitorAppService
+    public partial class WebsiteVisitorAppService : GenericAppService<WebsiteVisitor>, IWebsiteVisitorAppService
     {
 
         public WebsiteVisitorAppService(IRepository<WebsiteVisitor, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -727,7 +727,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebsiteVisitor> SendChatRequestAsync(Guid id)
+        public async Task<WebsiteVisitor> SendChatRequestAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_livechat, FILE: website_visitor.py) ---
@@ -786,10 +786,12 @@ namespace Bamboo.Core.Application.Services
             //     extra_fields={"open_chat_window": True},
             // ).bus_send()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<WebsiteVisitor> SendMailAsync(Guid id)
+        public async Task<WebsiteVisitor> SendMailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_visitor.py) ---
@@ -814,10 +816,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': compose_ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<WebsiteVisitor> SendSmsAsync(Guid id)
+        public async Task<WebsiteVisitor> SendSmsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sms, FILE: website_visitor.py) ---
@@ -838,7 +842,9 @@ namespace Bamboo.Core.Application.Services
             //     "target": "new",
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<WebsiteVisitor> UpdateVisitorLastVisitInternalAsync()

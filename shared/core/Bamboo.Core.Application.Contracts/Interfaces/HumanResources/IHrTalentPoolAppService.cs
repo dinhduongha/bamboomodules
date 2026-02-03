@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrTalentPoolAppService : IGenericApplicationService<HrTalentPool>
     {
-        Task<HrTalentPool> TalentPoolAddTalentsAsync(Guid id);
+        Task<HrTalentPool> TalentPoolAddTalentsAsync(Guid[] ids);
     }
 }

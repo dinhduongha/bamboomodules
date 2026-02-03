@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class FetchmailServerAppService : GenericApplicationService<FetchmailServer>, IFetchmailServerAppService
+    public partial class FetchmailServerAppService : GenericAppService<FetchmailServer>, IFetchmailServerAppService
     {
         private readonly IGoogleGmailMixinAppService _googleGmailMixinAppService;
         private readonly IMicrosoftOutlookMixinAppService _microsoftOutlookMixinAppService;
@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services
             _microsoftOutlookMixinAppService = microsoftOutlookMixinAppService;
         }
 
-        public async Task<FetchmailServer> ButtonConfirmLoginAsync(Guid id)
+        public async Task<FetchmailServer> ButtonConfirmLoginAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
@@ -59,7 +59,9 @@ namespace Bamboo.Core.Application.Services
             //             pass
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FetchmailServer> CheckUseGoogleGmailServiceInternalAsync()
@@ -145,7 +147,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FetchmailServer> FetchMailAsync(Guid id)
+        public async Task<FetchmailServer> FetchMailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
@@ -156,7 +158,9 @@ namespace Bamboo.Core.Application.Services
             // if exception is not None:
             //     raise exception
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FetchmailServer> FetchMailInternalAsync(object batch_limit)
@@ -246,6 +250,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<FetchmailServer> FetchMailsInternalAsync()
         {
             /*
@@ -333,7 +338,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FetchmailServer> OnchangeServerTypeAsync(Guid id)
+        public async Task<FetchmailServer> OnchangeServerTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_gmail, FILE: fetchmail_server.py) ---
@@ -381,10 +386,12 @@ namespace Bamboo.Core.Application.Services
             //     self.microsoft_outlook_access_token_expiration = False
             //     super().onchange_server_type()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FetchmailServer> SetDraftAsync(Guid id)
+        public async Task<FetchmailServer> SetDraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
@@ -392,9 +399,12 @@ namespace Bamboo.Core.Application.Services
             // self.write({'state': 'draft'})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<FetchmailServer> UpdateCronInternalAsync()
         {
             /*

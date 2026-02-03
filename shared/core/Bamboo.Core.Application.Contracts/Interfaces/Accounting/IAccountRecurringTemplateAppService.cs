@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountRecurringTemplateAppService : IGenericApplicationService<AccountRecurringTemplate>
     {
-        Task<AccountRecurringTemplate> DoneAsync(Guid id);
-        Task<AccountRecurringTemplate> DraftAsync(Guid id);
+        Task<AccountRecurringTemplate> DoneAsync(Guid[] ids);
+        Task<AccountRecurringTemplate> DraftAsync(Guid[] ids);
     }
 }

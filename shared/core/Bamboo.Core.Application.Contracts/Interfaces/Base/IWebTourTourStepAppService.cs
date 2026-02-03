@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWebTourTourStepAppService : IGenericApplicationService<WebTourTourStep>
     {
-        Task<WebTourTourStep> GetStepsJsonAsync(Guid id);
+        Task<WebTourTourStep> GetStepsJsonAsync(Guid[] ids);
     }
 }

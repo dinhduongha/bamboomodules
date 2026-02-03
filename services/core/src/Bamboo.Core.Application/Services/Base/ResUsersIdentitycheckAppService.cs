@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResUsersIdentitycheckAppService : GenericApplicationService<ResUsersIdentitycheck>, IResUsersIdentitycheckAppService
+    public partial class ResUsersIdentitycheckAppService : GenericAppService<ResUsersIdentitycheck>, IResUsersIdentitycheckAppService
     {
 
         public ResUsersIdentitycheckAppService(IRepository<ResUsersIdentitycheck, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -74,7 +74,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersIdentitycheck> RunCheckAsync(Guid id)
+        public async Task<ResUsersIdentitycheck> RunCheckAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -89,10 +89,12 @@ namespace Bamboo.Core.Application.Services
             // assert getattr(method, '__has_check_identity', False)
             // return method(*args, **kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsersIdentitycheck> UsePasswordAsync(Guid id)
+        public async Task<ResUsersIdentitycheck> UsePasswordAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: res_users_identitycheck.py) ---
@@ -109,7 +111,9 @@ namespace Bamboo.Core.Application.Services
             //     'views': [(False, 'form')],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -10,32 +10,32 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrUiViewAppService : IGenericApplicationService<IrUiView>
     {
-        Task<IrUiView> ApplyInheritanceSpecsAsync(Guid id, IrUiViewApplyInheritanceSpecsRequestDto input);
-        Task<IrUiView> CopyDataAsync(Guid id, IrUiViewCopyDataRequestDto input);
-        Task<IrUiView> DefaultViewAsync(Guid id, IrUiViewDefaultViewRequestDto input);
-        Task<IrUiView> DeleteSnippetAsync(Guid id, IrUiViewDeleteSnippetRequestDto input);
-        Task<IrUiView> DistributeBrandingAsync(Guid id, IrUiViewDistributeBrandingRequestDto input);
-        Task<IrUiView> ExtractEmbeddedFieldsAsync(Guid id, IrUiViewExtractEmbeddedFieldsRequestDto input);
-        Task<IrUiView> ExtractOeStructuresAsync(Guid id, IrUiViewExtractOeStructuresRequestDto input);
-        Task<IrUiView> FilterDuplicateAsync(Guid id);
-        Task<IrUiView> GetCombinedArchAsync(Guid id);
-        Task<IrUiView> GetDefaultLangCodeAsync(Guid id);
-        Task<IrUiView> GetRelatedViewsAsync(Guid id, IrUiViewGetRelatedViewsRequestDto input);
-        Task<IrUiView> GetViewHierarchyAsync(Guid id);
-        Task<IrUiView> GetViewInfoAsync(Guid id);
-        Task<IrUiView> InheritBrandingAsync(Guid id, IrUiViewInheritBrandingRequestDto input);
-        Task<IrUiView> IsNodeBrandedAsync(Guid id, IrUiViewIsNodeBrandedRequestDto input);
-        Task<IrUiView> LocateNodeAsync(Guid id, IrUiViewLocateNodeRequestDto input);
-        Task<IrUiView> PostprocessAndFieldsAsync(Guid id, IrUiViewPostprocessAndFieldsRequestDto input);
-        Task<IrUiView> RenameSnippetAsync(Guid id, IrUiViewRenameSnippetRequestDto input);
-        Task<IrUiView> RenderPublicAssetAsync(Guid id, IrUiViewRenderPublicAssetRequestDto input);
-        Task<IrUiView> ReplaceArchSectionAsync(Guid id, IrUiViewReplaceArchSectionRequestDto input);
-        Task<IrUiView> ResetArchAsync(Guid id, IrUiViewResetArchRequestDto input);
-        Task<IrUiView> SaveAsync(Guid id, IrUiViewSaveRequestDto input);
-        Task<IrUiView> SaveEmbeddedFieldAsync(Guid id, IrUiViewSaveEmbeddedFieldRequestDto input);
-        Task<IrUiView> SaveOeStructureAsync(Guid id, IrUiViewSaveOeStructureRequestDto input);
-        Task<IrUiView> SaveSnippetAsync(Guid id, IrUiViewSaveSnippetRequestDto input);
-        Task<IrUiView> ToEmptyOeStructureAsync(Guid id, IrUiViewToEmptyOeStructureRequestDto input);
-        Task<IrUiView> ToFieldRefAsync(Guid id, IrUiViewToFieldRefRequestDto input);
+        Task<IrUiView> ApplyInheritanceSpecsAsync(IrUiViewApplyInheritanceSpecsRequestDto input);
+        Task<IrUiView> CopyDataAsync(IrUiViewCopyDataRequestDto input);
+        Task<IrUiView> DefaultViewAsync(IrUiViewDefaultViewRequestDto input);
+        Task<IrUiView> DeleteSnippetAsync(IrUiViewDeleteSnippetRequestDto input);
+        Task<IrUiView> DistributeBrandingAsync(IrUiViewDistributeBrandingRequestDto input);
+        Task<IrUiView> ExtractEmbeddedFieldsAsync(IrUiViewExtractEmbeddedFieldsRequestDto input);
+        Task<IrUiView> ExtractOeStructuresAsync(IrUiViewExtractOeStructuresRequestDto input);
+        Task<IrUiView> FilterDuplicateAsync(Guid[] ids);
+        Task<IrUiView> GetCombinedArchAsync(Guid[] ids);
+        Task<IrUiView> GetDefaultLangCodeAsync(Guid[] ids);
+        Task<IrUiView> GetRelatedViewsAsync(IrUiViewGetRelatedViewsRequestDto input);
+        Task<IrUiView> GetViewHierarchyAsync(Guid[] ids);
+        Task<IrUiView> GetViewInfoAsync(Guid[] ids);
+        Task<IrUiView> InheritBrandingAsync(IrUiViewInheritBrandingRequestDto input);
+        Task<IrUiView> IsNodeBrandedAsync(IrUiViewIsNodeBrandedRequestDto input);
+        Task<IrUiView> LocateNodeAsync(IrUiViewLocateNodeRequestDto input);
+        Task<IrUiView> PostprocessAndFieldsAsync(IrUiViewPostprocessAndFieldsRequestDto input);
+        Task<IrUiView> RenameSnippetAsync(IrUiViewRenameSnippetRequestDto input);
+        Task<IrUiView> RenderPublicAssetAsync(IrUiViewRenderPublicAssetRequestDto input);
+        Task<IrUiView> ReplaceArchSectionAsync(IrUiViewReplaceArchSectionRequestDto input);
+        Task<IrUiView> ResetArchAsync(IrUiViewResetArchRequestDto input);
+        Task<IrUiView> SaveAsync(IrUiViewSaveRequestDto input);
+        Task<IrUiView> SaveEmbeddedFieldAsync(IrUiViewSaveEmbeddedFieldRequestDto input);
+        Task<IrUiView> SaveOeStructureAsync(IrUiViewSaveOeStructureRequestDto input);
+        Task<IrUiView> SaveSnippetAsync(IrUiViewSaveSnippetRequestDto input);
+        Task<IrUiView> ToEmptyOeStructureAsync(IrUiViewToEmptyOeStructureRequestDto input);
+        Task<IrUiView> ToFieldRefAsync(IrUiViewToFieldRefRequestDto input);
     }
 }

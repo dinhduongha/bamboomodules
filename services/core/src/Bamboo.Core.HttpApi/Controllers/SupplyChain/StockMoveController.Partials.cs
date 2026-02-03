@@ -11,114 +11,128 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-from-catalog-byproduct")]
-        public async Task<IActionResult> ActionAddFromCatalogByproductAsync(Guid id)
+        [Route("action-add-from-catalog-byproduct")]
+        public async Task<IActionResult> ActionAddFromCatalogByproductAsync(Guid[] ids)
         {
-            var result = await _appService.AddFromCatalogByproductAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddFromCatalogByproductAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-add-from-catalog-raw")]
-        public async Task<IActionResult> ActionAddFromCatalogRawAsync(Guid id)
+        [Route("action-add-from-catalog-raw")]
+        public async Task<IActionResult> ActionAddFromCatalogRawAsync(Guid[] ids)
         {
-            var result = await _appService.AddFromCatalogRawAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddFromCatalogRawAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-add-from-catalog-repair")]
-        public async Task<IActionResult> ActionAddFromCatalogRepairAsync(Guid id)
+        [Route("action-add-from-catalog-repair")]
+        public async Task<IActionResult> ActionAddFromCatalogRepairAsync(Guid[] ids)
         {
-            var result = await _appService.AddFromCatalogRepairAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddFromCatalogRepairAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-add-packages")]
-        public async Task<IActionResult> ActionAddPackagesAsync(Guid id)
+        [Route("action-add-packages")]
+        public async Task<IActionResult> ActionAddPackagesAsync(Guid[] ids)
         {
-            var result = await _appService.AddPackagesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddPackagesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-adjust-valuation")]
-        public async Task<IActionResult> ActionAdjustValuationAsync(Guid id)
+        [Route("action-adjust-valuation")]
+        public async Task<IActionResult> ActionAdjustValuationAsync(Guid[] ids)
         {
-            var result = await _appService.AdjustValuationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AdjustValuationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-explode")]
-        public async Task<IActionResult> ActionExplodeAsync(Guid id)
+        [Route("action-explode")]
+        public async Task<IActionResult> ActionExplodeAsync(Guid[] ids)
         {
-            var result = await _appService.ExplodeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExplodeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-generate-lot-line-vals")]
-        public async Task<IActionResult> ActionGenerateLotLineValsAsync(Guid id, [FromBody] StockMoveGenerateLotLineValsRequestDto input)
+        [Route("action-generate-lot-line-vals")]
+        public async Task<IActionResult> ActionGenerateLotLineValsAsync(StockMoveGenerateLotLineValsRequestDto input)
         {
-            var result = await _appService.GenerateLotLineValsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GenerateLotLineValsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-reference")]
-        public async Task<IActionResult> ActionOpenReferenceAsync(Guid id)
+        [Route("action-open-reference")]
+        public async Task<IActionResult> ActionOpenReferenceAsync(Guid[] ids)
         {
-            var result = await _appService.OpenReferenceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenReferenceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-product-forecast-report")]
-        public async Task<IActionResult> ActionProductForecastReportAsync(Guid id)
+        [Route("action-product-forecast-report")]
+        public async Task<IActionResult> ActionProductForecastReportAsync(Guid[] ids)
         {
-            var result = await _appService.ProductForecastReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProductForecastReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-details")]
-        public async Task<IActionResult> ActionShowDetailsAsync(Guid id)
+        [Route("action-show-details")]
+        public async Task<IActionResult> ActionShowDetailsAsync(Guid[] ids)
         {
-            var result = await _appService.ShowDetailsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowDetailsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-subcontract-details")]
-        public async Task<IActionResult> ActionShowSubcontractDetailsAsync(Guid id, [FromBody] StockMoveShowSubcontractDetailsRequestDto input)
+        [Route("action-show-subcontract-details")]
+        public async Task<IActionResult> ActionShowSubcontractDetailsAsync(StockMoveShowSubcontractDetailsRequestDto input)
         {
-            var result = await _appService.ShowSubcontractDetailsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ShowSubcontractDetailsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockMoveCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(StockMoveCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-remaining-qty")]
-        public async Task<IActionResult> SearchRemainingQtyAsync(Guid id, [FromBody] StockMoveSearchRemainingQtyRequestDto input)
+        [Route("search-remaining-qty")]
+        public async Task<IActionResult> SearchRemainingQtyAsync(StockMoveSearchRemainingQtyRequestDto input)
         {
-            var result = await _appService.SearchRemainingQtyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchRemainingQtyAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/split-lots")]
-        public async Task<IActionResult> SplitLotsAsync(Guid id, [FromBody] StockMoveSplitLotsRequestDto input)
+        [Route("split-lots")]
+        public async Task<IActionResult> SplitLotsAsync(StockMoveSplitLotsRequestDto input)
         {
-            var result = await _appService.SplitLotsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SplitLotsAsync(input);
             return Ok(result);
         }
     }

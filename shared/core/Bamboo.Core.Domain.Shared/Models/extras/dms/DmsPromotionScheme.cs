@@ -28,10 +28,10 @@ public partial class DmsPromotionScheme : FullAuditedAggregateRoot<Guid>, IEntit
     public string SchemeCode { get; set; } = null!;
 
     [Column("start_date")]
-    public DateTime StartDate { get; set; }
+    public DateTimeOffset? StartDate { get; set; }
 
     [Column("end_date")]
-    public DateTime EndDate { get; set; }
+    public DateTimeOffset? EndDate { get; set; }
 
     [Column("discount_percent")]
     public decimal? DiscountPercent { get; set; }
@@ -56,4 +56,12 @@ public partial class DmsPromotionScheme : FullAuditedAggregateRoot<Guid>, IEntit
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
 }

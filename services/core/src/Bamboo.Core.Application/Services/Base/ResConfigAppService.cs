@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResConfigAppService : GenericApplicationService<ResConfig>, IResConfigAppService
+    public partial class ResConfigAppService : GenericAppService<ResConfig>, IResConfigAppService
     {
 
         public ResConfigAppService(IRepository<ResConfig, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ResConfig> CancelAsync(Guid id)
+        public async Task<ResConfig> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -44,10 +44,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // pass
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfig> CancelActionAsync(Guid id)
+        public async Task<ResConfig> CancelActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -65,10 +67,12 @@ namespace Bamboo.Core.Application.Services
             // # pylint: disable=next-method-called
             // return self.cancel() or self.next()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfig> ExecuteAsync(Guid id)
+        public async Task<ResConfig> ExecuteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -84,10 +88,12 @@ namespace Bamboo.Core.Application.Services
             // raise NotImplementedError(
             //     'Configuration items need to implement execute')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfig> NextAsync(Guid id)
+        public async Task<ResConfig> NextAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -100,10 +106,12 @@ namespace Bamboo.Core.Application.Services
             //     'tag': 'reload',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfig> NextActionAsync(Guid id)
+        public async Task<ResConfig> NextActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -118,10 +126,12 @@ namespace Bamboo.Core.Application.Services
             // # pylint: disable=next-method-called
             // return self.execute() or self.next()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfig> SkipAsync(Guid id)
+        public async Task<ResConfig> SkipAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -136,10 +146,12 @@ namespace Bamboo.Core.Application.Services
             // # pylint: disable=next-method-called
             // return self.cancel() or self.next()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfig> StartAsync(Guid id)
+        public async Task<ResConfig> StartAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -147,7 +159,9 @@ namespace Bamboo.Core.Application.Services
             // # pylint: disable=next-method-called
             // return self.next()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

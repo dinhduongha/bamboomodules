@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventSponsorAppService : IGenericApplicationService<EventSponsor>
     {
-        Task<EventSponsor> GetBackendMenuIdAsync(Guid id);
-        Task<EventSponsor> GetBaseUrlAsync(Guid id);
+        Task<EventSponsor> GetBackendMenuIdAsync(Guid[] ids);
+        Task<EventSponsor> GetBaseUrlAsync(Guid[] ids);
     }
 }

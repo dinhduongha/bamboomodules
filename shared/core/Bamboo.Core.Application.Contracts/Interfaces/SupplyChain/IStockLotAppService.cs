@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockLotAppService : IGenericApplicationService<StockLot>
     {
-        Task<StockLot> CopyDataAsync(Guid id, StockLotCopyDataRequestDto input);
-        Task<StockLot> GenerateLotNamesAsync(Guid id, StockLotGenerateLotNamesRequestDto input);
-        Task<StockLot> LotOpenQuantsAsync(Guid id);
-        Task<StockLot> LotOpenRepairsAsync(Guid id);
-        Task<StockLot> LotOpenTransfersAsync(Guid id);
-        Task<StockLot> ViewPoAsync(Guid id);
-        Task<StockLot> ViewRoAsync(Guid id);
-        Task<StockLot> ViewSoAsync(Guid id);
+        Task<StockLot> CopyDataAsync(StockLotCopyDataRequestDto input);
+        Task<StockLot> GenerateLotNamesAsync(StockLotGenerateLotNamesRequestDto input);
+        Task<StockLot> LotOpenQuantsAsync(Guid[] ids);
+        Task<StockLot> LotOpenRepairsAsync(Guid[] ids);
+        Task<StockLot> LotOpenTransfersAsync(Guid[] ids);
+        Task<StockLot> ViewPoAsync(Guid[] ids);
+        Task<StockLot> ViewRoAsync(Guid[] ids);
+        Task<StockLot> ViewSoAsync(Guid[] ids);
     }
 }

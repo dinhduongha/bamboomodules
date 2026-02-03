@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResCurrencyRateAppService : IGenericApplicationService<ResCurrencyRate>
     {
-        Task<ResCurrencyRate> GetRatesForSpreadsheetAsync(Guid id, ResCurrencyRateGetRatesForSpreadsheetRequestDto input);
+        Task<ResCurrencyRate> GetRatesForSpreadsheetAsync(ResCurrencyRateGetRatesForSpreadsheetRequestDto input);
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("EventBoothModule", Category = "Marketing", Depends = new[] { "event" })]
-    public partial class EventBoothAppService : GenericApplicationService<EventBooth>, IEventBoothAppService
+    public partial class EventBoothAppService : GenericAppService<EventBooth>, IEventBoothAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -92,7 +92,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventBooth> ConfirmAsync(Guid id, EventBoothConfirmRequestDto input)
+        public async Task<EventBooth> ConfirmAsync(EventBoothConfirmRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_booth, FILE: event_booth.py) ---
@@ -100,7 +100,9 @@ namespace Bamboo.Core.Application.Services
             // write_vals = dict({'state': 'unavailable'}, **additional_values or {})
             // self.write(write_vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventBooth> GetBoothMultilineDescriptionInternalAsync()
@@ -129,6 +131,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventBooth> GetEventBoothFieldsWhitelistInternalAsync()
         {
             /*
@@ -201,14 +204,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventBooth> SetPaidAsync(Guid id)
+        public async Task<EventBooth> SetPaidAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_booth_sale, FILE: event_booth.py) ---
             // def action_set_paid(self):
             // self.write({'is_paid': True})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventBooth> UnlinkExceptLinkedSaleOrderInternalAsync()
@@ -225,7 +230,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventBooth> ViewSaleOrderAsync(Guid id)
+        public async Task<EventBooth> ViewSaleOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_booth_sale, FILE: event_booth.py) ---
@@ -236,10 +241,12 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = self.sale_order_id.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventBooth> ViewSponsorAsync(Guid id)
+        public async Task<EventBooth> ViewSponsorAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_booth_exhibitor, FILE: event_booth.py) ---
@@ -249,7 +256,9 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = self.sponsor_id.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

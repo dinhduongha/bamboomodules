@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Utm", Category = "Marketing", Depends = new[] { "base", "web" })]
-    public partial class UtmMediumAppService : GenericApplicationService<UtmMedium>, IUtmMediumAppService
+    public partial class UtmMediumAppService : GenericAppService<UtmMedium>, IUtmMediumAppService
     {
 
         public UtmMediumAppService(IRepository<UtmMedium, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -50,7 +50,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<UtmMedium> SELFREQUIREDUTMMEDIUMSREFAsync(Guid id)
+        public async Task<UtmMedium> SELFREQUIREDUTMMEDIUMSREFAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: utm.py) ---
@@ -67,7 +67,9 @@ namespace Bamboo.Core.Application.Services
             //     'utm.utm_medium_linkedin': 'LinkedIn'
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<UtmMedium> UnlinkExceptLinkedMailingsInternalAsync()

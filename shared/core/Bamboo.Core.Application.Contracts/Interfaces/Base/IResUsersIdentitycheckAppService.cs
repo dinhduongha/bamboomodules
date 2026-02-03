@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResUsersIdentitycheckAppService : IGenericApplicationService<ResUsersIdentitycheck>
     {
-        Task<ResUsersIdentitycheck> RunCheckAsync(Guid id);
-        Task<ResUsersIdentitycheck> UsePasswordAsync(Guid id);
+        Task<ResUsersIdentitycheck> RunCheckAsync(Guid[] ids);
+        Task<ResUsersIdentitycheck> UsePasswordAsync(Guid[] ids);
     }
 }

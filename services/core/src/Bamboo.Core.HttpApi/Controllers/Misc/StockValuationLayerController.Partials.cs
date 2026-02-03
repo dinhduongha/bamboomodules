@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-journal-entry")]
-        public async Task<IActionResult> ActionOpenJournalEntryAsync(Guid id)
+        [Route("action-open-journal-entry")]
+        public async Task<IActionResult> ActionOpenJournalEntryAsync(Guid[] ids)
         {
-            var result = await _appService.OpenJournalEntryAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenJournalEntryAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-reference")]
-        public async Task<IActionResult> ActionOpenReferenceAsync(Guid id)
+        [Route("action-open-reference")]
+        public async Task<IActionResult> ActionOpenReferenceAsync(Guid[] ids)
         {
-            var result = await _appService.OpenReferenceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenReferenceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-valuation-at-date")]
-        public async Task<IActionResult> ActionValuationAtDateAsync(Guid id)
+        [Route("action-valuation-at-date")]
+        public async Task<IActionResult> ActionValuationAtDateAsync(Guid[] ids)
         {
-            var result = await _appService.ValuationAtDateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValuationAtDateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("init")]
+        public async Task<IActionResult> InitAsync(Guid[] ids)
         {
-            var result = await _appService.InitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InitAsync(ids);
             return Ok(result);
         }
     }

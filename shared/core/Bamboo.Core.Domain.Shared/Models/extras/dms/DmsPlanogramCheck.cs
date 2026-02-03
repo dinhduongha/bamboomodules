@@ -25,22 +25,22 @@ public partial class DmsPlanogramCheck : FullAuditedAggregateRoot<Guid>, IEntity
     public Guid? OrganizationUnitId { get; set; }
 
     [Column("outlet_visit_id")]
-    public Guid OutletVisitId { get; set; }
+    public Guid? OutletVisitId { get; set; }
 
     [Column("planogram_id")]
-    public Guid PlanogramId { get; set; }
+    public Guid? PlanogramId { get; set; }
 
     [Column("photo_url")]
-    public string PhotoUrl { get; set; } = null!;
+    public string? PhotoUrl { get; set; }
 
     [Column("compliance_score")]
     public decimal ComplianceScore { get; set; }
 
-    [Column("detected_issues_json")]
-    public string? DetectedIssuesJson { get; set; }
+    [Column("detected_issues", TypeName = "jsonb")]
+    public string? DetectedIssues { get; set; }
 
     [Column("status")]
-    public string Status { get; set; } = "pending";
+    public string? Status { get; set; } = "pending";
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -57,4 +57,17 @@ public partial class DmsPlanogramCheck : FullAuditedAggregateRoot<Guid>, IEntity
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("OutletVisitId")]
     public virtual DmsOutletVisit? OutletVisit { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("PlanogramId")]
+    public virtual DmsPlanogram? DmsPlanogram { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
 }

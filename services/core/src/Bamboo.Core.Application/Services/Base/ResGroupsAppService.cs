@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResGroupsAppService : GenericApplicationService<ResGroups>, IResGroupsAppService
+    public partial class ResGroupsAppService : GenericAppService<ResGroups>, IResGroupsAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public ResGroupsAppService(IRepository<ResGroups, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,6 +27,7 @@ namespace Bamboo.Core.Application.Services
             _busListenerMixinAppService = busListenerMixinAppService;
         }
 
+        [ApiModel]
         protected async Task<ResGroups> ActivateGroupAccountSecuredInternalAsync()
         {
             /*
@@ -263,7 +264,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResGroups> CopyDataAsync(Guid id, ResGroupsCopyDataRequestDto input)
+        public async Task<ResGroups> CopyDataAsync(ResGroupsCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
@@ -274,10 +275,12 @@ namespace Bamboo.Core.Application.Services
             //     vals['name'] = default.get('name') or self.env._('%s (copy)', group.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<ResGroups> CreateAsync(ResGroups entity, List<string> fields)
+        public override async Task<ResGroups> CreateAsync(CreateRequestDto<ResGroups> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
@@ -292,7 +295,7 @@ namespace Bamboo.Core.Application.Services
             // self.env.registry.clear_cache('groups')
             // return groups
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<ResGroups> EnsureXmlIdInternalAsync()
@@ -322,7 +325,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResGroups> GetApplicationGroupsAsync(Guid id, ResGroupsGetApplicationGroupsRequestDto input)
+        [ApiModel]
+        public async Task<ResGroups> GetApplicationGroupsAsync(ResGroupsGetApplicationGroupsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_users.py) ---
@@ -340,9 +344,12 @@ namespace Bamboo.Core.Application.Services
             //     domain += [('id', '!=', group_account_basic.id)]
             // return super().get_application_groups(domain)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResGroups> GetGroupDefinitionsInternalAsync()
         {
             /*
@@ -432,6 +439,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResGroups> GetViewGroupHierarchyInternalAsync()
         {
             /*
@@ -517,6 +525,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResGroups> IsFeatureEnabledInternalAsync(object group_reference)
         {
             /*
@@ -689,6 +698,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResGroups> SearchInternalAsync(object domain, object offset, object limit, object order)
         {
             /*
@@ -705,7 +715,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResGroups> ShowAllUsersAsync(Guid id)
+        public async Task<ResGroups> ShowAllUsersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_groups.py) ---
@@ -721,7 +731,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         public override async Task<object> UnlinkAsync(List<Guid> ids)
@@ -755,7 +767,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ResGroups entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ResGroups> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_timeout, FILE: res_groups.py) ---
@@ -812,7 +824,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

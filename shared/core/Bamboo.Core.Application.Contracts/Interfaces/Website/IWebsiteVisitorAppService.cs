@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWebsiteVisitorAppService : IGenericApplicationService<WebsiteVisitor>
     {
-        Task<WebsiteVisitor> SendChatRequestAsync(Guid id);
-        Task<WebsiteVisitor> SendMailAsync(Guid id);
-        Task<WebsiteVisitor> SendSmsAsync(Guid id);
+        Task<WebsiteVisitor> SendChatRequestAsync(Guid[] ids);
+        Task<WebsiteVisitor> SendMailAsync(Guid[] ids);
+        Task<WebsiteVisitor> SendSmsAsync(Guid[] ids);
     }
 }

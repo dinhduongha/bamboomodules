@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Fleet", Category = "HumanResources", Depends = new[] { "base", "mail" })]
-    public partial class FleetVehicleAssignationLogAppService : GenericApplicationService<FleetVehicleAssignationLog>, IFleetVehicleAssignationLogAppService
+    public partial class FleetVehicleAssignationLogAppService : GenericAppService<FleetVehicleAssignationLog>, IFleetVehicleAssignationLogAppService
     {
 
         public FleetVehicleAssignationLogAppService(IRepository<FleetVehicleAssignationLog, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -73,7 +73,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicleAssignationLog> GetAttachmentViewAsync(Guid id)
+        public async Task<FleetVehicleAssignationLog> GetAttachmentViewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: fleet_vehicle_assignation_log.py) ---
@@ -85,7 +85,9 @@ namespace Bamboo.Core.Application.Services
             // res['context'] = {'default_res_model': 'fleet.vehicle.assignation.log', 'default_res_id': self.id}
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

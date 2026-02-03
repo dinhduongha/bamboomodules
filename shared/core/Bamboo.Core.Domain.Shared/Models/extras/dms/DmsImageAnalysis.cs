@@ -31,19 +31,19 @@ public partial class DmsImageAnalysis : FullAuditedAggregateRoot<Guid>, IEntityD
     public Guid? PlanogramCheckId { get; set; }
 
     [Column("analyzed_image_url")]
-    public string AnalyzedImageUrl { get; set; } = null!;
+    public string? AnalyzedImageUrl { get; set; }
 
-    [Column("detected_products_json")]
-    public string? DetectedProductsJson { get; set; }
+    [Column("detected_products", TypeName = "jsonb")]
+    public string? DetectedProducts { get; set; }
 
     [Column("compliance_score")]
     public decimal ComplianceScore { get; set; }
 
-    [Column("issues_json")]
-    public string? IssuesJson { get; set; }
+    [Column("issues", TypeName = "jsonb")]
+    public string? Issues { get; set; }
 
     [Column("ai_provider")]
-    public string AIProvider { get; set; } = "google_vision";
+    public string? AIProvider { get; set; } = "google_vision";
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -64,4 +64,13 @@ public partial class DmsImageAnalysis : FullAuditedAggregateRoot<Guid>, IEntityD
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PlanogramCheckId")]
     public virtual DmsPlanogramCheck? PlanogramCheck { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
 }

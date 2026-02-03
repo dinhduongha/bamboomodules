@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Loyalty", Category = "Sales", Depends = new[] { "product", "portal", "account" })]
-    public partial class LoyaltyProgramAppService : GenericApplicationService<LoyaltyProgram>, ILoyaltyProgramAppService
+    public partial class LoyaltyProgramAppService : GenericAppService<LoyaltyProgram>, ILoyaltyProgramAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         private readonly IWebsiteMultiMixinAppService _websiteMultiMixinAppService;
@@ -288,7 +288,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LoyaltyProgram> CreateFromTemplateAsync(Guid id, LoyaltyProgramCreateFromTemplateRequestDto input)
+        [ApiModel]
+        public async Task<LoyaltyProgram> CreateFromTemplateAsync(LoyaltyProgramCreateFromTemplateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
@@ -314,10 +315,13 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = program.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LoyaltyProgram> GetProgramTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<LoyaltyProgram> GetProgramTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
@@ -384,9 +388,12 @@ namespace Bamboo.Core.Application.Services
             //     res['promotion']['description'] = _("Automatic promotion: free shipping on orders higher than $50")
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyProgram> GetTemplateValuesInternalAsync()
         {
             /*
@@ -551,6 +558,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyProgram> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -561,6 +569,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyProgram> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -575,6 +584,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyProgram> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
@@ -585,7 +595,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LoyaltyProgram> OpenLoyaltyCardsAsync(Guid id)
+        public async Task<LoyaltyProgram> OpenLoyaltyCardsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
@@ -603,9 +613,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyProgram> ProgramItemsNameInternalAsync()
         {
             /*
@@ -625,7 +638,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LoyaltyProgram> ProgramShareAsync(Guid id)
+        public async Task<LoyaltyProgram> ProgramShareAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: loyalty_program.py) ---
@@ -633,9 +646,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.env['coupon.share'].create_share_action(program=self)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyProgram> ProgramTypeDefaultValuesInternalAsync()
         {
             /*

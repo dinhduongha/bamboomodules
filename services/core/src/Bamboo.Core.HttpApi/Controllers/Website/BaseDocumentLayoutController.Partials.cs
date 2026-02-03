@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/document-layout-save")]
-        public async Task<IActionResult> DocumentLayoutSaveAsync(Guid id)
+        [Route("document-layout-save")]
+        public async Task<IActionResult> DocumentLayoutSaveAsync(Guid[] ids)
         {
-            var result = await _appService.DocumentLayoutSaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DocumentLayoutSaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/extract-image-primary-secondary-colors")]
-        public async Task<IActionResult> ExtractImagePrimarySecondaryColorsAsync(Guid id, [FromBody] BaseDocumentLayoutExtractImagePrimarySecondaryColorsRequestDto input)
+        [Route("extract-image-primary-secondary-colors")]
+        public async Task<IActionResult> ExtractImagePrimarySecondaryColorsAsync(BaseDocumentLayoutExtractImagePrimarySecondaryColorsRequestDto input)
         {
-            var result = await _appService.ExtractImagePrimarySecondaryColorsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ExtractImagePrimarySecondaryColorsAsync(input);
             return Ok(result);
         }
     }

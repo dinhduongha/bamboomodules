@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class BaseEnableProfilingWizardAppService : GenericApplicationService<BaseEnableProfilingWizard>, IBaseEnableProfilingWizardAppService
+    public partial class BaseEnableProfilingWizardAppService : GenericAppService<BaseEnableProfilingWizard>, IBaseEnableProfilingWizardAppService
     {
 
         public BaseEnableProfilingWizardAppService(IRepository<BaseEnableProfilingWizard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -38,7 +38,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseEnableProfilingWizard> SubmitAsync(Guid id)
+        public async Task<BaseEnableProfilingWizard> SubmitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_profile.py) ---
@@ -46,7 +46,9 @@ namespace Bamboo.Core.Application.Services
             // self.env['ir.config_parameter'].set_param('base.profiling_enabled_until', self.expiration)
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

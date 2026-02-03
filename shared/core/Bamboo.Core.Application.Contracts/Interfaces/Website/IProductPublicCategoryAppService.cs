@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductPublicCategoryAppService : IGenericApplicationService<ProductPublicCategory>
     {
-        Task<ProductPublicCategory> CheckParentIdAsync(Guid id);
-        Task<ProductPublicCategory> GetAvailableSnippetCategoriesAsync(Guid id, ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input);
+        Task<ProductPublicCategory> CheckParentIdAsync(Guid[] ids);
+        Task<ProductPublicCategory> GetAvailableSnippetCategoriesAsync(ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input);
     }
 }

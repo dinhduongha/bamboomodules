@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResourceResourceAppService : IGenericApplicationService<ResourceResource>
     {
-        Task<ResourceResource> CopyDataAsync(Guid id, ResourceResourceCopyDataRequestDto input);
-        Task<ResourceResource> GetAvatarCardDataAsync(Guid id, ResourceResourceGetAvatarCardDataRequestDto input);
+        Task<ResourceResource> CopyDataAsync(ResourceResourceCopyDataRequestDto input);
+        Task<ResourceResource> GetAvatarCardDataAsync(ResourceResourceGetAvatarCardDataRequestDto input);
     }
 }

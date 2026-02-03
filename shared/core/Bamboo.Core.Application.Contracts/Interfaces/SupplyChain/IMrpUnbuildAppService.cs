@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMrpUnbuildAppService : IGenericApplicationService<MrpUnbuild>
     {
-        Task<MrpUnbuild> UnbuildAsync(Guid id);
-        Task<MrpUnbuild> ValidateAsync(Guid id);
+        Task<MrpUnbuild> UnbuildAsync(Guid[] ids);
+        Task<MrpUnbuild> ValidateAsync(Guid[] ids);
     }
 }

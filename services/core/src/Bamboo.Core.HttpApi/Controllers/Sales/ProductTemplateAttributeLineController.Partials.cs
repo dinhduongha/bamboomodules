@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-attribute-values")]
-        public async Task<IActionResult> ActionOpenAttributeValuesAsync(Guid id)
+        [Route("action-open-attribute-values")]
+        public async Task<IActionResult> ActionOpenAttributeValuesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAttributeValuesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAttributeValuesAsync(ids);
             return Ok(result);
         }
     }

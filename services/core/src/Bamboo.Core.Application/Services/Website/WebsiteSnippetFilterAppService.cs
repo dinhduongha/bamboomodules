@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public partial class WebsiteSnippetFilterAppService : GenericApplicationService<WebsiteSnippetFilter>, IWebsiteSnippetFilterAppService
+    public partial class WebsiteSnippetFilterAppService : GenericAppService<WebsiteSnippetFilter>, IWebsiteSnippetFilterAppService
     {
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         public WebsiteSnippetFilterAppService(IRepository<WebsiteSnippetFilter, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -79,7 +79,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<WebsiteSnippetFilter> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<WebsiteSnippetFilter> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_snippet_filter.py) ---
@@ -101,7 +102,7 @@ namespace Bamboo.Core.Application.Services
             //     defaults['field_names'] = 'display_name,description_sale,image_512'
             // return defaults
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
         protected async Task<WebsiteSnippetFilter> FillSampleInternalAsync(object model, object sample, object index)
@@ -488,6 +489,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<WebsiteSnippetFilter> GetProductsInternalAsync(object mode)
         {
             /*
@@ -614,6 +616,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<WebsiteSnippetFilter> GetWebsiteCurrencyInternalAsync()
         {
             /*
@@ -629,6 +632,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<WebsiteSnippetFilter> PrepareCategoryListDataInternalAsync(Guid parent_id)
         {
             /*

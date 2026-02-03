@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAuthPasskeyKeyCreateAppService : IGenericApplicationService<AuthPasskeyKeyCreate>
     {
-        Task<AuthPasskeyKeyCreate> MakeKeyAsync(Guid id, AuthPasskeyKeyCreateMakeKeyRequestDto input);
+        Task<AuthPasskeyKeyCreate> MakeKeyAsync(AuthPasskeyKeyCreateMakeKeyRequestDto input);
     }
 }

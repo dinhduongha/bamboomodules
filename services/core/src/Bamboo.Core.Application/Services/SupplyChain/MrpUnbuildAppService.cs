@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mrp", Category = "SupplyChain", Depends = new[] { "product", "stock", "resource" })]
-    public partial class MrpUnbuildAppService : GenericApplicationService<MrpUnbuild>, IMrpUnbuildAppService
+    public partial class MrpUnbuildAppService : GenericAppService<MrpUnbuild>, IMrpUnbuildAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -234,7 +234,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpUnbuild> UnbuildAsync(Guid id)
+        public async Task<MrpUnbuild> UnbuildAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_unbuild.py) ---
@@ -318,7 +318,9 @@ namespace Bamboo.Core.Application.Services
             //     )
             // return self.write({'state': 'done'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpUnbuild> UnlinkExceptDoneInternalAsync()
@@ -332,7 +334,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpUnbuild> ValidateAsync(Guid id)
+        public async Task<MrpUnbuild> ValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_unbuild.py) ---
@@ -360,7 +362,9 @@ namespace Bamboo.Core.Application.Services
             //         'target': 'new',
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

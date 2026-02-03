@@ -10,12 +10,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResConfigAppService : IGenericApplicationService<ResConfig>
     {
-        Task<ResConfig> CancelAsync(Guid id);
-        Task<ResConfig> CancelActionAsync(Guid id);
-        Task<ResConfig> ExecuteAsync(Guid id);
-        Task<ResConfig> NextAsync(Guid id);
-        Task<ResConfig> NextActionAsync(Guid id);
-        Task<ResConfig> SkipAsync(Guid id);
-        Task<ResConfig> StartAsync(Guid id);
+        Task<ResConfig> CancelAsync(Guid[] ids);
+        Task<ResConfig> CancelActionAsync(Guid[] ids);
+        Task<ResConfig> ExecuteAsync(Guid[] ids);
+        Task<ResConfig> NextAsync(Guid[] ids);
+        Task<ResConfig> NextActionAsync(Guid[] ids);
+        Task<ResConfig> SkipAsync(Guid[] ids);
+        Task<ResConfig> StartAsync(Guid[] ids);
     }
 }

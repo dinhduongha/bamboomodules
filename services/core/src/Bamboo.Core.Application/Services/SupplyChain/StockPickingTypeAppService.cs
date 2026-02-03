@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockPickingTypeAppService : GenericApplicationService<StockPickingType>, IStockPickingTypeAppService
+    public partial class StockPickingTypeAppService : GenericAppService<StockPickingType>, IStockPickingTypeAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public StockPickingTypeAppService(IRepository<StockPickingType, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<StockPickingType> BatchAsync(Guid id)
+        public async Task<StockPickingType> BatchAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking.py) ---
@@ -39,7 +39,9 @@ namespace Bamboo.Core.Application.Services
             //     action["view_mode"] = self.env.context["view_mode"]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPickingType> CheckActiveInternalAsync()
@@ -476,7 +478,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingType> CopyDataAsync(Guid id, StockPickingTypeCopyDataRequestDto input)
+        public async Task<StockPickingType> CopyDataAsync(StockPickingTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
@@ -490,7 +492,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['sequence_code'] = _("%s (copy)", picking.sequence_code)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPickingType> GetActionInternalAsync(object action_xmlid)
@@ -596,6 +600,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> GetBatchAndWaveGroupByKeysInternalAsync()
         {
             /*
@@ -606,6 +611,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> GetBatchGroupByKeysInternalAsync()
         {
             /*
@@ -672,7 +678,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingType> GetMrpStockPickingPickingTypeAsync(Guid id)
+        public async Task<StockPickingType> GetMrpStockPickingPickingTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_picking.py) ---
@@ -682,50 +688,60 @@ namespace Bamboo.Core.Application.Services
             //     action['display_name'] = self.display_name
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingType> GetPickingTreeBackorderAsync(Guid id)
+        public async Task<StockPickingType> GetPickingTreeBackorderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def get_action_picking_tree_backorder(self):
             // return self._get_action('stock.action_picking_tree_backorder')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingType> GetPickingTreeLateAsync(Guid id)
+        public async Task<StockPickingType> GetPickingTreeLateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def get_action_picking_tree_late(self):
             // return self._get_action('stock.action_picking_tree_late')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingType> GetPickingTreeReadyAsync(Guid id)
+        public async Task<StockPickingType> GetPickingTreeReadyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def get_action_picking_tree_ready(self):
             // return self._get_action('stock.action_picking_tree_ready')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingType> GetPickingTreeWaitingAsync(Guid id)
+        public async Task<StockPickingType> GetPickingTreeWaitingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def get_action_picking_tree_waiting(self):
             // return self._get_action('stock.action_picking_tree_waiting')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingType> GetPickingTypeMovesAnalysisAsync(Guid id)
+        public async Task<StockPickingType> GetPickingTypeMovesAnalysisAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
@@ -736,20 +752,24 @@ namespace Bamboo.Core.Application.Services
             // ])
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingType> GetPickingTypeReadyMovesAsync(Guid id)
+        public async Task<StockPickingType> GetPickingTypeReadyMovesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def get_action_picking_type_ready_moves(self):
             // return self._get_action('stock.action_get_picking_type_ready_moves')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingType> GetRepairStockPickingPickingTypeAsync(Guid id)
+        public async Task<StockPickingType> GetRepairStockPickingPickingTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: repair, FILE: stock_picking.py) ---
@@ -759,10 +779,12 @@ namespace Bamboo.Core.Application.Services
             //     action['display_name'] = self.display_name
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockPickingType> GetStockPickingPickingTypeAsync(Guid id)
+        public async Task<StockPickingType> GetStockPickingPickingTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
@@ -775,9 +797,12 @@ namespace Bamboo.Core.Application.Services
             //     return self._get_action('stock.action_picking_tree_internal')
             // return self._get_action('stock.stock_picking_action_picking_type')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> GetWaveGroupByKeysInternalAsync()
         {
             /*
@@ -803,6 +828,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> IsAutoBatchGroupedInternalAsync()
         {
             /*
@@ -814,6 +840,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> IsAutoWaveGroupedInternalAsync()
         {
             /*
@@ -825,6 +852,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -835,6 +863,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -940,7 +969,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingType> RedirectToBarcodeInstallationAsync(Guid id)
+        [ApiModel]
+        public async Task<StockPickingType> RedirectToBarcodeInstallationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
@@ -949,9 +979,12 @@ namespace Bamboo.Core.Application.Services
             // action["context"] = dict(literal_eval(action["context"]), search_default_name="Barcode")
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> SearchDisplayNameInternalAsync(object @operator, object @value)
         {
             /*
@@ -973,6 +1006,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockPickingType> SearchIsFavoriteInternalAsync(object @operator, object @value)
         {
             /*
@@ -1000,7 +1034,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingType> WaveAsync(Guid id)
+        public async Task<StockPickingType> WaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_picking.py) ---
@@ -1008,7 +1042,9 @@ namespace Bamboo.Core.Application.Services
             // action = self._get_action('stock_picking_batch.action_picking_tree_wave')
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

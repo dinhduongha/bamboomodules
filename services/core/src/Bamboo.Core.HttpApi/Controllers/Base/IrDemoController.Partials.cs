@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/install-demo")]
-        public async Task<IActionResult> InstallDemoAsync(Guid id)
+        [Route("install-demo")]
+        public async Task<IActionResult> InstallDemoAsync(Guid[] ids)
         {
-            var result = await _appService.InstallDemoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InstallDemoAsync(ids);
             return Ok(result);
         }
     }

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/check-dates")]
-        public async Task<IActionResult> CheckDatesAsync(Guid id)
+        [Route("check-dates")]
+        public async Task<IActionResult> CheckDatesAsync(Guid[] ids)
         {
-            var result = await _appService.CheckDatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckDatesAsync(ids);
             return Ok(result);
         }
     }

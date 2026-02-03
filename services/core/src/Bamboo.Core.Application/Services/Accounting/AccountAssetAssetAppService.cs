@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountAsset", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class AccountAssetAssetAppService : GenericApplicationService<AccountAssetAsset>, IAccountAssetAssetAppService
+    public partial class AccountAssetAssetAppService : GenericAppService<AccountAssetAsset>, IAccountAssetAssetAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -118,7 +118,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAssetAsset> ComputeDepreciationBoardAsync(Guid id)
+        public async Task<AccountAssetAsset> ComputeDepreciationBoardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -192,7 +192,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAssetAsset> ComputeEntriesInternalAsync(object date, object group_entries)
@@ -210,7 +212,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAssetAsset> ComputeGeneratedEntriesAsync(Guid id, AccountAssetAssetComputeGeneratedEntriesRequestDto input)
+        [ApiModel]
+        public async Task<AccountAssetAsset> ComputeGeneratedEntriesAsync(AccountAssetAssetComputeGeneratedEntriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -229,10 +232,12 @@ namespace Bamboo.Core.Application.Services
             //     created_move_ids += assets._compute_entries(date, group_entries=True)
             // return created_move_ids
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetAsset> CopyDataAsync(Guid id, AccountAssetAssetCopyDataRequestDto input)
+        public async Task<AccountAssetAsset> CopyDataAsync(AccountAssetAssetCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -242,9 +247,12 @@ namespace Bamboo.Core.Application.Services
             // default['name'] = self.name + _(' (copy)')
             // return super(AccountAssetAsset, self).copy_data(default)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountAssetAsset> CronGenerateEntriesInternalAsync()
         {
             /*
@@ -309,7 +317,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAssetAsset> OnchangeCategoryIdAsync(Guid id)
+        public async Task<AccountAssetAsset> OnchangeCategoryIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -320,10 +328,12 @@ namespace Bamboo.Core.Application.Services
             //     for k, v in vals['value'].items():
             //         setattr(self, k, v)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetAsset> OnchangeCategoryIdValuesAsync(Guid id, AccountAssetAssetOnchangeCategoryIdValuesRequestDto input)
+        public async Task<AccountAssetAsset> OnchangeCategoryIdValuesAsync(AccountAssetAssetOnchangeCategoryIdValuesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -345,20 +355,24 @@ namespace Bamboo.Core.Application.Services
             //         }
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetAsset> OnchangeCompanyIdAsync(Guid id)
+        public async Task<AccountAssetAsset> OnchangeCompanyIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
             // def onchange_company_id(self):
             // self.currency_id = self.company_id.currency_id.id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetAsset> OnchangeDateFirstDepreciationAsync(Guid id)
+        public async Task<AccountAssetAsset> OnchangeDateFirstDepreciationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -367,10 +381,12 @@ namespace Bamboo.Core.Application.Services
             //     if record.date_first_depreciation == 'manual':
             //         record.first_depreciation_manual_date = record.date
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetAsset> OnchangeMethodTimeAsync(Guid id)
+        public async Task<AccountAssetAsset> OnchangeMethodTimeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -378,10 +394,12 @@ namespace Bamboo.Core.Application.Services
             // if self.method_time != 'number':
             //     self.prorata = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetAsset> OpenEntriesAsync(Guid id)
+        public async Task<AccountAssetAsset> OpenEntriesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -401,7 +419,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('id', 'in', move_ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAssetAsset> ReturnDisposalViewInternalAsync(List<Guid> move_ids)
@@ -427,7 +447,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAssetAsset> SetToCloseAsync(Guid id)
+        public async Task<AccountAssetAsset> SetToCloseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -438,20 +458,24 @@ namespace Bamboo.Core.Application.Services
             // # Fallback, as if we just clicked on the smartbutton
             // return self.open_entries()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetAsset> SetToDraftAsync(Guid id)
+        public async Task<AccountAssetAsset> SetToDraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
             // def set_to_draft(self):
             // self.write({'state': 'draft'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAssetAsset> ValidateAsync(Guid id)
+        public async Task<AccountAssetAsset> ValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -479,7 +503,9 @@ namespace Bamboo.Core.Application.Services
             //     dummy, tracking_value_ids = asset._mail_track(tracked_fields, dict.fromkeys(fields))
             //     asset.message_post(subject=_('Asset created'), tracking_value_ids=tracking_value_ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -15,12 +15,11 @@ using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
-using System.Text.Json;
 
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResUsersAppService : GenericApplicationService<ResUsers>, IResUsersAppService
+    public partial class ResUsersAppService : GenericAppService<ResUsers>, IResUsersAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
@@ -196,7 +195,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> ApiKeyWizardAsync(Guid id)
+        public async Task<ResUsers> ApiKeyWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -209,10 +208,12 @@ namespace Bamboo.Core.Application.Services
             //     'views': [(False, 'form')],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> ArchiveAsync(Guid id)
+        public async Task<ResUsers> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
@@ -225,7 +226,9 @@ namespace Bamboo.Core.Application.Services
             // self.env['crm.team.member'].search([('user_id', 'in', self.ids)]).action_archive()
             // return super().action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> AssertCanAuthInternalAsync(object user)
@@ -303,7 +306,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> AuthOauthAsync(Guid id, ResUsersAuthOauthRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> AuthOauthAsync(ResUsersAuthOauthRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_users.py) ---
@@ -323,7 +327,9 @@ namespace Bamboo.Core.Application.Services
             // # return user credentials
             // return (self.env.cr.dbname, login, access_token)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> AuthOauthRpcInternalAsync(object endpoint, object access_token)
@@ -348,6 +354,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> AuthOauthSigninInternalAsync(object provider, object validation, object @params)
         {
             /*
@@ -385,6 +392,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> AuthOauthValidateInternalAsync(object provider, object access_token)
         {
             /*
@@ -418,7 +426,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> AuthenticateAsync(Guid id, ResUsersAuthenticateRequestDto input)
+        public async Task<ResUsers> AuthenticateAsync(ResUsersAuthenticateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
@@ -488,7 +496,9 @@ namespace Bamboo.Core.Application.Services
             //             _logger.exception("Failed to update web.base.url configuration parameter")
             // return auth_info
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> BusChannelInternalAsync()
@@ -534,7 +544,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> ChangePasswordAsync(Guid id, ResUsersChangePasswordRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> ChangePasswordAsync(ResUsersChangePasswordRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_ldap, FILE: res_users.py) ---
@@ -572,7 +583,9 @@ namespace Bamboo.Core.Application.Services
             // self.env.user._change_password(new_passwd)
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> ChangePasswordInternalAsync(object new_passwd)
@@ -597,7 +610,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> ChangePasswordWizardAsync(Guid id)
+        public async Task<ResUsers> ChangePasswordWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -609,7 +622,9 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> CheckActionIdInternalAsync()
@@ -654,7 +669,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> CheckCalendarCredentialsAsync(Guid id)
+        [ApiModel]
+        public async Task<ResUsers> CheckCalendarCredentialsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_users.py) ---
@@ -671,7 +687,9 @@ namespace Bamboo.Core.Application.Services
             // res['microsoft_calendar'] = self._has_setup_microsoft_credentials()
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> CheckCompanyDomainInternalAsync(object companies)
@@ -984,7 +1002,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> CheckSynchronizationStatusAsync(Guid id)
+        public async Task<ResUsers> CheckSynchronizationStatusAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_users.py) ---
@@ -1013,9 +1031,12 @@ namespace Bamboo.Core.Application.Services
             // res['microsoft_calendar'] = sync_status
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> CheckUidPasswdInternalAsync(object uid, object passwd)
         {
             /*
@@ -1655,7 +1676,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> ContextGetAsync(Guid id)
+        [ApiModel]
+        public async Task<ResUsers> ContextGetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -1688,10 +1710,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return frozendict(context)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<ResUsers> CopyAsync(Guid id, List<string> fields, ResUsers defaultValues = null)
+        public override async Task<ResUsers> CopyAsync(CopyRequestDto<ResUsers> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
@@ -1701,10 +1725,10 @@ namespace Bamboo.Core.Application.Services
             //     self = self.with_context(no_reset_password=True)
             // return super().copy(default=default)
             */
-            return await base.CopyAsync(id, fields, defaultValues);
+            return await base.CopyAsync(input);
         }
 
-        public async Task<ResUsers> CopyDataAsync(Guid id, ResUsersCopyDataRequestDto input)
+        public async Task<ResUsers> CopyDataAsync(ResUsersCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -1718,10 +1742,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['login'] = _("%s (copy)", user.login)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<ResUsers> CreateAsync(ResUsers entity, List<string> fields)
+        public override async Task<ResUsers> CreateAsync(CreateRequestDto<ResUsers> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
@@ -1863,10 +1889,10 @@ namespace Bamboo.Core.Application.Services
             //             user.write({'group_ids': [Command.link(group_multi_company_id)]})
             // return users
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<ResUsers> CreateEmployeeAsync(Guid id)
+        public async Task<ResUsers> CreateEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
@@ -1880,10 +1906,12 @@ namespace Bamboo.Core.Application.Services
             //     **self.env['hr.employee']._sync_user(self)
             // ))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> CreatePasskeyAsync(Guid id)
+        public async Task<ResUsers> CreatePasskeyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: res_users.py) ---
@@ -1900,7 +1928,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> CreateRecruitmentInterviewersInternalAsync()
@@ -2107,6 +2137,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> DefaultUserCalendarDefaultPrivacyInternalAsync()
         {
             /*
@@ -2182,6 +2213,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GenerateProfileTokenInternalAsync(Guid user_id, object email)
         {
             /*
@@ -2204,6 +2236,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GenerateSignupValuesInternalAsync(object provider, object validation, object @params)
         {
             /*
@@ -2225,6 +2258,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetActivityGroupsInternalAsync()
         {
             /*
@@ -2505,7 +2539,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> GetAsync(Guid id)
+        [ApiModel]
+        public async Task<ResUsers> GetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
@@ -2526,7 +2561,9 @@ namespace Bamboo.Core.Application.Services
             // def action_get(self):
             // return self.sudo().env.ref('base.action_res_users_my').read()[0]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> GetAuthMethodsInternalAsync()
@@ -2555,14 +2592,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> GetCompanyCurrencyIdAsync(Guid id)
+        [ApiModel]
+        public async Task<ResUsers> GetCompanyCurrencyIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def get_company_currency_id(self):
             // return self.env.company.currency_id.id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> GetCompanyIdsInternalAsync()
@@ -2594,6 +2634,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetEmailDomainInternalAsync(object email)
         {
             /*
@@ -2623,7 +2664,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> GetFormviewActionAsync(Guid id, ResUsersGetFormviewActionRequestDto input)
+        public async Task<ResUsers> GetFormviewActionAsync(ResUsersGetFormviewActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
@@ -2641,10 +2682,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> GetGamificationRedirectionDataAsync(Guid id)
+        public async Task<ResUsers> GetGamificationRedirectionDataAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: res_users.py) ---
@@ -2673,7 +2716,9 @@ namespace Bamboo.Core.Application.Services
             // })
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> GetGoogleCalendarTokenInternalAsync()
@@ -2721,6 +2766,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetInvalidationFieldsInternalAsync()
         {
             /*
@@ -2827,6 +2873,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetLoginDomainInternalAsync(object login)
         {
             /*
@@ -2841,6 +2888,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetLoginOrderInternalAsync()
         {
             /*
@@ -2854,6 +2902,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetMailServerSetupEndActionInternalAsync(object smtp_server)
         {
             /*
@@ -2874,6 +2923,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetMailServerValuesInternalAsync(object server_type)
         {
             /*
@@ -2956,6 +3006,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetOnLeaveIdsInternalAsync(object partner)
         {
             /*
@@ -2977,7 +3028,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> GetPasswordPolicyAsync(Guid id)
+        [ApiModel]
+        public async Task<ResUsers> GetPasswordPolicyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_password_policy, FILE: res_users.py) ---
@@ -2987,7 +3039,9 @@ namespace Bamboo.Core.Application.Services
             //     'minlength': int(params.get_param('auth_password_policy.minlength', default=0)),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> GetPersonalInfoPartnerIdsToNotifyInternalAsync(object employee)
@@ -3018,7 +3072,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> GetSelectedCalendarsPartnerIdsAsync(Guid id, ResUsersGetSelectedCalendarsPartnerIdsRequestDto input)
+        public async Task<ResUsers> GetSelectedCalendarsPartnerIdsAsync(ResUsersGetSelectedCalendarsPartnerIdsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_users.py) ---
@@ -3041,7 +3095,9 @@ namespace Bamboo.Core.Application.Services
             //     partner_ids += [self.env.user.partner_id.id]
             // return partner_ids
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> GetSessionTokenFieldsInternalAsync()
@@ -3098,6 +3154,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> GetSignupInvitationScopeInternalAsync()
         {
             /*
@@ -3122,7 +3179,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> GetTotpInviteUrlAsync(Guid id)
+        public async Task<ResUsers> GetTotpInviteUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
@@ -3135,7 +3192,9 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return super().get_totp_invite_url()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> GetTotpMailCodeInternalAsync()
@@ -3266,6 +3325,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<List<string>> GetUserCalendarConfigurationFieldsInternalAsync()
         {
             /*
@@ -3277,7 +3337,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> GetViewAsync(Guid id, ResUsersGetViewRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> GetViewAsync(ResUsersGetViewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
@@ -3296,7 +3357,9 @@ namespace Bamboo.Core.Application.Services
             // result = super().get_view(view_id, view_type, **options)
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> GetViewPostprocessedInternalAsync(object view, object arch)
@@ -3316,7 +3379,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> GetViewsAsync(Guid id, ResUsersGetViewsRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> GetViewsAsync(ResUsersGetViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
@@ -3333,7 +3397,9 @@ namespace Bamboo.Core.Application.Services
             // result = super().get_views(views, options)
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> HasAnyActiveSynchronizationInternalAsync()
@@ -3393,7 +3459,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<bool> HasGroupAsync(Guid id, ResUsersHasGroupRequestDto input)
+        public async Task<bool> HasGroupAsync(ResUsersHasGroupRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -3416,7 +3482,9 @@ namespace Bamboo.Core.Application.Services
             //     result = result and bool(request and request.session.debug)
             // return result
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<bool> HasGroupInternalAsync(Guid group_ext_id)
@@ -3439,7 +3507,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<bool> HasGroupsAsync(Guid id, ResUsersHasGroupsRequestDto input)
+        public async Task<bool> HasGroupsAsync(ResUsersHasGroupsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -3474,9 +3542,12 @@ namespace Bamboo.Core.Application.Services
             //     return True
             // return not positives
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> HasSetupCredentialsInternalAsync()
         {
             /*
@@ -3491,6 +3562,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> HasSetupMicrosoftCredentialsInternalAsync()
         {
             /*
@@ -3505,7 +3577,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> InitAsync(Guid id)
+        public async Task<ResUsers> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
@@ -3531,7 +3603,9 @@ namespace Bamboo.Core.Application.Services
             //     for uid, pw in cr.fetchall():
             //         ResUsers.browse(uid).password = pw
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> InitMessagingInternalAsync(object store)
@@ -3600,6 +3674,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> InitStoreDataInternalAsync(object store)
         {
             /*
@@ -3775,7 +3850,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> IsGoogleCalendarSyncedAsync(Guid id)
+        public async Task<ResUsers> IsGoogleCalendarSyncedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: res_users.py) ---
@@ -3785,7 +3860,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.sudo().google_calendar_token and self._get_google_sync_status() == 'sync_active'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> IsInternalInternalAsync()
@@ -3853,7 +3930,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> KarmaReportAsync(Guid id)
+        public async Task<ResUsers> KarmaReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: res_users.py) ---
@@ -3872,7 +3949,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> LegacySessionTokenHashComputeInternalAsync(object sid)
@@ -3894,6 +3973,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -3904,6 +3984,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -3914,6 +3995,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
@@ -4060,7 +4142,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, JsonElement? domain = null, string @operator = "ilike", int limit = 100)
+        [ApiModel]
+        public override async Task<List<(Guid Id, string Name)>> NameSearchAsync(NameSearchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: res_users.py) ---
@@ -4090,10 +4173,11 @@ namespace Bamboo.Core.Application.Services
             //     return [(user.id, user.display_name)]
             // return super().name_search(name, domain, operator, limit)
             */
-            return await base.NameSearchAsync(name, domain, @operator, limit);
+            return await base.NameSearchAsync(input);
         }
 
-        public async Task<ResUsers> NewAsync(Guid id, ResUsersNewRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> NewAsync(ResUsersNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -4110,7 +4194,9 @@ namespace Bamboo.Core.Application.Services
             //         user.update({'group_ids': [Command.link(group_multi_company_id)]})
             // return user
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> NotifyInviterInternalAsync()
@@ -4266,7 +4352,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> OnChangeLoginAsync(Guid id)
+        public async Task<ResUsers> OnChangeLoginAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -4274,7 +4360,9 @@ namespace Bamboo.Core.Application.Services
             // if self.login and tools.single_email_re.match(self.login):
             //     self.email = self.login
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> OnLoginCooldownInternalAsync(object failures, object previous)
@@ -4350,14 +4438,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> OnchangeParentIdAsync(Guid id)
+        public async Task<ResUsers> OnchangeParentIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def onchange_parent_id(self):
             // return self.partner_id.onchange_parent_id()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> OnchangePrivateStateIdInternalAsync()
@@ -4399,7 +4489,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> OpenEmployeesAsync(Guid id)
+        public async Task<ResUsers> OpenEmployeesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
@@ -4423,10 +4513,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> OpenMyAccountSettingsAsync(Guid id)
+        public async Task<ResUsers> OpenMyAccountSettingsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
@@ -4440,40 +4532,48 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> OpenWebsiteUrlAsync(Guid id)
+        public async Task<ResUsers> OpenWebsiteUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: res_users.py) ---
             // def open_website_url(self):
             // return self.mapped('partner_id').open_website_url()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> PauseGoogleSynchronizationAsync(Guid id)
+        public async Task<ResUsers> PauseGoogleSynchronizationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: res_users.py) ---
             // def pause_google_synchronization(self):
             // self.env['ir.config_parameter'].sudo().set_param("google_calendar_sync_paused", True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> PauseMicrosoftSynchronizationAsync(Guid id)
+        public async Task<ResUsers> PauseMicrosoftSynchronizationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: res_users.py) ---
             // def pause_microsoft_synchronization(self):
             // self.env['ir.config_parameter'].sudo().set_param("microsoft_calendar_sync_paused", True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> PreferenceChangePasswordAsync(Guid id)
+        public async Task<ResUsers> PreferenceChangePasswordAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -4485,10 +4585,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> PreferenceSaveAsync(Guid id)
+        public async Task<ResUsers> PreferenceSaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -4498,7 +4600,9 @@ namespace Bamboo.Core.Application.Services
             //     'tag': 'reload_context',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> ProcessProfileValidationTokenInternalAsync(object token, object email)
@@ -4687,7 +4791,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> RelatedContactAsync(Guid id)
+        public async Task<ResUsers> RelatedContactAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
@@ -4700,10 +4804,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> RemoveOauthAccessTokenAsync(Guid id)
+        public async Task<ResUsers> RemoveOauthAccessTokenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_users.py) ---
@@ -4713,7 +4819,9 @@ namespace Bamboo.Core.Application.Services
             //     raise AccessError(self.env._('You do not have permissions to remove the access token'))
             // self.sudo().oauth_access_token = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> RemoveRecruitmentInterviewersInternalAsync()
@@ -4741,7 +4849,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> ResetPasswordAsync(Guid id, ResUsersResetPasswordRequestDto input)
+        public async Task<ResUsers> ResetPasswordAsync(ResUsersResetPasswordRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
@@ -4758,10 +4866,12 @@ namespace Bamboo.Core.Application.Services
             //     raise Exception(_('Multiple accounts found for this login'))
             // return users.action_reset_password()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> ResetPasswordAsync(Guid id)
+        public async Task<ResUsers> ResetPasswordAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
@@ -4777,10 +4887,12 @@ namespace Bamboo.Core.Application.Services
             //     else:
             //         raise UserError(_("There was an error when trying to deliver your Email, please check your configuration")) from mde
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> RestartGoogleSynchronizationAsync(Guid id)
+        public async Task<ResUsers> RestartGoogleSynchronizationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: res_users.py) ---
@@ -4790,10 +4902,12 @@ namespace Bamboo.Core.Application.Services
             // self.env['calendar.recurrence']._restart_google_sync()
             // self.env['calendar.event']._restart_google_sync()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> RestartMicrosoftSynchronizationAsync(Guid id)
+        public async Task<ResUsers> RestartMicrosoftSynchronizationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: res_users.py) ---
@@ -4804,20 +4918,24 @@ namespace Bamboo.Core.Application.Services
             // self.env['calendar.recurrence']._restart_microsoft_sync()
             // self.env['calendar.event']._restart_microsoft_sync()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> RevokeAllDevicesAsync(Guid id)
+        public async Task<ResUsers> RevokeAllDevicesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
             // def revoke_all_devices(self):
             // self._revoke_all_devices()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> RevokeAllDevicesActionAsync(Guid id)
+        public async Task<ResUsers> RevokeAllDevicesActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -4826,7 +4944,9 @@ namespace Bamboo.Core.Application.Services
             // # Need sudo to bypass access error for removing the devices of portal user
             // return (self.env.user if self.id == self.env.uid else self)._action_revoke_all_devices()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> RevokeAllDevicesInternalAsync()
@@ -4858,7 +4978,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> SELFREADABLEFIELDSAsync(Guid id)
+        public async Task<ResUsers> SELFREADABLEFIELDSAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_users.py) ---
@@ -4928,10 +5048,12 @@ namespace Bamboo.Core.Application.Services
             //     'share', 'device_ids', 'api_key_ids', 'phone', 'display_name',
             // ]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> SELFWRITEABLEFIELDSAsync(Guid id)
+        public async Task<ResUsers> SELFWRITEABLEFIELDSAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_users.py) ---
@@ -4973,7 +5095,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // return ['signature', 'action_id', 'company_id', 'email', 'name', 'image_1920', 'lang', 'tz', 'api_key_ids', 'phone']
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> SearchAllGroupIdsInternalAsync(object @operator, object @value)
@@ -5028,6 +5152,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> SearchDisplayNameInternalAsync(object @operator, object @value)
         {
             /*
@@ -5045,6 +5170,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> SearchResUsersSettingsIdInternalAsync(object @operator, object operand)
         {
             /*
@@ -5070,6 +5196,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> SelfAccessibleFieldsInternalAsync()
         {
             /*
@@ -5149,7 +5276,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> SendUnregisteredUserReminderAsync(Guid id)
+        public async Task<ResUsers> SendUnregisteredUserReminderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
@@ -5181,7 +5308,9 @@ namespace Bamboo.Core.Application.Services
             //         _logger.info("send_unregistered_user_reminder: timeout reached, stopping")
             //         break
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> SessionTokenGetValuesInternalAsync()
@@ -5337,7 +5466,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> SetupOutgoingMailServerAsync(Guid id, ResUsersSetupOutgoingMailServerRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> SetupOutgoingMailServerAsync(ResUsersSetupOutgoingMailServerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
@@ -5419,7 +5549,9 @@ namespace Bamboo.Core.Application.Services
             // smtp_server = self.env["ir.mail_server"].sudo().create(values)
             // return self._get_mail_server_setup_end_action(smtp_server)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> ShouldCaptchaLoginInternalAsync(object credential)
@@ -5434,7 +5566,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> ShowAccessesAsync(Guid id)
+        public async Task<ResUsers> ShowAccessesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -5450,10 +5582,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> ShowGroupsAsync(Guid id)
+        public async Task<ResUsers> ShowGroupsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -5469,10 +5603,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> ShowRulesAsync(Guid id)
+        public async Task<ResUsers> ShowRulesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -5488,10 +5624,13 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> SignupAsync(Guid id, ResUsersSignupRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> SignupAsync(ResUsersSignupRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
@@ -5545,9 +5684,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return (values.get('login'), values.get('password'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> SignupCreateUserInternalAsync(object values)
         {
             /*
@@ -5576,7 +5718,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> StopGoogleSynchronizationAsync(Guid id)
+        public async Task<ResUsers> StopGoogleSynchronizationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: res_users.py) ---
@@ -5584,10 +5726,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.sudo().google_synchronization_stopped = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> StopMicrosoftSynchronizationAsync(Guid id)
+        public async Task<ResUsers> StopMicrosoftSynchronizationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: res_users.py) ---
@@ -5596,10 +5740,13 @@ namespace Bamboo.Core.Application.Services
             // self.sudo().microsoft_synchronization_stopped = True
             // self.sudo().microsoft_last_sync_date = None
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> SwitchTourEnabledAsync(Guid id, ResUsersSwitchTourEnabledRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> SwitchTourEnabledAsync(ResUsersSwitchTourEnabledRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_tour, FILE: res_users.py) ---
@@ -5607,9 +5754,12 @@ namespace Bamboo.Core.Application.Services
             // self.env.user.sudo().tour_enabled = val
             // return self.env.user.tour_enabled
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> SyncAllGoogleCalendarInternalAsync()
         {
             /*
@@ -5630,6 +5780,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> SyncAllMicrosoftCalendarInternalAsync()
         {
             /*
@@ -5853,7 +6004,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> TestOutgoingMailServerAsync(Guid id)
+        [ApiModel]
+        public async Task<ResUsers> TestOutgoingMailServerAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users.py) ---
@@ -5878,10 +6030,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> TotpDisableAsync(Guid id)
+        public async Task<ResUsers> TotpDisableAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
@@ -5911,7 +6065,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> TotpEnableSearchInternalAsync(object @operator, object @value)
@@ -5930,7 +6086,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> TotpEnableWizardAsync(Guid id)
+        public async Task<ResUsers> TotpEnableWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
@@ -5959,10 +6115,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': self.env.context | {'dialog_size': 'medium'},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> TotpInviteAsync(Guid id)
+        public async Task<ResUsers> TotpInviteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp_mail, FILE: res_users.py) ---
@@ -5989,7 +6147,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> TotpRateLimitInternalAsync(object limit_type)
@@ -6101,24 +6261,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> UnpauseGoogleSynchronizationAsync(Guid id)
+        public async Task<ResUsers> UnpauseGoogleSynchronizationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: res_users.py) ---
             // def unpause_google_synchronization(self):
             // self.env['ir.config_parameter'].sudo().set_param("google_calendar_sync_paused", False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> UnpauseMicrosoftSynchronizationAsync(Guid id)
+        public async Task<ResUsers> UnpauseMicrosoftSynchronizationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: res_users.py) ---
             // def unpause_microsoft_synchronization(self):
             // self.env['ir.config_parameter'].sudo().set_param("microsoft_calendar_sync_paused", False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsers> UnsubscribeFromNonPublicChannelsInternalAsync()
@@ -6139,6 +6303,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsers> UpdateLastLoginInternalAsync()
         {
             /*
@@ -6151,7 +6316,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsers> WebCreateUsersAsync(Guid id, ResUsersWebCreateUsersRequestDto input)
+        [ApiModel]
+        public async Task<ResUsers> WebCreateUsersAsync(ResUsersWebCreateUsersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
@@ -6189,20 +6355,24 @@ namespace Bamboo.Core.Application.Services
             // 
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsers> WebsitePublishButtonAsync(Guid id)
+        public async Task<ResUsers> WebsitePublishButtonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
             // def website_publish_button(self):
             // return self.partner_id.website_publish_button()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ResUsers entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ResUsers> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
@@ -6477,7 +6647,7 @@ namespace Bamboo.Core.Application.Services
             //             user.write({'group_ids': [Command.link(group_multi_company_id)]})
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

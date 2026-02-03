@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrAttendanceModule", Category = "HumanResources", Depends = new[] { "hr", "barcodes", "base_geolocalize" })]
-    public partial class HrAttendanceOvertimeLineAppService : GenericApplicationService<HrAttendanceOvertimeLine>, IHrAttendanceOvertimeLineAppService
+    public partial class HrAttendanceOvertimeLineAppService : GenericAppService<HrAttendanceOvertimeLine>, IHrAttendanceOvertimeLineAppService
     {
 
         public HrAttendanceOvertimeLineAppService(IRepository<HrAttendanceOvertimeLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,14 +27,16 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<HrAttendanceOvertimeLine> ApproveAsync(Guid id)
+        public async Task<HrAttendanceOvertimeLine> ApproveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime.py) ---
             // def action_approve(self):
             // self.write({'status': 'approved'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrAttendanceOvertimeLine> ComputeIsManagerInternalAsync()
@@ -92,14 +94,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrAttendanceOvertimeLine> RefuseAsync(Guid id)
+        public async Task<HrAttendanceOvertimeLine> RefuseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime.py) ---
             // def action_refuse(self):
             // self.write({'status': 'refused'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

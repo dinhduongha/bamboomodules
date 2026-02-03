@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/execute")]
-        public async Task<IActionResult> ExecuteAsync(Guid id)
+        [Route("execute")]
+        public async Task<IActionResult> ExecuteAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteAsync(ids);
             return Ok(result);
         }
     }

@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-create-sidebar-action")]
-        public async Task<IActionResult> ActionCreateSidebarActionAsync(Guid id)
+        [Route("action-create-sidebar-action")]
+        public async Task<IActionResult> ActionCreateSidebarActionAsync(Guid[] ids)
         {
-            var result = await _appService.CreateSidebarActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateSidebarActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unlink-sidebar-action")]
-        public async Task<IActionResult> ActionUnlinkSidebarActionAsync(Guid id)
+        [Route("action-unlink-sidebar-action")]
+        public async Task<IActionResult> ActionUnlinkSidebarActionAsync(Guid[] ids)
         {
-            var result = await _appService.UnlinkSidebarActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnlinkSidebarActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SmsTemplateCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(SmsTemplateCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
     }

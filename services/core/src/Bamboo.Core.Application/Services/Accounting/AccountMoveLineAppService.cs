@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountMoveLineAppService : GenericApplicationService<AccountMoveLine>, IAccountMoveLineAppService
+    public partial class AccountMoveLineAppService : GenericAppService<AccountMoveLine>, IAccountMoveLineAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         public AccountMoveLineAppService(IRepository<AccountMoveLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _analyticMixinAppService = analyticMixinAppService;
         }
 
-        public async Task<AccountMoveLine> AddFromCatalogAsync(Guid id)
+        public async Task<AccountMoveLine> AddFromCatalogAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -36,7 +36,9 @@ namespace Bamboo.Core.Application.Services
             // move = self.env['account.move'].browse(self.env.context.get('order_id'))
             // return move.with_context(child_field='line_ids').action_add_from_catalog()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> AffectTaxReportInternalAsync()
@@ -61,6 +63,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> ApplyIrRulesInternalAsync(object query, object mode)
         {
             /*
@@ -83,7 +86,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> AssetCreateAsync(Guid id)
+        public async Task<AccountMoveLine> AssetCreateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_move.py) ---
@@ -115,10 +118,12 @@ namespace Bamboo.Core.Application.Services
             //         asset.validate()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountMoveLine> AutomaticEntryAsync(Guid id, AccountMoveLineAutomaticEntryRequestDto input)
+        public async Task<AccountMoveLine> AutomaticEntryAsync(AccountMoveLineAutomaticEntryRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -135,7 +140,9 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = ctx
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> CheckAmlsExigibilityForReconciliationInternalAsync(object shadowed_aml_values)
@@ -1342,7 +1349,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> CopyDataAsync(Guid id, AccountMoveLineCopyDataRequestDto input)
+        public async Task<AccountMoveLine> CopyDataAsync(AccountMoveLineCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -1364,7 +1371,9 @@ namespace Bamboo.Core.Application.Services
             //         line._copy_data_extend_business_fields(vals)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> CopyDataExtendBusinessFieldsInternalAsync(object values)
@@ -1407,6 +1416,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> CreateExchangeDifferenceMovesInternalAsync(object exchange_diff_values_list)
         {
             /*
@@ -1468,7 +1478,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<AccountMoveLine> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<AccountMoveLine> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -1495,7 +1506,7 @@ namespace Bamboo.Core.Application.Services
             //     self.onchange_asset_category_id()
             // return res
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
         protected async Task<AccountMoveLine> EligibleForStockAccountInternalAsync()
@@ -1589,26 +1600,31 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> FlushModelAsync(Guid id, AccountMoveLineFlushModelRequestDto input)
+        public async Task<AccountMoveLine> FlushModelAsync(AccountMoveLineFlushModelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def flush_model(self, fnames=None):
             // return super().flush_model(self._parse_flush_fnames(fnames))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountMoveLine> FlushRecordsetAsync(Guid id, AccountMoveLineFlushRecordsetRequestDto input)
+        public async Task<AccountMoveLine> FlushRecordsetAsync(AccountMoveLineFlushRecordsetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def flush_recordset(self, fnames=None):
             // return super().flush_recordset(self._parse_flush_fnames(fnames))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> FormatAmlNameInternalAsync(object line_name, object move_ref, object move_name)
         {
             /*
@@ -1718,6 +1734,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> GetAttachmentByRecordInternalAsync(object id_model2attachments, object move_line)
         {
             /*
@@ -1909,14 +1926,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> GetColumnToExcludeForColspanCalculationAsync(Guid id, AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto input)
+        public async Task<AccountMoveLine> GetColumnToExcludeForColspanCalculationAsync(AccountMoveLineGetColumnToExcludeForColspanCalculationRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def get_column_to_exclude_for_colspan_calculation(self, taxes=None):
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> GetComputedTaxesInternalAsync()
@@ -1954,6 +1973,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> GetDefaultReadFieldsInternalAsync()
         {
             /*
@@ -2039,7 +2059,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<AccountMoveLine> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -2049,7 +2070,9 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/account/static/xls/aml_import_template.xlsx'
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> GetInstallmentsDataInternalAsync(object payment_currency, object payment_date, object next_payment_date)
@@ -2138,14 +2161,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> GetInvoiceLineAccountAsync(Guid id, AccountMoveLineGetInvoiceLineAccountRequestDto input)
+        public async Task<AccountMoveLine> GetInvoiceLineAccountAsync(AccountMoveLineGetInvoiceLineAccountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_move.py) ---
             // def get_invoice_line_account(self, type, product, fpos, company):
             // return product.asset_category_id.account_asset_id or super(AccountMoveLine, self).get_invoice_line_account(type, product, fpos, company)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> GetInvoicedQtyPerProductInternalAsync()
@@ -2223,7 +2248,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> GetParentSectionLineAsync(Guid id)
+        public async Task<AccountMoveLine> GetParentSectionLineAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -2233,7 +2258,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self.parent_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> GetPriceUnitValDifAndRelevantQtyInternalAsync()
@@ -2316,6 +2343,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<object> GetQueryTaxDetailsFromDomainInternalAsync(object domain, object fallback)
         {
             /*
@@ -2334,9 +2362,10 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<object> GetQueryTaxDetailsInternalAsync(object table_references, object search_condition, object fallback)
         {
-            #if PYTHON_CODE
+#if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line_tax_details.py) ---
             // def _get_query_tax_details(self, table_references, search_condition, fallback=True) -> SQL:
             // """ Create the tax details sub-query based on the orm domain passed as parameter.
@@ -2823,7 +2852,7 @@ namespace Bamboo.Core.Application.Services
             //     table_references=table_references,
             //     fallback_query=fallback_query,
             // )
-            #endif
+#endif
             return default;
         }
 
@@ -2863,7 +2892,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> GetSectionSubtotalAsync(Guid id)
+        public async Task<AccountMoveLine> GetSectionSubtotalAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -2871,7 +2900,9 @@ namespace Bamboo.Core.Application.Services
             // section_lines = self._get_section_lines()
             // return sum(section_lines.mapped('price_subtotal'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> GetSoMappingDomainInternalAsync()
@@ -2974,6 +3005,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> GetTaxExigibleDomainInternalAsync()
         {
             /*
@@ -3000,7 +3032,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> GetViewsAsync(Guid id, AccountMoveLineGetViewsRequestDto input)
+        [ApiModel]
+        public async Task<AccountMoveLine> GetViewsAsync(AccountMoveLineGetViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -3012,10 +3045,12 @@ namespace Bamboo.Core.Application.Services
             //         toolbar['action'] = []
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountMoveLine> InvalidateModelAsync(Guid id, AccountMoveLineInvalidateModelRequestDto input)
+        public async Task<AccountMoveLine> InvalidateModelAsync(AccountMoveLineInvalidateModelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -3029,10 +3064,12 @@ namespace Bamboo.Core.Application.Services
             //         self.env['account.move'].browse(move_ids).invalidate_recordset()
             // return super().invalidate_model(fnames, flush)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountMoveLine> InvalidateRecordsetAsync(Guid id, AccountMoveLineInvalidateRecordsetRequestDto input)
+        public async Task<AccountMoveLine> InvalidateRecordsetAsync(AccountMoveLineInvalidateRecordsetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -3045,7 +3082,9 @@ namespace Bamboo.Core.Application.Services
             //         self.env['account.move'].browse(move_ids).invalidate_recordset()
             // return super().invalidate_recordset(fnames, flush)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> InverseAccountIdInternalAsync()
@@ -3218,7 +3257,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> OnchangeAssetCategoryIdAsync(Guid id)
+        public async Task<AccountMoveLine> OnchangeAssetCategoryIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_move.py) ---
@@ -3228,7 +3267,9 @@ namespace Bamboo.Core.Application.Services
             // elif self.move_id.move_type == 'in_invoice' and self.asset_category_id:
             //     self.account_id = self.asset_category_id.account_asset_id.id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> OnchangeIsLandedCostsLineInternalAsync()
@@ -3255,17 +3296,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> OpenBusinessDocAsync(Guid id)
+        public async Task<AccountMoveLine> OpenBusinessDocAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def action_open_business_doc(self):
             // return self.move_id.action_open_business_doc()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountMoveLine> OpenReconcileViewAsync(Guid id)
+        public async Task<AccountMoveLine> OpenReconcileViewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -3275,9 +3318,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('id', 'in', ids)]
             // return clean_action(action, self.env)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> OptimizeReconciliationPlanInternalAsync(object reconciliation_plan, object shadowed_aml_values)
         {
             /*
@@ -3392,14 +3438,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> PaymentItemsRegisterPaymentAsync(Guid id)
+        public async Task<AccountMoveLine> PaymentItemsRegisterPaymentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
             // def action_payment_items_register_payment(self):
             // return self.action_register_payment(ctx={'default_group_payment': True})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> PrepareAnalyticDistributionLineInternalAsync(object distribution, List<Guid> account_ids, object distribution_on_each_plan)
@@ -3683,6 +3731,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> PrepareMoveLineResidualAmountsInternalAsync(object aml_values, object counterpart_currency, object shadowed_aml_values, object other_aml_values)
         {
             /*
@@ -3767,6 +3816,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> PrepareReconciliationAmlsInternalAsync(object values_list, object shadowed_aml_values)
         {
             /*
@@ -3840,6 +3890,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> PrepareReconciliationPlanInternalAsync(object plan, object amls_values_map, object shadowed_aml_values)
         {
             /*
@@ -3886,6 +3937,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> PrepareReconciliationSinglePartialInternalAsync(object debit_values, object credit_values, object shadowed_aml_values)
         {
             /*
@@ -4221,6 +4273,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> QueryGetInternalAsync(object domain)
         {
             /*
@@ -4298,7 +4351,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> ReconcileAsync(Guid id)
+        public async Task<AccountMoveLine> ReconcileAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -4306,7 +4359,9 @@ namespace Bamboo.Core.Application.Services
             // """ Reconcile the current move lines all together. """
             // return self._reconcile_plan([self])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> ReconcileMarkedInternalAsync()
@@ -4339,6 +4394,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> ReconcilePlanInternalAsync(object reconciliation_plan)
         {
             /*
@@ -4606,7 +4662,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> RegisterPaymentAsync(Guid id, AccountMoveLineRegisterPaymentRequestDto input)
+        public async Task<AccountMoveLine> RegisterPaymentAsync(AccountMoveLineRegisterPaymentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -4630,7 +4686,9 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_window',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> RelatedAnalyticDistributionInternalAsync()
@@ -4658,7 +4716,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> RemoveMoveReconcileAsync(Guid id)
+        public async Task<AccountMoveLine> RemoveMoveReconcileAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -4666,7 +4724,9 @@ namespace Bamboo.Core.Application.Services
             // """ Undo a reconciliation """
             // (self.matched_debit_ids + self.matched_credit_ids).unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> RoundAnalyticDistributionLineInternalAsync(object analytic_lines_vals)
@@ -4990,6 +5050,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> SearchAccountIdInternalAsync(object @operator, object @value)
         {
             /*
@@ -5021,7 +5082,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> SearchFetchAsync(Guid id, AccountMoveLineSearchFetchRequestDto input)
+        [ApiModel]
+        public async Task<AccountMoveLine> SearchFetchAsync(AccountMoveLineSearchFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -5039,7 +5101,9 @@ namespace Bamboo.Core.Application.Services
             // )
             // return super(AccountMoveLine, contextualized).search_fetch(domain, field_names, offset, limit, order)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> SearchJournalGroupIdInternalAsync(object @operator, object @value)
@@ -5168,6 +5232,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> TimesheetDomainGetInvoicedLinesInternalAsync(object sale_line_delivery)
         {
             /*
@@ -5276,7 +5341,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> UnreconcileMatchEntriesAsync(Guid id)
+        public async Task<AccountMoveLine> UnreconcileMatchEntriesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -5287,7 +5352,9 @@ namespace Bamboo.Core.Application.Services
             //     move_lines = self.env['account.move.line'].browse(active_ids)._all_reconciled_lines()
             //     move_lines.remove_move_reconcile()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountMoveLine> UpdateAnalyticDistributionInternalAsync()
@@ -5358,6 +5425,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountMoveLine> WhereCalcInternalAsync(object domain, object active_test)
         {
             /*
@@ -5387,7 +5455,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, AccountMoveLine entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<AccountMoveLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -5521,7 +5589,7 @@ namespace Bamboo.Core.Application.Services
             //     self.sudo().vehicle_log_service_ids.with_context(ignore_linked_bill_constraint=True).unlink()
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

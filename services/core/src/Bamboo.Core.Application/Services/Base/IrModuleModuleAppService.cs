@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrModuleModuleAppService : GenericApplicationService<IrModuleModule>, IIrModuleModuleAppService
+    public partial class IrModuleModuleAppService : GenericAppService<IrModuleModule>, IIrModuleModuleAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public IrModuleModuleAppService(IRepository<IrModuleModule, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<IrModuleModule> ButtonChooseThemeAsync(Guid id)
+        public async Task<IrModuleModule> ButtonChooseThemeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_module_module.py) ---
@@ -59,7 +59,9 @@ namespace Bamboo.Core.Application.Services
             // result = website.button_go_website()
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModule> ButtonImmediateFunctionInternalAsync(object function)
@@ -126,7 +128,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> ButtonImmediateInstallAppAsync(Guid id)
+        public async Task<IrModuleModule> ButtonImmediateInstallAppAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
@@ -163,10 +165,12 @@ namespace Bamboo.Core.Application.Services
             // except requests.exceptions.ConnectionError:
             //     raise UserError(_('Connection to %(url)s failed, the module %(module)s cannot be downloaded.', url=APPS_URL, module=module_name))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonImmediateInstallAsync(Guid id)
+        public async Task<IrModuleModule> ButtonImmediateInstallAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -188,10 +192,12 @@ namespace Bamboo.Core.Application.Services
             //     request.allowed_company_ids = self.env.companies.ids
             // return self._button_immediate_function(self.env.registry[self._name].button_install)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonImmediateUninstallAsync(Guid id)
+        public async Task<IrModuleModule> ButtonImmediateUninstallAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -203,10 +209,12 @@ namespace Bamboo.Core.Application.Services
             // _logger.info('User #%d triggered module uninstallation', self.env.uid)
             // return self._button_immediate_function(self.env.registry[self._name].button_uninstall)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonImmediateUpgradeAsync(Guid id)
+        public async Task<IrModuleModule> ButtonImmediateUpgradeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -217,10 +225,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // return self._button_immediate_function(self.env.registry[self._name].button_upgrade)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonInstallAsync(Guid id)
+        public async Task<IrModuleModule> ButtonInstallAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -292,10 +302,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return dict(ACTION_DICT, name=_('Install'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonRefreshThemeAsync(Guid id)
+        public async Task<IrModuleModule> ButtonRefreshThemeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_module_module.py) ---
@@ -309,10 +321,12 @@ namespace Bamboo.Core.Application.Services
             // website = self.env['website'].get_current_website()
             // website.theme_id._theme_upgrade_upstream()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonRemoveThemeAsync(Guid id)
+        public async Task<IrModuleModule> ButtonRemoveThemeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_module_module.py) ---
@@ -321,10 +335,13 @@ namespace Bamboo.Core.Application.Services
             // website = self.env['website'].get_current_website()
             // self._theme_remove(website)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonResetStateAsync(Guid id)
+        [ApiModel]
+        public async Task<IrModuleModule> ButtonResetStateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -334,10 +351,12 @@ namespace Bamboo.Core.Application.Services
             // self.search([('state', 'in', ('to upgrade', 'to remove'))]).state = 'installed'
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonUninstallAsync(Guid id)
+        public async Task<IrModuleModule> ButtonUninstallAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -354,10 +373,12 @@ namespace Bamboo.Core.Application.Services
             // (self + deps).write({'state': 'to remove'})
             // return dict(ACTION_DICT, name=_('Uninstall'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonUninstallWizardAsync(Guid id)
+        public async Task<IrModuleModule> ButtonUninstallWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -372,10 +393,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'default_module_ids': self.ids},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ButtonUpgradeAsync(Guid id)
+        public async Task<IrModuleModule> ButtonUpgradeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
@@ -433,9 +456,12 @@ namespace Bamboo.Core.Application.Services
             // self.browse(to_install).button_install()
             // return dict(ACTION_DICT, name=_('Apply Schedule Upgrade'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> CallAppsInternalAsync(object payload)
         {
             /*
@@ -453,7 +479,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> CheckExternalDependenciesAsync(Guid id, IrModuleModuleCheckExternalDependenciesRequestDto input)
+        public async Task<IrModuleModule> CheckExternalDependenciesAsync(IrModuleModuleCheckExternalDependenciesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -484,7 +510,9 @@ namespace Bamboo.Core.Application.Services
             // 
             //     raise UserError(msg) from e
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModule> CheckInternalAsync()
@@ -509,14 +537,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> CheckModuleUpdateAsync(Guid id)
+        [ApiModel]
+        public async Task<IrModuleModule> CheckModuleUpdateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
             // def check_module_update(self):
             // return bool(self.sudo().search_count([('state', 'in', ('to install', 'to upgrade', 'to remove'))], limit=1))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModule> ComputeAccountTemplatesInternalAsync()
@@ -587,6 +618,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> CreateModelDataInternalAsync(object views)
         {
             /*
@@ -612,7 +644,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> DownstreamDependenciesAsync(Guid id, IrModuleModuleDownstreamDependenciesRequestDto input)
+        public async Task<IrModuleModule> DownstreamDependenciesAsync(IrModuleModuleDownstreamDependenciesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -641,9 +673,12 @@ namespace Bamboo.Core.Application.Services
             //     known_deps |= missing_mods.downstream_dependencies(known_deps, exclude_states)
             // return known_deps
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> ExtractResourceAttachmentTranslationsInternalAsync(object module, object lang)
         {
             /*
@@ -1010,6 +1045,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> GetImportedModuleNamesInternalAsync()
         {
             /*
@@ -1020,6 +1056,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> GetImportedModuleTranslationsForWebclientInternalAsync(object module, object lang)
         {
             /*
@@ -1060,6 +1097,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> GetIndustryCategoriesFromAppsInternalAsync()
         {
             /*
@@ -1114,6 +1152,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> GetMissingDependenciesInternalAsync(object zip_data)
         {
             /*
@@ -1207,7 +1246,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> GetModuleInfoAsync(Guid id, IrModuleModuleGetModuleInfoRequestDto input)
+        public async Task<IrModuleModule> GetModuleInfoAsync(IrModuleModuleGetModuleInfoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -1220,9 +1259,12 @@ namespace Bamboo.Core.Application.Services
             //     return name
             // return {}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> GetModulesFromAppsInternalAsync(object fields, object module_type, object module_name, object domain, object limit, object offset)
         {
             /*
@@ -1285,7 +1327,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> GetThemesDomainAsync(Guid id)
+        public async Task<IrModuleModule> GetThemesDomainAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_module_module.py) ---
@@ -1304,10 +1346,12 @@ namespace Bamboo.Core.Application.Services
             //     ('category_id.parent_id', '=', get_id('base.module_category_theme'))
             // ]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> GetValuesFromTerpAsync(Guid id)
+        public async Task<IrModuleModule> GetValuesFromTerpAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -1329,7 +1373,9 @@ namespace Bamboo.Core.Application.Services
             //     'to_buy': False
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModule> GetViewsInternalAsync()
@@ -1595,6 +1641,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> ImportZipfileInternalAsync(object module_file, object force, object with_demo)
         {
             /*
@@ -1669,6 +1716,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> InstalledInternalAsync()
         {
             /*
@@ -1683,6 +1731,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> LoadModuleTermsInternalAsync(object modules, object langs, object overwrite)
         {
             /*
@@ -1872,6 +1921,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -1882,6 +1932,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -1892,7 +1943,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> ModuleUninstallAsync(Guid id)
+        public async Task<IrModuleModule> ModuleUninstallAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_module.py) ---
@@ -1935,10 +1986,12 @@ namespace Bamboo.Core.Application.Services
             // self.with_context(prefetch_fields=False).write({'state': 'uninstalled', 'latest_version': False})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> MoreInfoAsync(Guid id)
+        public async Task<IrModuleModule> MoreInfoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
@@ -1952,10 +2005,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': self.env.context,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> NextAsync(Guid id)
+        public async Task<IrModuleModule> NextAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -1976,10 +2031,12 @@ namespace Bamboo.Core.Application.Services
             //     'url': '/odoo',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> OpenInstallRequestAsync(Guid id)
+        public async Task<IrModuleModule> OpenInstallRequestAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_install_request, FILE: ir_module_module.py) ---
@@ -1994,7 +2051,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'default_module_id': self.id},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModule> PostCopyInternalAsync(object old_rec, object new_rec)
@@ -2079,7 +2138,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> SearchPanelSelectRangeAsync(Guid id, IrModuleModuleSearchPanelSelectRangeRequestDto input)
+        [ApiModel]
+        public async Task<IrModuleModule> SearchPanelSelectRangeAsync(IrModuleModuleSearchPanelSelectRangeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
@@ -2141,7 +2201,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return super().search_panel_select_range(field_name, **kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModule> StateUpdateInternalAsync(object newstate, object states_to_update, object level)
@@ -2331,6 +2393,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModuleModule> ThemeRemoveInternalAsync(object website)
         {
             /*
@@ -2505,7 +2568,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> UpdateListAsync(Guid id)
+        [ApiModel]
+        public async Task<IrModuleModule> UpdateListAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_module_module.py) ---
@@ -2550,7 +2614,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModule> UpdateRecordsInternalAsync(object model_name, object website)
@@ -2633,7 +2699,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> UpdateThemeImagesAsync(Guid id)
+        [ApiModel]
+        public async Task<IrModuleModule> UpdateThemeImagesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_module_module.py) ---
@@ -2663,7 +2730,9 @@ namespace Bamboo.Core.Application.Services
             //             'res_id': theme.id,
             //         })
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModule> UpdateTranslationsInternalAsync(object filter_lang, object overwrite)
@@ -2688,7 +2757,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> UpstreamDependenciesAsync(Guid id, IrModuleModuleUpstreamDependenciesRequestDto input)
+        public async Task<IrModuleModule> UpstreamDependenciesAsync(IrModuleModuleUpstreamDependenciesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -2717,10 +2786,12 @@ namespace Bamboo.Core.Application.Services
             //     known_deps |= missing_mods.upstream_dependencies(known_deps, exclude_states)
             // return known_deps
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> ViewDeliveryMethodsAsync(Guid id)
+        public async Task<IrModuleModule> ViewDeliveryMethodsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: ir_module_module.py) ---
@@ -2739,10 +2810,12 @@ namespace Bamboo.Core.Application.Services
             //     action['context'] = {'search_default_delivery_type': delivery_type}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> WebReadAsync(Guid id, IrModuleModuleWebReadRequestDto input)
+        public async Task<IrModuleModule> WebReadAsync(IrModuleModuleWebReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
@@ -2755,10 +2828,13 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return super().web_read(specification)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModuleModule> WebSearchReadAsync(Guid id, IrModuleModuleWebSearchReadRequestDto input)
+        [ApiModel]
+        public async Task<IrModuleModule> WebSearchReadAsync(IrModuleModuleWebSearchReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
@@ -2773,10 +2849,12 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return super().web_search_read(domain, specification, offset=offset, limit=limit, order=order, count_limit=count_limit)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrModuleModule entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<IrModuleModule> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_module.py) ---
@@ -2851,7 +2929,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return super(IrModuleModule, self).write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

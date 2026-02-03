@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmHrPayroll", Category = "HumanResources", Depends = new[] { "mail", "hr_contract", "hr_holidays" })]
-    public partial class HrPayslipRunAppService : GenericApplicationService<HrPayslipRun>, IHrPayslipRunAppService
+    public partial class HrPayslipRunAppService : GenericAppService<HrPayslipRun>, IHrPayslipRunAppService
     {
 
         public HrPayslipRunAppService(IRepository<HrPayslipRun, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,17 +27,19 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<HrPayslipRun> ClosePayslipRunAsync(Guid id)
+        public async Task<HrPayslipRun> ClosePayslipRunAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
             // def close_payslip_run(self):
             // return self.write({'state': 'close'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslipRun> DonePayslipRunAsync(Guid id)
+        public async Task<HrPayslipRun> DonePayslipRunAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -46,17 +48,21 @@ namespace Bamboo.Core.Application.Services
             //     line.action_payslip_done()
             // return self.write({'state': 'done'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslipRun> DraftPayslipRunAsync(Guid id)
+        public async Task<HrPayslipRun> DraftPayslipRunAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
             // def draft_payslip_run(self):
             // return self.write({'state': 'draft'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

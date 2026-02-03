@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Loyalty", Category = "Sales", Depends = new[] { "product", "portal", "account" })]
-    public partial class LoyaltyCardAppService : GenericApplicationService<LoyaltyCard>, ILoyaltyCardAppService
+    public partial class LoyaltyCardAppService : GenericAppService<LoyaltyCard>, ILoyaltyCardAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<LoyaltyCard> ArchiveAsync(Guid id)
+        public async Task<LoyaltyCard> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: loyalty_card.py) ---
@@ -40,7 +40,9 @@ namespace Bamboo.Core.Application.Services
             // ]).unlink()
             // return super().action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LoyaltyCard> ComputeDisplayNameInternalAsync()
@@ -103,7 +105,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LoyaltyCard> CouponSendAsync(Guid id)
+        public async Task<LoyaltyCard> CouponSendAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_card.py) ---
@@ -133,10 +135,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LoyaltyCard> CouponShareAsync(Guid id)
+        public async Task<LoyaltyCard> CouponShareAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: loyalty_card.py) ---
@@ -144,7 +148,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.env['coupon.share'].create_share_action(coupon=self)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LoyaltyCard> FormatPointsInternalAsync(object points)
@@ -162,6 +168,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyCard> GenerateCodeInternalAsync()
         {
             /*
@@ -198,7 +205,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LoyaltyCard> GetGiftCardStatusAsync(Guid id, LoyaltyCardGetGiftCardStatusRequestDto input)
+        [ApiModel]
+        public async Task<LoyaltyCard> GetGiftCardStatusAsync(LoyaltyCardGetGiftCardStatusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_card.py) ---
@@ -215,10 +223,13 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<LoyaltyCard> GetLoyaltyCardPartnerByCodeAsync(Guid id, LoyaltyCardGetLoyaltyCardPartnerByCodeRequestDto input)
+        [ApiModel]
+        public async Task<LoyaltyCard> GetLoyaltyCardPartnerByCodeAsync(LoyaltyCardGetLoyaltyCardPartnerByCodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_card.py) ---
@@ -228,7 +239,9 @@ namespace Bamboo.Core.Application.Services
             //     ('program_type', '=', 'loyalty'),
             // ], limit=1).partner_id or False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LoyaltyCard> GetMailAuthorInternalAsync()
@@ -285,6 +298,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyCard> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -295,6 +309,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyCard> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -305,7 +320,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LoyaltyCard> LoyaltyUpdateBalanceAsync(Guid id)
+        public async Task<LoyaltyCard> LoyaltyUpdateBalanceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_card.py) ---
@@ -321,7 +336,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LoyaltyCard> MailGetPartnerFieldsInternalAsync(object introspect_fields)

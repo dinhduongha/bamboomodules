@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IRestaurantTableAppService : IGenericApplicationService<RestaurantTable>
     {
-        Task<RestaurantTable> AreOrdersStillInDraftAsync(Guid id);
+        Task<RestaurantTable> AreOrdersStillInDraftAsync(Guid[] ids);
     }
 }

@@ -103,6 +103,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionFetchFavoritesAsync<TEntity>(IEnumerable<TEntity> entities, object extra_domain) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -869,6 +870,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> BuildExpressionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name, object sub_field_name, object null_value) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -2037,6 +2039,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -2648,6 +2651,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultMailServerIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -2915,6 +2919,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRenderFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3235,6 +3240,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrependPreviewInternalAsync<TEntity>(IEnumerable<TEntity> entities, object html, object preview) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3265,6 +3271,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProcessMassMailingQueueInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3302,6 +3309,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProcessScheduledDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object scheduled_date) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3317,6 +3325,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderEncapsulateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object layout_xmlid, object html, object add_context, object context_record) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3388,6 +3397,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderEvalContextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3636,6 +3646,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderTemplateGetValidOptionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3646,6 +3657,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderTemplateInlineTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_txt, object model, List<Guid> res_ids, object add_context, object options) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3714,6 +3726,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderTemplateInlineTemplateRegexInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_txt, object model, List<Guid> res_ids) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3741,6 +3754,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_src, object model, List<Guid> res_ids, object engine, object add_context, object options) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3812,6 +3826,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderTemplatePostprocessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object rendered) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3851,6 +3866,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderTemplateQwebInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_src, object model, List<Guid> res_ids, object add_context, object options) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3924,6 +3940,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderTemplateQwebRegexInternalAsync<TEntity>(IEnumerable<TEntity> entities, object template_src, object model, List<Guid> res_ids) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -3968,6 +3985,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderTemplateQwebViewInternalAsync<TEntity>(IEnumerable<TEntity> entities, object view_ref, object model, List<Guid> res_ids, object add_context, object options) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -4075,6 +4093,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchTemplateCategoryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -4263,6 +4282,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ShortenLinksInternalAsync<TEntity>(IEnumerable<TEntity> entities, object html, object link_tracker_vals, object blacklist, object base_url) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*
@@ -4310,6 +4330,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ShortenLinksTextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object content, object link_tracker_vals, object blacklist, object base_url) where TEntity : IEntity<Guid>, IMailRenderMixinable
         {
             /*

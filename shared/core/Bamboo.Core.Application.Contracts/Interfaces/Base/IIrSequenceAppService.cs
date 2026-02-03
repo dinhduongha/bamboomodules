@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrSequenceAppService : IGenericApplicationService<IrSequence>
     {
-        Task<IrSequence> GetNextCharAsync(Guid id, IrSequenceGetNextCharRequestDto input);
-        Task<IrSequence> NextByCodeAsync(Guid id, IrSequenceNextByCodeRequestDto input);
-        Task<IrSequence> NextByIdAsync(Guid id, IrSequenceNextByIdRequestDto input);
+        Task<IrSequence> GetNextCharAsync(IrSequenceGetNextCharRequestDto input);
+        Task<IrSequence> NextByCodeAsync(IrSequenceNextByCodeRequestDto input);
+        Task<IrSequence> NextByIdAsync(IrSequenceNextByIdRequestDto input);
     }
 }

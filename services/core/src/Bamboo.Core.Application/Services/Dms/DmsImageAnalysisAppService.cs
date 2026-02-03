@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsImageAnalysisAppService : IGenericApplicationService<DmsImageAnalysis>
+    public interface IDmsImageAnalysisAppService : IGenericAppService<DmsImageAnalysis>
     {
         Task AnalyzeImageAsync(Guid analysisId, string imageUrl);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsImageAnalysisAppService : GenericApplicationService<DmsImageAnalysis>, IDmsImageAnalysisAppService
+    public class DmsImageAnalysisAppService : GenericAppService<DmsImageAnalysis>, IDmsImageAnalysisAppService
     {
         public DmsImageAnalysisAppService(
             IRepository<DmsImageAnalysis, Guid> repository,

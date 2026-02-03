@@ -28,8 +28,8 @@ public static partial class ModelBuilderExtensions
 
             entity.Property(e => e.OutletVisitId).HasColumnName("outlet_visit_id");
             entity.Property(e => e.DisplayScore).HasColumnName("display_score");
-            entity.Property(e => e.PhotosBeforeJson).HasColumnName("photos_before_json");
-            entity.Property(e => e.PhotosAfterJson).HasColumnName("photos_after_json");
+            entity.Property(e => e.PhotosBefore);
+            entity.Property(e => e.PhotosAfter);
             entity.Property(e => e.CompetitorNotes).HasColumnName("competitor_notes");
 
             entity.Property(e => e.CreationTime)

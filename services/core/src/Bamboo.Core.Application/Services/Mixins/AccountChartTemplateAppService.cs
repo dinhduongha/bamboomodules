@@ -756,6 +756,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InstallDemoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object companies) where TEntity : IEntity<Guid>, IAccountChartTemplateable
         {
             /*
@@ -770,6 +771,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InstantiateForeignTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object country, object company) where TEntity : IEntity<Guid>, IAccountChartTemplateable
         {
             /*

@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-picking")]
-        public async Task<IActionResult> ActionViewPickingAsync(Guid id)
+        [Route("action-view-picking")]
+        public async Task<IActionResult> ActionViewPickingAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPickingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPickingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unpack")]
-        public async Task<IActionResult> UnpackAsync(Guid id)
+        [Route("unpack")]
+        public async Task<IActionResult> UnpackAsync(Guid[] ids)
         {
-            var result = await _appService.UnpackAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnpackAsync(ids);
             return Ok(result);
         }
     }

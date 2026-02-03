@@ -353,10 +353,17 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CancelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _cancel(self):
-            // self.calendar_event_ids._cancel()
-            // super()._cancel()
+            // # only owner can delete => others refuse the event
+            // user = self.env.user
+            // my_cancelled_records = self.filtered(lambda e: e.user_id == user)
+            // for event in self:
+            //     # remove the tracking data to avoid calling _track_template in the pre-commit phase
+            //     self.env.cr.precommit.data.pop(f'mail.tracking.create.{event._name}.{event.id}', None)
+            // super(CalendarEvent, my_cancelled_records)._cancel()
+            // attendees = (self - my_cancelled_records).attendee_ids.filtered(lambda a: a.partner_id == user.partner_id)
+            // attendees.state = 'declined'
             */
             return default;
         }
@@ -618,6 +625,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckValuesToSyncInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1160,6 +1168,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateFromMicrosoftInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event, object vals_list) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1207,6 +1216,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1276,6 +1286,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultPartnersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1291,6 +1302,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultStartInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1302,6 +1314,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultStopInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1315,6 +1328,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DetachEventsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object events) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1490,6 +1504,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActivityDeadlineFromStartInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object allday) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1508,6 +1523,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActivityExcludedModelsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1524,6 +1540,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetArchiveValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1552,6 +1569,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetContactDetailsDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object organizer, object partners) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1576,6 +1594,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCustomFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1629,6 +1648,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDateFormatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1643,6 +1663,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultDurationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1678,6 +1699,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDiscussVideocallLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1689,6 +1711,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDisplayTimeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object stop, object zduration, object zallday) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -1793,12 +1816,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetEventUserInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _get_event_user(self):
             // self.ensure_one()
-            // event = self._get_first_event()
-            // if event:
-            //     return event._get_event_user()
+            // if self.user_id and self.user_id.sudo().google_calendar_token:
+            //     return self.user_id
             // return self.env.user
             */
             return default;
@@ -1912,12 +1934,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetGoogleSyncedFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _get_google_synced_fields(self):
-            // return {'rrule'}
+            // return {'name', 'description', 'allday', 'start', 'date_end', 'stop',
+            //         'attendee_ids', 'alarm_ids', 'location', 'privacy', 'active', 'show_as', 'videocall_location'}
             */
             return default;
         }
@@ -2032,6 +2056,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMicrosoftServiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2217,6 +2242,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetOrganizerUserChangeInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2254,6 +2280,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPublicFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2295,6 +2322,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRecurrenceParamsByDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object event_date) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2331,6 +2359,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRecurrentFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2343,6 +2372,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRemoveSyncIdValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2419,6 +2449,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetStateSelectionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2432,13 +2463,20 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetSyncDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _get_sync_domain(self):
-            // # Empty rrule may exists in historical data. It is not a desired behavior but it could have been created with
-            // # older versions of the module. When synced, these recurrency may come back from Google after database cleaning
-            // # and trigger errors as the records are not properly populated.
-            // # We also prevent sync of other user recurrent events.
-            // return Domain('calendar_event_ids.user_id', '=', self.env.user.id) & Domain('rrule', '!=', False)
+            // # in case of full sync, limit to a range of 1y in past and 1y in the future by default
+            // ICP = self.env['ir.config_parameter'].sudo()
+            // day_range = int(ICP.get_param('google_calendar.sync.range_days', default=365))
+            // lower_bound = fields.Datetime.subtract(fields.Datetime.now(), days=day_range)
+            // upper_bound = fields.Datetime.add(fields.Datetime.now(), days=day_range)
+            // return Domain([
+            //     ('partner_ids.user_ids', 'in', self.env.user.id),
+            //     ('stop', '>', lower_bound),
+            //     ('start', '<', upper_bound),
+            //     # Do not sync events that follow the recurrence, they are already synced at recurrence creation
+            //     '!', '&', '&', ('recurrency', '=', True), ('recurrence_id', '!=', False), ('follow_recurrence', '=', True)
+            // ])
             */
             return default;
         }
@@ -2456,6 +2494,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetTimeFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2523,6 +2562,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetUnusualDaysAsync<TEntity>(IEnumerable<TEntity> entities, object date_from, object date_to) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2533,6 +2573,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetUpdateFutureEventsValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -2628,32 +2669,82 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GoogleValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _google_values(self):
-            // event = self._get_first_event()
-            // if not event:
-            //     return {}
-            // values = event._google_values()
-            // values['id'] = self.google_id
-            // if not self._is_allday():
-            //     values['start']['timeZone'] = self.event_tz or 'Etc/UTC'
-            //     values['end']['timeZone'] = self.event_tz or 'Etc/UTC'
+            // # In Google API, all-day events must have their 'dateTime' information set
+            // # as null and timed events must have their 'date' information set as null.
+            // # This is mandatory for allowing changing timed events to all-day and vice versa.
+            // start = {'date': None, 'dateTime': None}
+            // end = {'date': None, 'dateTime': None}
+            // if self.allday:
+            //     # For all-day events, 'dateTime' must be set to None to indicate that it's an all-day event.
+            //     # Otherwise, if both 'date' and 'dateTime' are set, Google may not recognize it as an all-day event.
+            //     start['date'] = self.start_date.isoformat()
+            //     end['date'] = (self.stop_date + relativedelta(days=1)).isoformat()
+            // else:
+            //     # For timed events, 'date' must be set to None to indicate that it's not an all-day event.
+            //     # Otherwise, if both 'date' and 'dateTime' are set, Google may not recognize it as a timed event
+            //     start['dateTime'] = pytz.utc.localize(self.start).isoformat()
+            //     end['dateTime'] = pytz.utc.localize(self.stop).isoformat()
+            // reminders = [{
+            //     'method': "email" if alarm.alarm_type == "email" else "popup",
+            //     'minutes': alarm.duration_minutes
+            // } for alarm in self.alarm_ids]
             // 
-            // # DTSTART is not allowed by Google Calendar API.
-            // # Event start and end times are specified in the start and end fields.
-            // rrule = re.sub('DTSTART:[0-9]{8}T[0-9]{1,8}\\n', '', self.rrule)
-            // # UNTIL must be in UTC (appending Z)
-            // # We want to only add a 'Z' to non UTC UNTIL values and avoid adding a second.
-            // # 'RRULE:FREQ=DAILY;UNTIL=20210224T235959;INTERVAL=3 --> match UNTIL=20210224T235959
-            // # 'RRULE:FREQ=DAILY;UNTIL=20210224T235959 --> match
-            // rrule = re.sub(r"(UNTIL=\d{8}T\d{6})($|;)", r"\1Z\2", rrule)
-            // values['recurrence'] = ['RRULE:%s' % rrule] if 'RRULE:' not in rrule else [rrule]
-            // property_location = 'shared' if event.user_id else 'private'
-            // values['extendedProperties'] = {
-            //     property_location: {
-            //         '%s_odoo_id' % self.env.cr.dbname: self.id,
+            // attendees = self.attendee_ids
+            // attendee_values = [{
+            //     'email': attendee.partner_id.email_normalized,
+            //     'responseStatus': attendee.state or 'needsAction',
+            // } for attendee in attendees if attendee.partner_id.email_normalized]
+            // # We sort the attendees to avoid undeterministic test fails. It's not mandatory for Google.
+            // attendee_values.sort(key=lambda k: k['email'])
+            // values = {
+            //     'id': self.google_id,
+            //     'start': start,
+            //     'end': end,
+            //     'summary': self.name,
+            //     'description': self._get_customer_description(),
+            //     'location': self.location or '',
+            //     'guestsCanModify': not self.guests_readonly,
+            //     'organizer': {'email': self.user_id.email, 'self': self.user_id == self.env.user},
+            //     'attendees': attendee_values,
+            //     'extendedProperties': {
+            //         'shared': {
+            //             '%s_odoo_id' % self.env.cr.dbname: self.id,
+            //         },
             //     },
+            //     'reminders': {
+            //         'overrides': reminders,
+            //         'useDefault': False,
+            //     }
             // }
+            // if not self.google_id and not self.videocall_location and not self.location:
+            //     values['conferenceData'] = {'createRequest': {'requestId': uuid4().hex}}
+            // if self.google_id and not self.videocall_location:
+            //     values['conferenceData'] = None
+            // if self.privacy:
+            //     values['visibility'] = self.privacy
+            // if self.show_as:
+            //     values['transparency'] = 'opaque' if self.show_as == 'busy' else 'transparent'
+            // if not self.active:
+            //     values['status'] = 'cancelled'
+            // if self.user_id and self.user_id != self.env.user and not bool(self.user_id.sudo().google_calendar_token):
+            //     # The organizer is an Odoo user that do not sync his calendar
+            //     values['extendedProperties']['shared']['%s_owner_id' % self.env.cr.dbname] = self.user_id.id
+            // elif not self.user_id:
+            //     # We can't store on the shared properties in that case without getting a 403. It can happen when
+            //     # the owner is not an Odoo user: We don't store the real owner identity (mail)
+            //     # If we are not the owner, we should change the post values to avoid errors because we don't have
+            //     # write permissions
+            //     # See https://developers.google.com/calendar/concepts/sharing
+            //     keep_keys = ['id', 'summary', 'attendees', 'start', 'end', 'reminders']
+            //     values = {key: val for key, val in values.items() if key in keep_keys}
+            //     # values['extendedProperties']['private] should be used if the owner is not an odoo user
+            //     values['extendedProperties'] = {
+            //         'private': {
+            //             '%s_odoo_id' % self.env.cr.dbname: self.id,
+            //         },
+            //     }
             // return values
             */
             return default;
@@ -2774,22 +2865,22 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> IsEventOverInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_recurrence.py) ---
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def _is_event_over(self):
-            // """Check if all events in this recurrence are in the past.
-            // :return: True if all events are over, False otherwise
+            // """Check if the event is over. This method is used to check if the event
+            // should trigger invitations with Google Calendar.
+            // :return: True if the event is over, False otherwise
             // """
             // self.ensure_one()
-            // if not self.calendar_event_ids:
-            //     return False
-            // 
             // now = fields.Datetime.now()
             // today = fields.Date.today()
             // 
-            // return all(
-            //     (event.stop_date < today if event.allday else event.stop < now)
-            //     for event in self.calendar_event_ids
-            // )
+            // # For all-day events
+            // if self.allday:
+            //     return self.stop_date and self.stop_date < today
+            // 
+            // # For timed events
+            // return self.stop and self.stop < now
             */
             return default;
         }
@@ -2797,12 +2888,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> IsGoogleInsertionBlockedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sender_user) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _is_google_insertion_blocked(self, sender_user):
             // self.ensure_one()
-            // has_base_event = self.base_event_id
-            // has_different_owner = self.base_event_id.user_id and self.base_event_id.user_id != sender_user
-            // return has_base_event and has_different_owner
+            // has_different_owner = self.user_id and self.user_id != sender_user
+            // return has_different_owner
             */
             return default;
         }
@@ -2986,6 +3076,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MicrosoftToOdooRecurrenceValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event, object default_values) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3011,6 +3102,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MicrosoftToOdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event, object default_reminders, object default_values, List<Guid> with_ids) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3300,6 +3392,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> OdooAttendeeCommandsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_event) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3349,6 +3442,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> OdooAttendeeCommandsMInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3403,6 +3497,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> OdooRemindersCommandsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object reminders) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3451,6 +3546,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> OdooRemindersCommandsMInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3513,15 +3609,68 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_recurrence, object default_reminders) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
+        [ApiModel]
+        public async Task<TEntity> OdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_event, object default_reminders) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
-            // def _odoo_values(self, google_recurrence, default_reminders=()):
-            // return {
-            //     'rrule': google_recurrence.rrule,
-            //     'google_id': google_recurrence.id,
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
+            // def _odoo_values(self, google_event, default_reminders=()):
+            // if google_event.is_cancelled():
+            //     return {'active': False}
+            // 
+            // # default_reminders is never () it is set to google's default reminder (30 min before)
+            // # we need to check 'useDefault' for the event to determine if we have to use google's
+            // # default reminder or not
+            // reminder_command = google_event.reminders.get('overrides')
+            // if not reminder_command:
+            //     reminder_command = google_event.reminders.get('useDefault') and default_reminders or ()
+            // alarm_commands = self._odoo_reminders_commands(reminder_command)
+            // attendee_commands, partner_commands = self._odoo_attendee_commands(google_event)
+            // related_event = self.search([('google_id', '=', google_event.id)], limit=1)
+            // name = google_event.summary or related_event and related_event.name or _("(No title)")
+            // values = {
+            //     'name': name,
+            //     'description': google_event.description and tools.html_sanitize(google_event.description),
+            //     'location': google_event.location,
+            //     'user_id': google_event.owner(self.env).id,
+            //     'privacy': google_event.visibility or False,
+            //     'attendee_ids': attendee_commands,
+            //     'alarm_ids': alarm_commands,
+            //     'recurrency': google_event.is_recurrent(),
+            //     'videocall_location': google_event.get_meeting_url(),
+            //     'show_as': 'free' if google_event.is_available() else 'busy',
+            //     'guests_readonly': not bool(google_event.guestsCanModify)
             // }
+            // # Remove 'videocall_location' when not sent by Google, otherwise the local videocall will be discarded.
+            // if not values.get('videocall_location'):
+            //     values.pop('videocall_location', False)
+            // if partner_commands:
+            //     # Add partner_commands only if set from Google. The write method on calendar_events will
+            //     # override attendee commands if the partner_ids command is set but empty.
+            //     values['partner_ids'] = partner_commands
+            // if not google_event.is_recurrence():
+            //     values['google_id'] = google_event.id
+            // if google_event.is_recurrent() and not google_event.is_recurrence():
+            //     # Propagate the follow_recurrence according to the google result
+            //     values['follow_recurrence'] = google_event.is_recurrence_follower()
+            // if google_event.start.get('dateTime'):
+            //     # starting from python3.7, use the new [datetime, date].fromisoformat method
+            //     start = parse(google_event.start.get('dateTime')).astimezone(pytz.utc).replace(tzinfo=None)
+            //     stop = parse(google_event.end.get('dateTime')).astimezone(pytz.utc).replace(tzinfo=None)
+            //     values['allday'] = False
+            // else:
+            //     start = parse(google_event.start.get('date'))
+            //     stop = parse(google_event.end.get('date')) - relativedelta(days=1)
+            //     # Stop date should be exclusive as defined here https://developers.google.com/calendar/v3/reference/events#resource
+            //     # but it seems that's not always the case for old event
+            //     if stop < start:
+            //         stop = parse(google_event.end.get('date'))
+            //     values['allday'] = True
+            // if related_event['start'] != start:
+            //     values['start'] = start
+            // if related_event['stop'] != stop:
+            //     values['stop'] = stop
+            // return values
             */
             return default;
         }
@@ -3545,6 +3694,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PreparePartnerContactDetailsHtmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object section_title, object partner) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3601,6 +3751,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<List<object>> ReadGroupInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object groupby, object aggregates, object having, object offset, object limit, object order) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3621,6 +3772,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<List<object>> ReadGroupingSetsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object grouping_sets, object aggregates, object order) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3693,18 +3845,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RestartGoogleSyncInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar_recurrence_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: google_calendar, FILE: calendar.py) ---
             // def _restart_google_sync(self):
-            // self.env['calendar.recurrence'].search(self._get_sync_domain()).write({
+            // self.env['calendar.event'].search(self._get_sync_domain()).write({
             //     'need_sync': True,
             // })
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RestartMicrosoftSyncInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3777,6 +3931,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RruleParseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object rule_str, object date_start) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3910,6 +4065,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SetVideocallLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
@@ -3928,40 +4084,31 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object recurrence_update) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
+        public async Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_recurrence.py) ---
-            // def _setup_alarms(self, recurrence_update=False):
-            // """ Schedule cron triggers for future events
-            // Create one ir.cron.trigger per recurrence.
-            // :param recurrence_update: boolean: if true, update all recurrences in self, else only the recurrences
-            //        without trigger
-            // """
-            // now = self.env.context.get('date') or fields.Datetime.now()
-            // # get next events
-            // self.env['calendar.event'].flush_model(fnames=['recurrence_id', 'start'])
-            // if not self.calendar_event_ids.ids:
-            //     return
-            // 
-            // self.env.cr.execute("""
-            //     SELECT DISTINCT ON (recurrence_id) id event_id, recurrence_id
-            //             FROM calendar_event 
-            //            WHERE start > %s
-            //              AND id IN %s
-            //         ORDER BY recurrence_id,start ASC;
-            // """, (now, tuple(self.calendar_event_ids.ids)))
-            // result = self.env.cr.dictfetchall()
-            // if not result:
-            //     return
-            // events = self.env['calendar.event'].browse(value['event_id'] for value in result)
-            // triggers_by_events = events._setup_alarms()
-            // for vals in result:
-            //     trigger_id = triggers_by_events.get(vals['event_id'])
-            //     if not trigger_id:
-            //         continue
-            //     recurrence = self.env['calendar.recurrence'].browse(vals['recurrence_id'])
-            //     recurrence.trigger_id = trigger_id
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            // def _setup_alarms(self):
+            // """ Schedule cron triggers for future events """
+            // cron = self.env.ref('calendar.ir_cron_scheduler_alarm').sudo()
+            // alarm_types = self._get_trigger_alarm_types()
+            // events_to_notify = self.env['calendar.event']
+            // triggers_by_events = {}
+            // for event in self:
+            //     existing_trigger = event.recurrence_id.sudo().trigger_id
+            //     for alarm in (alarm for alarm in event.alarm_ids if alarm.alarm_type in alarm_types):
+            //         at = event.start - timedelta(minutes=alarm.duration_minutes)
+            //         create_trigger = not existing_trigger or existing_trigger and existing_trigger.call_at != at
+            //         if create_trigger and (not cron.lastcall or at > cron.lastcall):
+            //             # Don't trigger for past alarms, they would be skipped by design
+            //             trigger = cron._trigger(at=at)
+            //             triggers_by_events[event.id] = trigger.id
+            //     if any(alarm.alarm_type == 'notification' for alarm in event.alarm_ids):
+            //         # filter events before notifying attendees through calendar_alarm_manager
+            //         events_to_notify |= event.filtered(lambda ev: ev.alarm_ids and ev.stop >= fields.Datetime.now())
+            // if events_to_notify:
+            //     self.env['calendar.alarm_manager']._notify_next_alarm(events_to_notify.partner_ids.ids)
+            // return triggers_by_events
             */
             return default;
         }
@@ -4076,6 +4223,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SyncMicrosoft2odooInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_events) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable
         {
             /*

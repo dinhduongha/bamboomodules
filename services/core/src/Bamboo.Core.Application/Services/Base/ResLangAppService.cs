@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResLangAppService : GenericApplicationService<ResLang>, IResLangAppService
+    public partial class ResLangAppService : GenericAppService<ResLang>, IResLangAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public ResLangAppService(IRepository<ResLang, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -61,7 +61,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResLang> ActivateLangsAsync(Guid id)
+        public async Task<ResLang> ActivateLangsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_lang.py) ---
@@ -95,10 +95,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<object> CACHEDFIELDSAsync(Guid id)
+        public async Task<object> CACHEDFIELDSAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
@@ -112,7 +114,9 @@ namespace Bamboo.Core.Application.Services
             // return OrderedSet(['id', 'name', 'code', 'iso_code', 'url_code', 'active', 'direction', 'date_format',
             //                    'time_format', 'week_start', 'grouping', 'decimal_point', 'thousands_sep', 'flag_image_url'])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResLang> CheckActiveInternalAsync()
@@ -157,7 +161,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResLang> CopyDataAsync(Guid id, ResLangCopyDataRequestDto input)
+        public async Task<ResLang> CopyDataAsync(ResLangCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
@@ -173,7 +177,9 @@ namespace Bamboo.Core.Application.Services
             //         vals["url_code"] = _("%s (copy)", record.url_code)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResLang> CreateLangInternalAsync(object lang, object lang_name)
@@ -241,7 +247,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<string> FormatAsync(Guid id, ResLangFormatRequestDto input)
+        public async Task<string> FormatAsync(ResLangFormatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
@@ -276,7 +282,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return formatted
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<object> GetActiveByInternalAsync(string field)
@@ -407,7 +415,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<List<object>> GetInstalledAsync(Guid id)
+        [ApiModel]
+        public async Task<List<object>> GetInstalledAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
@@ -415,10 +424,13 @@ namespace Bamboo.Core.Application.Services
             // """ Return installed languages' (code, name) pairs sorted by name. """
             // return [(code, data.name) for code, data in self._get_active_by('code').items()]
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResLang> GetLocalesForSpreadsheetAsync(Guid id)
+        [ApiModel]
+        public async Task<ResLang> GetLocalesForSpreadsheetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet, FILE: res_lang.py) ---
@@ -429,9 +441,12 @@ namespace Bamboo.Core.Application.Services
             // spreadsheet_locales = [lang._odoo_lang_to_spreadsheet_locale() for lang in langs]
             // return spreadsheet_locales
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResLang> GetUserSpreadsheetLocaleInternalAsync()
         {
             /*
@@ -444,7 +459,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResLang> InstallLangAsync(Guid id)
+        [ApiModel]
+        public async Task<ResLang> InstallLangAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
@@ -471,7 +487,9 @@ namespace Bamboo.Core.Application.Services
             //         partner.write({'lang': lang_code})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResLang> LangGetInternalAsync(string code)
@@ -485,6 +503,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResLang> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -550,7 +569,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResLang> UnarchiveAsync(Guid id)
+        public async Task<ResLang> UnarchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
@@ -564,7 +583,9 @@ namespace Bamboo.Core.Application.Services
             //     mods._update_translations(active_lang)
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResLang> UnlinkExceptDefaultLangInternalAsync()
@@ -584,7 +605,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ResLang entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ResLang> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: res_lang.py) ---
@@ -652,7 +673,7 @@ namespace Bamboo.Core.Application.Services
             // self.env.registry.clear_cache('stable')
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

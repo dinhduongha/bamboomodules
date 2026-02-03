@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrAttendanceModule", Category = "HumanResources", Depends = new[] { "hr", "barcodes", "base_geolocalize" })]
-    public partial class HrAttendanceOvertimeRulesetAppService : GenericApplicationService<HrAttendanceOvertimeRuleset>, IHrAttendanceOvertimeRulesetAppService
+    public partial class HrAttendanceOvertimeRulesetAppService : GenericAppService<HrAttendanceOvertimeRuleset>, IHrAttendanceOvertimeRulesetAppService
     {
 
         public HrAttendanceOvertimeRulesetAppService(IRepository<HrAttendanceOvertimeRuleset, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -55,14 +55,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrAttendanceOvertimeRuleset> RegenerateOvertimesAsync(Guid id)
+        public async Task<HrAttendanceOvertimeRuleset> RegenerateOvertimesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime_ruleset.py) ---
             // def action_regenerate_overtimes(self):
             // self._attendances_to_regenerate_for()._update_overtime()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

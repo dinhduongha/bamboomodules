@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockPackageLevelAppService : GenericApplicationService<StockPackageLevel>, IStockPackageLevelAppService
+    public partial class StockPackageLevelAppService : GenericAppService<StockPackageLevel>, IStockPackageLevelAppService
     {
 
         public StockPackageLevelAppService(IRepository<StockPackageLevel, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -221,7 +221,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPackageLevel> ShowPackageDetailsAsync(Guid id)
+        public async Task<StockPackageLevel> ShowPackageDetailsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package_level.py) ---
@@ -241,7 +241,9 @@ namespace Bamboo.Core.Application.Services
             //     'flags': {'mode': 'readonly'},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrLoggingAppService : IGenericApplicationService<IrLogging>
     {
-        Task<IrLogging> InitAsync(Guid id);
+        Task<IrLogging> InitAsync(Guid[] ids);
     }
 }

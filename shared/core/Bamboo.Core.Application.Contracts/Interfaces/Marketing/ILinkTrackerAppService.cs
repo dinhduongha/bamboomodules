@@ -10,12 +10,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ILinkTrackerAppService : IGenericApplicationService<LinkTracker>
     {
-        Task<LinkTracker> ConvertLinksAsync(Guid id, LinkTrackerConvertLinksRequestDto input);
-        Task<LinkTracker> GetUrlFromCodeAsync(Guid id, LinkTrackerGetUrlFromCodeRequestDto input);
-        Task<LinkTracker> RecentLinksAsync(Guid id, LinkTrackerRecentLinksRequestDto input);
-        Task<LinkTracker> SearchOrCreateAsync(Guid id, LinkTrackerSearchOrCreateRequestDto input);
-        Task<LinkTracker> ViewStatisticsAsync(Guid id);
-        Task<LinkTracker> VisitPageAsync(Guid id);
-        Task<LinkTracker> VisitPageStatisticsAsync(Guid id);
+        Task<LinkTracker> ConvertLinksAsync(LinkTrackerConvertLinksRequestDto input);
+        Task<LinkTracker> GetUrlFromCodeAsync(LinkTrackerGetUrlFromCodeRequestDto input);
+        Task<LinkTracker> RecentLinksAsync(LinkTrackerRecentLinksRequestDto input);
+        Task<LinkTracker> SearchOrCreateAsync(LinkTrackerSearchOrCreateRequestDto input);
+        Task<LinkTracker> ViewStatisticsAsync(Guid[] ids);
+        Task<LinkTracker> VisitPageAsync(Guid[] ids);
+        Task<LinkTracker> VisitPageStatisticsAsync(Guid[] ids);
     }
 }

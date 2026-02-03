@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsOutletInventoryCheckAppService : IGenericApplicationService<DmsOutletInventoryCheck>
+    public interface IDmsOutletInventoryCheckAppService : IGenericAppService<DmsOutletInventoryCheck>
     {
         Task PerformCheckAsync(Guid checkId, decimal checkedQty);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsOutletInventoryCheckAppService : GenericApplicationService<DmsOutletInventoryCheck>, IDmsOutletInventoryCheckAppService
+    public class DmsOutletInventoryCheckAppService : GenericAppService<DmsOutletInventoryCheck>, IDmsOutletInventoryCheckAppService
     {
         public DmsOutletInventoryCheckAppService(
             IRepository<DmsOutletInventoryCheck, Guid> repository,

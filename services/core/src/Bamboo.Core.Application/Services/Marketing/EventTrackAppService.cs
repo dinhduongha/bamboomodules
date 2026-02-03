@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteEventTrack", Category = "Marketing", Depends = new[] { "website_event" })]
-    public partial class EventTrackAppService : GenericApplicationService<EventTrack>, IEventTrackAppService
+    public partial class EventTrackAppService : GenericAppService<EventTrack>, IEventTrackAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -35,7 +35,7 @@ namespace Bamboo.Core.Application.Services
             _websiteSeoMetadataAppService = websiteSeoMetadataAppService;
         }
 
-        public async Task<EventTrack> AddQuizAsync(Guid id)
+        public async Task<EventTrack> AddQuizAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track_quiz, FILE: event_track.py) ---
@@ -53,7 +53,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventTrack> ComputeContactEmailInternalAsync()
@@ -514,16 +516,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventTrack> GetBackendMenuIdAsync(Guid id)
+        public async Task<EventTrack> GetBackendMenuIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
             // def get_backend_menu_id(self):
             // return self.env.ref('event.event_main_menu').id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<EventTrack> GetDefaultStageIdInternalAsync()
         {
             /*
@@ -833,7 +838,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventTrack> OpenTrackSpeakersListAsync(Guid id)
+        public async Task<EventTrack> OpenTrackSpeakersListAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_track.py) ---
@@ -847,9 +852,12 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_window',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<EventTrack> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*
@@ -946,7 +954,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventTrack> ViewQuizAsync(Guid id)
+        public async Task<EventTrack> ViewQuizAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track_quiz, FILE: event_track.py) ---
@@ -964,7 +972,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

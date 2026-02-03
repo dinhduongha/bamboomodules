@@ -9,7 +9,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResDeviceLogAppService : IApplicationService
     {
-        Task<ResDeviceLog> InitAsync(Guid id);
-        Task<ResDeviceLog> RevokeAsync(Guid id);
+        Task<ResDeviceLog> InitAsync(Guid[] ids);
+        Task<ResDeviceLog> RevokeAsync(Guid[] ids);
     }
 }

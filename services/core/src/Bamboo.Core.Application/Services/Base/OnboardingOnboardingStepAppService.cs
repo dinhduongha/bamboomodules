@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Onboarding", Category = "Base", Depends = new[] { "web" })]
-    public partial class OnboardingOnboardingStepAppService : GenericApplicationService<OnboardingOnboardingStep>, IOnboardingOnboardingStepAppService
+    public partial class OnboardingOnboardingStepAppService : GenericAppService<OnboardingOnboardingStep>, IOnboardingOnboardingStepAppService
     {
 
         public OnboardingOnboardingStepAppService(IRepository<OnboardingOnboardingStep, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<OnboardingOnboardingStep> CheckStepOnOnboardingHasActionAsync(Guid id)
+        public async Task<OnboardingOnboardingStep> CheckStepOnOnboardingHasActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_onboarding_step.py) ---
@@ -39,7 +39,9 @@ namespace Bamboo.Core.Application.Services
             //         step_titles=steps_without_action.mapped('title'),
             //     ))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<OnboardingOnboardingStep> ComputeCurrentProgressInternalAsync()
@@ -94,6 +96,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<OnboardingOnboardingStep> GetPlaceholderFilenameInternalAsync(object field)
         {
             /*
@@ -106,17 +109,21 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<OnboardingOnboardingStep> OpenStepBankAccountAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> OpenStepBankAccountAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
             // def action_open_step_bank_account(self):
             // return self.env.company.setting_init_bank_account_action()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> OpenStepBaseDocumentLayoutAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> OpenStepBaseDocumentLayoutAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
@@ -131,10 +138,13 @@ namespace Bamboo.Core.Application.Services
             //     'context': {"dialog_size": "extra-large"},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> OpenStepChartOfAccountsAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> OpenStepChartOfAccountsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
@@ -165,10 +175,13 @@ namespace Bamboo.Core.Application.Services
             //     'domain': domain,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> OpenStepCompanyDataAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> OpenStepCompanyDataAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
@@ -185,10 +198,13 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> OpenStepCreateInvoiceAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> OpenStepCreateInvoiceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
@@ -201,10 +217,13 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'default_move_type': 'out_invoice'},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> OpenStepFiscalYearAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> OpenStepFiscalYearAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
@@ -226,10 +245,13 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> OpenStepSalesTaxAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> OpenStepSalesTaxAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
@@ -246,10 +268,12 @@ namespace Bamboo.Core.Application.Services
             //     'views': [[view_id, 'form']],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> SetJustDoneAsync(Guid id)
+        public async Task<OnboardingOnboardingStep> SetJustDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_onboarding_step.py) ---
@@ -259,10 +283,13 @@ namespace Bamboo.Core.Application.Services
             // steps_without_progress._create_progress_steps()
             // return self.current_progress_step_id.action_set_just_done().step_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> ValidateStepAsync(Guid id, OnboardingOnboardingStepValidateStepRequestDto input)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> ValidateStepAsync(OnboardingOnboardingStepValidateStepRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_onboarding_step.py) ---
@@ -272,10 +299,13 @@ namespace Bamboo.Core.Application.Services
             //     return "NOT_FOUND"
             // return "JUST_DONE" if step.action_set_just_done() else "WAS_DONE"
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<OnboardingOnboardingStep> ValidateStepBaseDocumentLayoutAsync(Guid id)
+        [ApiModel]
+        public async Task<OnboardingOnboardingStep> ValidateStepBaseDocumentLayoutAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: onboarding_onboarding_step.py) ---
@@ -286,7 +316,9 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // return self.action_validate_step('account.onboarding_onboarding_step_base_document_layout')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

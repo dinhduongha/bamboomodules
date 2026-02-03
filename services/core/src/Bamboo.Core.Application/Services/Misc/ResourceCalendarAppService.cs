@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Resource", Category = "Misc", Depends = new[] { "base", "web" })]
-    public partial class ResourceCalendarAppService : GenericApplicationService<ResourceCalendar>, IResourceCalendarAppService
+    public partial class ResourceCalendarAppService : GenericAppService<ResourceCalendar>, IResourceCalendarAppService
     {
 
         public ResourceCalendarAppService(IRepository<ResourceCalendar, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -401,7 +401,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceCalendar> CopyDataAsync(Guid id, ResourceCalendarCopyDataRequestDto input)
+        public async Task<ResourceCalendar> CopyDataAsync(ResourceCalendarCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
@@ -409,7 +409,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", calendar.name)) for calendar, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResourceCalendar> GetAttendanceIntervalsDaysDataInternalAsync(object attendance_intervals)
@@ -715,7 +717,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceCalendar> GetWorkDurationDataAsync(Guid id, ResourceCalendarGetWorkDurationDataRequestDto input)
+        public async Task<ResourceCalendar> GetWorkDurationDataAsync(ResourceCalendarGetWorkDurationDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
@@ -743,10 +745,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self._get_attendance_intervals_days_data(intervals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResourceCalendar> GetWorkHoursCountAsync(Guid id, ResourceCalendarGetWorkHoursCountRequestDto input)
+        public async Task<ResourceCalendar> GetWorkHoursCountAsync(ResourceCalendarGetWorkHoursCountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
@@ -777,7 +781,9 @@ namespace Bamboo.Core.Application.Services
             //     for start, stop, meta in intervals
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResourceCalendar> GetWorkingHoursInternalAsync()
@@ -934,7 +940,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceCalendar> PlanDaysAsync(Guid id, ResourceCalendarPlanDaysRequestDto input)
+        public async Task<ResourceCalendar> PlanDaysAsync(ResourceCalendarPlanDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
@@ -982,10 +988,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return revert(day_dt)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResourceCalendar> PlanHoursAsync(Guid id, ResourceCalendarPlanHoursRequestDto input)
+        public async Task<ResourceCalendar> PlanHoursAsync(ResourceCalendarPlanHoursRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
@@ -1034,9 +1042,12 @@ namespace Bamboo.Core.Application.Services
             //         hours -= interval_hours
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResourceCalendar> SearchWorkTimeRateInternalAsync(object @operator, object @value)
         {
             /*
@@ -1065,7 +1076,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceCalendar> SwitchBasedOnDurationAsync(Guid id)
+        public async Task<ResourceCalendar> SwitchBasedOnDurationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
@@ -1080,10 +1091,12 @@ namespace Bamboo.Core.Application.Services
             //     if self.two_weeks_calendar:
             //         self.attendance_ids = self._get_two_weeks_attendance()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResourceCalendar> SwitchCalendarTypeAsync(Guid id)
+        public async Task<ResourceCalendar> SwitchCalendarTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar.py) ---
@@ -1100,10 +1113,12 @@ namespace Bamboo.Core.Application.Services
             //     self.duration_based = False
             //     self.attendance_ids = self._get_default_attendance_ids(self.company_id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResourceCalendar> TransferLeavesToAsync(Guid id, ResourceCalendarTransferLeavesToRequestDto input)
+        public async Task<ResourceCalendar> TransferLeavesToAsync(ResourceCalendarTransferLeavesToRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: resource_calendar.py) ---
@@ -1124,7 +1139,9 @@ namespace Bamboo.Core.Application.Services
             //     'calendar_id': other_calendar.id,
             // })
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResourceCalendar> UnavailableIntervalsBatchInternalAsync(object start_dt, object end_dt, object resources, object domain, object tz)

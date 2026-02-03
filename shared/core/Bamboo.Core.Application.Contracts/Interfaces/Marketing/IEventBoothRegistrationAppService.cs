@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventBoothRegistrationAppService : IGenericApplicationService<EventBoothRegistration>
     {
-        Task<EventBoothRegistration> ConfirmAsync(Guid id);
+        Task<EventBoothRegistration> ConfirmAsync(Guid[] ids);
     }
 }

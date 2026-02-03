@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-to-picking")]
-        public async Task<IActionResult> ActionAddToPickingAsync(Guid id)
+        [Route("action-add-to-picking")]
+        public async Task<IActionResult> ActionAddToPickingAsync(Guid[] ids)
         {
-            var result = await _appService.AddToPickingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddToPickingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-put-in-pack")]
-        public async Task<IActionResult> ActionPutInPackAsync(Guid id)
+        [Route("action-put-in-pack")]
+        public async Task<IActionResult> ActionPutInPackAsync(Guid[] ids)
         {
-            var result = await _appService.PutInPackAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PutInPackAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-remove-package")]
-        public async Task<IActionResult> ActionRemovePackageAsync(Guid id)
+        [Route("action-remove-package")]
+        public async Task<IActionResult> ActionRemovePackageAsync(Guid[] ids)
         {
-            var result = await _appService.RemovePackageAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RemovePackageAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-picking")]
-        public async Task<IActionResult> ActionViewPickingAsync(Guid id)
+        [Route("action-view-picking")]
+        public async Task<IActionResult> ActionViewPickingAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPickingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPickingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unpack")]
-        public async Task<IActionResult> UnpackAsync(Guid id)
+        [Route("unpack")]
+        public async Task<IActionResult> UnpackAsync(Guid[] ids)
         {
-            var result = await _appService.UnpackAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnpackAsync(ids);
             return Ok(result);
         }
     }

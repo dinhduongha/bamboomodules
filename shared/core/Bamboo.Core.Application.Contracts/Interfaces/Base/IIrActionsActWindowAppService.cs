@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrActionsActWindowAppService : IGenericApplicationService<IrActWindow>
     {
-        Task<IrActWindow> ExistsAsync(Guid id);
+        Task<IrActWindow> ExistsAsync(Guid[] ids);
     }
 }

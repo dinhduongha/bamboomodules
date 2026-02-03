@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Analytic", Category = "Accounting", Depends = new[] { "base", "mail", "uom" })]
-    public partial class AccountAnalyticAccountAppService : GenericApplicationService<AccountAnalyticAccount>, IAccountAnalyticAccountAppService
+    public partial class AccountAnalyticAccountAppService : GenericAppService<AccountAnalyticAccount>, IAccountAnalyticAccountAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public AccountAnalyticAccountAppService(IRepository<AccountAnalyticAccount, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -210,7 +210,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticAccount> CopyDataAsync(Guid id, AccountAnalyticAccountCopyDataRequestDto input)
+        public async Task<AccountAnalyticAccount> CopyDataAsync(AccountAnalyticAccountCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_account.py) ---
@@ -222,7 +222,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", account.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountAnalyticAccount> PerformAnalyticDistributionInternalAsync(object distribution, object amount, object unit_amount, object lines, object obj, object additive)
@@ -436,7 +438,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticAccount> ViewInvoiceAsync(Guid id)
+        public async Task<AccountAnalyticAccount> ViewInvoiceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_analytic_account.py) ---
@@ -455,10 +457,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticAccount> ViewMrpBomAsync(Guid id)
+        public async Task<AccountAnalyticAccount> ViewMrpBomAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: analytic_account.py) ---
@@ -477,10 +481,12 @@ namespace Bamboo.Core.Application.Services
             //     result['res_id'] = self.bom_ids.id
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticAccount> ViewMrpProductionAsync(Guid id)
+        public async Task<AccountAnalyticAccount> ViewMrpProductionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: analytic_account.py) ---
@@ -499,10 +505,12 @@ namespace Bamboo.Core.Application.Services
             //     result['res_id'] = self.production_ids.id
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticAccount> ViewProjectsAsync(Guid id)
+        public async Task<AccountAnalyticAccount> ViewProjectsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: account_analytic_account.py) ---
@@ -521,10 +529,12 @@ namespace Bamboo.Core.Application.Services
             //     result['res_id'] = self.project_ids.id
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticAccount> ViewPurchaseOrdersAsync(Guid id)
+        public async Task<AccountAnalyticAccount> ViewPurchaseOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: analytic_account.py) ---
@@ -545,10 +555,12 @@ namespace Bamboo.Core.Application.Services
             //     result['res_id'] = purchase_orders.id
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticAccount> ViewVendorBillAsync(Guid id)
+        public async Task<AccountAnalyticAccount> ViewVendorBillAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_analytic_account.py) ---
@@ -567,10 +579,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountAnalyticAccount> ViewWorkorderAsync(Guid id)
+        public async Task<AccountAnalyticAccount> ViewWorkorderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: analytic_account.py) ---
@@ -586,10 +600,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<List<Dictionary<string, object>>> WebReadAsync(Guid id, AccountAnalyticAccountWebReadRequestDto input)
+        public async Task<List<Dictionary<string, object>>> WebReadAsync(AccountAnalyticAccountWebReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_account.py) ---
@@ -599,7 +615,9 @@ namespace Bamboo.Core.Application.Services
             //     self_context = self.with_context(analytic_plan_id=self.plan_id.id)
             // return super(AccountAnalyticAccount, self_context).web_read(specification)
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -10,23 +10,23 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrExpenseAppService : IGenericApplicationService<HrExpense>
     {
-        Task<HrExpense> ApproveAsync(Guid id);
-        Task<HrExpense> ApproveDuplicatesAsync(Guid id);
-        Task<HrExpense> AttachDocumentAsync(Guid id);
-        Task<HrExpense> CreateExpenseFromAttachmentsAsync(Guid id, HrExpenseCreateExpenseFromAttachmentsRequestDto input);
-        Task<HrExpense> GetEmptyListHelpAsync(Guid id, HrExpenseGetEmptyListHelpRequestDto input);
-        Task<HrExpense> GetExpenseDashboardAsync(Guid id);
-        Task<HrExpense> MessageNewAsync(Guid id, HrExpenseMessageNewRequestDto input);
-        Task<HrExpense> OpenAccountMoveAsync(Guid id);
-        Task<HrExpense> OpenSaleOrderAsync(Guid id);
-        Task<HrExpense> OpenSplitExpenseAsync(Guid id);
-        Task<HrExpense> PayAsync(Guid id);
-        Task<HrExpense> PostAsync(Guid id);
-        Task<HrExpense> RefuseAsync(Guid id);
-        Task<HrExpense> ResetAsync(Guid id);
-        Task<HrExpense> ShowSameReceiptExpenseIdsAsync(Guid id);
-        Task<HrExpense> SplitWizardAsync(Guid id);
-        Task<HrExpense> SubmitAsync(Guid id);
-        Task<HrExpense> UpdateActivitiesAndMailsAsync(Guid id);
+        Task<HrExpense> ApproveAsync(Guid[] ids);
+        Task<HrExpense> ApproveDuplicatesAsync(Guid[] ids);
+        Task<HrExpense> AttachDocumentAsync(Guid[] ids);
+        Task<HrExpense> CreateExpenseFromAttachmentsAsync(HrExpenseCreateExpenseFromAttachmentsRequestDto input);
+        Task<HrExpense> GetEmptyListHelpAsync(HrExpenseGetEmptyListHelpRequestDto input);
+        Task<HrExpense> GetExpenseDashboardAsync(Guid[] ids);
+        Task<HrExpense> MessageNewAsync(HrExpenseMessageNewRequestDto input);
+        Task<HrExpense> OpenAccountMoveAsync(Guid[] ids);
+        Task<HrExpense> OpenSaleOrderAsync(Guid[] ids);
+        Task<HrExpense> OpenSplitExpenseAsync(Guid[] ids);
+        Task<HrExpense> PayAsync(Guid[] ids);
+        Task<HrExpense> PostAsync(Guid[] ids);
+        Task<HrExpense> RefuseAsync(Guid[] ids);
+        Task<HrExpense> ResetAsync(Guid[] ids);
+        Task<HrExpense> ShowSameReceiptExpenseIdsAsync(Guid[] ids);
+        Task<HrExpense> SplitWizardAsync(Guid[] ids);
+        Task<HrExpense> SubmitAsync(Guid[] ids);
+        Task<HrExpense> UpdateActivitiesAndMailsAsync(Guid[] ids);
     }
 }

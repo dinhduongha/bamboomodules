@@ -90,6 +90,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> BarcodeAsync<TEntity>(IEnumerable<TEntity> entities, object barcode_type, object @value) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -163,6 +164,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> BuildWkhtmltopdfArgsInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid paperformat_id, object landscape, object specific_paperformat_args, object set_viewport_size) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -677,6 +679,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultUpdatePathInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -737,6 +740,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ExistingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -760,6 +764,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ForXmlIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid full_xml_id) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -830,6 +835,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAvailableBarcodeMasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -851,6 +857,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetBindingsAsync<TEntity>(IEnumerable<TEntity> entities, object model_name) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -931,6 +938,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetChildrenDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1173,6 +1181,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetReportFromNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_name) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1189,6 +1198,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetReportInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1318,6 +1328,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWkhtmltopdfStateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1377,6 +1388,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MergePdfsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object streams, object handle_error) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1536,6 +1548,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareLocalAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachments) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1620,6 +1633,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref, List<Guid> res_ids, object data) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1635,6 +1649,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderQwebHtmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref, object docids, object data) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -1901,6 +1916,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RenderQwebTextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_ref, object docids, object data) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -2281,6 +2297,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RunWkhtmltopdfInternalAsync<TEntity>(IEnumerable<TEntity> entities, object bodies, object report_ref, object header, object footer, object landscape, object specific_paperformat_args, object set_viewport_size) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -2450,6 +2467,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SelectionTargetModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
@@ -2570,6 +2588,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WarningDependsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*

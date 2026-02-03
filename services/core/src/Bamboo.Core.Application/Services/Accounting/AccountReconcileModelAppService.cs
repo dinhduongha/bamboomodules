@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountReconcileModelAppService : GenericApplicationService<AccountReconcileModel>, IAccountReconcileModelAppService
+    public partial class AccountReconcileModelAppService : GenericAppService<AccountReconcileModel>, IAccountReconcileModelAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public AccountReconcileModelAppService(IRepository<AccountReconcileModel, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -65,7 +65,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountReconcileModel> CopyDataAsync(Guid id, AccountReconcileModelCopyDataRequestDto input)
+        public async Task<AccountReconcileModel> CopyDataAsync(AccountReconcileModelCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
@@ -81,10 +81,12 @@ namespace Bamboo.Core.Application.Services
             //     vals['name'] = name
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountReconcileModel> ReconcileStatAsync(Guid id)
+        public async Task<AccountReconcileModel> ReconcileStatAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
@@ -103,27 +105,33 @@ namespace Bamboo.Core.Application.Services
             // })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountReconcileModel> SetAutoReconcileAsync(Guid id)
+        public async Task<AccountReconcileModel> SetAutoReconcileAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
             // def action_set_auto_reconcile(self):
             // self.trigger = 'auto_reconcile'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountReconcileModel> SetManualAsync(Guid id)
+        public async Task<AccountReconcileModel> SetManualAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
             // def action_set_manual(self):
             // self.trigger = 'manual'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

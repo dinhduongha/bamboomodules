@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> DbIdForAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object subfield, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -149,6 +150,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ForModelAsync<TEntity>(IEnumerable<TEntity> entities, object model, object fromtype) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -216,6 +218,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FormatImportErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object error_type, object error_msg, object error_params, object error_args) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -235,6 +238,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetBooleanTranslationsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object src) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -301,6 +305,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSelectionTranslationsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field, object src) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -333,6 +338,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InputTzInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -373,6 +379,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -383,6 +390,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToBooleanInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -420,6 +428,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -439,6 +448,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToDatetimeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -462,6 +472,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToFloatInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -479,6 +490,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToIntegerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -510,6 +522,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToMany2manyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -538,6 +551,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToMany2oneInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object values, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -554,6 +568,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToMany2oneReferenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -564,6 +579,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToOne2manyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object records, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -733,6 +749,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> StrToSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object @value, object savepoint) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*
@@ -770,6 +787,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ToFieldAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object fromtype) where TEntity : IEntity<Guid>, IIrFieldsConverterable
         {
             /*

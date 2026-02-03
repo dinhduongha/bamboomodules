@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ICrmLostReasonAppService : IGenericApplicationService<CrmLostReason>
     {
-        Task<CrmLostReason> LostLeadsAsync(Guid id);
+        Task<CrmLostReason> LostLeadsAsync(Guid[] ids);
     }
 }

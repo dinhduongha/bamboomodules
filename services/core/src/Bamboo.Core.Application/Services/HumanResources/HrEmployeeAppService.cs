@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Hr", Category = "HumanResources", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
-    public partial class HrEmployeeAppService : GenericApplicationService<HrEmployee>, IHrEmployeeAppService
+    public partial class HrEmployeeAppService : GenericAppService<HrEmployee>, IHrEmployeeAppService
     {
         private readonly IAvatarMixinAppService _avatarMixinAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
@@ -51,6 +51,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> AddCertificationActivityToEmployeesInternalAsync()
         {
             /*
@@ -142,7 +143,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> ArchiveAsync(Guid id)
+        public async Task<HrEmployee> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -176,7 +177,9 @@ namespace Bamboo.Core.Application.Services
             //         }
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> AttendanceActionChangeInternalAsync(object geo_information)
@@ -242,7 +245,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> CheckNoExistingContractAsync(Guid id, HrEmployeeCheckNoExistingContractRequestDto input)
+        public async Task<HrEmployee> CheckNoExistingContractAsync(HrEmployeeCheckNoExistingContractRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -254,9 +257,12 @@ namespace Bamboo.Core.Application.Services
             //                                      "Please select a date outside existing contracts",
             //                                      format_date_abbr(self.env, date)))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> CheckPresenceInternalAsync()
         {
             /*
@@ -1379,7 +1385,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<HrEmployee> CreateAsync(HrEmployee entity, List<string> fields)
+        public override async Task<HrEmployee> CreateAsync(CreateRequestDto<HrEmployee> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1482,10 +1488,10 @@ namespace Bamboo.Core.Application.Services
             //     ._create_future_public_holidays_timesheets(employees)
             // return employees
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<HrEmployee> CreateContractAsync(Guid id, HrEmployeeCreateContractRequestDto input)
+        public async Task<HrEmployee> CreateContractAsync(HrEmployeeCreateContractRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1513,7 +1519,9 @@ namespace Bamboo.Core.Application.Services
             //     'contract_date_end': new_contract_date_end
             // })
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> CreateFuturePublicHolidaysTimesheetsInternalAsync(object employees)
@@ -1551,6 +1559,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> CreateInternalAsync(object data_list)
         {
             /*
@@ -1567,7 +1576,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> CreateUserAsync(Guid id)
+        public async Task<HrEmployee> CreateUserAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1593,10 +1602,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> CreateUsersAsync(Guid id)
+        public async Task<HrEmployee> CreateUsersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1678,10 +1689,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return next_action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> CreateUsersConfirmationAsync(Guid id)
+        public async Task<HrEmployee> CreateUsersConfirmationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1696,10 +1709,12 @@ namespace Bamboo.Core.Application.Services
             //         },
             //     )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> CreateVersionAsync(Guid id, HrEmployeeCreateVersionRequestDto input)
+        public async Task<HrEmployee> CreateVersionAsync(HrEmployeeCreateVersionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1785,7 +1800,9 @@ namespace Bamboo.Core.Application.Services
             // })
             // return new_version
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> CreateWorkContactsInternalAsync()
@@ -1818,7 +1835,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<HrEmployee> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<HrEmployee> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: hr_employee.py) ---
@@ -1829,7 +1847,7 @@ namespace Bamboo.Core.Application.Services
             //     result['company_id'] = project_company_id
             // return result
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
         protected async Task<HrEmployee> DeleteFuturePublicHolidaysTimesheetsInternalAsync()
@@ -1874,7 +1892,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> FetchAsync(Guid id, HrEmployeeFetchRequestDto input)
+        public async Task<HrEmployee> FetchAsync(HrEmployeeFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1901,7 +1919,9 @@ namespace Bamboo.Core.Application.Services
             //         public.mapped(field_name)
             // self._copy_cache_from(public, field_names)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<object> FieldToSqlInternalAsync(string @alias, string field_expr, object query)
@@ -1917,7 +1937,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GenerateRandomBarcodeAsync(Guid id)
+        public async Task<HrEmployee> GenerateRandomBarcodeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1925,10 +1945,12 @@ namespace Bamboo.Core.Application.Services
             // for employee in self:
             //     employee.barcode = '041'+"".join(choice(digits) for i in range(9))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GenerateWorkEntriesAsync(Guid id, HrEmployeeGenerateWorkEntriesRequestDto input)
+        public async Task<HrEmployee> GenerateWorkEntriesAsync(HrEmployeeGenerateWorkEntriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_employee.py) ---
@@ -1942,10 +1964,12 @@ namespace Bamboo.Core.Application.Services
             //     versions = self._get_all_versions_with_contract_overlap_with_period(date_start, date_stop)
             // return versions.generate_work_entries(date_start, date_stop, force=force)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetAccountsWithFixedAllocationsAsync(Guid id)
+        public async Task<HrEmployee> GetAccountsWithFixedAllocationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1955,7 +1979,9 @@ namespace Bamboo.Core.Application.Services
             //     lambda a: not self.salary_distribution.get(str(a.id), {}).get('amount_is_percentage', True)
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetAgeInternalAsync(object target_date)
@@ -1988,6 +2014,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> GetAllVersionsWithContractOverlapWithPeriodInternalAsync(object date_from, object date_to)
         {
             /*
@@ -2003,7 +2030,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetAllocationRequestsAmountAsync(Guid id)
+        [ApiModel]
+        public async Task<HrEmployee> GetAllocationRequestsAmountAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -2014,20 +2042,24 @@ namespace Bamboo.Core.Application.Services
             //     ('state', '=', 'confirm'),
             // ])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetAvatarCardDataAsync(Guid id, HrEmployeeGetAvatarCardDataRequestDto input)
+        public async Task<HrEmployee> GetAvatarCardDataAsync(HrEmployeeGetAvatarCardDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
             // def get_avatar_card_data(self, fields):
             // return self.read(fields)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetBankAccountSalaryAllocationAsync(Guid id, HrEmployeeGetBankAccountSalaryAllocationRequestDto input)
+        public async Task<HrEmployee> GetBankAccountSalaryAllocationAsync(HrEmployeeGetBankAccountSalaryAllocationRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -2035,10 +2067,12 @@ namespace Bamboo.Core.Application.Services
             // ba_info = self.salary_distribution.get(str(account_id), {})
             // return ba_info.get('amount', 0), ba_info.get('amount_is_percentage')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetBarcodesAndPinHashedAsync(Guid id)
+        public async Task<HrEmployee> GetBarcodesAndPinHashedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: hr_employee.py) ---
@@ -2054,7 +2088,9 @@ namespace Bamboo.Core.Application.Services
             //     e['pin'] = hashlib.sha1(e['pin'].encode('utf8')).hexdigest() if e['pin'] else False
             // return employees_data
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetCalendarAttendancesInternalAsync(object date_from, object date_to)
@@ -2152,6 +2188,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> GetCertificateSelectionInternalAsync()
         {
             /*
@@ -2376,6 +2413,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> GetContextualEmployeeInternalAsync()
         {
             /*
@@ -2506,6 +2544,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> GetCurrentDayLocationFieldInternalAsync()
         {
             /*
@@ -2541,6 +2580,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> GetEmployeeWorkingNowInternalAsync()
         {
             /*
@@ -2688,7 +2728,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetFormviewActionAsync(Guid id, HrEmployeeGetFormviewActionRequestDto input)
+        public async Task<HrEmployee> GetFormviewActionAsync(HrEmployeeGetFormviewActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -2704,10 +2744,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetFormviewIdAsync(Guid id, HrEmployeeGetFormviewIdRequestDto input)
+        public async Task<HrEmployee> GetFormviewIdAsync(HrEmployeeGetFormviewIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -2722,7 +2764,9 @@ namespace Bamboo.Core.Application.Services
             // # Hardcode the form view for public employee
             // return self.env.ref('hr.hr_employee_public_view_form').id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetHoursPerDayInternalAsync(object date_from)
@@ -2739,7 +2783,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<HrEmployee> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -2749,10 +2794,13 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/hr/static/xls/hr_employee.xls'
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetInternalResumeLinesAsync(Guid id, HrEmployeeGetInternalResumeLinesRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> GetInternalResumeLinesAsync(HrEmployeeGetInternalResumeLinesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee.py) ---
@@ -2813,10 +2861,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return res[::-1]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetMandatoryDaysAsync(Guid id, HrEmployeeGetMandatoryDaysRequestDto input)
+        public async Task<HrEmployee> GetMandatoryDaysAsync(HrEmployeeGetMandatoryDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -2833,10 +2883,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return all_days
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetMandatoryDaysDataAsync(Guid id, HrEmployeeGetMandatoryDaysDataRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> GetMandatoryDaysDataAsync(HrEmployeeGetMandatoryDaysDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -2864,7 +2917,9 @@ namespace Bamboo.Core.Application.Services
             //     'title': sd.name,
             // } for sd in mandatory_days]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetMandatoryDaysInternalAsync(object start_date, object end_date)
@@ -2900,6 +2955,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> GetNewHireFieldInternalAsync()
         {
             /*
@@ -2910,7 +2966,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetOvertimeDataAsync(Guid id, HrEmployeeGetOvertimeDataRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> GetOvertimeDataAsync(HrEmployeeGetOvertimeDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_employee.py) ---
@@ -2926,10 +2983,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return {"validated_overtime": validated_overtime, "overtime_adjustments": {}}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetOvertimeDataByEmployeeAsync(Guid id)
+        public async Task<HrEmployee> GetOvertimeDataByEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_employee.py) ---
@@ -2974,7 +3033,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return overtime_data
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetPartnerCountDependsInternalAsync()
@@ -2990,7 +3051,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetPresenceServerDataAsync(Guid id)
+        public async Task<HrEmployee> GetPresenceServerDataAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
@@ -3007,10 +3068,13 @@ namespace Bamboo.Core.Application.Services
             //     actions += actions.env.ref(f"hr_presence.{xmlid}")
             // return actions.read(['id', 'value'])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetPublicHolidaysDataAsync(Guid id, HrEmployeeGetPublicHolidaysDataRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> GetPublicHolidaysDataAsync(HrEmployeeGetPublicHolidaysDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -3029,7 +3093,9 @@ namespace Bamboo.Core.Application.Services
             //     'title': bh.name,
             // }, public_holidays))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetPublicHolidaysInternalAsync(object date_start, object date_end)
@@ -3066,7 +3132,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetRemainingPercentageAsync(Guid id)
+        public async Task<HrEmployee> GetRemainingPercentageAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -3082,7 +3148,9 @@ namespace Bamboo.Core.Application.Services
             // remaining = 100.0 - allocated
             // return max(0.0, remaining)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetSchedulesByEmployeeByWorkTypeInternalAsync(object start, object stop, object version_periods_by_employee)
@@ -3163,7 +3231,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetSpecialDaysDataAsync(Guid id, HrEmployeeGetSpecialDaysDataRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> GetSpecialDaysDataAsync(HrEmployeeGetSpecialDaysDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -3173,7 +3242,9 @@ namespace Bamboo.Core.Application.Services
             //     'bankHolidays': self.get_public_holidays_data(date_start, date_end),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetStoreAvatarCardFieldsInternalAsync(object target)
@@ -3231,7 +3302,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetTimeOffDashboardDataAsync(Guid id, HrEmployeeGetTimeOffDashboardDataRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> GetTimeOffDashboardDataAsync(HrEmployeeGetTimeOffDashboardDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -3242,7 +3314,9 @@ namespace Bamboo.Core.Application.Services
             // dashboard_data['allocation_request_amount'] = self.get_allocation_requests_amount()
             // return dashboard_data
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetTzBatchInternalAsync()
@@ -3391,7 +3465,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetViewAsync(Guid id, HrEmployeeGetViewRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> GetViewAsync(HrEmployeeGetViewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -3400,10 +3475,13 @@ namespace Bamboo.Core.Application.Services
             //     return super().get_view(view_id, view_type, **options)
             // return self.env['hr.employee.public'].get_view(view_id, view_type, **options)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> GetViewsAsync(Guid id, HrEmployeeGetViewsRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> GetViewsAsync(HrEmployeeGetViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -3430,7 +3508,9 @@ namespace Bamboo.Core.Application.Services
             //     res['views']['list']['arch'] = res['views']['list']['arch'].replace('work_location_name', dayfield)
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> GetWorklocationInternalAsync(object start_date, object end_date)
@@ -3546,6 +3626,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> LangGetInternalAsync()
         {
             /*
@@ -3576,6 +3657,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -3586,6 +3668,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -3596,6 +3679,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*
@@ -3658,7 +3742,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> NewAsync(Guid id, HrEmployeeNewRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> NewAsync(HrEmployeeNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -3677,10 +3762,13 @@ namespace Bamboo.Core.Application.Services
             // })
             // return employee
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> NotifyExpiringContractWorkPermitAsync(Guid id)
+        [ApiModel]
+        public async Task<HrEmployee> NotifyExpiringContractWorkPermitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -3717,7 +3805,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> OnchangeCompanyIdInternalAsync()
@@ -3806,7 +3896,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> OpenAllocationWizardAsync(Guid id)
+        public async Task<HrEmployee> OpenAllocationWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -3824,10 +3914,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> OpenBarcodeScannerAsync(Guid id)
+        public async Task<HrEmployee> OpenBarcodeScannerAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_employee.py) ---
@@ -3838,10 +3930,12 @@ namespace Bamboo.Core.Application.Services
             //     "name": "Badge Scanner"
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> OpenCoursesAsync(Guid id)
+        public async Task<HrEmployee> OpenCoursesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills_slides, FILE: hr_employee.py) ---
@@ -3853,10 +3947,12 @@ namespace Bamboo.Core.Application.Services
             //     'url': '/profile/user/%s' % self.user_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> OpenEmployeeCarsAsync(Guid id)
+        public async Task<HrEmployee> OpenEmployeeCarsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: employee.py) ---
@@ -3872,10 +3968,12 @@ namespace Bamboo.Core.Application.Services
             //     "name": self.env._("Cars History"),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> OpenLastMonthAttendancesAsync(Guid id)
+        public async Task<HrEmployee> OpenLastMonthAttendancesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_employee.py) ---
@@ -3895,10 +3993,12 @@ namespace Bamboo.Core.Application.Services
             //     "domain": [('employee_id', '=', self.id)]
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> OpenLeaveRequestAsync(Guid id)
+        public async Task<HrEmployee> OpenLeaveRequestAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
@@ -3924,10 +4024,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> OpenVersionsAsync(Guid id)
+        public async Task<HrEmployee> OpenVersionsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -3944,10 +4046,12 @@ namespace Bamboo.Core.Application.Services
             //     'search_view_id': self.env.ref('hr.hr_version_search_view').id
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> OpenWorkEntriesAsync(Guid id, HrEmployeeOpenWorkEntriesRequestDto input)
+        public async Task<HrEmployee> OpenWorkEntriesAsync(HrEmployeeOpenWorkEntriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_employee.py) ---
@@ -3966,7 +4070,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('employee_id', '=', self.id)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> PhoneGetNumberFieldsInternalAsync()
@@ -4026,7 +4132,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> RelatedContactsAsync(Guid id)
+        public async Task<HrEmployee> RelatedContactsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -4046,7 +4152,9 @@ namespace Bamboo.Core.Application.Services
             //     action['res_id'] = related_partners.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> RemoveWorkContactIdInternalAsync(object user, object employee_company)
@@ -4089,7 +4197,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> SearchFetchAsync(Guid id, HrEmployeeSearchFetchRequestDto input)
+        [ApiModel]
+        public async Task<HrEmployee> SearchFetchAsync(HrEmployeeSearchFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -4110,7 +4219,9 @@ namespace Bamboo.Core.Application.Services
             // employees._copy_cache_from(public, field_names)
             // return employees
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> SearchFilterForExpenseInternalAsync(object @operator, object @value)
@@ -4140,6 +4251,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrEmployee> SearchInternalAsync(object domain, object offset, object limit, object order)
         {
             /*
@@ -4225,7 +4337,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> SendLogAsync(Guid id)
+        public async Task<HrEmployee> SendLogAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
@@ -4239,10 +4351,12 @@ namespace Bamboo.Core.Application.Services
             //         name=employee.name,
             //         state=employee.hr_presence_state_display))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> SendSmsAsync(Guid id)
+        public async Task<HrEmployee> SendSmsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
@@ -4270,7 +4384,9 @@ namespace Bamboo.Core.Application.Services
             //             "target": "new",
             //         }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> ServerDateToDomainInternalAsync(object domain)
@@ -4283,24 +4399,28 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> SetAbsentAsync(Guid id)
+        public async Task<HrEmployee> SetAbsentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
             // def action_set_absent(self):
             // self._action_set_manual_presence(False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> SetPresentAsync(Guid id)
+        public async Task<HrEmployee> SetPresentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
             // def action_set_present(self):
             // self._action_set_manual_presence(True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> SyncSalaryDistributionInternalAsync()
@@ -4372,7 +4492,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> TimeOffDashboardAsync(Guid id)
+        public async Task<HrEmployee> TimeOffDashboardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -4388,10 +4508,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> TimesheetFromEmployeeAsync(Guid id)
+        public async Task<HrEmployee> TimesheetFromEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_employee.py) ---
@@ -4402,10 +4524,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = context
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> TogglePrimaryBankAccountTrustAsync(Guid id)
+        public async Task<HrEmployee> TogglePrimaryBankAccountTrustAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -4414,10 +4538,12 @@ namespace Bamboo.Core.Application.Services
             // current_val = self.primary_bank_account_id.allow_out_payment
             // self.primary_bank_account_id.allow_out_payment = not current_val
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrEmployee> UnarchiveAsync(Guid id)
+        public async Task<HrEmployee> UnarchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -4430,7 +4556,9 @@ namespace Bamboo.Core.Application.Services
             // })
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> UnlinkExceptActivePosSessionInternalAsync()
@@ -4453,7 +4581,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> UnlinkWizardAsync(Guid id)
+        public async Task<HrEmployee> UnlinkWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_employee.py) ---
@@ -4475,7 +4603,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': self.env.context,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrEmployee> VerifyBarcodeInternalAsync()
@@ -4503,7 +4633,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, HrEmployee entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<HrEmployee> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -4702,7 +4832,7 @@ namespace Bamboo.Core.Application.Services
             //     self_company._create_future_public_holidays_timesheets(self_company)
             // return result
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

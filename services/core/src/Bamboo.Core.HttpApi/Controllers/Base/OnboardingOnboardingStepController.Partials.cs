@@ -11,90 +11,101 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-step-bank-account")]
-        public async Task<IActionResult> ActionOpenStepBankAccountAsync(Guid id)
+        [Route("action-open-step-bank-account")]
+        public async Task<IActionResult> ActionOpenStepBankAccountAsync(Guid[] ids)
         {
-            var result = await _appService.OpenStepBankAccountAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenStepBankAccountAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-step-base-document-layout")]
-        public async Task<IActionResult> ActionOpenStepBaseDocumentLayoutAsync(Guid id)
+        [Route("action-open-step-base-document-layout")]
+        public async Task<IActionResult> ActionOpenStepBaseDocumentLayoutAsync(Guid[] ids)
         {
-            var result = await _appService.OpenStepBaseDocumentLayoutAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenStepBaseDocumentLayoutAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-step-chart-of-accounts")]
-        public async Task<IActionResult> ActionOpenStepChartOfAccountsAsync(Guid id)
+        [Route("action-open-step-chart-of-accounts")]
+        public async Task<IActionResult> ActionOpenStepChartOfAccountsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenStepChartOfAccountsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenStepChartOfAccountsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-step-company-data")]
-        public async Task<IActionResult> ActionOpenStepCompanyDataAsync(Guid id)
+        [Route("action-open-step-company-data")]
+        public async Task<IActionResult> ActionOpenStepCompanyDataAsync(Guid[] ids)
         {
-            var result = await _appService.OpenStepCompanyDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenStepCompanyDataAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-step-create-invoice")]
-        public async Task<IActionResult> ActionOpenStepCreateInvoiceAsync(Guid id)
+        [Route("action-open-step-create-invoice")]
+        public async Task<IActionResult> ActionOpenStepCreateInvoiceAsync(Guid[] ids)
         {
-            var result = await _appService.OpenStepCreateInvoiceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenStepCreateInvoiceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-step-fiscal-year")]
-        public async Task<IActionResult> ActionOpenStepFiscalYearAsync(Guid id)
+        [Route("action-open-step-fiscal-year")]
+        public async Task<IActionResult> ActionOpenStepFiscalYearAsync(Guid[] ids)
         {
-            var result = await _appService.OpenStepFiscalYearAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenStepFiscalYearAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-step-sales-tax")]
-        public async Task<IActionResult> ActionOpenStepSalesTaxAsync(Guid id)
+        [Route("action-open-step-sales-tax")]
+        public async Task<IActionResult> ActionOpenStepSalesTaxAsync(Guid[] ids)
         {
-            var result = await _appService.OpenStepSalesTaxAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenStepSalesTaxAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-just-done")]
-        public async Task<IActionResult> ActionSetJustDoneAsync(Guid id)
+        [Route("action-set-just-done")]
+        public async Task<IActionResult> ActionSetJustDoneAsync(Guid[] ids)
         {
-            var result = await _appService.SetJustDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetJustDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-validate-step")]
-        public async Task<IActionResult> ActionValidateStepAsync(Guid id, [FromBody] OnboardingOnboardingStepValidateStepRequestDto input)
+        [Route("action-validate-step")]
+        public async Task<IActionResult> ActionValidateStepAsync(OnboardingOnboardingStepValidateStepRequestDto input)
         {
-            var result = await _appService.ValidateStepAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ValidateStepAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-validate-step-base-document-layout")]
-        public async Task<IActionResult> ActionValidateStepBaseDocumentLayoutAsync(Guid id)
+        [Route("action-validate-step-base-document-layout")]
+        public async Task<IActionResult> ActionValidateStepBaseDocumentLayoutAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateStepBaseDocumentLayoutAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateStepBaseDocumentLayoutAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-step-on-onboarding-has-action")]
-        public async Task<IActionResult> CheckStepOnOnboardingHasActionAsync(Guid id)
+        [Route("check-step-on-onboarding-has-action")]
+        public async Task<IActionResult> CheckStepOnOnboardingHasActionAsync(Guid[] ids)
         {
-            var result = await _appService.CheckStepOnOnboardingHasActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckStepOnOnboardingHasActionAsync(ids);
             return Ok(result);
         }
     }

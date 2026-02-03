@@ -23,6 +23,7 @@ public partial class CoreDbContext : AbpDbContext<CoreDbContext>, ICoreDbContext
     {
         //optionsBuilder.LogTo(Console.WriteLine, LogLevel.Debug);
         //optionsBuilder.EnableSensitiveDataLogging().EnableDetailedErrors();
+        optionsBuilder.UseNpgsql(x => x.UseNetTopologySuite());
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

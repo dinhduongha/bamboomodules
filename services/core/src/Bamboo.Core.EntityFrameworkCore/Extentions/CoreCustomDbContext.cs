@@ -9,6 +9,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<IrModelFieldAccess> IrModelFieldAccesses { get; set; }
     public virtual DbSet<ResOrganization> ResOrganizations { get; set; }
+    public virtual DbSet<ResTeam> ResTeams { get; set; }
     public virtual DbSet<MrpWorkcenterCategory> MrpWorkcenterCategories { get; set; }
 
     // DMS

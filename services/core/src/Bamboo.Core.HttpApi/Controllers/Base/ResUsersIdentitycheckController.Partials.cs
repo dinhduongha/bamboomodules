@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-use-password")]
-        public async Task<IActionResult> ActionUsePasswordAsync(Guid id)
+        [Route("action-use-password")]
+        public async Task<IActionResult> ActionUsePasswordAsync(Guid[] ids)
         {
-            var result = await _appService.UsePasswordAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UsePasswordAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/run-check")]
-        public async Task<IActionResult> RunCheckAsync(Guid id)
+        [Route("run-check")]
+        public async Task<IActionResult> RunCheckAsync(Guid[] ids)
         {
-            var result = await _appService.RunCheckAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RunCheckAsync(ids);
             return Ok(result);
         }
     }

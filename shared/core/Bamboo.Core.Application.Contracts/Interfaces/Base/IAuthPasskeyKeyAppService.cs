@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAuthPasskeyKeyAppService : IGenericApplicationService<AuthPasskeyKey>
     {
-        Task<AuthPasskeyKey> DeletePasskeyAsync(Guid id);
-        Task<AuthPasskeyKey> InitAsync(Guid id);
-        Task<AuthPasskeyKey> RenamePasskeyAsync(Guid id);
+        Task<AuthPasskeyKey> DeletePasskeyAsync(Guid[] ids);
+        Task<AuthPasskeyKey> InitAsync(Guid[] ids);
+        Task<AuthPasskeyKey> RenamePasskeyAsync(Guid[] ids);
     }
 }

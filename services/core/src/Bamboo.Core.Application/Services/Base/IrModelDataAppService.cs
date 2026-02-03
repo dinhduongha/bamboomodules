@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrModelDataAppService : GenericApplicationService<IrModelData>, IIrModelDataAppService
+    public partial class IrModelDataAppService : GenericAppService<IrModelData>, IIrModelDataAppService
     {
 
         public IrModelDataAppService(IRepository<IrModelData, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -69,7 +69,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelData> CheckObjectReferenceAsync(Guid id, IrModelDataCheckObjectReferenceRequestDto input)
+        [ApiModel]
+        public async Task<IrModelData> CheckObjectReferenceAsync(IrModelDataCheckObjectReferenceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -84,7 +85,9 @@ namespace Bamboo.Core.Application.Services
             //     raise AccessError(_('Not enough access rights on the external ID "%(module)s.%(xml_id)s"', module=module, xml_id=xml_id))
             // return model, False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModelData> ComputeCompleteNameInternalAsync()
@@ -128,7 +131,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelData> CopyDataAsync(Guid id, IrModelDataCopyDataRequestDto input)
+        public async Task<IrModelData> CopyDataAsync(IrModelDataCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -139,9 +142,12 @@ namespace Bamboo.Core.Application.Services
             //     vals['name'] = "%s_%s" % (model.name, rand)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelData> LoadXmlidInternalAsync(Guid xml_id)
         {
             /*
@@ -191,6 +197,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelData> ModuleDataUninstallInternalAsync(object modules_to_remove)
         {
             /*
@@ -368,6 +375,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelData> ProcessEndInternalAsync(object modules)
         {
             /*
@@ -454,6 +462,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelData> ProcessEndUnlinkRecordInternalAsync(object record)
         {
             /*
@@ -486,7 +495,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelData> ToggleNoupdateAsync(Guid id, IrModelDataToggleNoupdateRequestDto input)
+        [ApiModel]
+        public async Task<IrModelData> ToggleNoupdateAsync(IrModelDataToggleNoupdateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -496,9 +506,12 @@ namespace Bamboo.Core.Application.Services
             // for xid in self.search([('model', '=', model), ('res_id', '=', res_id)]):
             //     xid.noupdate = not xid.noupdate
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelData> UpdateXmlidsInternalAsync(object data_list, object update)
         {
             /*
@@ -552,6 +565,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelData> XmlidLookupInternalAsync(string xmlid)
         {
             /*
@@ -571,6 +585,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelData> XmlidToResIdInternalAsync(object xmlid, object raise_if_not_found)
         {
             /*
@@ -582,6 +597,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelData> XmlidToResModelResIdInternalAsync(string xmlid, bool raise_if_not_found)
         {
             /*

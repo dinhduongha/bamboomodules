@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrEmployeeSkillAppService : IGenericApplicationService<HrEmployeeSkill>
     {
-        Task<HrEmployeeSkill> GetCurrentSkillsByEmployeeAsync(Guid id);
-        Task<HrEmployeeSkill> OpenHrEmployeeSkillModalAsync(Guid id);
-        Task<HrEmployeeSkill> SaveAsync(Guid id);
+        Task<HrEmployeeSkill> GetCurrentSkillsByEmployeeAsync(Guid[] ids);
+        Task<HrEmployeeSkill> OpenHrEmployeeSkillModalAsync(Guid[] ids);
+        Task<HrEmployeeSkill> SaveAsync(Guid[] ids);
     }
 }

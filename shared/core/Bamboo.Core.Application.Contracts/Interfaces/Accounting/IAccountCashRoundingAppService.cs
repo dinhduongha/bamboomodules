@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountCashRoundingAppService : IGenericApplicationService<AccountCashRounding>
     {
-        Task<AccountCashRounding> ComputeDifferenceAsync(Guid id, AccountCashRoundingComputeDifferenceRequestDto input);
-        Task<AccountCashRounding> RoundAsync(Guid id, AccountCashRoundingRoundRequestDto input);
-        Task<AccountCashRounding> ValidateRoundingAsync(Guid id);
+        Task<AccountCashRounding> ComputeDifferenceAsync(AccountCashRoundingComputeDifferenceRequestDto input);
+        Task<AccountCashRounding> RoundAsync(AccountCashRoundingRoundRequestDto input);
+        Task<AccountCashRounding> ValidateRoundingAsync(Guid[] ids);
     }
 }

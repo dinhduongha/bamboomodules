@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-week-type")]
-        public async Task<IActionResult> GetWeekTypeAsync(Guid id, [FromBody] ResourceCalendarAttendanceGetWeekTypeRequestDto input)
+        [Route("get-week-type")]
+        public async Task<IActionResult> GetWeekTypeAsync(ResourceCalendarAttendanceGetWeekTypeRequestDto input)
         {
-            var result = await _appService.GetWeekTypeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetWeekTypeAsync(input);
             return Ok(result);
         }
     }

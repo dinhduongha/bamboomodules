@@ -10,16 +10,16 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPaymentTransactionAppService : IGenericApplicationService<PaymentTransaction>
     {
-        Task<PaymentTransaction> CaptureAsync(Guid id);
-        Task<PaymentTransaction> DemoSetCanceledAsync(Guid id);
-        Task<PaymentTransaction> DemoSetDoneAsync(Guid id);
-        Task<PaymentTransaction> DemoSetErrorAsync(Guid id);
-        Task<PaymentTransaction> PostProcessAsync(Guid id);
-        Task<PaymentTransaction> RefundAsync(Guid id, PaymentTransactionRefundRequestDto input);
-        Task<PaymentTransaction> ViewInvoicesAsync(Guid id);
-        Task<PaymentTransaction> ViewPosOrderAsync(Guid id);
-        Task<PaymentTransaction> ViewRefundsAsync(Guid id);
-        Task<PaymentTransaction> ViewSalesOrdersAsync(Guid id);
-        Task<PaymentTransaction> VoidAsync(Guid id);
+        Task<PaymentTransaction> CaptureAsync(Guid[] ids);
+        Task<PaymentTransaction> DemoSetCanceledAsync(Guid[] ids);
+        Task<PaymentTransaction> DemoSetDoneAsync(Guid[] ids);
+        Task<PaymentTransaction> DemoSetErrorAsync(Guid[] ids);
+        Task<PaymentTransaction> PostProcessAsync(Guid[] ids);
+        Task<PaymentTransaction> RefundAsync(PaymentTransactionRefundRequestDto input);
+        Task<PaymentTransaction> ViewInvoicesAsync(Guid[] ids);
+        Task<PaymentTransaction> ViewPosOrderAsync(Guid[] ids);
+        Task<PaymentTransaction> ViewRefundsAsync(Guid[] ids);
+        Task<PaymentTransaction> ViewSalesOrdersAsync(Guid[] ids);
+        Task<PaymentTransaction> VoidAsync(Guid[] ids);
     }
 }

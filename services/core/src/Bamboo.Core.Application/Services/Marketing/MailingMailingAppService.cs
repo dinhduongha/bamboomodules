@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
-    public partial class MailingMailingAppService : GenericApplicationService<MailingMailing>, IMailingMailingAppService
+    public partial class MailingMailingAppService : GenericAppService<MailingMailing>, IMailingMailingAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailRenderMixinAppService _mailRenderMixinAppService;
@@ -257,7 +257,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingMailing> BuySmsCreditsAsync(Guid id)
+        public async Task<MailingMailing> BuySmsCreditsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
@@ -268,17 +268,21 @@ namespace Bamboo.Core.Application.Services
             //     'url': url,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> CancelAsync(Guid id)
+        public async Task<MailingMailing> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_cancel(self):
             // self.write({'state': 'draft', 'schedule_date': False, 'schedule_type': 'now', 'next_departure': False})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingMailing> CheckMailingDomainInternalAsync()
@@ -312,7 +316,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingMailing> CompareVersionsAsync(Guid id)
+        public async Task<MailingMailing> CompareVersionsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -332,7 +336,9 @@ namespace Bamboo.Core.Application.Services
             //     ]),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingMailing> ComputeAbTestingDescriptionInternalAsync()
@@ -956,7 +962,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingMailing> ConvertLinksAsync(Guid id)
+        public async Task<MailingMailing> ConvertLinksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -988,10 +994,12 @@ namespace Bamboo.Core.Application.Services
             // res.update(super(MailingMailing, self - sms_mailings).convert_links())
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> CopyDataAsync(Guid id, MailingMailingCopyDataRequestDto input)
+        public async Task<MailingMailing> CopyDataAsync(MailingMailingCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -1005,7 +1013,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['ab_testing_schedule_datetime'] = mailing.ab_testing_schedule_datetime
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingMailing> CreateAbTestingUtmCampaignsInternalAsync()
@@ -1023,7 +1033,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<MailingMailing> CreateAsync(MailingMailing entity, List<string> fields)
+        public override async Task<MailingMailing> CreateAsync(CreateRequestDto<MailingMailing> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -1052,7 +1062,7 @@ namespace Bamboo.Core.Application.Services
             //         vals['subject'] = vals['sms_subject']
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<MailingMailing> CreateAttachmentsFromInlineImagesInternalAsync(object b64images)
@@ -1121,7 +1131,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<MailingMailing> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<MailingMailing> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -1151,10 +1162,10 @@ namespace Bamboo.Core.Application.Services
             //     res['keep_archives'] = True
             // return res
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
-        public async Task<MailingMailing> DuplicateAsync(Guid id)
+        public async Task<MailingMailing> DuplicateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -1170,10 +1181,13 @@ namespace Bamboo.Core.Application.Services
             //     }
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> FetchFavoritesAsync(Guid id, MailingMailingFetchFavoritesRequestDto input)
+        [ApiModel]
+        public async Task<MailingMailing> FetchFavoritesAsync(MailingMailingFetchFavoritesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -1207,7 +1221,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return values_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingMailing> FixAttachmentOwnershipInternalAsync()
@@ -1368,6 +1384,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailingMailing> GetDefaultMailServerIdInternalAsync()
         {
             /*
@@ -1713,7 +1730,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingMailing> GetSmsLinkReplacementsPlaceholdersAsync(Guid id)
+        public async Task<MailingMailing> GetSmsLinkReplacementsPlaceholdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
@@ -1751,7 +1768,9 @@ namespace Bamboo.Core.Application.Services
             //     'unsubscribe': f"\n{self.env['sms.composer']._get_unsubscribe_info(opt_out_url)}"
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingMailing> GetUnsubscribeOneclickUrlInternalAsync(object email_to, Guid res_id)
@@ -1814,7 +1833,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingMailing> LaunchAsync(Guid id)
+        public async Task<MailingMailing> LaunchAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -1822,7 +1841,9 @@ namespace Bamboo.Core.Application.Services
             // self.write({'schedule_type': 'now'})
             // return self.action_put_in_queue()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingMailing> ParseMailingDomainInternalAsync()
@@ -1985,6 +2006,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailingMailing> ProcessMassMailingQueueInternalAsync()
         {
             /*
@@ -2022,7 +2044,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingMailing> PutInQueueAsync(Guid id)
+        public async Task<MailingMailing> PutInQueueAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: mailing_mailing.py) ---
@@ -2044,10 +2066,12 @@ namespace Bamboo.Core.Application.Services
             //     for schedule_date in self.mapped('schedule_date')
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> RedirectToInvoicedAsync(Guid id)
+        public async Task<MailingMailing> RedirectToInvoicedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sale, FILE: mailing_mailing.py) ---
@@ -2077,10 +2101,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,pivot,graph,form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> RedirectToLeadsAndOpportunitiesAsync(Guid id)
+        public async Task<MailingMailing> RedirectToLeadsAndOpportunitiesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_crm, FILE: mailing_mailing.py) ---
@@ -2105,10 +2131,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,pivot,graph,form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> RedirectToQuotationsAsync(Guid id)
+        public async Task<MailingMailing> RedirectToQuotationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sale, FILE: mailing_mailing.py) ---
@@ -2132,20 +2160,24 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,pivot,graph,form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ReloadAsync(Guid id)
+        public async Task<MailingMailing> ReloadAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_reload(self):
             // pass
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> RemoveFavoriteAsync(Guid id)
+        public async Task<MailingMailing> RemoveFavoriteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2167,10 +2199,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> RetryFailedAsync(Guid id)
+        public async Task<MailingMailing> RetryFailedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2197,10 +2231,12 @@ namespace Bamboo.Core.Application.Services
             //     mass_sms.action_retry_failed_sms()
             // return super(MailingMailing, self - mass_sms).action_retry_failed()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> RetryFailedSmsAsync(Guid id)
+        public async Task<MailingMailing> RetryFailedSmsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
@@ -2213,10 +2249,12 @@ namespace Bamboo.Core.Application.Services
             // failed_sms.unlink()
             // self.action_put_in_queue()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ScheduleAsync(Guid id)
+        public async Task<MailingMailing> ScheduleAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2228,10 +2266,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(self.env.context, default_mass_mailing_id=self.id, dialog_size='medium')
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> SelectAsWinnerAsync(Guid id)
+        public async Task<MailingMailing> SelectAsWinnerAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2249,10 +2289,12 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = final_mailing.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> SendMailAsync(Guid id, MailingMailingSendMailRequestDto input)
+        public async Task<MailingMailing> SendMailAsync(MailingMailingSendMailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: mailing_mailing.py) ---
@@ -2268,10 +2310,12 @@ namespace Bamboo.Core.Application.Services
             // def action_send_mail(self, res_ids=None):
             // return self._action_send_mail(res_ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> SendSmsAsync(Guid id, MailingMailingSendSmsRequestDto input)
+        public async Task<MailingMailing> SendSmsAsync(MailingMailingSendSmsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---
@@ -2284,7 +2328,9 @@ namespace Bamboo.Core.Application.Services
             //         composer._action_send_sms()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingMailing> SendSmsGetComposerValuesInternalAsync(List<Guid> res_ids)
@@ -2310,7 +2356,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingMailing> SendWinnerMailingAsync(Guid id)
+        public async Task<MailingMailing> SendWinnerMailingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2341,10 +2387,12 @@ namespace Bamboo.Core.Application.Services
             //         raise ValidationError(_("No mailing for this A/B testing campaign has been sent yet! Send one first and try again later."))
             // return final_mailing.action_select_as_winner()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> SetFavoriteAsync(Guid id)
+        public async Task<MailingMailing> SetFavoriteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2366,10 +2414,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> TestAsync(Guid id)
+        public async Task<MailingMailing> TestAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2398,10 +2448,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // return super().action_test()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> UpdateCardsAsync(Guid id)
+        public async Task<MailingMailing> UpdateCardsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: mailing_mailing.py) ---
@@ -2417,40 +2469,48 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewBouncedAsync(Guid id)
+        public async Task<MailingMailing> ViewBouncedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_bounced(self):
             // return self._action_view_documents_filtered('bounce')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewClickedAsync(Guid id)
+        public async Task<MailingMailing> ViewClickedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_clicked(self):
             // return self._action_view_documents_filtered('clicked')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewDeliveredAsync(Guid id)
+        public async Task<MailingMailing> ViewDeliveredAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_delivered(self):
             // return self._action_view_documents_filtered('delivered')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewLinkTrackersAsync(Guid id)
+        public async Task<MailingMailing> ViewLinkTrackersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2472,10 +2532,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': dict(self.env.context, create=False)
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewMailingContactsAsync(Guid id)
+        public async Task<MailingMailing> ViewMailingContactsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2491,77 +2553,93 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('list_ids', 'in', self.contact_list_ids.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewOpenedAsync(Guid id)
+        public async Task<MailingMailing> ViewOpenedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_opened(self):
             // return self._action_view_documents_filtered('open')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewRepliedAsync(Guid id)
+        public async Task<MailingMailing> ViewRepliedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_replied(self):
             // return self._action_view_documents_filtered('reply')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewTracesCanceledAsync(Guid id)
+        public async Task<MailingMailing> ViewTracesCanceledAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_traces_canceled(self):
             // return self._action_view_traces_filtered('canceled')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewTracesFailedAsync(Guid id)
+        public async Task<MailingMailing> ViewTracesFailedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_traces_failed(self):
             // return self._action_view_traces_filtered('failed')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewTracesProcessAsync(Guid id)
+        public async Task<MailingMailing> ViewTracesProcessAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_traces_process(self):
             // return self._action_view_traces_filtered('process')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewTracesScheduledAsync(Guid id)
+        public async Task<MailingMailing> ViewTracesScheduledAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_traces_scheduled(self):
             // return self._action_view_traces_filtered('scheduled')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingMailing> ViewTracesSentAsync(Guid id)
+        public async Task<MailingMailing> ViewTracesSentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
             // def action_view_traces_sent(self):
             // return self._action_view_traces_filtered('sent')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

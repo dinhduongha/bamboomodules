@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-confirm")]
-        public async Task<IActionResult> ActionConfirmAsync(Guid id)
+        [Route("action-confirm")]
+        public async Task<IActionResult> ActionConfirmAsync(Guid[] ids)
         {
-            var result = await _appService.ConfirmAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConfirmAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-badge-email")]
-        public async Task<IActionResult> ActionSendBadgeEmailAsync(Guid id)
+        [Route("action-send-badge-email")]
+        public async Task<IActionResult> ActionSendBadgeEmailAsync(Guid[] ids)
         {
-            var result = await _appService.SendBadgeEmailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendBadgeEmailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-done")]
-        public async Task<IActionResult> ActionSetDoneAsync(Guid id)
+        [Route("action-set-done")]
+        public async Task<IActionResult> ActionSetDoneAsync(Guid[] ids)
         {
-            var result = await _appService.SetDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-draft")]
-        public async Task<IActionResult> ActionSetDraftAsync(Guid id)
+        [Route("action-set-draft")]
+        public async Task<IActionResult> ActionSetDraftAsync(Guid[] ids)
         {
-            var result = await _appService.SetDraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetDraftAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-pos-order")]
-        public async Task<IActionResult> ActionViewPosOrderAsync(Guid id)
+        [Route("action-view-pos-order")]
+        public async Task<IActionResult> ActionViewPosOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPosOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPosOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-sale-order")]
-        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid id)
+        [Route("action-view-sale-order")]
+        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSaleOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSaleOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/register-attendee")]
-        public async Task<IActionResult> RegisterAttendeeAsync(Guid id, [FromBody] EventRegistrationRegisterAttendeeRequestDto input)
+        [Route("register-attendee")]
+        public async Task<IActionResult> RegisterAttendeeAsync(EventRegistrationRegisterAttendeeRequestDto input)
         {
-            var result = await _appService.RegisterAttendeeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RegisterAttendeeAsync(input);
             return Ok(result);
         }
     }

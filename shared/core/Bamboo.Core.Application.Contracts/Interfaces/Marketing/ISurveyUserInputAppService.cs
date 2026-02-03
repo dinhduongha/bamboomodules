@@ -10,11 +10,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISurveyUserInputAppService : IGenericApplicationService<SurveyUserInput>
     {
-        Task<SurveyUserInput> GetPrintUrlAsync(Guid id);
-        Task<SurveyUserInput> GetStartUrlAsync(Guid id);
-        Task<SurveyUserInput> PrintAnswersAsync(Guid id);
-        Task<SurveyUserInput> RedirectLeadAsync(Guid id);
-        Task<SurveyUserInput> RedirectToAttemptsAsync(Guid id);
-        Task<SurveyUserInput> ResendAsync(Guid id);
+        Task<SurveyUserInput> GetPrintUrlAsync(Guid[] ids);
+        Task<SurveyUserInput> GetStartUrlAsync(Guid[] ids);
+        Task<SurveyUserInput> PrintAnswersAsync(Guid[] ids);
+        Task<SurveyUserInput> RedirectLeadAsync(Guid[] ids);
+        Task<SurveyUserInput> RedirectToAttemptsAsync(Guid[] ids);
+        Task<SurveyUserInput> ResendAsync(Guid[] ids);
     }
 }

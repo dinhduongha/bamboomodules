@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add")]
-        public async Task<IActionResult> ActionAddAsync(Guid id)
+        [Route("action-add")]
+        public async Task<IActionResult> ActionAddAsync(Guid[] ids)
         {
-            var result = await _appService.AddAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/add")]
-        public async Task<IActionResult> AddAsync(Guid id, [FromBody] PhoneBlacklistAddRequestDto input)
+        [Route("add")]
+        public async Task<IActionResult> AddAsync(PhoneBlacklistAddRequestDto input)
         {
-            var result = await _appService.AddAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AddAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/phone-action-blacklist-remove")]
-        public async Task<IActionResult> PhoneActionBlacklistRemoveAsync(Guid id)
+        [Route("phone-action-blacklist-remove")]
+        public async Task<IActionResult> PhoneActionBlacklistRemoveAsync(Guid[] ids)
         {
-            var result = await _appService.PhoneBlacklistRemoveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PhoneBlacklistRemoveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/remove")]
-        public async Task<IActionResult> RemoveAsync(Guid id, [FromBody] PhoneBlacklistRemoveRequestDto input)
+        [Route("remove")]
+        public async Task<IActionResult> RemoveAsync(PhoneBlacklistRemoveRequestDto input)
         {
-            var result = await _appService.RemoveAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RemoveAsync(input);
             return Ok(result);
         }
     }

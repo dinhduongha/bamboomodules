@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailingContactAppService : IGenericApplicationService<MailingContact>
     {
-        Task<MailingContact> AddToListAsync(Guid id, MailingContactAddToListRequestDto input);
-        Task<MailingContact> AddToMailingListAsync(Guid id);
-        Task<MailingContact> GetImportTemplatesAsync(Guid id);
-        Task<MailingContact> ImportAsync(Guid id);
+        Task<MailingContact> AddToListAsync(MailingContactAddToListRequestDto input);
+        Task<MailingContact> AddToMailingListAsync(Guid[] ids);
+        Task<MailingContact> GetImportTemplatesAsync(Guid[] ids);
+        Task<MailingContact> ImportAsync(Guid[] ids);
     }
 }

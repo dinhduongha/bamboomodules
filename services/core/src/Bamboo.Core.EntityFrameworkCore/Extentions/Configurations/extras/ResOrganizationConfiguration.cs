@@ -589,6 +589,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("res_organization_write_uid_fkey");
 
+                    // entity.HasOne(d => d.Parent)
+                    //             .WithMany(o => o.Children)
+                    //             .HasForeignKey(d => d.ParentId)
+                    //             .OnDelete(DeleteBehavior.SetNull)
+                    //             .HasConstraintName("res_organization_parent_id_fkey");
+
+                    // entity.HasOne(d => d.Manager)
+                    //     .WithMany()
+                    //     .HasForeignKey(d => d.ManagerId)
+                    //     .OnDelete(DeleteBehavior.SetNull)
+                    //     .HasConstraintName("res_organization_manager_id_fkey");
+
                     // entity.HasMany(d => d.AccountPaymentMethodLine).WithMany(p => p.ResCompany)
                     // entity.HasMany<AccountPaymentMethodLine>().WithMany()
                     // .UsingEntity<Dictionary<string, object>>(

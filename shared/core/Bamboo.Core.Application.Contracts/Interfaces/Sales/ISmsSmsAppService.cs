@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISmsSmsAppService : IGenericApplicationService<SmsSms>
     {
-        Task<SmsSms> ResendFailedAsync(Guid id);
-        Task<SmsSms> SendAsync(Guid id, SmsSmsSendRequestDto input);
-        Task<SmsSms> SetCanceledAsync(Guid id);
-        Task<SmsSms> SetErrorAsync(Guid id, SmsSmsSetErrorRequestDto input);
-        Task<SmsSms> SetOutgoingAsync(Guid id);
+        Task<SmsSms> ResendFailedAsync(Guid[] ids);
+        Task<SmsSms> SendAsync(SmsSmsSendRequestDto input);
+        Task<SmsSms> SetCanceledAsync(Guid[] ids);
+        Task<SmsSms> SetErrorAsync(SmsSmsSetErrorRequestDto input);
+        Task<SmsSms> SetOutgoingAsync(Guid[] ids);
     }
 }

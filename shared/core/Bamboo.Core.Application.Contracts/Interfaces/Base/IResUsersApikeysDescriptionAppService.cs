@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResUsersApikeysDescriptionAppService : IGenericApplicationService<ResUsersApikeysDescription>
     {
-        Task<ResUsersApikeysDescription> CheckAccessMakeKeyAsync(Guid id);
-        Task<ResUsersApikeysDescription> MakeKeyAsync(Guid id);
+        Task<ResUsersApikeysDescription> CheckAccessMakeKeyAsync(Guid[] ids);
+        Task<ResUsersApikeysDescription> MakeKeyAsync(Guid[] ids);
     }
 }

@@ -190,6 +190,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<List<Dictionary<string, object>>> FormattedReadGroupAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object groupby, object aggregates, object having, int offset, object limit, object order) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -335,6 +336,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FormattedReadGroupingSetsAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object grouping_sets, object aggregates) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -461,6 +463,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetBackendRootMenuIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -526,6 +529,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultActivityViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -544,6 +548,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultCalendarViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -592,6 +597,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultFormViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -641,6 +647,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultGraphViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -657,6 +664,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultKanbanViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -676,6 +684,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultListViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -692,6 +701,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultPivotViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -707,6 +717,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultSearchViewInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -723,6 +734,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<string> GetEmptyListHelpAsync<TEntity>(IEnumerable<TEntity> entities, string help_message) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -788,6 +800,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetFieldsSpecInternalAsync<TEntity>(IEnumerable<TEntity> entities, object view_info) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -888,6 +901,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -963,6 +977,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1010,6 +1025,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewCacheInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1063,6 +1079,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewCacheKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1092,6 +1109,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewFieldAttributesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1120,6 +1138,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object view_type, object models) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1151,6 +1170,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1250,6 +1270,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewsAsync<TEntity>(IEnumerable<TEntity> entities, object views, object options) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1341,6 +1362,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> HierarchyReadAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object specification, object parent_field, object child_field, object order) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1381,6 +1403,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MailAllowedQwebExpressionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1455,6 +1478,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MailGetCompanyFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1527,6 +1551,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MailGetPartnerFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object introspect_fields) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -1578,6 +1603,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MailGetPrimaryEmailFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -2505,6 +2531,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> OnchangeSpecInternalAsync<TEntity>(IEnumerable<TEntity> entities, object view_info) where TEntity : IEntity<Guid>, IBaseable
         {
             #if PYTHON_CODE
@@ -2739,6 +2766,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PhoneGetCountryFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -2782,6 +2810,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PhoneGetNumberFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -2796,6 +2825,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReadProgressBarAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object group_by, object progress_bar) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -2832,6 +2862,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPanelDomainImageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name, object domain, object set_count, object limit) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -2888,6 +2919,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPanelFieldImageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -2948,6 +2980,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPanelGlobalCountersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values_range, object parent_name) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -2986,6 +3019,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPanelSanitizedParentHierarchyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object parent_name, object ids) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -3042,6 +3076,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPanelSelectMultiRangeAsync<TEntity>(IEnumerable<TEntity> entities, object field_name) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -3238,6 +3273,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPanelSelectRangeAsync<TEntity>(IEnumerable<TEntity> entities, object field_name) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -3384,6 +3420,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPanelSelectionRangeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_name) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -3615,6 +3652,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ViewHeaderGetAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -3625,6 +3663,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WebNameSearchAsync<TEntity>(IEnumerable<TEntity> entities, object name, object specification, object domain, object @operator, object limit) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -3844,6 +3883,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WebReadGroupAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object groupby, object aggregates, object limit, int offset, object order) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -4076,6 +4116,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WebReadGroupFillTemporalInternalAsync<TEntity>(IEnumerable<TEntity> entities, object groups, object groupby, object aggregates, object fill_from, object fill_to, object min_groups) where TEntity : IEntity<Guid>, IBaseable
         {
             /*
@@ -4565,6 +4606,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WebSearchReadAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object specification, object offset, object limit, object order, object count_limit) where TEntity : IEntity<Guid>, IBaseable
         {
             /*

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("LinkTrackerModule", Category = "Marketing", Depends = new[] { "utm", "mail" })]
-    public partial class LinkTrackerClickAppService : GenericApplicationService<LinkTrackerClick>, ILinkTrackerClickAppService
+    public partial class LinkTrackerClickAppService : GenericAppService<LinkTrackerClick>, ILinkTrackerClickAppService
     {
 
         public LinkTrackerClickAppService(IRepository<LinkTrackerClick, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,8 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<LinkTrackerClick> AddClickAsync(Guid id, LinkTrackerClickAddClickRequestDto input)
+        [ApiModel]
+        public async Task<LinkTrackerClick> AddClickAsync(LinkTrackerClickAddClickRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -51,7 +52,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return click
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LinkTrackerClick> PrepareClickValuesFromRouteInternalAsync()

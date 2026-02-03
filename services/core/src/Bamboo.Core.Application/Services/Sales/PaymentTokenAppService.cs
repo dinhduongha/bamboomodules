@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Payment", Category = "Sales", Depends = new[] { "onboarding", "portal" })]
-    public partial class PaymentTokenAppService : GenericApplicationService<PaymentToken>, IPaymentTokenAppService
+    public partial class PaymentTokenAppService : GenericAppService<PaymentToken>, IPaymentTokenAppService
     {
 
         public PaymentTokenAppService(IRepository<PaymentToken, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -158,7 +158,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentToken> GetLinkedRecordsInfoAsync(Guid id)
+        public async Task<PaymentToken> GetLinkedRecordsInfoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_token.py) ---
@@ -183,9 +183,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return []
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentToken> GetSpecificCreateValuesInternalAsync(object provider_code, object values)
         {
             /*

@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrCronAppService : IGenericApplicationService<IrCron>
     {
-        Task<IrCron> MethodDirectTriggerAsync(Guid id);
-        Task<IrCron> ToggleAsync(Guid id, IrCronToggleRequestDto input);
-        Task<IrCron> TryWriteAsync(Guid id, IrCronTryWriteRequestDto input);
+        Task<IrCron> MethodDirectTriggerAsync(Guid[] ids);
+        Task<IrCron> ToggleAsync(IrCronToggleRequestDto input);
+        Task<IrCron> TryWriteAsync(IrCronTryWriteRequestDto input);
     }
 }

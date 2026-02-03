@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResPartnerAppService : GenericApplicationService<ResPartner>, IResPartnerAppService
+    public partial class ResPartnerAppService : GenericAppService<ResPartner>, IResPartnerAppService
     {
         private readonly IAvatarMixinAppService _avatarMixinAppService;
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
@@ -77,6 +77,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> AddressFieldsInternalAsync()
         {
             /*
@@ -91,7 +92,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> AddressGetAsync(Guid id, ResPartnerAddressGetRequestDto input)
+        public async Task<ResPartner> AddressGetAsync(ResPartnerAddressGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -133,7 +134,9 @@ namespace Bamboo.Core.Application.Services
             //     result[adr_type] = result.get(adr_type) or default
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> AssetDifferenceSearchInternalAsync(object account_type, object @operator, object operand)
@@ -171,7 +174,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> AutocompleteByNameAsync(Guid id, ResPartnerAutocompleteByNameRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> AutocompleteByNameAsync(ResPartnerAutocompleteByNameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -191,10 +195,13 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return []
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> AutocompleteByVatAsync(Guid id, ResPartnerAutocompleteByVatRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> AutocompleteByVatAsync(ResPartnerAutocompleteByVatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -235,7 +242,9 @@ namespace Bamboo.Core.Application.Services
             //             })]
             //     return []
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> AvatarGetPlaceholderPathInternalAsync()
@@ -281,6 +290,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> BuildVatErrorMessageInternalAsync(object country_code, object wrong_vat, object record_label)
         {
             /*
@@ -398,7 +408,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> ButtonAccountPeppolCheckPartnerEndpointAsync(Guid id, ResPartnerButtonAccountPeppolCheckPartnerEndpointRequestDto input)
+        public async Task<ResPartner> ButtonAccountPeppolCheckPartnerEndpointAsync(ResPartnerButtonAccountPeppolCheckPartnerEndpointRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
@@ -445,7 +455,9 @@ namespace Bamboo.Core.Application.Services
             //     self._log_verification_state_update(company, old_value, self_partner.peppol_verification_state)
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> CanBeEditedByCurrentCustomerInternalAsync()
@@ -497,7 +509,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> CanEditVatAsync(Guid id)
+        public async Task<ResPartner> CanEditVatAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -520,7 +532,9 @@ namespace Bamboo.Core.Application.Services
             //     [('partner_id', 'child_of', self.commercial_partner_id.id)]
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> CheckBarcodeUnicityInternalAsync()
@@ -557,6 +571,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> CheckImportConsistencyInternalAsync(object vals_list)
         {
             /*
@@ -627,6 +642,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> CheckPeppolParticipantExistsInternalAsync(object participant_info, object edi_identification)
         {
             /*
@@ -653,7 +669,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> CheckVatAlAsync(Guid id, ResPartnerCheckVatAlRequestDto input)
+        public async Task<ResPartner> CheckVatAlAsync(ResPartnerCheckVatAlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -662,10 +678,12 @@ namespace Bamboo.Core.Application.Services
             // number = stdnum.util.get_cc_module('al', 'vat').compact(vat)
             // return len(number) == 10 and self._check_vat_al_re.match(number)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatBrAsync(Guid id, ResPartnerCheckVatBrRequestDto input)
+        public async Task<ResPartner> CheckVatBrAsync(ResPartnerCheckVatBrRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -674,10 +692,12 @@ namespace Bamboo.Core.Application.Services
             // is_cnpj_valid = stdnum.get_cc_module('br', 'cnpj').is_valid
             // return is_cpf_valid(vat) or is_cnpj_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatChAsync(Guid id, ResPartnerCheckVatChRequestDto input)
+        public async Task<ResPartner> CheckVatChAsync(ResPartnerCheckVatChRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -708,10 +728,12 @@ namespace Bamboo.Core.Application.Services
             //     return check == int(num[8])
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatCrAsync(Guid id, ResPartnerCheckVatCrRequestDto input)
+        public async Task<ResPartner> CheckVatCrAsync(ResPartnerCheckVatCrRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -723,10 +745,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self._check_vat_cr_re.match(vat) or False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatDeAsync(Guid id, ResPartnerCheckVatDeRequestDto input)
+        public async Task<ResPartner> CheckVatDeAsync(ResPartnerCheckVatDeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -735,10 +759,12 @@ namespace Bamboo.Core.Application.Services
             // is_valid_stnr = stdnum.util.get_cc_module("de", "stnr").is_valid
             // return is_valid_vat(vat) or is_valid_stnr(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatDoAsync(Guid id, ResPartnerCheckVatDoRequestDto input)
+        public async Task<ResPartner> CheckVatDoAsync(ResPartnerCheckVatDoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -747,10 +773,12 @@ namespace Bamboo.Core.Application.Services
             // is_valid_cedula = stdnum.util.get_cc_module("do", "cedula").is_valid
             // return is_valid_vat(vat) or is_valid_cedula(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatEcAsync(Guid id, ResPartnerCheckVatEcRequestDto input)
+        public async Task<ResPartner> CheckVatEcAsync(ResPartnerCheckVatEcRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -758,10 +786,12 @@ namespace Bamboo.Core.Application.Services
             // vat = clean(vat, ' -.').upper().strip()
             // return self.is_valid_ruc_ec(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatGrAsync(Guid id, ResPartnerCheckVatGrRequestDto input)
+        public async Task<ResPartner> CheckVatGrAsync(ResPartnerCheckVatGrRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -772,10 +802,12 @@ namespace Bamboo.Core.Application.Services
             //     return True
             // return stdnum.util.get_cc_module('gr', 'vat').is_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatGtAsync(Guid id, ResPartnerCheckVatGtRequestDto input)
+        public async Task<ResPartner> CheckVatGtAsync(ResPartnerCheckVatGtRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -788,10 +820,12 @@ namespace Bamboo.Core.Application.Services
             //     return True
             // return stdnum.util.get_cc_module('gt', 'vat').is_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatHuAsync(Guid id, ResPartnerCheckVatHuRequestDto input)
+        public async Task<ResPartner> CheckVatHuAsync(ResPartnerCheckVatHuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -816,10 +850,12 @@ namespace Bamboo.Core.Application.Services
             // # Check the vat number
             // return stdnum.util.get_cc_module('hu', 'vat').is_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatIdAsync(Guid id, ResPartnerCheckVatIdRequestDto input)
+        public async Task<ResPartner> CheckVatIdAsync(ResPartnerCheckVatIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -845,20 +881,24 @@ namespace Bamboo.Core.Application.Services
             // 
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatIeAsync(Guid id, ResPartnerCheckVatIeRequestDto input)
+        public async Task<ResPartner> CheckVatIeAsync(ResPartnerCheckVatIeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def check_vat_ie(self, vat):
             // return stdnum.util.get_cc_module('ie', 'vat').is_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatIlAsync(Guid id, ResPartnerCheckVatIlRequestDto input)
+        public async Task<ResPartner> CheckVatIlAsync(ResPartnerCheckVatIlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -866,10 +906,12 @@ namespace Bamboo.Core.Application.Services
             // check_func = stdnum.util.get_cc_module('il', 'idnr').is_valid
             // return check_func(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatInAsync(Guid id, ResPartnerCheckVatInRequestDto input)
+        public async Task<ResPartner> CheckVatInAsync(ResPartnerCheckVatInRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -886,7 +928,9 @@ namespace Bamboo.Core.Application.Services
             //     return any(re.compile(rx).match(vat) for rx in all_gstin_re)
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> CheckVatInternalAsync(object validation)
@@ -903,7 +947,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> CheckVatJpAsync(Guid id, ResPartnerCheckVatJpRequestDto input)
+        public async Task<ResPartner> CheckVatJpAsync(ResPartnerCheckVatJpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -912,20 +956,24 @@ namespace Bamboo.Core.Application.Services
             //     vat = vat[1:]
             // return stdnum.util.get_cc_module('jp', 'vat').is_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatMaAsync(Guid id, ResPartnerCheckVatMaRequestDto input)
+        public async Task<ResPartner> CheckVatMaAsync(ResPartnerCheckVatMaRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def check_vat_ma(self, vat):
             // return vat.isdigit() and len(vat) == 8
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatMxAsync(Guid id, ResPartnerCheckVatMxRequestDto input)
+        public async Task<ResPartner> CheckVatMxAsync(ResPartnerCheckVatMxRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -951,10 +999,12 @@ namespace Bamboo.Core.Application.Services
             // # Valid format and valid date
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatNoAsync(Guid id, ResPartnerCheckVatNoRequestDto input)
+        public async Task<ResPartner> CheckVatNoAsync(ResPartnerCheckVatNoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -985,9 +1035,12 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // return check == int(vat[8])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> CheckVatNumberInternalAsync(object country_code, object vat_number)
         {
             /*
@@ -1001,7 +1054,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> CheckVatPeAsync(Guid id, ResPartnerCheckVatPeRequestDto input)
+        public async Task<ResPartner> CheckVatPeAsync(ResPartnerCheckVatPeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1015,20 +1068,24 @@ namespace Bamboo.Core.Application.Services
             //     dig_check = 1
             // return int(vat[10]) == dig_check
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatPhAsync(Guid id, ResPartnerCheckVatPhRequestDto input)
+        public async Task<ResPartner> CheckVatPhAsync(ResPartnerCheckVatPhRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def check_vat_ph(self, vat):
             // return len(vat) >= 11 and len(vat) <= 17 and self._check_vat_ph_re.match(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatRoAsync(Guid id, ResPartnerCheckVatRoRequestDto input)
+        public async Task<ResPartner> CheckVatRoAsync(ResPartnerCheckVatRoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1053,10 +1110,12 @@ namespace Bamboo.Core.Application.Services
             // # Check the vat number
             // return stdnum.util.get_cc_module('ro', 'vat').is_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatRsAsync(Guid id, ResPartnerCheckVatRsRequestDto input)
+        public async Task<ResPartner> CheckVatRsAsync(ResPartnerCheckVatRsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1064,10 +1123,12 @@ namespace Bamboo.Core.Application.Services
             // vat = vat.removeprefix('RS')
             // return stdnum.util.get_cc_module('rs', 'vat').is_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatRuAsync(Guid id, ResPartnerCheckVatRuRequestDto input)
+        public async Task<ResPartner> CheckVatRuAsync(ResPartnerCheckVatRuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1108,10 +1169,12 @@ namespace Bamboo.Core.Application.Services
             //         return False
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatSaAsync(Guid id, ResPartnerCheckVatSaRequestDto input)
+        public async Task<ResPartner> CheckVatSaAsync(ResPartnerCheckVatSaRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1122,10 +1185,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // return self._check_vat_sa_re.match(vat) or False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatThAsync(Guid id, ResPartnerCheckVatThRequestDto input)
+        public async Task<ResPartner> CheckVatThAsync(ResPartnerCheckVatThRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1133,20 +1198,24 @@ namespace Bamboo.Core.Application.Services
             // check_func = stdnum.util.get_cc_module('th', 'tin').is_valid
             // return check_func(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatTrAsync(Guid id, ResPartnerCheckVatTrRequestDto input)
+        public async Task<ResPartner> CheckVatTrAsync(ResPartnerCheckVatTrRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
             // def check_vat_tr(self, vat):
             // return stdnum.util.get_cc_module('tr', 'tckimlik').is_valid(vat) or stdnum.util.get_cc_module('tr', 'vkn').is_valid(vat)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatTwAsync(Guid id, ResPartnerCheckVatTwRequestDto input)
+        public async Task<ResPartner> CheckVatTwAsync(ResPartnerCheckVatTwRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1181,10 +1250,12 @@ namespace Bamboo.Core.Application.Services
             //     base_checksum = sum(int(d) for d in "".join(products[0:6] + products[7:]))
             //     return (base_checksum + 1) % 5 == 0 or base_checksum % 5 == 0
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatUaAsync(Guid id, ResPartnerCheckVatUaRequestDto input)
+        public async Task<ResPartner> CheckVatUaAsync(ResPartnerCheckVatUaRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1208,10 +1279,12 @@ namespace Bamboo.Core.Application.Services
             //             res.append(False)
             // return all(res)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatUyAsync(Guid id, ResPartnerCheckVatUyRequestDto input)
+        public async Task<ResPartner> CheckVatUyAsync(ResPartnerCheckVatUyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1244,10 +1317,12 @@ namespace Bamboo.Core.Application.Services
             //     and vat[-1] == calc_check_digit(vat)  # Invalid Check Digit
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatVeAsync(Guid id, ResPartnerCheckVatVeRequestDto input)
+        public async Task<ResPartner> CheckVatVeAsync(ResPartnerCheckVatVeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1302,10 +1377,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return check_digit == checksum_digit
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> CheckVatVnAsync(Guid id, ResPartnerCheckVatVnRequestDto input)
+        public async Task<ResPartner> CheckVatVnAsync(ResPartnerCheckVatVnRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1327,7 +1404,9 @@ namespace Bamboo.Core.Application.Services
             // vat = vat.strip()
             // return bool(self.__check_vat_vn_re.match(vat))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> ChildrenSyncInternalAsync(object values)
@@ -1365,6 +1444,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> ClearRemovedEdiFormatsInternalAsync()
         {
             /*
@@ -1388,6 +1468,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> CommercialFieldsInternalAsync()
         {
             /*
@@ -1445,6 +1526,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> CompanyDependentCommercialFieldsInternalAsync()
         {
             /*
@@ -3186,6 +3268,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> ConvertHuLocalToEuVatInternalAsync(object local_vat)
         {
             /*
@@ -3198,7 +3281,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> CopyDataAsync(Guid id, ResPartnerCopyDataRequestDto input)
+        public async Task<ResPartner> CopyDataAsync(ResPartnerCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -3209,10 +3292,12 @@ namespace Bamboo.Core.Application.Services
             //     return vals_list
             // return [dict(vals, name=self.env._("%s (copy)", partner.name)) for partner, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<ResPartner> CreateAsync(ResPartner entity, List<string> fields)
+        public override async Task<ResPartner> CreateAsync(CreateRequestDto<ResPartner> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -3274,10 +3359,10 @@ namespace Bamboo.Core.Application.Services
             //     partner._fields_sync(vals)
             // return partners
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<ResPartner> CreateCompanyAsync(Guid id)
+        public async Task<ResPartner> CreateCompanyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -3291,7 +3376,9 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> CreateContactParentCompanyInternalAsync()
@@ -3391,6 +3478,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> CreditSearchInternalAsync(object @operator, object operand)
         {
             /*
@@ -3401,6 +3489,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> DebitSearchInternalAsync(object @operator, object operand)
         {
             /*
@@ -3450,7 +3539,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<ResPartner> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<ResPartner> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: res_partner.py) ---
@@ -3477,7 +3567,7 @@ namespace Bamboo.Core.Application.Services
             //         values['type'] = None
             // return values
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
         protected async Task<ResPartner> DisplayAddressDependsInternalAsync()
@@ -3513,7 +3603,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> DoButtonPrintAsync(Guid id)
+        public async Task<ResPartner> DoButtonPrintAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3545,10 +3635,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return self.do_partner_print(wizard_partner_ids, data)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> DoPartnerMailAsync(Guid id)
+        public async Task<ResPartner> DoPartnerMailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3599,10 +3691,12 @@ namespace Bamboo.Core.Application.Services
             //              'payment_next_action': payment_next_action})
             // return unknown_mails
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> DoPartnerManualActionAsync(Guid id, ResPartnerDoPartnerManualActionRequestDto input)
+        public async Task<ResPartner> DoPartnerManualActionAsync(ResPartnerDoPartnerManualActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3628,10 +3722,12 @@ namespace Bamboo.Core.Application.Services
             //                    'payment_next_action': action_text,
             //                    'payment_responsible_id': responsible_id})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> DoPartnerManualDermanordAsync(Guid id, ResPartnerDoPartnerManualDermanordRequestDto input)
+        public async Task<ResPartner> DoPartnerManualDermanordAsync(ResPartnerDoPartnerManualDermanordRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3649,10 +3745,12 @@ namespace Bamboo.Core.Application.Services
             //             'payment_next_action': action_text,
             //             'payment_responsible_id': responsible_id})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> DoPartnerPrintAsync(Guid id, ResPartnerDoPartnerPrintRequestDto input)
+        public async Task<ResPartner> DoPartnerPrintAsync(ResPartnerDoPartnerPrintRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3669,10 +3767,12 @@ namespace Bamboo.Core.Application.Services
             //     'om_account_followup.action_report_followup').report_action(
             //     self, data=datas)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> DoneAsync(Guid id)
+        public async Task<ResPartner> DoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3681,10 +3781,13 @@ namespace Bamboo.Core.Application.Services
             //                    'payment_next_action': '',
             //                    'payment_responsible_id': False})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> EnrichByDomainAsync(Guid id, ResPartnerEnrichByDomainRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> EnrichByDomainAsync(ResPartnerEnrichByDomainRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -3694,10 +3797,13 @@ namespace Bamboo.Core.Application.Services
             // }, timeout=timeout)
             // return self._process_enriched_response(response, error)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> EnrichByDunsAsync(Guid id, ResPartnerEnrichByDunsRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> EnrichByDunsAsync(ResPartnerEnrichByDunsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -3707,10 +3813,13 @@ namespace Bamboo.Core.Application.Services
             // }, timeout=timeout)
             // return self._process_enriched_response(response, error)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> EnrichByGstAsync(Guid id, ResPartnerEnrichByGstRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> EnrichByGstAsync(ResPartnerEnrichByGstRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -3720,7 +3829,9 @@ namespace Bamboo.Core.Application.Services
             // }, timeout=timeout)
             // return self._process_enriched_response(response, error)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> EnsureSameCompanyThanProjectsInternalAsync()
@@ -3747,7 +3858,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> EventViewAsync(Guid id)
+        public async Task<ResPartner> EventViewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: res_partner.py) ---
@@ -3757,7 +3868,9 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('registration_ids.partner_id', 'child_of', self.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> FetchChildrenPartnersForHierarchyInternalAsync()
@@ -3846,7 +3959,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> FieldsViewGetAsync(Guid id, ResPartnerFieldsViewGetRequestDto input)
+        public async Task<ResPartner> FieldsViewGetAsync(ResPartnerFieldsViewGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3863,7 +3976,9 @@ namespace Bamboo.Core.Application.Services
             //     res['arch'] = etree.tostring(doc, encoding="utf-8")
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> FindAccountingPartnerInternalAsync(object partner)
@@ -3877,7 +3992,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> FindOrCreateAsync(Guid id, ResPartnerFindOrCreateRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> FindOrCreateAsync(ResPartnerFindOrCreateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -3929,9 +4045,12 @@ namespace Bamboo.Core.Application.Services
             //     create_values['email'] = parsed_email_normalized
             // return self.create(create_values)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> FindOrCreateFromEmailsInternalAsync(object emails, object ban_emails, object filter_found, object additional_values, object no_create, object sort_key, object sort_reverse)
         {
             /*
@@ -4054,6 +4173,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> FormatDataCompanyInternalAsync(object iap_data)
         {
             /*
@@ -4067,7 +4187,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> FormatVatChAsync(Guid id, ResPartnerFormatVatChRequestDto input)
+        public async Task<ResPartner> FormatVatChAsync(ResPartnerFormatVatChRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4075,10 +4195,12 @@ namespace Bamboo.Core.Application.Services
             // stdnum_vat_format = stdnum.util.get_cc_module('ch', 'vat').format
             // return stdnum_vat_format('CH' + vat)[2:]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> FormatVatClAsync(Guid id, ResPartnerFormatVatClRequestDto input)
+        public async Task<ResPartner> FormatVatClAsync(ResPartnerFormatVatClRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4089,10 +4211,12 @@ namespace Bamboo.Core.Application.Services
             //     return vat[:-1] + '-' + vat[-1]
             // return vat
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> FormatVatCoAsync(Guid id, ResPartnerFormatVatCoRequestDto input)
+        public async Task<ResPartner> FormatVatCoAsync(ResPartnerFormatVatCoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4104,10 +4228,12 @@ namespace Bamboo.Core.Application.Services
             //     return vat[:-1] + '-' + vat[-1]
             // return vat
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> FormatVatEuAsync(Guid id, ResPartnerFormatVatEuRequestDto input)
+        public async Task<ResPartner> FormatVatEuAsync(ResPartnerFormatVatEuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4116,10 +4242,12 @@ namespace Bamboo.Core.Application.Services
             // # may have a VATIN starting with "EU" instead of a country code.
             // return vat
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> FormatVatHuAsync(Guid id, ResPartnerFormatVatHuRequestDto input)
+        public async Task<ResPartner> FormatVatHuAsync(ResPartnerFormatVatHuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4131,9 +4259,12 @@ namespace Bamboo.Core.Application.Services
             //     vat = vat[:8] + '-' + vat[8] + '-' + vat[9] + vat[10]
             // return vat
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> FormatVatNumberInternalAsync(object country_code, object vat)
         {
             /*
@@ -4151,7 +4282,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> FormatVatSmAsync(Guid id, ResPartnerFormatVatSmRequestDto input)
+        public async Task<ResPartner> FormatVatSmAsync(ResPartnerFormatVatSmRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4159,10 +4290,12 @@ namespace Bamboo.Core.Application.Services
             // stdnum_vat_format = stdnum.util.get_cc_module('sm', 'vat').compact
             // return stdnum_vat_format('SM' + vat)[2:]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> FormatVatVnAsync(Guid id, ResPartnerFormatVatVnRequestDto input)
+        public async Task<ResPartner> FormatVatVnAsync(ResPartnerFormatVatVnRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4174,9 +4307,12 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return vat
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> FormattingAddressFieldsInternalAsync()
         {
             /*
@@ -4244,7 +4380,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GeoLocalizeAsync(Guid id)
+        public async Task<ResPartner> GeoLocalizeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_geolocalize, FILE: res_partner.py) ---
@@ -4281,9 +4417,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GeoLocalizeInternalAsync(object street, object zip, object city, object state, object country)
         {
             /*
@@ -4310,6 +4449,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetAddressFormatInternalAsync()
         {
             /*
@@ -4408,7 +4548,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetAttendeeDetailAsync(Guid id, ResPartnerGetAttendeeDetailRequestDto input)
+        public async Task<ResPartner> GetAttendeeDetailAsync(ResPartnerGetAttendeeDetailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_partner.py) ---
@@ -4437,17 +4577,21 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return attendees_details
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> GetBackendMenuIdAsync(Guid id)
+        public async Task<ResPartner> GetBackendMenuIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_customer, FILE: res_partner.py) ---
             // def get_backend_menu_id(self):
             // return self.env.ref('contacts.menu_contacts').id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> GetBackendRootMenuIdsInternalAsync()
@@ -4602,6 +4746,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetCurrentPersonaInternalAsync()
         {
             /*
@@ -4614,6 +4759,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetDefaultAddressFormatInternalAsync()
         {
             /*
@@ -4640,6 +4786,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetEdiBuilderInternalAsync(object invoice_edi_format)
         {
             /*
@@ -4722,7 +4869,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetFollowupTableHtmlAsync(Guid id)
+        public async Task<ResPartner> GetFollowupTableHtmlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -4778,7 +4925,9 @@ namespace Bamboo.Core.Application.Services
             //             "Amount due") + ''' : %s </center>''' % (total)
             // return followup_table
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> GetFrontendWritableFieldsInternalAsync()
@@ -4835,7 +4984,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<ResPartner> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -4845,7 +4995,9 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/base/static/xls/contacts_import_template.xlsx',
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> GetLatestInternalAsync()
@@ -4897,7 +5049,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetMentionSuggestionsAsync(Guid id, ResPartnerGetMentionSuggestionsRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> GetMentionSuggestionsAsync(ResPartnerGetMentionSuggestionsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -4916,9 +5069,12 @@ namespace Bamboo.Core.Application.Services
             //     pass
             // return store.get_result()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetMentionSuggestionsDomainInternalAsync(object search)
         {
             /*
@@ -4929,7 +5085,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetMentionSuggestionsFromChannelAsync(Guid id, ResPartnerGetMentionSuggestionsFromChannelRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> GetMentionSuggestionsFromChannelAsync(ResPartnerGetMentionSuggestionsFromChannelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -4980,7 +5137,9 @@ namespace Bamboo.Core.Application.Services
             //     pass
             // return store.get_result()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> GetMentionTokenInternalAsync()
@@ -5016,7 +5175,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetNewPartnerAsync(Guid id, ResPartnerGetNewPartnerRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> GetNewPartnerAsync(ResPartnerGetNewPartnerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
@@ -5035,9 +5195,12 @@ namespace Bamboo.Core.Application.Services
             //     'account.fiscal.position': self.env['account.fiscal.position']._load_pos_data_read(fiscal_positions, config),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetOnLeaveIdsInternalAsync()
         {
             /*
@@ -5048,6 +5211,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetParticipantInfoInternalAsync(object edi_identification)
         {
             /*
@@ -5071,6 +5235,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetPartnerFromTokenInternalAsync(object token)
         {
             /*
@@ -5087,7 +5252,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetPartnerLocalisationFieldsRequiredToInvoiceAsync(Guid id, ResPartnerGetPartnerLocalisationFieldsRequiredToInvoiceRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> GetPartnerLocalisationFieldsRequiredToInvoiceAsync(ResPartnerGetPartnerLocalisationFieldsRequiredToInvoiceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -5102,7 +5268,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // return []
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> GetPartnersInternalAsync()
@@ -5153,6 +5321,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetPeppolFormatsInternalAsync()
         {
             /*
@@ -5164,6 +5333,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetPeppolVerificationStateInternalAsync(object peppol_endpoint, object peppol_eas, object invoice_edi_format, object process_type)
         {
             /*
@@ -5190,6 +5360,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetSaleOrderDomainCountInternalAsync()
         {
             /*
@@ -5471,6 +5642,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetUblCiiFormatsByCountryInternalAsync()
         {
             /*
@@ -5489,6 +5661,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetUblCiiFormatsInfoInternalAsync()
         {
             /*
@@ -5511,6 +5684,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetUblCiiFormatsInternalAsync()
         {
             /*
@@ -5558,6 +5732,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetViewCacheKeyInternalAsync(Guid view_id, object view_type)
         {
             /*
@@ -5570,6 +5745,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> GetViewInternalAsync(Guid view_id, object view_type)
         {
             /*
@@ -5586,7 +5762,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetWorkingHoursForAllAttendeesAsync(Guid id, ResPartnerGetWorkingHoursForAllAttendeesRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> GetWorkingHoursForAllAttendeesAsync(ResPartnerGetWorkingHoursForAllAttendeesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_calendar, FILE: res_partner.py) ---
@@ -5600,10 +5777,12 @@ namespace Bamboo.Core.Application.Services
             //     return []
             // return self._interval_to_business_hours(reduce(Intervals.__and__, schedule_by_partner.values()))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> GetWorklocationAsync(Guid id, ResPartnerGetWorklocationRequestDto input)
+        public async Task<ResPartner> GetWorklocationAsync(ResPartnerGetWorklocationRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_homeworking_calendar, FILE: res_partner.py) ---
@@ -5613,10 +5792,12 @@ namespace Bamboo.Core.Application.Services
             //     ('company_id.id', '=', self.env.company.id)])
             // return employee_id._get_worklocation(start_date, end_date)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> GoogleMapImgAsync(Guid id, ResPartnerGoogleMapImgRequestDto input)
+        public async Task<ResPartner> GoogleMapImgAsync(ResPartnerGoogleMapImgRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_partner.py) ---
@@ -5633,10 +5814,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return '//maps.googleapis.com/maps/api/staticmap?' + werkzeug.urls.url_encode(params)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> GoogleMapLinkAsync(Guid id, ResPartnerGoogleMapLinkRequestDto input)
+        public async Task<ResPartner> GoogleMapLinkAsync(ResPartnerGoogleMapLinkRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_partner.py) ---
@@ -5647,7 +5830,9 @@ namespace Bamboo.Core.Application.Services
             // }
             // return 'https://maps.google.com/maps?' + werkzeug.urls.url_encode(params)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> GoogleMapSignedImgInternalAsync(object zoom, object width, object height)
@@ -5745,7 +5930,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> IapPartnerAutocompleteGetTagIdsAsync(Guid id, ResPartnerIapPartnerAutocompleteGetTagIdsRequestDto input)
+        public async Task<ResPartner> IapPartnerAutocompleteGetTagIdsAsync(ResPartnerIapPartnerAutocompleteGetTagIdsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -5769,9 +5954,12 @@ namespace Bamboo.Core.Application.Services
             //         tag_ids |= self.env['res.partner.category'].create({'name': tag_name})
             // return tag_ids.ids
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> IapReplaceIndustryCodeInternalAsync(object iap_data)
         {
             /*
@@ -5785,6 +5973,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> IapReplaceLanguageCodesInternalAsync(object iap_data)
         {
             /*
@@ -5802,6 +5991,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> IapReplaceLocationCodesInternalAsync(object iap_data)
         {
             /*
@@ -6019,7 +6209,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> IsValidRucEcAsync(Guid id, ResPartnerIsValidRucEcRequestDto input)
+        public async Task<ResPartner> IsValidRucEcAsync(ResPartnerIsValidRucEcRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -6028,9 +6218,12 @@ namespace Bamboo.Core.Application.Services
             //     return True
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -6049,6 +6242,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -6066,6 +6260,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -6183,6 +6378,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> MondialrelaySearchOrCreateInternalAsync(object data)
         {
             /*
@@ -6241,14 +6437,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> OnchangeCompanyTypeAsync(Guid id)
+        public async Task<ResPartner> OnchangeCompanyTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def onchange_company_type(self):
             // self.is_company = (self.company_type == 'company')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> OnchangeCountryIdInternalAsync()
@@ -6267,7 +6465,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> OnchangeParentIdAsync(Guid id)
+        public async Task<ResPartner> OnchangeParentIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -6285,7 +6483,9 @@ namespace Bamboo.Core.Application.Services
             //         result['value'] = address_values
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> OnchangePhoneValidationInternalAsync()
@@ -6356,17 +6556,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> OpenBusinessDocAsync(Guid id)
+        public async Task<ResPartner> OpenBusinessDocAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def action_open_business_doc(self):
             // return self._get_records_action()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> OpenCommercialEntityAsync(Guid id)
+        public async Task<ResPartner> OpenCommercialEntityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
@@ -6386,10 +6588,12 @@ namespace Bamboo.Core.Application.Services
             //         'target': 'current',
             //         }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> OpenEmployeesAsync(Guid id)
+        public async Task<ResPartner> OpenEmployeesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
@@ -6412,7 +6616,9 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResPartner> OrderInternalAsync()
@@ -6503,6 +6709,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> PeppolLookupParticipantInternalAsync(object edi_identification)
         {
             /*
@@ -6568,7 +6775,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> PrivacyLookupAsync(Guid id)
+        public async Task<ResPartner> PrivacyLookupAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: privacy_lookup, FILE: res_partner.py) ---
@@ -6581,9 +6788,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> ProcessEnrichedResponseInternalAsync(object response, object error)
         {
             /*
@@ -6660,6 +6870,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> RetrievePartnerWithNameInternalAsync(object name, object extra_domain)
         {
             /*
@@ -6672,6 +6883,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> RetrievePartnerWithPhoneEmailInternalAsync(object phone, object email, object extra_domain)
         {
             /*
@@ -6694,6 +6906,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> RetrievePartnerWithVatInternalAsync(object vat, object extra_domain)
         {
             /*
@@ -6751,6 +6964,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> RunVatChecksInternalAsync(object country, object vat, object partner_name, object validation)
         {
             /*
@@ -6835,7 +7049,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> ScheduleMeetingAsync(Guid id)
+        public async Task<ResPartner> ScheduleMeetingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_partner.py) ---
@@ -6850,10 +7064,13 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = ['|', ('id', 'in', self._compute_meeting()[self.id]), ('partner_ids', 'in', self.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> SearchForChannelInviteAsync(Guid id, ResPartnerSearchForChannelInviteRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> SearchForChannelInviteAsync(ResPartnerSearchForChannelInviteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -6904,9 +7121,12 @@ namespace Bamboo.Core.Application.Services
             //     "store_data": store.get_result(),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> SearchForChannelInviteInternalAsync(object store, object search_term, Guid channel_id, object limit)
         {
             /*
@@ -7003,6 +7223,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> SearchMentionSuggestionsInternalAsync(object domain, object limit, object extra_domain)
         {
             /*
@@ -7060,6 +7281,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> SetCalendarLastNotifAckInternalAsync()
         {
             /*
@@ -7071,17 +7293,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> SignupCancelAsync(Guid id)
+        public async Task<ResPartner> SignupCancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
             // def signup_cancel(self):
             // return self.write({'signup_type': None})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> SignupGetAuthParamAsync(Guid id)
+        public async Task<ResPartner> SignupGetAuthParamAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
@@ -7104,20 +7328,24 @@ namespace Bamboo.Core.Application.Services
             //         res[partner.id]['auth_login'] = partner.user_ids[0].login
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> SignupPrepareAsync(Guid id)
+        public async Task<ResPartner> SignupPrepareAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
             // def action_signup_prepare(self):
             // return self.signup_prepare()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> SignupPrepareAsync(Guid id, ResPartnerSignupPrepareRequestDto input)
+        public async Task<ResPartner> SignupPrepareAsync(ResPartnerSignupPrepareRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
@@ -7126,9 +7354,12 @@ namespace Bamboo.Core.Application.Services
             // self.write({'signup_type': signup_type})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> SignupRetrieveInfoInternalAsync(object token)
         {
             /*
@@ -7166,6 +7397,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> SignupRetrievePartnerInternalAsync(object token, object check_validity, object raise_exception)
         {
             /*
@@ -7199,6 +7431,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResPartner> SyncedCommercialFieldsInternalAsync()
         {
             /*
@@ -7379,7 +7612,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> ViewCertificationsAsync(Guid id)
+        public async Task<ResPartner> ViewCertificationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: res_partner.py) ---
@@ -7390,10 +7623,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewCoursesAsync(Guid id)
+        public async Task<ResPartner> ViewCoursesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: res_partner.py) ---
@@ -7413,10 +7648,13 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = Domain.AND([action['domain'], [('partner_id', 'in', self.ids)]])
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewHeaderGetAsync(Guid id, ResPartnerViewHeaderGetRequestDto input)
+        [ApiModel]
+        public async Task<ResPartner> ViewHeaderGetAsync(ResPartnerViewHeaderGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -7428,10 +7666,12 @@ namespace Bamboo.Core.Application.Services
             //     )
             // return super().view_header_get(view_id, view_type)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewLivechatSessionsAsync(Guid id)
+        public async Task<ResPartner> ViewLivechatSessionsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: res_partner.py) ---
@@ -7447,10 +7687,12 @@ namespace Bamboo.Core.Application.Services
             // ])
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewLoyaltyCardsAsync(Guid id)
+        public async Task<ResPartner> ViewLoyaltyCardsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: res_partner.py) ---
@@ -7461,10 +7703,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'search_default_active' : True, 'create': False}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewOpportunityAsync(Guid id)
+        public async Task<ResPartner> ViewOpportunityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_partner.py) ---
@@ -7481,10 +7725,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = self._get_contact_opportunities_domain()
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewPartnerInvoicesAsync(Guid id)
+        public async Task<ResPartner> ViewPartnerInvoicesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -7499,10 +7745,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale', 'search_default_unpaid': 1}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewPosOrderAsync(Guid id)
+        public async Task<ResPartner> ViewPosOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
@@ -7517,10 +7765,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('partner_id', '=', self.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewStockSerialAsync(Guid id)
+        public async Task<ResPartner> ViewStockSerialAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_partner.py) ---
@@ -7530,10 +7780,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = {'display_complete': True}
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartner> ViewTasksAsync(Guid id)
+        public async Task<ResPartner> ViewTasksAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: res_partner.py) ---
@@ -7556,10 +7808,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = search_domain
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ResPartner entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ResPartner> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -7764,7 +8018,7 @@ namespace Bamboo.Core.Application.Services
             //                 partner_ids=[responsible_partner_id])
             // return super(ResPartner, self).write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
 
         protected async Task<ResPartner> WriteCompanyTypeInternalAsync()

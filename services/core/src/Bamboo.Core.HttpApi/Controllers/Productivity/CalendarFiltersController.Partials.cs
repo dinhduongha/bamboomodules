@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/unlink-from-partner-id")]
-        public async Task<IActionResult> UnlinkFromPartnerIdAsync(Guid id, [FromBody] CalendarFiltersUnlinkFromPartnerIdRequestDto input)
+        [Route("unlink-from-partner-id")]
+        public async Task<IActionResult> UnlinkFromPartnerIdAsync(CalendarFiltersUnlinkFromPartnerIdRequestDto input)
         {
-            var result = await _appService.UnlinkFromPartnerIdAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UnlinkFromPartnerIdAsync(input);
             return Ok(result);
         }
     }

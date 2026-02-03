@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrHolidays", Category = "HumanResources", Depends = new[] { "hr", "calendar", "resource" })]
-    public partial class HrLeaveAccrualLevelAppService : GenericApplicationService<HrLeaveAccrualLevel>, IHrLeaveAccrualLevelAppService
+    public partial class HrLeaveAccrualLevelAppService : GenericAppService<HrLeaveAccrualLevel>, IHrLeaveAccrualLevelAppService
     {
 
         public HrLeaveAccrualLevelAppService(IRepository<HrLeaveAccrualLevel, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -370,14 +370,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAccrualLevel> SaveNewAsync(Guid id)
+        public async Task<HrLeaveAccrualLevel> SaveNewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan_level.py) ---
             // def action_save_new(self):
             // return self.accrual_plan_id.action_create_accrual_plan_level()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveAccrualLevel> SetDayInternalAsync(object day_field, object month_field)

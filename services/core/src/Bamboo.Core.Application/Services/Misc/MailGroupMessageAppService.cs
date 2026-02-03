@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MailGroupModule", Category = "Misc", Depends = new[] { "mail", "portal" })]
-    public partial class MailGroupMessageAppService : GenericApplicationService<MailGroupMessage>, IMailGroupMessageAppService
+    public partial class MailGroupMessageAppService : GenericAppService<MailGroupMessage>, IMailGroupMessageAppService
     {
 
         public MailGroupMessageAppService(IRepository<MailGroupMessage, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -98,7 +98,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroupMessage> CopyDataAsync(Guid id, MailGroupMessageCopyDataRequestDto input)
+        public async Task<MailGroupMessage> CopyDataAsync(MailGroupMessageCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -108,7 +108,9 @@ namespace Bamboo.Core.Application.Services
             //     vals['mail_message_id'] = message.mail_message_id.copy().id
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailGroupMessage> CreateModerationRuleInternalAsync(object status)
@@ -174,7 +176,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroupMessage> ModerateAcceptAsync(Guid id)
+        public async Task<MailGroupMessage> ModerateAcceptAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -193,10 +195,12 @@ namespace Bamboo.Core.Application.Services
             // for message in self:
             //     message.mail_group_id._notify_members(message)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailGroupMessage> ModerateAllowAsync(Guid id)
+        public async Task<MailGroupMessage> ModerateAllowAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -207,10 +211,12 @@ namespace Bamboo.Core.Application.Services
             // same_author = self._get_pending_same_author_same_group()
             // same_author.action_moderate_accept()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailGroupMessage> ModerateBanAsync(Guid id)
+        public async Task<MailGroupMessage> ModerateBanAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -221,10 +227,12 @@ namespace Bamboo.Core.Application.Services
             // same_author = self._get_pending_same_author_same_group()
             // same_author.action_moderate_reject()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailGroupMessage> ModerateBanWithCommentAsync(Guid id, MailGroupMessageModerateBanWithCommentRequestDto input)
+        public async Task<MailGroupMessage> ModerateBanWithCommentAsync(MailGroupMessageModerateBanWithCommentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -238,10 +246,12 @@ namespace Bamboo.Core.Application.Services
             // same_author = self._get_pending_same_author_same_group()
             // same_author.action_moderate_reject()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailGroupMessage> ModerateRejectAsync(Guid id)
+        public async Task<MailGroupMessage> ModerateRejectAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -252,10 +262,12 @@ namespace Bamboo.Core.Application.Services
             //     'moderator_id': self.env.uid,
             // })
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailGroupMessage> ModerateRejectWithCommentAsync(Guid id, MailGroupMessageModerateRejectWithCommentRequestDto input)
+        public async Task<MailGroupMessage> ModerateRejectWithCommentAsync(MailGroupMessageModerateRejectWithCommentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -265,7 +277,9 @@ namespace Bamboo.Core.Application.Services
             //     self._moderate_send_reject_email(reject_subject, reject_comment)
             // self.action_moderate_reject()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailGroupMessage> ModerateSendRejectEmailInternalAsync(object subject, object comment)

@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAnalyticAccountAppService : IGenericApplicationService<AccountAnalyticAccount>
     {
-        Task<AccountAnalyticAccount> CopyDataAsync(Guid id, AccountAnalyticAccountCopyDataRequestDto input);
-        Task<AccountAnalyticAccount> ViewInvoiceAsync(Guid id);
-        Task<AccountAnalyticAccount> ViewMrpBomAsync(Guid id);
-        Task<AccountAnalyticAccount> ViewMrpProductionAsync(Guid id);
-        Task<AccountAnalyticAccount> ViewProjectsAsync(Guid id);
-        Task<AccountAnalyticAccount> ViewPurchaseOrdersAsync(Guid id);
-        Task<AccountAnalyticAccount> ViewVendorBillAsync(Guid id);
-        Task<AccountAnalyticAccount> ViewWorkorderAsync(Guid id);
-        Task<List<Dictionary<string, object>>> WebReadAsync(Guid id, AccountAnalyticAccountWebReadRequestDto input);
+        Task<AccountAnalyticAccount> CopyDataAsync(AccountAnalyticAccountCopyDataRequestDto input);
+        Task<AccountAnalyticAccount> ViewInvoiceAsync(Guid[] ids);
+        Task<AccountAnalyticAccount> ViewMrpBomAsync(Guid[] ids);
+        Task<AccountAnalyticAccount> ViewMrpProductionAsync(Guid[] ids);
+        Task<AccountAnalyticAccount> ViewProjectsAsync(Guid[] ids);
+        Task<AccountAnalyticAccount> ViewPurchaseOrdersAsync(Guid[] ids);
+        Task<AccountAnalyticAccount> ViewVendorBillAsync(Guid[] ids);
+        Task<AccountAnalyticAccount> ViewWorkorderAsync(Guid[] ids);
+        Task<List<Dictionary<string, object>>> WebReadAsync(AccountAnalyticAccountWebReadRequestDto input);
     }
 }

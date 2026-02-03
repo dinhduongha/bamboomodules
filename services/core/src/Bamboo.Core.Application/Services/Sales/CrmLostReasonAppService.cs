@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Crm", Category = "Sales", Depends = new[] { "base_setup", "sales_team", "mail", "calendar", "resource", "utm", "web_tour", "contacts", "digest", "phone_validation" })]
-    public partial class CrmLostReasonAppService : GenericApplicationService<CrmLostReason>, ICrmLostReasonAppService
+    public partial class CrmLostReasonAppService : GenericAppService<CrmLostReason>, ICrmLostReasonAppService
     {
 
         public CrmLostReasonAppService(IRepository<CrmLostReason, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -43,7 +43,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLostReason> LostLeadsAsync(Guid id)
+        public async Task<CrmLostReason> LostLeadsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lost_reason.py) ---
@@ -57,7 +57,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'create': False, 'active_test': False},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

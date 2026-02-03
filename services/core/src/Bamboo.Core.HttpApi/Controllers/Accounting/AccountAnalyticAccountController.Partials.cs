@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-invoice")]
-        public async Task<IActionResult> ActionViewInvoiceAsync(Guid id)
+        [Route("action-view-invoice")]
+        public async Task<IActionResult> ActionViewInvoiceAsync(Guid[] ids)
         {
-            var result = await _appService.ViewInvoiceAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewInvoiceAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mrp-bom")]
-        public async Task<IActionResult> ActionViewMrpBomAsync(Guid id)
+        [Route("action-view-mrp-bom")]
+        public async Task<IActionResult> ActionViewMrpBomAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMrpBomAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMrpBomAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-mrp-production")]
-        public async Task<IActionResult> ActionViewMrpProductionAsync(Guid id)
+        [Route("action-view-mrp-production")]
+        public async Task<IActionResult> ActionViewMrpProductionAsync(Guid[] ids)
         {
-            var result = await _appService.ViewMrpProductionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewMrpProductionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-projects")]
-        public async Task<IActionResult> ActionViewProjectsAsync(Guid id)
+        [Route("action-view-projects")]
+        public async Task<IActionResult> ActionViewProjectsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewProjectsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewProjectsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-purchase-orders")]
-        public async Task<IActionResult> ActionViewPurchaseOrdersAsync(Guid id)
+        [Route("action-view-purchase-orders")]
+        public async Task<IActionResult> ActionViewPurchaseOrdersAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPurchaseOrdersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPurchaseOrdersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-vendor-bill")]
-        public async Task<IActionResult> ActionViewVendorBillAsync(Guid id)
+        [Route("action-view-vendor-bill")]
+        public async Task<IActionResult> ActionViewVendorBillAsync(Guid[] ids)
         {
-            var result = await _appService.ViewVendorBillAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewVendorBillAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-workorder")]
-        public async Task<IActionResult> ActionViewWorkorderAsync(Guid id)
+        [Route("action-view-workorder")]
+        public async Task<IActionResult> ActionViewWorkorderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewWorkorderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewWorkorderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountAnalyticAccountCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(AccountAnalyticAccountCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/web-read")]
-        public async Task<IActionResult> WebReadAsync(Guid id, [FromBody] AccountAnalyticAccountWebReadRequestDto input)
+        [Route("web-read")]
+        public async Task<IActionResult> WebReadAsync(AccountAnalyticAccountWebReadRequestDto input)
         {
-            var result = await _appService.WebReadAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.WebReadAsync(input);
             return Ok(result);
         }
     }

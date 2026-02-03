@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrActionsTodoAppService : IGenericApplicationService<IrActionsTodo>
     {
-        Task<IrActionsTodo> EnsureOneOpenTodoAsync(Guid id);
-        Task<IrActionsTodo> LaunchAsync(Guid id);
-        Task<IrActionsTodo> OpenAsync(Guid id);
+        Task<IrActionsTodo> EnsureOneOpenTodoAsync(Guid[] ids);
+        Task<IrActionsTodo> LaunchAsync(Guid[] ids);
+        Task<IrActionsTodo> OpenAsync(Guid[] ids);
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mrp", Category = "SupplyChain", Depends = new[] { "product", "stock", "resource" })]
-    public partial class MrpWorkcenterProductivityAppService : GenericApplicationService<MrpWorkcenterProductivity>, IMrpWorkcenterProductivityAppService
+    public partial class MrpWorkcenterProductivityAppService : GenericAppService<MrpWorkcenterProductivity>, IMrpWorkcenterProductivityAppService
     {
 
         public MrpWorkcenterProductivityAppService(IRepository<MrpWorkcenterProductivity, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<MrpWorkcenterProductivity> ButtonBlockAsync(Guid id)
+        public async Task<MrpWorkcenterProductivity> ButtonBlockAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
@@ -35,7 +35,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.workcenter_id.order_ids.end_all()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpWorkcenterProductivity> CheckOpenTimeIdsInternalAsync()

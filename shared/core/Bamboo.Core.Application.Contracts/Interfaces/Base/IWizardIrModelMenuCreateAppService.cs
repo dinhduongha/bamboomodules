@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWizardIrModelMenuCreateAppService : IGenericApplicationService<WizardIrModelMenuCreate>
     {
-        Task<WizardIrModelMenuCreate> MenuCreateAsync(Guid id);
+        Task<WizardIrModelMenuCreate> MenuCreateAsync(Guid[] ids);
     }
 }

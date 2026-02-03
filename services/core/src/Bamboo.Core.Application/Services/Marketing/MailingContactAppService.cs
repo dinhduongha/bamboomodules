@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("MassMailing", Category = "Marketing", Depends = new[] { "contacts", "mail", "html_builder", "utm", "link_tracker", "social_media", "web_tour", "digest" })]
-    public partial class MailingContactAppService : GenericApplicationService<MailingContact>, IMailingContactAppService
+    public partial class MailingContactAppService : GenericAppService<MailingContact>, IMailingContactAppService
     {
         private readonly IMailThreadBlacklistAppService _mailThreadBlacklistAppService;
         private readonly IMailThreadPhoneAppService _mailThreadPhoneAppService;
@@ -31,7 +31,8 @@ namespace Bamboo.Core.Application.Services
             _propertiesBaseDefinitionMixinAppService = propertiesBaseDefinitionMixinAppService;
         }
 
-        public async Task<MailingContact> AddToListAsync(Guid id, MailingContactAddToListRequestDto input)
+        [ApiModel]
+        public async Task<MailingContact> AddToListAsync(MailingContactAddToListRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
@@ -40,10 +41,12 @@ namespace Bamboo.Core.Application.Services
             // contact = self.create({'name': name, 'email': email, 'list_ids': [(4, list_id)]})
             // return contact.id, contact.display_name
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingContact> AddToMailingListAsync(Guid id)
+        public async Task<MailingContact> AddToMailingListAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
@@ -56,7 +59,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailingContact> ComputeNameInternalAsync()
@@ -88,7 +93,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingContact> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<MailingContact> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
@@ -98,10 +104,12 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/mass_mailing/static/xls/mailing_contact.xls'
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailingContact> ImportAsync(Guid id)
+        public async Task<MailingContact> ImportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
@@ -116,9 +124,12 @@ namespace Bamboo.Core.Application.Services
             // 
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<MailingContact> IsNameSplitActivatedInternalAsync()
         {
             /*
@@ -131,6 +142,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailingContact> SearchOptOutInternalAsync(object @operator, object @value)
         {
             /*

@@ -9,20 +9,22 @@ namespace Bamboo.Core.HttpApi.Controllers
 {
     public partial class DiscussChannelMemberController
     {
-        // v18-COMPAT
+
         // [HttpPost]
-        // [Route("{id}/init")]
-        // public async Task<IActionResult> InitAsync(Guid id)
+        // [Route("init")]
+        // public async Task<IActionResult> InitAsync(Guid[] ids)
         // {
-        //     var result = await _appService.InitAsync(id);
+        //     // content_action has_extra_params: False
+        //     var result = await _appService.InitAsync(ids);
         //     return Ok(result);
         // }
 
         // [HttpPost]
-        // [Route("{id}/set-custom-notifications")]
-        // public async Task<IActionResult> SetCustomNotificationsAsync(Guid id, [FromBody] DiscussChannelMemberSetCustomNotificationsRequestDto input)
+        // [Route("set-custom-notifications")]
+        // public async Task<IActionResult> SetCustomNotificationsAsync(DiscussChannelMemberSetCustomNotificationsRequestDto input)
         // {
-        //     var result = await _appService.SetCustomNotificationsAsync(id, input);
+        //     // content_action has_extra_params: True
+        //     var result = await _appService.SetCustomNotificationsAsync(input);
         //     return Ok(result);
         // }
     }

@@ -10,11 +10,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrVersionAppService : IGenericApplicationService<HrVersion>
     {
-        Task<HrVersion> CheckContractFinishedAsync(Guid id);
-        Task<HrVersion> GenerateWorkEntriesAsync(Guid id, HrVersionGenerateWorkEntriesRequestDto input);
-        Task<HrVersion> GetFormviewActionAsync(Guid id, HrVersionGetFormviewActionRequestDto input);
-        Task<HrVersion> GetValuesFromContractTemplateAsync(Guid id, HrVersionGetValuesFromContractTemplateRequestDto input);
-        Task<HrVersion> HasStaticWorkEntriesAsync(Guid id);
-        Task<HrVersion> OpenVersionAsync(Guid id);
+        Task<HrVersion> CheckContractFinishedAsync(Guid[] ids);
+        Task<HrVersion> GenerateWorkEntriesAsync(HrVersionGenerateWorkEntriesRequestDto input);
+        Task<HrVersion> GetFormviewActionAsync(HrVersionGetFormviewActionRequestDto input);
+        Task<HrVersion> GetValuesFromContractTemplateAsync(HrVersionGetValuesFromContractTemplateRequestDto input);
+        Task<HrVersion> HasStaticWorkEntriesAsync(Guid[] ids);
+        Task<HrVersion> OpenVersionAsync(Guid[] ids);
     }
 }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("PartnerAutocomplete", Category = "Misc", Depends = new[] { "iap_mail" })]
-    public partial class ResPartnerAutocompleteSyncAppService : GenericApplicationService<ResPartnerAutocompleteSync>, IResPartnerAutocompleteSyncAppService
+    public partial class ResPartnerAutocompleteSyncAppService : GenericAppService<ResPartnerAutocompleteSync>, IResPartnerAutocompleteSyncAppService
     {
 
         public ResPartnerAutocompleteSyncAppService(IRepository<ResPartnerAutocompleteSync, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,24 +26,29 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ResPartnerAutocompleteSync> AddToQueueAsync(Guid id, ResPartnerAutocompleteSyncAddToQueueRequestDto input)
+        public async Task<ResPartnerAutocompleteSync> AddToQueueAsync(ResPartnerAutocompleteSyncAddToQueueRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner_autocomplete_sync.py) ---
             // def add_to_queue(self, partner_id):
             // pass
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResPartnerAutocompleteSync> StartSyncAsync(Guid id, ResPartnerAutocompleteSyncStartSyncRequestDto input)
+        [ApiModel]
+        public async Task<ResPartnerAutocompleteSync> StartSyncAsync(ResPartnerAutocompleteSyncStartSyncRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner_autocomplete_sync.py) ---
             // def start_sync(self, batch_size=1000):
             // pass
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

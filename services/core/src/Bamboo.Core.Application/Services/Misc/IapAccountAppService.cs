@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Iap", Category = "Misc", Depends = new[] { "web", "base_setup" })]
-    public partial class IapAccountAppService : GenericApplicationService<IapAccount>, IIapAccountAppService
+    public partial class IapAccountAppService : GenericAppService<IapAccount>, IIapAccountAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public IapAccountAppService(IRepository<IapAccount, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<IapAccount> BuyCreditsAsync(Guid id)
+        public async Task<IapAccount> BuyCreditsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -40,17 +40,22 @@ namespace Bamboo.Core.Application.Services
             //     ),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IapAccount> GetAccountIdAsync(Guid id, IapAccountGetAccountIdRequestDto input)
+        [ApiModel]
+        public async Task<IapAccount> GetAccountIdAsync(IapAccountGetAccountIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
             // def get_account_id(self, service_name):
             // return self.get(service_name).id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IapAccount> GetAccountInfoInternalAsync(Guid account_id, object balance, object information)
@@ -113,7 +118,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IapAccount> GetAsync(Guid id, IapAccountGetRequestDto input)
+        [ApiModel]
+        public async Task<IapAccount> GetAsync(IapAccountGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -169,10 +175,13 @@ namespace Bamboo.Core.Application.Services
             //     return accounts_with_company[0]
             // return accounts[0]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IapAccount> GetConfigAccountUrlAsync(Guid id)
+        [ApiModel]
+        public async Task<IapAccount> GetConfigAccountUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -188,10 +197,13 @@ namespace Bamboo.Core.Application.Services
             //     url = f"/odoo/action-iap.iap_account_action?menu_id={menu.id}"
             // return url
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IapAccount> GetCreditsAsync(Guid id, IapAccountGetCreditsRequestDto input)
+        [ApiModel]
+        public async Task<IapAccount> GetCreditsAsync(IapAccountGetCreditsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -216,10 +228,13 @@ namespace Bamboo.Core.Application.Services
             // 
             // return credit
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IapAccount> GetCreditsUrlAsync(Guid id, IapAccountGetCreditsUrlRequestDto input)
+        [ApiModel]
+        public async Task<IapAccount> GetCreditsUrlAsync(IapAccountGetCreditsUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -239,9 +254,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return '%s?%s' % (base_url, werkzeug.urls.url_encode(d))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IapAccount> HashIapTokenInternalAsync(object key)
         {
             /*
@@ -256,7 +274,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IapAccount> OpenRegistrationWizardAsync(Guid id)
+        public async Task<IapAccount> OpenRegistrationWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: iap_account.py) ---
@@ -270,10 +288,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'default_account_id': self.id},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IapAccount> OpenSenderNameWizardAsync(Guid id)
+        public async Task<IapAccount> OpenSenderNameWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: iap_account.py) ---
@@ -287,9 +307,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'default_account_id': self.id},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IapAccount> SendErrorNotificationInternalAsync(object message, object title)
         {
             /*
@@ -300,6 +323,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IapAccount> SendNoCreditNotificationInternalAsync(object service_name, object title)
         {
             /*
@@ -315,6 +339,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IapAccount> SendStatusNotificationInternalAsync(object message, object status, object title)
         {
             /*
@@ -331,6 +356,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IapAccount> SendSuccessNotificationInternalAsync(object message, object title)
         {
             /*
@@ -341,7 +367,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IapAccount> ValidateWarningAlertsAsync(Guid id)
+        public async Task<IapAccount> ValidateWarningAlertsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -356,10 +382,12 @@ namespace Bamboo.Core.Application.Services
             //             ",".join(users_with_no_email),
             //         ))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IapAccount> WebReadAsync(Guid id)
+        public async Task<IapAccount> WebReadAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -368,17 +396,21 @@ namespace Bamboo.Core.Application.Services
             //     self._get_account_information_from_iap()
             // return super().web_read(*args, **kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IapAccount> WebSaveAsync(Guid id)
+        public async Task<IapAccount> WebSaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
             // def web_save(self, *args, **kwargs):
             // return super(IapAccount, self.with_context(disable_iap_fetch=True)).web_save(*args, **kwargs)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResPartnerAutocompleteSyncAppService : IGenericApplicationService<ResPartnerAutocompleteSync>
     {
-        Task<ResPartnerAutocompleteSync> AddToQueueAsync(Guid id, ResPartnerAutocompleteSyncAddToQueueRequestDto input);
-        Task<ResPartnerAutocompleteSync> StartSyncAsync(Guid id, ResPartnerAutocompleteSyncStartSyncRequestDto input);
+        Task<ResPartnerAutocompleteSync> AddToQueueAsync(ResPartnerAutocompleteSyncAddToQueueRequestDto input);
+        Task<ResPartnerAutocompleteSync> StartSyncAsync(ResPartnerAutocompleteSyncStartSyncRequestDto input);
     }
 }

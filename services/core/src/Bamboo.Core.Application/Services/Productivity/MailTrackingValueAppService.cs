@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailTrackingValueAppService : GenericApplicationService<MailTrackingValue>, IMailTrackingValueAppService
+    public partial class MailTrackingValueAppService : GenericAppService<MailTrackingValue>, IMailTrackingValueAppService
     {
 
         public MailTrackingValueAppService(IRepository<MailTrackingValue, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,6 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<MailTrackingValue> CreateTrackingValuesInternalAsync(object initial_value, object new_value, object col_name, object col_info, object record)
         {
             /*
@@ -142,6 +143,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailTrackingValue> CreateTrackingValuesPropertyInternalAsync(object initial_value, object col_name, object col_info, object record)
         {
             /*
@@ -364,7 +366,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, MailTrackingValue entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<MailTrackingValue> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_tracking_value.py) ---
@@ -372,7 +374,7 @@ namespace Bamboo.Core.Application.Services
             // self._except_audit_log()
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

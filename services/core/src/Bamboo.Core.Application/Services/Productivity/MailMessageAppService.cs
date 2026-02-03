@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailMessageAppService : GenericApplicationService<MailMessage>, IMailMessageAppService
+    public partial class MailMessageAppService : GenericAppService<MailMessage>, IMailMessageAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public MailMessageAppService(IRepository<MailMessage, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -58,14 +58,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> CancelLetterAsync(Guid id)
+        public async Task<MailMessage> CancelLetterAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: mail_message.py) ---
             // def cancel_letter(self):
             // self.letter_ids.cancel()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessage> CheckAccessInternalAsync(string operation)
@@ -446,7 +448,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> ExportDataAsync(Guid id, MailMessageExportDataRequestDto input)
+        public async Task<MailMessage> ExportDataAsync(MailMessageExportDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -456,7 +458,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return super().export_data(fields_to_export)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessage> ExtrasToStoreInternalAsync(object store, object format_reply)
@@ -478,7 +482,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> FetchAsync(Guid id, MailMessageFetchRequestDto input)
+        public async Task<MailMessage> FetchAsync(MailMessageFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -491,7 +495,9 @@ namespace Bamboo.Core.Application.Services
             // self = self.sudo()
             // return super().fetch(field_names)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessage> FieldStoreReprInternalAsync(object field_name)
@@ -533,6 +539,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessage> FindAllowedDocIdsInternalAsync(List<Guid> model_ids)
         {
             /*
@@ -736,6 +743,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessage> GetMessageIdInternalAsync(object values)
         {
             /*
@@ -752,6 +760,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessage> GetReplyToInternalAsync(object values)
         {
             /*
@@ -885,6 +894,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessage> GetWithAccessInternalAsync(Guid message_id, object mode)
         {
             /*
@@ -1009,7 +1019,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> MarkAllAsReadAsync(Guid id, MailMessageMarkAllAsReadRequestDto input)
+        [ApiModel]
+        public async Task<MailMessage> MarkAllAsReadAsync(MailMessageMarkAllAsReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -1036,9 +1047,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessage> MessageFetchInternalAsync(object domain)
         {
             /*
@@ -1200,7 +1214,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> OpenDocumentAsync(Guid id)
+        public async Task<MailMessage> OpenDocumentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -1215,7 +1229,9 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessage> PortalGetDefaultFormatPropertiesNamesInternalAsync(object options)
@@ -1266,7 +1282,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> PortalMessageFormatAsync(Guid id, MailMessagePortalMessageFormatRequestDto input)
+        public async Task<MailMessage> PortalMessageFormatAsync(MailMessagePortalMessageFormatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: portal, FILE: mail_message.py) ---
@@ -1291,7 +1307,9 @@ namespace Bamboo.Core.Application.Services
             //     options=options,
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessage> PortalMessageFormatAttachmentsInternalAsync(object attachment_values)
@@ -1657,6 +1675,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessage> SearchInternalAsync(object domain, object offset, object limit, object order)
         {
             /*
@@ -1740,6 +1759,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessage> SearchNeedactionInternalAsync(object @operator, object operand)
         {
             /*
@@ -1786,6 +1806,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMessage> SearchStarredInternalAsync(object @operator, object operand)
         {
             /*
@@ -1798,17 +1819,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> SendLetterAsync(Guid id)
+        public async Task<MailMessage> SendLetterAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: mail_message.py) ---
             // def send_letter(self):
             // self.letter_ids._snailmail_print()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailMessage> SetMessageDoneAsync(Guid id)
+        public async Task<MailMessage> SetMessageDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -1832,7 +1855,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMessage> ToStoreDefaultsInternalAsync(object target)
@@ -2136,7 +2161,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> ToggleMessageStarredAsync(Guid id)
+        public async Task<MailMessage> ToggleMessageStarredAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -2157,10 +2182,13 @@ namespace Bamboo.Core.Application.Services
             // )
             // return Store().add(self, {"starred": self.starred}).get_result()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailMessage> UnstarAllAsync(Guid id)
+        [ApiModel]
+        public async Task<MailMessage> UnstarAllAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -2172,10 +2200,12 @@ namespace Bamboo.Core.Application.Services
             //     "mail.message/toggle_star", {"message_ids": starred_messages.ids, "starred": False}
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, MailMessage entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<MailMessage> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: mail_message.py) ---
@@ -2206,7 +2236,7 @@ namespace Bamboo.Core.Application.Services
             //     self._invalidate_documents()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

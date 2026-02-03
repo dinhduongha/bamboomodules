@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-web-push-vapid-public-key")]
-        public async Task<IActionResult> GetWebPushVapidPublicKeyAsync(Guid id)
+        [Route("get-web-push-vapid-public-key")]
+        public async Task<IActionResult> GetWebPushVapidPublicKeyAsync(Guid[] ids)
         {
-            var result = await _appService.GetWebPushVapidPublicKeyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetWebPushVapidPublicKeyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/register-devices")]
-        public async Task<IActionResult> RegisterDevicesAsync(Guid id)
+        [Route("register-devices")]
+        public async Task<IActionResult> RegisterDevicesAsync(Guid[] ids)
         {
-            var result = await _appService.RegisterDevicesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RegisterDevicesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unregister-devices")]
-        public async Task<IActionResult> UnregisterDevicesAsync(Guid id)
+        [Route("unregister-devices")]
+        public async Task<IActionResult> UnregisterDevicesAsync(Guid[] ids)
         {
-            var result = await _appService.UnregisterDevicesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnregisterDevicesAsync(ids);
             return Ok(result);
         }
     }

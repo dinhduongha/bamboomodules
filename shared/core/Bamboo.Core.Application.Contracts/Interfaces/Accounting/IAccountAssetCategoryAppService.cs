@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAssetCategoryAppService : IGenericApplicationService<AccountAssetCategory>
     {
-        Task<AccountAssetCategory> OnchangeAccountAssetAsync(Guid id);
-        Task<AccountAssetCategory> OnchangeTypeAsync(Guid id);
+        Task<AccountAssetCategory> OnchangeAccountAssetAsync(Guid[] ids);
+        Task<AccountAssetCategory> OnchangeTypeAsync(Guid[] ids);
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockMoveLineAppService : GenericApplicationService<StockMoveLine>, IStockMoveLineAppService
+    public partial class StockMoveLineAppService : GenericAppService<StockMoveLine>, IStockMoveLineAppService
     {
 
         public StockMoveLineAppService(IRepository<StockMoveLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -856,7 +856,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<StockMoveLine> CreateAsync(StockMoveLine entity, List<string> fields)
+        public override async Task<StockMoveLine> CreateAsync(CreateRequestDto<StockMoveLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
@@ -971,7 +971,7 @@ namespace Bamboo.Core.Application.Services
             // mls._update_stock_move_value()
             // return mls
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<StockMoveLine> ExcludeRequiringLotInternalAsync()
@@ -1366,7 +1366,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMoveLine> GetMoveLineQuantMatchAsync(Guid id, StockMoveLineGetMoveLineQuantMatchRequestDto input)
+        public async Task<StockMoveLine> GetMoveLineQuantMatchAsync(StockMoveLineGetMoveLineQuantMatchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
@@ -1406,7 +1406,9 @@ namespace Bamboo.Core.Application.Services
             //         move_lines_data += [(ml.id, {"quantity": ml.quantity, "quant_id": quant.id}) for ml in dirty_lines]
             // return [quants_data, move_lines_data]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockMoveLine> GetPackageCarrierTypeForPackInternalAsync()
@@ -1697,7 +1699,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMoveLine> OpenAddToWaveAsync(Guid id)
+        public async Task<StockMoveLine> OpenAddToWaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_picking_batch, FILE: stock_move_line.py) ---
@@ -1717,10 +1719,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockMoveLine> OpenReferenceAsync(Guid id)
+        public async Task<StockMoveLine> OpenReferenceAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
@@ -1737,7 +1741,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockMoveLine> PostPutInPackHookInternalAsync(object package)
@@ -1846,6 +1852,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockMoveLine> PrepareStockMoveValsInternalAsync()
         {
             /*
@@ -1877,7 +1884,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMoveLine> PutInPackAsync(Guid id)
+        public async Task<StockMoveLine> PutInPackAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
@@ -1906,7 +1913,9 @@ namespace Bamboo.Core.Application.Services
             //     if packages_to_pack:
             //         return packages_to_pack.action_put_in_pack(package_id=package_id, package_type_id=package_type_id, package_name=package_name)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockMoveLine> PutInPackInternalAsync(Guid package_id, Guid package_type_id, object package_name)
@@ -1940,7 +1949,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMoveLine> RevertInventoryAsync(Guid id)
+        public async Task<StockMoveLine> RevertInventoryAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---
@@ -1972,7 +1981,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('id', 'in', moves.move_line_ids.ids + self.ids)]
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockMoveLine> SearchPickingTypeIdInternalAsync(object @operator, object @value)
@@ -2004,6 +2015,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockMoveLine> ShouldExcludeForValuationInternalAsync()
         {
             /*
@@ -2154,7 +2166,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, StockMoveLine entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<StockMoveLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_move_line.py) ---
@@ -2315,7 +2327,7 @@ namespace Bamboo.Core.Application.Services
             //     self._update_stock_move_value(qty_by_ml)
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

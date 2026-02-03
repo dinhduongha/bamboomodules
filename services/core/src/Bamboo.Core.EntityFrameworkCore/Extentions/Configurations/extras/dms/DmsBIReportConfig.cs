@@ -28,7 +28,7 @@ public static partial class ModelBuilderExtensions
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.ReportType).HasColumnName("report_type");
-            entity.Property(e => e.FiltersJson).HasColumnName("filters_json");
+            entity.Property(e => e.Filters);
             entity.Property(e => e.ScheduleTime).HasColumnName("schedule_time");
 
             entity.Property(e => e.CreationTime)

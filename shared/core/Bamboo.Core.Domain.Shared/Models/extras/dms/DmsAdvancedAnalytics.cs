@@ -37,10 +37,10 @@ public partial class DmsAdvancedAnalytics : FullAuditedAggregateRoot<Guid>, IEnt
     public decimal PredictedValue { get; set; }
 
     [Column("insight_text")]
-    public string InsightText { get; set; } = null!;
+    public string? InsightText { get; set; } = null!;
 
     [Column("model_version")]
-    public string ModelVersion { get; set; } = null!;
+    public string? ModelVersion { get; set; } = null!;
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -61,4 +61,12 @@ public partial class DmsAdvancedAnalytics : FullAuditedAggregateRoot<Guid>, IEnt
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("SalesKPIId")]
     public virtual DmsSalesKPI? SalesKPI { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
 }

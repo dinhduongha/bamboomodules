@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountRootAppService : GenericApplicationService<AccountRoot>, IAccountRootAppService
+    public partial class AccountRootAppService : GenericAppService<AccountRoot>, IAccountRootAppService
     {
 
         public AccountRootAppService(IRepository<AccountRoot, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
         }
 
         [ApiPrivate]
-        public async Task<AccountRoot> BrowseAsync(Guid id, AccountRootBrowseRequestDto input)
+        public async Task<AccountRoot> BrowseAsync(AccountRootBrowseRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_root.py) ---
@@ -36,7 +36,9 @@ namespace Bamboo.Core.Application.Services
             //     ids = (ids,)
             // return super().browse(ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountRoot> ComputeRootInternalAsync()
@@ -51,6 +53,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountRoot> FromAccountCodeInternalAsync(object code)
         {
             /*

@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-next-char")]
-        public async Task<IActionResult> GetNextCharAsync(Guid id, [FromBody] IrSequenceGetNextCharRequestDto input)
+        [Route("get-next-char")]
+        public async Task<IActionResult> GetNextCharAsync(IrSequenceGetNextCharRequestDto input)
         {
-            var result = await _appService.GetNextCharAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetNextCharAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/next-by-code")]
-        public async Task<IActionResult> NextByCodeAsync(Guid id, [FromBody] IrSequenceNextByCodeRequestDto input)
+        [Route("next-by-code")]
+        public async Task<IActionResult> NextByCodeAsync(IrSequenceNextByCodeRequestDto input)
         {
-            var result = await _appService.NextByCodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.NextByCodeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/next-by-id")]
-        public async Task<IActionResult> NextByIdAsync(Guid id, [FromBody] IrSequenceNextByIdRequestDto input)
+        [Route("next-by-id")]
+        public async Task<IActionResult> NextByIdAsync(IrSequenceNextByIdRequestDto input)
         {
-            var result = await _appService.NextByIdAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.NextByIdAsync(input);
             return Ok(result);
         }
     }

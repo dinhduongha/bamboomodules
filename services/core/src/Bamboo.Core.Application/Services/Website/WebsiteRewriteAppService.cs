@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public partial class WebsiteRewriteAppService : GenericApplicationService<WebsiteRewrite>, IWebsiteRewriteAppService
+    public partial class WebsiteRewriteAppService : GenericAppService<WebsiteRewrite>, IWebsiteRewriteAppService
     {
 
         public WebsiteRewriteAppService(IRepository<WebsiteRewrite, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -85,7 +85,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebsiteRewrite> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<WebsiteRewrite> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_rewrite.py) ---
@@ -95,7 +96,9 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/website/static/xls/redirects_import_template.xlsx',
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<WebsiteRewrite> InvalidateRoutingInternalAsync()
@@ -124,14 +127,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebsiteRewrite> RefreshRoutesAsync(Guid id)
+        public async Task<WebsiteRewrite> RefreshRoutesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_rewrite.py) ---
             // def refresh_routes(self):
             // self.env['website.route']._refresh()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

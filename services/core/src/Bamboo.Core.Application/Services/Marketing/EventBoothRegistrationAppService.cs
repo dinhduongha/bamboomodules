@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("EventBoothSale", Category = "Marketing", Depends = new[] { "event_booth", "event_sale" })]
-    public partial class EventBoothRegistrationAppService : GenericApplicationService<EventBoothRegistration>, IEventBoothRegistrationAppService
+    public partial class EventBoothRegistrationAppService : GenericAppService<EventBoothRegistration>, IEventBoothRegistrationAppService
     {
 
         public EventBoothRegistrationAppService(IRepository<EventBoothRegistration, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -87,7 +87,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventBoothRegistration> ConfirmAsync(Guid id)
+        public async Task<EventBoothRegistration> ConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_booth_sale, FILE: event_booth_registration.py) ---
@@ -100,7 +100,9 @@ namespace Bamboo.Core.Application.Services
             //     registration.event_booth_id.action_confirm(values)
             // self._cancel_pending_registrations()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventBoothRegistration> GetFieldsForBoothConfirmationInternalAsync()

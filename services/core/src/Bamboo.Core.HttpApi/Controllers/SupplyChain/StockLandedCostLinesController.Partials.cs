@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/onchange-product-id")]
-        public async Task<IActionResult> OnchangeProductIdAsync(Guid id)
+        [Route("onchange-product-id")]
+        public async Task<IActionResult> OnchangeProductIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeProductIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeProductIdAsync(ids);
             return Ok(result);
         }
     }

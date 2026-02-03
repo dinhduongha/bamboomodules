@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountPaymentMethodLineAppService : GenericApplicationService<AccountPaymentMethodLine>, IAccountPaymentMethodLineAppService
+    public partial class AccountPaymentMethodLineAppService : GenericAppService<AccountPaymentMethodLine>, IAccountPaymentMethodLineAppService
     {
 
         public AccountPaymentMethodLineAppService(IRepository<AccountPaymentMethodLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,6 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<AccountPaymentMethodLine> AutoToggleAccountToReconcileInternalAsync(Guid account_id)
         {
             /*
@@ -125,7 +126,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPaymentMethodLine> OpenProviderFormAsync(Guid id)
+        public async Task<AccountPaymentMethodLine> OpenProviderFormAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_payment_method_line.py) ---
@@ -140,7 +141,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.payment_provider_id.id
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountPaymentMethodLine> UnlinkExceptActiveProviderInternalAsync()

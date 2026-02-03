@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMaintenanceEquipmentAppService : IGenericApplicationService<MaintenanceEquipment>
     {
-        Task<MaintenanceEquipment> OpenMatchedSerialAsync(Guid id);
+        Task<MaintenanceEquipment> OpenMatchedSerialAsync(Guid[] ids);
     }
 }

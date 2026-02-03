@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsPlanogramCheckAppService : IGenericApplicationService<DmsPlanogramCheck>
+    public interface IDmsPlanogramCheckAppService : IGenericAppService<DmsPlanogramCheck>
     {
         Task PerformCheckAsync(Guid checkId, string photoUrl);
     }
@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsPlanogramCheckAppService : GenericApplicationService<DmsPlanogramCheck>, IDmsPlanogramCheckAppService
+    public class DmsPlanogramCheckAppService : GenericAppService<DmsPlanogramCheck>, IDmsPlanogramCheckAppService
     {
         public DmsPlanogramCheckAppService(
             IRepository<DmsPlanogramCheck, Guid> repository,

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrAttendanceModule", Category = "HumanResources", Depends = new[] { "hr", "barcodes", "base_geolocalize" })]
-    public partial class HrAttendanceAppService : GenericApplicationService<HrAttendance>, IHrAttendanceAppService
+    public partial class HrAttendanceAppService : GenericAppService<HrAttendance>, IHrAttendanceAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public HrAttendanceAppService(IRepository<HrAttendance, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,14 +27,16 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<HrAttendance> ApproveOvertimeAsync(Guid id)
+        public async Task<HrAttendance> ApproveOvertimeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def action_approve_overtime(self):
             // self.linked_overtime_ids.action_approve()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrAttendance> CheckValidityCheckInCheckOutInternalAsync()
@@ -424,6 +426,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrAttendance> GetDayStartAndDayInternalAsync(object employee, object dt)
         {
             /*
@@ -453,14 +456,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrAttendance> GetKioskUrlAsync(Guid id)
+        public async Task<HrAttendance> GetKioskUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def get_kiosk_url(self):
             // return self.get_base_url() + "/hr_attendance/" + self.env.company.attendance_kiosk_key
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrAttendance> GetLocalizedTimesInternalAsync()
@@ -510,7 +515,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrAttendance> HasDemoDataAsync(Guid id)
+        [ApiModel]
+        public async Task<HrAttendance> HasDemoDataAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
@@ -521,10 +527,12 @@ namespace Bamboo.Core.Application.Services
             // demo_tag = self.env.ref('hr_attendance.resource_calendar_std_38h', raise_if_not_found=False)
             // return bool(demo_tag) or bool(self.env['ir.module.module'].search_count([('demo', '=', True)]))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrAttendance> InAttendanceMapsAsync(Guid id)
+        public async Task<HrAttendance> InAttendanceMapsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
@@ -536,7 +544,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new'
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrAttendance> LinkedOvertimesInternalAsync()
@@ -687,7 +697,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrAttendance> OutAttendanceMapsAsync(Guid id)
+        public async Task<HrAttendance> OutAttendanceMapsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
@@ -699,7 +709,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new'
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrAttendance> ReadGroupEmployeeIdInternalAsync(object resources, object domain)
@@ -727,17 +739,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrAttendance> RefuseOvertimeAsync(Guid id)
+        public async Task<HrAttendance> RefuseOvertimeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
             // def action_refuse_overtime(self):
             // self.linked_overtime_ids.action_refuse()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrAttendance> TryKioskAsync(Guid id)
+        public async Task<HrAttendance> TryKioskAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance.py) ---
@@ -757,7 +771,9 @@ namespace Bamboo.Core.Application.Services
             //     'url': self.env.company.attendance_kiosk_url + '?from_trial_mode=True'
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrAttendance> UpdateOvertimeInternalAsync(object attendance_domain)

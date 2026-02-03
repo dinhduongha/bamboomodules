@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IDecimalPrecisionAppService : IGenericApplicationService<DecimalPrecision>
     {
-        Task<DecimalPrecision> PrecisionGetAsync(Guid id, DecimalPrecisionPrecisionGetRequestDto input);
+        Task<DecimalPrecision> PrecisionGetAsync(DecimalPrecisionPrecisionGetRequestDto input);
     }
 }

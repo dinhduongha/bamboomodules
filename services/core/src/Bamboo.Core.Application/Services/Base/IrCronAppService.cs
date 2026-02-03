@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrCronAppService : GenericApplicationService<IrCron>, IIrCronAppService
+    public partial class IrCronAppService : GenericAppService<IrCron>, IIrCronAppService
     {
 
         public IrCronAppService(IRepository<IrCron, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -278,7 +278,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrCron> MethodDirectTriggerAsync(Guid id)
+        public async Task<IrCron> MethodDirectTriggerAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_cron.py) ---
@@ -294,7 +294,9 @@ namespace Bamboo.Core.Application.Services
             // _logger.info('Job %r (%s) done', self.name, self.id)
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrCron> NotifyAdminInternalAsync(object message)
@@ -606,7 +608,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrCron> ToggleAsync(Guid id, IrCronToggleRequestDto input)
+        [ApiModel]
+        public async Task<IrCron> ToggleAsync(IrCronToggleRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_cron.py) ---
@@ -619,7 +622,9 @@ namespace Bamboo.Core.Application.Services
             // active = bool(self.env[model].search_count(domain))
             // return self.try_write({'active': active})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrCron> TriggerInternalAsync(object at)
@@ -729,7 +734,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrCron> TryWriteAsync(Guid id, IrCronTryWriteRequestDto input)
+        public async Task<IrCron> TryWriteAsync(IrCronTryWriteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_cron.py) ---
@@ -748,7 +753,9 @@ namespace Bamboo.Core.Application.Services
             //     return super(ir_cron, self).write(values)
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrCron> UpdateFailureCountInternalAsync(object job, object status)

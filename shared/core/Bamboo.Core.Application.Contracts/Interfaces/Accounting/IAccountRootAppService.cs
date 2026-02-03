@@ -9,6 +9,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountRootAppService : IApplicationService
     {
-        Task<AccountRoot> BrowseAsync(Guid id, AccountRootBrowseRequestDto input);
+        Task<AccountRoot> BrowseAsync(AccountRootBrowseRequestDto input);
     }
 }

@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsTradePromotionAppService : IGenericApplicationService<DmsTradePromotion>
+    public interface IDmsTradePromotionAppService : IGenericAppService<DmsTradePromotion>
     {
         Task TrackSpendAsync(Guid promotionId, decimal amount);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsTradePromotionAppService : GenericApplicationService<DmsTradePromotion>, IDmsTradePromotionAppService
+    public class DmsTradePromotionAppService : GenericAppService<DmsTradePromotion>, IDmsTradePromotionAppService
     {
         public DmsTradePromotionAppService(
             IRepository<DmsTradePromotion, Guid> repository,

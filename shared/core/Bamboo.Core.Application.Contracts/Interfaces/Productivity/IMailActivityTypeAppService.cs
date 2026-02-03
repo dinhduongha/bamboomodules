@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailActivityTypeAppService : IGenericApplicationService<MailActivityType>
     {
-        Task<MailActivityType> ArchiveAsync(Guid id);
+        Task<MailActivityType> ArchiveAsync(Guid[] ids);
     }
 }

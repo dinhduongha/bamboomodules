@@ -33,7 +33,7 @@ public class CoreApplicationModule : AbpModule
         //         Expiration = TimeSpan.FromMinutes(30)
         //     };
         // });
-        
+
         context.Services.AddSingleton<IModelTypeRegistry>(provider =>
         {
             var registry = new ModelTypeRegistry();
@@ -41,9 +41,10 @@ public class CoreApplicationModule : AbpModule
             registry.RegisterServiceTypes([typeof(CoreApplicationModule).Assembly]);
             return registry;
         });
+        context.Services.AddSingleton<IRpcDispatcherAppService, RpcDispatcherAppService>();
         context.Services.AddTransient(typeof(IRepositoryService<>), typeof(RepositoryService<>));
 
-        context.Services.AddTransient(typeof(IGenericApplicationService<>), typeof(GenericApplicationService<>));
-        
+        context.Services.AddTransient(typeof(IGenericAppService<>), typeof(GenericAppService<>));
+
     }
 }

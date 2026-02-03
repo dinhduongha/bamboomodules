@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseImportModuleModule", Category = "Base", Depends = new[] { "web" })]
-    public partial class BaseImportModuleAppService : GenericApplicationService<BaseImportModule>, IBaseImportModuleAppService
+    public partial class BaseImportModuleAppService : GenericAppService<BaseImportModule>, IBaseImportModuleAppService
     {
 
         public BaseImportModuleAppService(IRepository<BaseImportModule, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<BaseImportModule> GetDependenciesToInstallNamesAsync(Guid id)
+        public async Task<BaseImportModule> GetDependenciesToInstallNamesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py) ---
@@ -34,10 +34,12 @@ namespace Bamboo.Core.Application.Services
             // module_ids, _not_found = self.env['ir.module.module']._get_missing_dependencies_modules(base64.decodebytes(self.module_file))
             // return module_ids.mapped('name')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BaseImportModule> ImportModuleAsync(Guid id)
+        public async Task<BaseImportModule> ImportModuleAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py) ---
@@ -54,10 +56,12 @@ namespace Bamboo.Core.Application.Services
             //     'url': '/odoo',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BaseImportModule> ModuleOpenAsync(Guid id)
+        public async Task<BaseImportModule> ModuleOpenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py) ---
@@ -72,7 +76,9 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_window',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

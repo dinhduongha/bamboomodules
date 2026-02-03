@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public partial class ProjectTagsAppService : GenericApplicationService<ProjectTags>, IProjectTagsAppService
+    public partial class ProjectTagsAppService : GenericAppService<ProjectTags>, IProjectTagsAppService
     {
 
         public ProjectTagsAppService(IRepository<ProjectTags, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,8 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ProjectTags> ArrangeTagListByIdAsync(Guid id, ProjectTagsArrangeTagListByIdRequestDto input)
+        [ApiModel]
+        public async Task<ProjectTags> ArrangeTagListByIdAsync(ProjectTagsArrangeTagListByIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_tags.py) ---
@@ -42,10 +43,13 @@ namespace Bamboo.Core.Application.Services
             // tags_by_id = {tag['id']: tag for tag in tag_list}
             // return [tags_by_id[id] for id in id_order if id in tags_by_id]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(Guid id, ProjectTagsFormattedReadGroupRequestDto input)
+        [ApiModel]
+        public async Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(ProjectTagsFormattedReadGroupRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_tags.py) ---
@@ -55,7 +59,9 @@ namespace Bamboo.Core.Application.Services
             //     domain = Domain.AND([domain, [('id', 'in', tag_ids)]])
             // return super().formatted_read_group(domain, groupby, aggregates, having=having, offset=offset, limit=limit, order=order)
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProjectTags> GetDefaultColorInternalAsync()

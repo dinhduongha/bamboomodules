@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-test-script")]
-        public async Task<IActionResult> ActionTestScriptAsync(Guid id)
+        [Route("action-test-script")]
+        public async Task<IActionResult> ActionTestScriptAsync(Guid[] ids)
         {
-            var result = await _appService.TestScriptAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TestScriptAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-leads")]
-        public async Task<IActionResult> ActionViewLeadsAsync(Guid id)
+        [Route("action-view-leads")]
+        public async Task<IActionResult> ActionViewLeadsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewLeadsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewLeadsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-livechat-channels")]
-        public async Task<IActionResult> ActionViewLivechatChannelsAsync(Guid id)
+        [Route("action-view-livechat-channels")]
+        public async Task<IActionResult> ActionViewLivechatChannelsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewLivechatChannelsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewLivechatChannelsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ChatbotScriptCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ChatbotScriptCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
     }

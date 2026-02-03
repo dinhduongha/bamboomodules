@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/change-password")]
-        public async Task<IActionResult> ChangePasswordAsync(Guid id)
+        [Route("change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(Guid[] ids)
         {
-            var result = await _appService.ChangePasswordAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ChangePasswordAsync(ids);
             return Ok(result);
         }
     }

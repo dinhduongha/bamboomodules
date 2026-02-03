@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mrp", Category = "SupplyChain", Depends = new[] { "product", "stock", "resource" })]
-    public partial class MrpBomLineAppService : GenericApplicationService<MrpBomLine>, IMrpBomLineAppService
+    public partial class MrpBomLineAppService : GenericAppService<MrpBomLine>, IMrpBomLineAppService
     {
 
         public MrpBomLineAppService(IRepository<MrpBomLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<MrpBomLine> AddFromCatalogAsync(Guid id)
+        public async Task<MrpBomLine> AddFromCatalogAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
@@ -35,7 +35,9 @@ namespace Bamboo.Core.Application.Services
             // bom = self.env['mrp.bom'].browse(self.env.context.get('order_id'))
             // return bom.with_context(child_field='bom_line_ids').action_add_from_catalog()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpBomLine> ComputeAttachmentsCountInternalAsync()
@@ -149,7 +151,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpBomLine> OnchangeProductIdAsync(Guid id)
+        public async Task<MrpBomLine> OnchangeProductIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
@@ -157,7 +159,9 @@ namespace Bamboo.Core.Application.Services
             // if self.product_id:
             //     self.product_uom_id = self.product_id.uom_id.id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpBomLine> PrepareBomDoneValuesInternalAsync(object quantity, object product, object original_quantity, object boms_done)
@@ -190,7 +194,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpBomLine> SeeAttachmentsAsync(Guid id)
+        public async Task<MrpBomLine> SeeAttachmentsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
@@ -227,7 +231,9 @@ namespace Bamboo.Core.Application.Services
             //     'search_view_id': self.env.ref('product.product_document_search').ids
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpBomLine> SkipBomLineInternalAsync(object product, object never_attribute_values)

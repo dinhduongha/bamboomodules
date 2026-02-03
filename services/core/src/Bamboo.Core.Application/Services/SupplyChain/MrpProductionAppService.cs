@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mrp", Category = "SupplyChain", Depends = new[] { "product", "stock", "resource" })]
-    public partial class MrpProductionAppService : GenericApplicationService<MrpProduction>, IMrpProductionAppService
+    public partial class MrpProductionAppService : GenericAppService<MrpProduction>, IMrpProductionAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -206,7 +206,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> AssignAsync(Guid id)
+        public async Task<MrpProduction> AssignAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -215,7 +215,9 @@ namespace Bamboo.Core.Application.Services
             //     production.move_raw_ids._action_assign()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> AutoProductionChecksInternalAsync()
@@ -304,7 +306,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> ButtonMarkDoneAsync(Guid id)
+        public async Task<MrpProduction> ButtonMarkDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -430,7 +432,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // return another_action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> ButtonMarkDoneSanityChecksInternalAsync()
@@ -445,7 +449,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> ButtonPlanAsync(Guid id)
+        public async Task<MrpProduction> ButtonPlanAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -458,10 +462,12 @@ namespace Bamboo.Core.Application.Services
             //     order._plan_workorders()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ButtonScrapAsync(Guid id)
+        public async Task<MrpProduction> ButtonScrapAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -480,10 +486,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ButtonUnbuildAsync(Guid id)
+        public async Task<MrpProduction> ButtonUnbuildAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -512,10 +520,12 @@ namespace Bamboo.Core.Application.Services
             //     ))
             // return super().button_unbuild()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ButtonUnplanAsync(Guid id)
+        public async Task<MrpProduction> ButtonUnplanAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -534,7 +544,9 @@ namespace Bamboo.Core.Application.Services
             // })
             // self.is_planned = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> CalPriceInternalAsync(object consumed_moves)
@@ -613,7 +625,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> CancelAsync(Guid id)
+        public async Task<MrpProduction> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -625,7 +637,9 @@ namespace Bamboo.Core.Application.Services
             // self._action_cancel()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> ChangeProducingInternalAsync()
@@ -773,7 +787,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> ClearLotProducingIdsAsync(Guid id)
+        public async Task<MrpProduction> ClearLotProducingIdsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -782,7 +796,9 @@ namespace Bamboo.Core.Application.Services
             // self.qty_producing = 0
             // self._set_qty_producing(False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> ComputeAllowedUomIdsInternalAsync()
@@ -1671,7 +1687,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> ConfirmAsync(Guid id)
+        public async Task<MrpProduction> ConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -1728,10 +1744,12 @@ namespace Bamboo.Core.Application.Services
             //         ).sale_line_id = production.sale_line_id
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> CopyDataAsync(Guid id, MrpProductionCopyDataRequestDto input)
+        public async Task<MrpProduction> CopyDataAsync(MrpProductionCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -1750,7 +1768,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['move_raw_ids'] = [(0, 0, move_vals) for move_vals in production.move_raw_ids.filtered(lambda m: m.product_qty != 0.0).copy_data()]
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> CreateUpdateMoveFinishedInternalAsync()
@@ -1793,17 +1813,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> DoUnreserveAsync(Guid id)
+        public async Task<MrpProduction> DoUnreserveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def do_unreserve(self):
             // (self.move_finished_ids | self.move_raw_ids).filtered(lambda x: x.state not in ('done', 'cancel'))._do_unreserve()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> GenerateBomAsync(Guid id)
+        public async Task<MrpProduction> GenerateBomAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -1836,10 +1858,12 @@ namespace Bamboo.Core.Application.Services
             // action['context']['default_project_id'] = self.project_id.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> GenerateSerialAsync(Guid id, MrpProductionGenerateSerialRequestDto input)
+        public async Task<MrpProduction> GenerateSerialAsync(MrpProductionGenerateSerialRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -1867,7 +1891,9 @@ namespace Bamboo.Core.Application.Services
             //         action['context']['default_workorder_id'] = workorder.id
             //     return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> GetAutoprintDoneReportActionsInternalAsync()
@@ -2071,6 +2097,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MrpProduction> GetDefaultDateFinishedInternalAsync()
         {
             /*
@@ -2085,6 +2112,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MrpProduction> GetDefaultDateStartInternalAsync()
         {
             /*
@@ -2099,6 +2127,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MrpProduction> GetDefaultIsLockedInternalAsync()
         {
             /*
@@ -2109,6 +2138,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MrpProduction> GetDefaultPickingTypeIdInternalAsync(Guid company_id)
         {
             /*
@@ -2138,7 +2168,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> GetEmptyListHelpAsync(Guid id, MrpProductionGetEmptyListHelpRequestDto input)
+        [ApiModel]
+        public async Task<MrpProduction> GetEmptyListHelpAsync(MrpProductionGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -2148,7 +2179,9 @@ namespace Bamboo.Core.Application.Services
             // )
             // return super(MrpProduction, self).get_empty_list_help(help_message)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> GetExpiredContextInternalAsync(List<Guid> expired_lot_ids)
@@ -2292,6 +2325,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MrpProduction> GetNameBackorderInternalAsync(object name, object sequence)
         {
             /*
@@ -2841,7 +2875,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> MergeAsync(Guid id)
+        public async Task<MrpProduction> MergeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -2913,7 +2947,9 @@ namespace Bamboo.Core.Application.Services
             //     raise ValidationError(_("Subcontracted manufacturing orders cannot be merged."))
             // return super().action_merge()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> OnchangeLotProducingInternalAsync()
@@ -2939,7 +2975,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> OpenLabelLayoutAsync(Guid id)
+        public async Task<MrpProduction> OpenLabelLayoutAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -2957,10 +2993,12 @@ namespace Bamboo.Core.Application.Services
             //         'default_move_quantity': 'move'},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> OpenLabelTypeAsync(Guid id)
+        public async Task<MrpProduction> OpenLabelTypeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -2978,10 +3016,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // return self.action_open_label_layout()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> PlanWithComponentsAvailabilityAsync(Guid id)
+        public async Task<MrpProduction> PlanWithComponentsAvailabilityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -2995,7 +3035,9 @@ namespace Bamboo.Core.Application.Services
             //         production.date_start = expected_date
             // self.filtered(lambda p: p.state == 'confirmed').button_plan()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> PlanWorkordersInternalAsync(object replan)
@@ -3204,7 +3246,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> PreButtonMarkDoneAsync(Guid id)
+        public async Task<MrpProduction> PreButtonMarkDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -3269,7 +3311,9 @@ namespace Bamboo.Core.Application.Services
             //     return super(MrpProduction, self.with_context(skip_consumption=True)).pre_button_mark_done()
             // return super().pre_button_mark_done()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> PrepareFinishedExtraValsInternalAsync()
@@ -3342,7 +3386,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> ProductForecastReportAsync(Guid id)
+        public async Task<MrpProduction> ProductForecastReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -3359,7 +3403,9 @@ namespace Bamboo.Core.Application.Services
             //     action['context']['warehouse_id'] = warehouse.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> RemoveReferenceInternalAsync(object reference)
@@ -3394,6 +3440,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MrpProduction> SearchComponentsAvailabilityStateInternalAsync(object @operator, object @value)
         {
             /*
@@ -3426,6 +3473,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MrpProduction> SearchDelayAlertDateInternalAsync(object @operator, object @value)
         {
             /*
@@ -3458,7 +3506,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> SeeMoveScrapAsync(Guid id)
+        public async Task<MrpProduction> SeeMoveScrapAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -3469,7 +3517,9 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(self.env.context, default_origin=self.name)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> SetMoveByproductIdsInternalAsync()
@@ -3484,7 +3534,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> SetQtyProducingAsync(Guid id)
+        public async Task<MrpProduction> SetQtyProducingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -3492,7 +3542,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self._set_qty_producing(False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> SetQtyProducingInternalAsync(object pick_manual_consumption_moves)
@@ -3588,7 +3640,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> SplitAsync(Guid id)
+        public async Task<MrpProduction> SplitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -3608,7 +3660,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             //     return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> SplitProductionsInternalAsync(object amounts, object cancel_remaining_qty, object set_consumed_qty)
@@ -3853,7 +3907,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> SplitSubcontractingAsync(Guid id)
+        public async Task<MrpProduction> SplitSubcontractingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: mrp_production.py) ---
@@ -3875,10 +3929,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return move.action_show_subcontract_details(lot_id=False)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> StartAsync(Guid id)
+        public async Task<MrpProduction> StartAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -3887,10 +3943,12 @@ namespace Bamboo.Core.Application.Services
             // if self.state == "confirmed":
             //     self.state = "progress"
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ToggleIsLockedAsync(Guid id)
+        public async Task<MrpProduction> ToggleIsLockedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -3899,7 +3957,9 @@ namespace Bamboo.Core.Application.Services
             // self.is_locked = not self.is_locked
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> TrackGetFieldsInternalAsync()
@@ -3962,7 +4022,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> UpdateBomAsync(Guid id)
+        public async Task<MrpProduction> UpdateBomAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -3972,7 +4032,9 @@ namespace Bamboo.Core.Application.Services
             //         production._link_bom(production.bom_id)
             // self.is_outdated_bom = False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpProduction> UpdateCatalogLineQuantityInternalAsync(object line, object quantity)
@@ -4031,7 +4093,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> ViewAnalyticAccountsAsync(Guid id)
+        public async Task<MrpProduction> ViewAnalyticAccountsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project_mrp_account, FILE: mrp_production.py) ---
@@ -4045,10 +4107,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewMoDeliveryAsync(Guid id)
+        public async Task<MrpProduction> ViewMoDeliveryAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -4068,10 +4132,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict(self.env.context, default_origin=self.name)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewMoveWipAsync(Guid id)
+        public async Task<MrpProduction> ViewMoveWipAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_production.py) ---
@@ -4095,10 +4161,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewMrpProductionBackordersAsync(Guid id)
+        public async Task<MrpProduction> ViewMrpProductionBackordersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -4112,10 +4180,12 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewMrpProductionChildsAsync(Guid id)
+        public async Task<MrpProduction> ViewMrpProductionChildsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -4139,10 +4209,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewMrpProductionSourcesAsync(Guid id)
+        public async Task<MrpProduction> ViewMrpProductionSourcesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -4166,10 +4238,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewMrpProductionUnbuildsAsync(Guid id)
+        public async Task<MrpProduction> ViewMrpProductionUnbuildsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -4183,10 +4257,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = context
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewPurchaseOrdersAsync(Guid id)
+        public async Task<MrpProduction> ViewPurchaseOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_mrp, FILE: mrp_production.py) ---
@@ -4210,10 +4286,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewReceptionReportAsync(Guid id)
+        public async Task<MrpProduction> ViewReceptionReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -4223,10 +4301,12 @@ namespace Bamboo.Core.Application.Services
             // action['context'] = dict({'default_production_ids': self.ids}, **self.env.context)
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewRepairOrdersAsync(Guid id)
+        public async Task<MrpProduction> ViewRepairOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_repair, FILE: production.py) ---
@@ -4246,10 +4326,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('id', 'in', repair_ids.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewSaleOrdersAsync(Guid id)
+        public async Task<MrpProduction> ViewSaleOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_mrp, FILE: mrp_production.py) ---
@@ -4273,10 +4355,12 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpProduction> ViewSerialNumbersAsync(Guid id)
+        public async Task<MrpProduction> ViewSerialNumbersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -4290,10 +4374,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, MrpProduction entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<MrpProduction> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -4439,7 +4525,7 @@ namespace Bamboo.Core.Application.Services
             //         production.workorder_ids._create_or_update_analytic_entry()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mrp", Category = "SupplyChain", Depends = new[] { "product", "stock", "resource" })]
-    public partial class MrpWorkcenterAppService : GenericApplicationService<MrpWorkcenter>, IMrpWorkcenterAppService
+    public partial class MrpWorkcenterAppService : GenericAppService<MrpWorkcenter>, IMrpWorkcenterAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -31,7 +31,7 @@ namespace Bamboo.Core.Application.Services
             _resourceMixinAppService = resourceMixinAppService;
         }
 
-        public async Task<MrpWorkcenter> ArchiveAsync(Guid id)
+        public async Task<MrpWorkcenter> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
@@ -52,7 +52,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MrpWorkcenter> CheckAlternativeWorkcenterInternalAsync()
@@ -473,7 +475,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpWorkcenter> ShowOperationsAsync(Guid id)
+        public async Task<MrpWorkcenter> ShowOperationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
@@ -486,10 +488,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpWorkcenter> UnblockAsync(Guid id)
+        public async Task<MrpWorkcenter> UnblockAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
@@ -501,10 +505,12 @@ namespace Bamboo.Core.Application.Services
             // times.write({'date_end': datetime.now()})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpWorkcenter> WorkOrderAlternativesAsync(Guid id)
+        public async Task<MrpWorkcenter> WorkOrderAlternativesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
@@ -514,10 +520,12 @@ namespace Bamboo.Core.Application.Services
             //                     ('workcenter_id.alternative_workcenter_ids', '=', self.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MrpWorkcenter> WorkOrderAsync(Guid id)
+        public async Task<MrpWorkcenter> WorkOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
@@ -525,7 +533,9 @@ namespace Bamboo.Core.Application.Services
             // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_work_orders")
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

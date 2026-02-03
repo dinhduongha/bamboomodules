@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResCurrencyAppService : GenericApplicationService<ResCurrency>, IResCurrencyAppService
+    public partial class ResCurrencyAppService : GenericAppService<ResCurrency>, IResCurrencyAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public ResCurrencyAppService(IRepository<ResCurrency, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,6 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
+        [ApiModel]
         protected async Task<ResCurrency> ActivateGroupMultiCurrencyInternalAsync()
         {
             /*
@@ -48,7 +49,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> AmountToTextAsync(Guid id, ResCurrencyAmountToTextRequestDto input)
+        public async Task<ResCurrency> AmountToTextAsync(ResCurrencyAmountToTextRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -82,7 +83,9 @@ namespace Bamboo.Core.Application.Services
             //         currency_subunit=self.currency_subunit_label,
             //     )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResCurrency> CheckCompanyCurrencyStaysActiveInternalAsync()
@@ -118,7 +121,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> CompareAmountsAsync(Guid id, ResCurrencyCompareAmountsRequestDto input)
+        public async Task<ResCurrency> CompareAmountsAsync(ResCurrencyCompareAmountsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -145,7 +148,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return tools.float_compare(amount1, amount2, precision_rounding=self.rounding)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResCurrency> ComputeCurrentRateInternalAsync()
@@ -321,6 +326,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrency> DeactivateGroupMultiCurrencyInternalAsync()
         {
             /*
@@ -334,7 +340,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> FormatAsync(Guid id, ResCurrencyFormatRequestDto input)
+        public async Task<ResCurrency> FormatAsync(ResCurrencyFormatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -349,10 +355,13 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return tools.format_amount(self.env, amount + 0.0, self)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResCurrency> GetAllCurrenciesAsync(Guid id)
+        [ApiModel]
+        public async Task<ResCurrency> GetAllCurrenciesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -363,10 +372,13 @@ namespace Bamboo.Core.Application.Services
             //     for c in currencies
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResCurrency> GetCompanyCurrencyForSpreadsheetAsync(Guid id, ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input)
+        [ApiModel]
+        public async Task<ResCurrency> GetCompanyCurrencyForSpreadsheetAsync(ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet, FILE: res_currency.py) ---
@@ -390,9 +402,12 @@ namespace Bamboo.Core.Application.Services
             //     "position": currency.position,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrency> GetConversionRateInternalAsync(object from_currency, object to_currency, object company, object date)
         {
             /*
@@ -656,6 +671,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrency> GetViewCacheKeyInternalAsync(Guid view_id, object view_type)
         {
             /*
@@ -669,6 +685,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrency> GetViewInternalAsync(Guid view_id, object view_type)
         {
             /*
@@ -705,7 +722,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> IsZeroAsync(Guid id, ResCurrencyIsZeroRequestDto input)
+        public async Task<ResCurrency> IsZeroAsync(ResCurrencyIsZeroRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -724,9 +741,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return tools.float_is_zero(amount, precision_rounding=self.rounding)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrency> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -741,6 +761,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrency> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -751,7 +772,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> RoundAsync(Guid id, ResCurrencyRoundRequestDto input)
+        public async Task<ResCurrency> RoundAsync(ResCurrencyRoundRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -764,7 +785,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return tools.float_round(amount, precision_rounding=self.rounding)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResCurrency> SelectCompaniesRatesInternalAsync()
@@ -791,6 +814,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrency> ToggleGroupMultiCurrencyInternalAsync()
         {
             /*
@@ -808,7 +832,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ResCurrency entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ResCurrency> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_currency.py) ---
@@ -840,7 +864,7 @@ namespace Bamboo.Core.Application.Services
             // self._toggle_group_multi_currency()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsAIInsightAppService : IGenericApplicationService<DmsAIInsight>
+    public interface IDmsAIInsightAppService : IGenericAppService<DmsAIInsight>
     {
         Task GenerateInsightAsync(Guid insightId);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsAIInsightAppService : GenericApplicationService<DmsAIInsight>, IDmsAIInsightAppService
+    public class DmsAIInsightAppService : GenericAppService<DmsAIInsight>, IDmsAIInsightAppService
     {
         public DmsAIInsightAppService(
             IRepository<DmsAIInsight, Guid> repository,

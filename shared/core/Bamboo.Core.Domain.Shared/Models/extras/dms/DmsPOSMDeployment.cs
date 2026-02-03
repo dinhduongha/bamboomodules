@@ -24,26 +24,29 @@ public partial class DmsPOSMDeployment : FullAuditedAggregateRoot<Guid>, IEntity
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
+
     [Column("partner_id")]
-    public Guid PartnerId { get; set; }
+    public Guid? PartnerId { get; set; }
 
     [Column("trade_promotion_id")]
     public Guid? TradePromotionId { get; set; }
 
-    [Column("user_id")]
-    public Guid UserId { get; set; }
-
     [Column("deployment_date")]
-    public DateTime DeploymentDate { get; set; }
+    public DateTimeOffset? DeploymentDate { get; set; }
 
-    [Column("photos_before_json")]
-    public string? PhotosBeforeJson { get; set; }
+    [Column("photos_before", TypeName = "jsonb")]
+    public string? PhotosBefore { get; set; }
 
-    [Column("photos_after_json")]
-    public string? PhotosAfterJson { get; set; }
+    [Column("photos_after", TypeName = "jsonb")]
+    public string? PhotosAfter { get; set; }
 
     [Column("status")]
-    public string Status { get; set; } = "planned";
+    public string? Status { get; set; } = "planned";
 
     [Column("cost")]
     public decimal Cost { get; set; }
@@ -63,4 +66,12 @@ public partial class DmsPOSMDeployment : FullAuditedAggregateRoot<Guid>, IEntity
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PartnerId")]
     public virtual ResPartner? ResPartner { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
 }

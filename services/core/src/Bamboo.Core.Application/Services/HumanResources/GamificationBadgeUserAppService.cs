@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Gamification", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class GamificationBadgeUserAppService : GenericApplicationService<GamificationBadgeUser>, IGamificationBadgeUserAppService
+    public partial class GamificationBadgeUserAppService : GenericAppService<GamificationBadgeUser>, IGamificationBadgeUserAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public GamificationBadgeUserAppService(IRepository<GamificationBadgeUser, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -95,7 +95,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<GamificationBadgeUser> OpenBadgeAsync(Guid id)
+        public async Task<GamificationBadgeUser> OpenBadgeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_gamification, FILE: gamification.py) ---
@@ -112,7 +112,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': {"dialog_size": "medium"},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<GamificationBadgeUser> SendBadgeInternalAsync()

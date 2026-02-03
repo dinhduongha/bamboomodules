@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Calendar", Category = "Productivity", Depends = new[] { "base", "mail" })]
-    public partial class CalendarRecurrenceAppService : GenericApplicationService<CalendarRecurrence>, ICalendarRecurrenceAppService
+    public partial class CalendarRecurrenceAppService : GenericAppService<CalendarRecurrence>, ICalendarRecurrenceAppService
     {
         private readonly IGoogleCalendarSyncAppService _googleCalendarSyncAppService;
         private readonly IMicrosoftCalendarSyncAppService _microsoftCalendarSyncAppService;
@@ -236,6 +236,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarRecurrence> DetachEventsInternalAsync(object events)
         {
             /*
@@ -501,7 +502,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarRecurrence> GetRecurrenceNameAsync(Guid id)
+        public async Task<CalendarRecurrence> GetRecurrenceNameAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_recurrence.py) ---
@@ -515,7 +516,9 @@ namespace Bamboo.Core.Application.Services
             // if self.rrule_type == 'yearly':
             //     return self._get_yearly_recurrence_name()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarRecurrence> GetRruleInternalAsync(object dtstart)
@@ -813,6 +816,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarRecurrence> MicrosoftToOdooValuesInternalAsync(object microsoft_recurrence, object default_reminders, object default_values, List<Guid> with_ids)
         {
             /*
@@ -846,6 +850,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarRecurrence> OdooValuesInternalAsync(object google_recurrence, object default_reminders)
         {
             /*
@@ -908,6 +913,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarRecurrence> RestartGoogleSyncInternalAsync()
         {
             /*
@@ -920,6 +926,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarRecurrence> RestartMicrosoftSyncInternalAsync()
         {
             /*
@@ -932,6 +939,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarRecurrence> RruleParseInternalAsync(object rule_str, object date_start)
         {
             /*

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("AuthLdap", Category = "Base", Depends = new[] { "base", "base_setup" })]
-    public partial class ResCompanyLdapAppService : GenericApplicationService<ResCompanyLdap>, IResCompanyLdapAppService
+    public partial class ResCompanyLdapAppService : GenericAppService<ResCompanyLdap>, IResCompanyLdapAppService
     {
 
         public ResCompanyLdapAppService(IRepository<ResCompanyLdap, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -274,7 +274,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCompanyLdap> TestLdapConnectionAsync(Guid id)
+        public async Task<ResCompanyLdap> TestLdapConnectionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_ldap, FILE: res_company_ldap.py) ---
@@ -364,7 +364,9 @@ namespace Bamboo.Core.Application.Services
             //         }
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

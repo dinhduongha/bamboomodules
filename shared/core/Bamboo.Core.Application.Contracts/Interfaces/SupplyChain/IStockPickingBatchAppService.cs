@@ -10,18 +10,18 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockPickingBatchAppService : IGenericApplicationService<StockPickingBatch>
     {
-        Task<StockPickingBatch> AssignAsync(Guid id);
-        Task<StockPickingBatch> BatchDetailedOperationsAsync(Guid id);
-        Task<StockPickingBatch> CancelAsync(Guid id);
-        Task<StockPickingBatch> ConfirmAsync(Guid id);
-        Task<StockPickingBatch> DoneAsync(Guid id);
-        Task<StockPickingBatch> MergeAsync(Guid id);
-        Task<StockPickingBatch> OnchangeScheduledDateAsync(Guid id);
-        Task<StockPickingBatch> OpenLabelLayoutAsync(Guid id);
-        Task<StockPickingBatch> OrderOnZipAsync(Guid id);
-        Task<StockPickingBatch> PrintAsync(Guid id);
-        Task<StockPickingBatch> PutInPackAsync(Guid id);
-        Task<StockPickingBatch> SeePackagesAsync(Guid id);
-        Task<StockPickingBatch> ViewReceptionReportAsync(Guid id);
+        Task<StockPickingBatch> AssignAsync(Guid[] ids);
+        Task<StockPickingBatch> BatchDetailedOperationsAsync(Guid[] ids);
+        Task<StockPickingBatch> CancelAsync(Guid[] ids);
+        Task<StockPickingBatch> ConfirmAsync(Guid[] ids);
+        Task<StockPickingBatch> DoneAsync(Guid[] ids);
+        Task<StockPickingBatch> MergeAsync(Guid[] ids);
+        Task<StockPickingBatch> OnchangeScheduledDateAsync(Guid[] ids);
+        Task<StockPickingBatch> OpenLabelLayoutAsync(Guid[] ids);
+        Task<StockPickingBatch> OrderOnZipAsync(Guid[] ids);
+        Task<StockPickingBatch> PrintAsync(Guid[] ids);
+        Task<StockPickingBatch> PutInPackAsync(Guid[] ids);
+        Task<StockPickingBatch> SeePackagesAsync(Guid[] ids);
+        Task<StockPickingBatch> ViewReceptionReportAsync(Guid[] ids);
     }
 }

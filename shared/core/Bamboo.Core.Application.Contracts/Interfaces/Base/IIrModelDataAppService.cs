@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrModelDataAppService : IGenericApplicationService<IrModelData>
     {
-        Task<IrModelData> CheckObjectReferenceAsync(Guid id, IrModelDataCheckObjectReferenceRequestDto input);
-        Task<IrModelData> CopyDataAsync(Guid id, IrModelDataCopyDataRequestDto input);
-        Task<IrModelData> ToggleNoupdateAsync(Guid id, IrModelDataToggleNoupdateRequestDto input);
+        Task<IrModelData> CheckObjectReferenceAsync(IrModelDataCheckObjectReferenceRequestDto input);
+        Task<IrModelData> CopyDataAsync(IrModelDataCopyDataRequestDto input);
+        Task<IrModelData> ToggleNoupdateAsync(IrModelDataToggleNoupdateRequestDto input);
     }
 }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("CrmIapMine", Category = "Sales", Depends = new[] { "iap_crm", "iap_mail" })]
-    public partial class CrmIapLeadMiningRequestAppService : GenericApplicationService<CrmIapLeadMiningRequest>, ICrmIapLeadMiningRequestAppService
+    public partial class CrmIapLeadMiningRequestAppService : GenericAppService<CrmIapLeadMiningRequest>, ICrmIapLeadMiningRequestAppService
     {
 
         public CrmIapLeadMiningRequestAppService(IRepository<CrmIapLeadMiningRequest, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<CrmIapLeadMiningRequest> BuyCreditsAsync(Guid id)
+        public async Task<CrmIapLeadMiningRequest> BuyCreditsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_mining_request.py) ---
@@ -36,7 +36,9 @@ namespace Bamboo.Core.Application.Services
             //     'url': self.env['iap.account'].get_credits_url(service_name='reveal'),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CrmIapLeadMiningRequest> ComputeAvailableStateIdsInternalAsync()
@@ -184,7 +186,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmIapLeadMiningRequest> DraftAsync(Guid id)
+        public async Task<CrmIapLeadMiningRequest> DraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_mining_request.py) ---
@@ -193,10 +195,13 @@ namespace Bamboo.Core.Application.Services
             // self.name = _('New')
             // self.state = 'draft'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CrmIapLeadMiningRequest> GetEmptyListHelpAsync(Guid id, CrmIapLeadMiningRequestGetEmptyListHelpRequestDto input)
+        [ApiModel]
+        public async Task<CrmIapLeadMiningRequest> GetEmptyListHelpAsync(CrmIapLeadMiningRequestGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_mining_request.py) ---
@@ -210,10 +215,12 @@ namespace Bamboo.Core.Application.Services
             //     f'<p class="o_view_nocontent_smiling_face">{help_title}</p><p class="oe_view_nocontent_alias">{sub_title}</p>'
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CrmIapLeadMiningRequest> GetLeadActionAsync(Guid id)
+        public async Task<CrmIapLeadMiningRequest> GetLeadActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_mining_request.py) ---
@@ -223,10 +230,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('id', 'in', self.lead_ids.ids), ('type', '=', 'lead')]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CrmIapLeadMiningRequest> GetOpportunityActionAsync(Guid id)
+        public async Task<CrmIapLeadMiningRequest> GetOpportunityActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_mining_request.py) ---
@@ -236,7 +245,9 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('id', 'in', self.lead_ids.ids), ('type', '=', 'opportunity')]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CrmIapLeadMiningRequest> IapContactMiningInternalAsync(object @params, object timeout)
@@ -250,6 +261,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CrmIapLeadMiningRequest> LeadValsFromResponseInternalAsync(object data)
         {
             /*
@@ -416,7 +428,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmIapLeadMiningRequest> SubmitAsync(Guid id)
+        public async Task<CrmIapLeadMiningRequest> SubmitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_mining_request.py) ---
@@ -450,7 +462,9 @@ namespace Bamboo.Core.Application.Services
             //     # will reload the form view and show the error message on top
             //     return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

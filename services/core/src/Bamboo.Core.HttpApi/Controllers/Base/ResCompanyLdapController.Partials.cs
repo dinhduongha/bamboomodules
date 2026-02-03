@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/test-ldap-connection")]
-        public async Task<IActionResult> TestLdapConnectionAsync(Guid id)
+        [Route("test-ldap-connection")]
+        public async Task<IActionResult> TestLdapConnectionAsync(Guid[] ids)
         {
-            var result = await _appService.TestLdapConnectionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TestLdapConnectionAsync(ids);
             return Ok(result);
         }
     }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrModelConstraintAppService : GenericApplicationService<IrModelConstraint>, IIrModelConstraintAppService
+    public partial class IrModelConstraintAppService : GenericAppService<IrModelConstraint>, IIrModelConstraintAppService
     {
 
         public IrModelConstraintAppService(IRepository<IrModelConstraint, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<IrModelConstraint> CopyDataAsync(Guid id, IrModelConstraintCopyDataRequestDto input)
+        public async Task<IrModelConstraint> CopyDataAsync(IrModelConstraintCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -34,7 +34,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=constraint.name + '_copy') for constraint, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModelConstraint> ReflectConstraintInternalAsync(object model, object conname, object type, object definition, object module, object message)

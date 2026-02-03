@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductCategoryAppService : GenericApplicationService<ProductCategory>, IProductCategoryAppService
+    public partial class ProductCategoryAppService : GenericAppService<ProductCategory>, IProductCategoryAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
@@ -120,7 +120,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductCategory> CopyDataAsync(Guid id, ProductCategoryCopyDataRequestDto input)
+        public async Task<ProductCategory> CopyDataAsync(ProductCategoryCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_category.py) ---
@@ -132,9 +132,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", category.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ProductCategory> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -189,7 +192,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ProductCategory entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ProductCategory> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: product.py) ---
@@ -204,7 +207,7 @@ namespace Bamboo.Core.Application.Services
             //     products_to_update._update_standard_price()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

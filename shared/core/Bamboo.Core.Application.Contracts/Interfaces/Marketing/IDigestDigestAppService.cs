@@ -10,12 +10,12 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IDigestDigestAppService : IGenericApplicationService<DigestDigest>
     {
-        Task<DigestDigest> ActivateAsync(Guid id);
-        Task<DigestDigest> DeactivateAsync(Guid id);
-        Task<DigestDigest> SendAsync(Guid id);
-        Task<DigestDigest> SendManualAsync(Guid id);
-        Task<DigestDigest> SetPeriodicityAsync(Guid id, DigestDigestSetPeriodicityRequestDto input);
-        Task<DigestDigest> SubscribeAsync(Guid id);
-        Task<DigestDigest> UnsubscribeAsync(Guid id);
+        Task<DigestDigest> ActivateAsync(Guid[] ids);
+        Task<DigestDigest> DeactivateAsync(Guid[] ids);
+        Task<DigestDigest> SendAsync(Guid[] ids);
+        Task<DigestDigest> SendManualAsync(Guid[] ids);
+        Task<DigestDigest> SetPeriodicityAsync(DigestDigestSetPeriodicityRequestDto input);
+        Task<DigestDigest> SubscribeAsync(Guid[] ids);
+        Task<DigestDigest> UnsubscribeAsync(Guid[] ids);
     }
 }

@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsRouteAppService : IGenericApplicationService<DmsRoute>
+    public interface IDmsRouteAppService : IGenericAppService<DmsRoute>
     {
         Task StartRouteAsync(Guid routeId);
         Task CompleteRouteAsync(Guid routeId);
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain", Depends = new[] { "stock", "sale", "fleet" })]
-    public class DmsRouteAppService : GenericApplicationService<DmsRoute>, IDmsRouteAppService
+    public class DmsRouteAppService : GenericAppService<DmsRoute>, IDmsRouteAppService
     {
         public DmsRouteAppService(
             IRepository<DmsRoute, Guid> repository,

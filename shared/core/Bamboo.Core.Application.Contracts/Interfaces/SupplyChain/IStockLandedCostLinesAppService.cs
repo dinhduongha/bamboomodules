@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockLandedCostLinesAppService : IGenericApplicationService<StockLandedCostLines>
     {
-        Task<StockLandedCostLines> OnchangeProductIdAsync(Guid id);
+        Task<StockLandedCostLines> OnchangeProductIdAsync(Guid[] ids);
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResConfigSettingsAppService : GenericApplicationService<ResConfigSettings>, IResConfigSettingsAppService
+    public partial class ResConfigSettingsAppService : GenericAppService<ResConfigSettings>, IResConfigSettingsAppService
     {
 
         public ResConfigSettingsAppService(IRepository<ResConfigSettings, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ResConfigSettings> ButtonDisconnectThisDatabaseAsync(Guid id)
+        public async Task<ResConfigSettings> ButtonDisconnectThisDatabaseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
@@ -39,10 +39,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.account_peppol_edi_user._peppol_out_of_sync_disconnect_this_database()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> ButtonOpenPeppolConfigWizardAsync(Guid id)
+        public async Task<ResConfigSettings> ButtonOpenPeppolConfigWizardAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
@@ -59,10 +61,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> ButtonPeppolDisconnectBranchFromParentAsync(Guid id)
+        public async Task<ResConfigSettings> ButtonPeppolDisconnectBranchFromParentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
@@ -81,10 +85,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> ButtonPeppolRegisterSenderAsReceiverAsync(Guid id)
+        public async Task<ResConfigSettings> ButtonPeppolRegisterSenderAsReceiverAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
@@ -93,10 +99,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.env['peppol.config.wizard'].new().button_peppol_register_sender_as_receiver()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> ButtonReconnectThisDatabaseAsync(Guid id)
+        public async Task<ResConfigSettings> ButtonReconnectThisDatabaseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
@@ -105,10 +113,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.account_peppol_edi_user._peppol_out_of_sync_reconnect_this_database()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> CancelAsync(Guid id)
+        public async Task<ResConfigSettings> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -119,7 +129,9 @@ namespace Bamboo.Core.Application.Services
             //     return actions.read()[0]
             // return {}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> CheckCloudStorageUninstallableInternalAsync()
@@ -947,7 +959,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<ResConfigSettings> CreateAsync(ResConfigSettings entity, List<string> fields)
+        public override async Task<ResConfigSettings> CreateAsync(CreateRequestDto<ResConfigSettings> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: res_config_settings.py) ---
@@ -1051,10 +1063,10 @@ namespace Bamboo.Core.Application.Services
             // 
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<ResConfigSettings> CrmAssignLeadsAsync(Guid id)
+        public async Task<ResConfigSettings> CrmAssignLeadsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_config_settings.py) ---
@@ -1062,10 +1074,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.env['crm.team'].search([('assignment_optout', '=', False)]).action_assign_leads()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> CustomLinkActionAsync(Guid id)
+        public async Task<ResConfigSettings> CustomLinkActionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
@@ -1078,7 +1092,9 @@ namespace Bamboo.Core.Application.Services
             //     "domain": ['|', ['pos_config_ids', 'in', self.pos_config_id.id], ["pos_config_ids", "=", False]],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> DefaultPosConfigInternalAsync()
@@ -1117,7 +1133,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> EditExternalHeaderAsync(Guid id)
+        public async Task<ResConfigSettings> EditExternalHeaderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_setup, FILE: res_config_settings.py) ---
@@ -1126,10 +1142,12 @@ namespace Bamboo.Core.Application.Services
             //     return False
             // return self._prepare_report_view_action(self.external_report_layout_id.key)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> EuOssTaxMappingAsync(Guid id)
+        public async Task<ResConfigSettings> EuOssTaxMappingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_config_settings.py) ---
@@ -1140,10 +1158,12 @@ namespace Bamboo.Core.Application.Services
             //         l10n_eu_oss_module.button_immediate_install()
             //     self.env.companies._map_eu_taxes()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> ExecuteAsync(Guid id)
+        public async Task<ResConfigSettings> ExecuteAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -1210,7 +1230,9 @@ namespace Bamboo.Core.Application.Services
             //     'tag': 'reload',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> GenerateExcelInternalAsync(object rows, object headers)
@@ -1233,7 +1255,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> GenerateQrCodesPageAsync(Guid id)
+        public async Task<ResConfigSettings> GenerateQrCodesPageAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
@@ -1273,10 +1295,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> GenerateQrCodesZipAsync(Guid id)
+        public async Task<ResConfigSettings> GenerateQrCodesZipAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
@@ -1345,7 +1369,9 @@ namespace Bamboo.Core.Application.Services
             //     "target": "new",
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> GetActiveProvidersDomainInternalAsync()
@@ -1363,6 +1389,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResConfigSettings> GetClassifiedFieldsInternalAsync(object fnames)
         {
             /*
@@ -1460,7 +1487,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> GetConfigWarningAsync(Guid id, ResConfigSettingsGetConfigWarningRequestDto input)
+        [ApiModel]
+        public async Task<ResConfigSettings> GetConfigWarningAsync(ResConfigSettingsGetConfigWarningRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -1535,7 +1563,9 @@ namespace Bamboo.Core.Application.Services
             //     return RedirectWarning(msg % values, action_id, _('Go to the configuration panel'))
             // return UserError(msg % values)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> GetCrmAutoAssignmmentRunDatetimeInternalAsync(object run_datetime, object run_interval, object run_interval_number)
@@ -1552,7 +1582,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> GetOptionNameAsync(Guid id, ResConfigSettingsGetOptionNameRequestDto input)
+        [ApiModel]
+        public async Task<ResConfigSettings> GetOptionNameAsync(ResConfigSettingsGetOptionNameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -1568,10 +1599,13 @@ namespace Bamboo.Core.Application.Services
             // model_name, field_name = full_field_name.rsplit('.', 1)
             // return self.env[model_name].fields_get([field_name])[field_name]['string']
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> GetOptionPathAsync(Guid id, ResConfigSettingsGetOptionPathRequestDto input)
+        [ApiModel]
+        public async Task<ResConfigSettings> GetOptionPathAsync(ResConfigSettingsGetOptionPathRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -1589,10 +1623,12 @@ namespace Bamboo.Core.Application.Services
             // ir_ui_menu = self.env.ref(menu_xml_id)
             // return (ir_ui_menu.complete_name, ir_ui_menu.action.id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> GetPosQrStandsAsync(Guid id)
+        public async Task<ResConfigSettings> GetPosQrStandsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
@@ -1607,20 +1643,26 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> GetUriAsync(Guid id)
+        [ApiModel]
+        public async Task<ResConfigSettings> GetUriAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_config_settings.py) ---
             // def get_uri(self):
             // return "%s/auth_oauth/signin" % (self.env['ir.config_parameter'].get_param('web.base.url'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> GetValuesAsync(Guid id)
+        [ApiModel]
+        public async Task<ResConfigSettings> GetValuesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: res_config_settings.py) ---
@@ -1717,9 +1759,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // return {}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResConfigSettings> InstallModulesInternalAsync(object modules)
         {
             /*
@@ -1988,7 +2033,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> OnchangeAdvLocationAsync(Guid id)
+        public async Task<ResConfigSettings> OnchangeAdvLocationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: res_config_settings.py) ---
@@ -1996,7 +2041,9 @@ namespace Bamboo.Core.Application.Services
             // if self.group_stock_adv_location and not self.group_stock_multi_locations:
             //     self.group_stock_multi_locations = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> OnchangeAdvancedEmployeeIdsInternalAsync()
@@ -2013,7 +2060,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> OnchangeAnalyticAccountingAsync(Guid id)
+        public async Task<ResConfigSettings> OnchangeAnalyticAccountingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_config_settings.py) ---
@@ -2021,7 +2068,9 @@ namespace Bamboo.Core.Application.Services
             // if self.group_analytic_accounting:
             //     self.module_account_accountant = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> OnchangeAuthTotpEnforceInternalAsync()
@@ -2237,7 +2286,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> OnchangeModuleAccountBudgetAsync(Guid id)
+        public async Task<ResConfigSettings> OnchangeModuleAccountBudgetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_config_settings.py) ---
@@ -2245,7 +2294,9 @@ namespace Bamboo.Core.Application.Services
             // if self.module_account_budget:
             //     self.group_analytic_accounting = True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> OnchangeModuleProductExpiryInternalAsync()
@@ -2477,7 +2528,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> OpenAbandonedCartMailTemplateAsync(Guid id)
+        public async Task<ResConfigSettings> OpenAbandonedCartMailTemplateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
@@ -2491,10 +2542,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.env['ir.model.data']._xmlid_to_res_id("website_sale.mail_template_sale_cart_recovery"),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenBlockedThirdPartyDomainsAsync(Guid id)
+        public async Task<ResConfigSettings> OpenBlockedThirdPartyDomainsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_config_settings.py) ---
@@ -2509,10 +2562,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenCloudStorageMigrationConfigurationsAsync(Guid id)
+        public async Task<ResConfigSettings> OpenCloudStorageMigrationConfigurationsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: cloud_storage_migration, FILE: res_config_settings.py) ---
@@ -2533,10 +2588,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenCompanyAsync(Guid id)
+        public async Task<ResConfigSettings> OpenCompanyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_setup, FILE: res_config_settings.py) ---
@@ -2550,10 +2607,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenEmailLayoutAsync(Guid id)
+        public async Task<ResConfigSettings> OpenEmailLayoutAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_config_settings.py) ---
@@ -2569,10 +2628,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_model': 'ir.ui.view',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenExtraInfoAsync(Guid id)
+        public async Task<ResConfigSettings> OpenExtraInfoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
@@ -2583,10 +2644,12 @@ namespace Bamboo.Core.Application.Services
             // return self.env["website"].get_client_action(
             //     '/shop/extra_info?open_editor=true', mode_edit=True, website_id=self.website_id.id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenFollowupLevelFormAsync(Guid id)
+        public async Task<ResConfigSettings> OpenFollowupLevelFormAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: settings.py) ---
@@ -2600,20 +2663,24 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form,list',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenMailTemplatesAsync(Guid id)
+        public async Task<ResConfigSettings> OpenMailTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_config_settings.py) ---
             // def open_mail_templates(self):
             // return self.env['ir.actions.actions']._for_xml_id('mail.action_email_template_tree_all')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenNewUserDefaultGroupsAsync(Guid id)
+        public async Task<ResConfigSettings> OpenNewUserDefaultGroupsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_setup, FILE: res_config_settings.py) ---
@@ -2640,10 +2707,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenPaymentMethodFormAsync(Guid id)
+        public async Task<ResConfigSettings> OpenPaymentMethodFormAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
@@ -2663,10 +2732,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenPeppolFormAsync(Guid id)
+        public async Task<ResConfigSettings> OpenPeppolFormAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_config_settings.py) ---
@@ -2675,10 +2746,12 @@ namespace Bamboo.Core.Application.Services
             // registration_action = registration_wizard._action_open_peppol_form(reopen=False)
             // return registration_action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenProductFeedsAsync(Guid id)
+        public async Task<ResConfigSettings> OpenProductFeedsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
@@ -2698,10 +2771,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('website_id', '=', self.website_id.id)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenRobotsAsync(Guid id)
+        public async Task<ResConfigSettings> OpenRobotsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_config_settings.py) ---
@@ -2716,10 +2791,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenSaleMailTemplatesAsync(Guid id)
+        public async Task<ResConfigSettings> OpenSaleMailTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
@@ -2733,20 +2810,24 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'list,form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenSmsTwilioAccountManageAsync(Guid id)
+        public async Task<ResConfigSettings> OpenSmsTwilioAccountManageAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: res_config_settings.py) ---
             // def action_open_sms_twilio_account_manage(self):
             // return self.company_id._action_open_sms_twilio_account_manage()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> OpenTemplateUserAsync(Guid id)
+        public async Task<ResConfigSettings> OpenTemplateUserAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -2760,10 +2841,12 @@ namespace Bamboo.Core.Application.Services
             // action['views'] = [[self.env.ref('base.view_users_form').id, 'form']]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> PosCloseUiAsync(Guid id)
+        public async Task<ResConfigSettings> PosCloseUiAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
@@ -2778,10 +2861,12 @@ namespace Bamboo.Core.Application.Services
             //         return pos_config.action_close_kiosk_session()
             // return super().pos_close_ui()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> PosConfigCreateNewAsync(Guid id)
+        public async Task<ResConfigSettings> PosConfigCreateNewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
@@ -2795,10 +2880,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': {'pos_config_open_modal': True, 'pos_config_create_mode': True},
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> PosOpenUiAsync(Guid id)
+        public async Task<ResConfigSettings> PosOpenUiAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
@@ -2808,10 +2895,12 @@ namespace Bamboo.Core.Application.Services
             //     pos_config = self.env['pos.config'].browse(pos_config_id)
             //     return pos_config.open_ui()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> PosPrinterDialogAsync(Guid id)
+        public async Task<ResConfigSettings> PosPrinterDialogAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
@@ -2824,9 +2913,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': False,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResConfigSettings> PrepareReportViewActionInternalAsync(object template)
         {
             /*
@@ -2843,7 +2935,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> PreviewSelfOrderAppAsync(Guid id)
+        public async Task<ResConfigSettings> PreviewSelfOrderAppAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
@@ -2851,10 +2943,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.pos_config_id.preview_self_order_app()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> RedirectToBuyAutocompleteCreditAsync(Guid id)
+        public async Task<ResConfigSettings> RedirectToBuyAutocompleteCreditAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_config_settings.py) ---
@@ -2866,10 +2960,12 @@ namespace Bamboo.Core.Application.Services
             //     'target': '_new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> RegenerateKioskKeyAsync(Guid id)
+        public async Task<ResConfigSettings> RegenerateKioskKeyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_config_settings.py) ---
@@ -2877,20 +2973,24 @@ namespace Bamboo.Core.Application.Services
             // if self.env.user.has_group("hr_attendance.group_hr_attendance_user"):
             //     self.company_id._regenerate_attendance_kiosk_key()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> ReloadTemplateAsync(Guid id)
+        public async Task<ResConfigSettings> ReloadTemplateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_config_settings.py) ---
             // def reload_template(self):
             // self.env['account.chart.template'].try_loading(self.company_id.chart_template, company=self.company_id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> SetValuesAsync(Guid id)
+        public async Task<ResConfigSettings> SetValuesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_config_settings.py) ---
@@ -3210,7 +3310,9 @@ namespace Bamboo.Core.Application.Services
             //         continue
             //     IrConfigParameter.set_param(icp, value)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> SetupCloudStorageProviderInternalAsync()
@@ -3297,7 +3399,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> UpdateAccessTokensAsync(Guid id)
+        public async Task<ResConfigSettings> UpdateAccessTokensAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: res_config_settings.py) ---
@@ -3305,10 +3407,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.pos_config_id._update_access_token()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> UpdateTermsAsync(Guid id)
+        public async Task<ResConfigSettings> UpdateTermsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_config_settings.py) ---
@@ -3326,7 +3430,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.company_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResConfigSettings> ValidFieldParameterInternalAsync(object field, object name)
@@ -3343,17 +3449,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> ViewDeliveryProviderModulesAsync(Guid id)
+        public async Task<ResConfigSettings> ViewDeliveryProviderModulesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: res_config_settings.py) ---
             // def action_view_delivery_provider_modules(self):
             // return self.env['delivery.carrier'].install_more_provider()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> ViewInStoreDeliveryMethodsAsync(Guid id)
+        public async Task<ResConfigSettings> ViewInStoreDeliveryMethodsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: res_config_settings.py) ---
@@ -3376,10 +3484,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': '{"search_default_delivery_type": "in_store"}',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> WPaymentStartPaymentOnboardingAsync(Guid id)
+        public async Task<ResConfigSettings> WPaymentStartPaymentOnboardingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_payment, FILE: res_config_settings.py) ---
@@ -3387,10 +3497,12 @@ namespace Bamboo.Core.Application.Services
             // menu = self.env.ref('website.menu_website_website_settings', raise_if_not_found=False)
             // return self._start_payment_onboarding(menu and menu.id)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResConfigSettings> WebsiteCreateNewAsync(Guid id)
+        public async Task<ResConfigSettings> WebsiteCreateNewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_config_settings.py) ---
@@ -3405,10 +3517,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': False,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ResConfigSettings entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ResConfigSettings> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: res_config_settings.py) ---
@@ -3418,7 +3532,7 @@ namespace Bamboo.Core.Application.Services
             //     configs._check_google_maps_static_api_secret()
             // return configs
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

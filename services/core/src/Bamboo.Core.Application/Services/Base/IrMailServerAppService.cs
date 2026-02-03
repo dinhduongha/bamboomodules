@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrMailServerAppService : GenericApplicationService<IrMailServer>, IIrMailServerAppService
+    public partial class IrMailServerAppService : GenericAppService<IrMailServer>, IIrMailServerAppService
     {
         private readonly IGoogleGmailMixinAppService _googleGmailMixinAppService;
         private readonly IMicrosoftOutlookMixinAppService _microsoftOutlookMixinAppService;
@@ -73,6 +73,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrMailServer> AlterMessageInternalAsync(object message, object smtp_from, object smtp_to_list)
         {
             /*
@@ -496,6 +497,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrMailServer> FilterMailServersFallbackInternalAsync(object servers)
         {
             /*
@@ -610,6 +612,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrMailServer> GetDefaultBounceAddressInternalAsync()
         {
             /*
@@ -633,6 +636,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrMailServer> GetDefaultFromAddressInternalAsync()
         {
             /*
@@ -656,6 +660,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrMailServer> GetDefaultFromFilterInternalAsync()
         {
             /*
@@ -768,6 +773,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrMailServer> MatchFromFilterInternalAsync(object email_from, object from_filter)
         {
             /*
@@ -885,6 +891,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrMailServer> ParseFromFilterInternalAsync(object from_filter)
         {
             /*
@@ -957,6 +964,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrMailServer> PrepareSmtpToListInternalAsync(object message, object smtp_session)
         {
             /*
@@ -998,7 +1006,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrMailServer> RetrieveMaxEmailSizeAsync(Guid id)
+        public async Task<IrMailServer> RetrieveMaxEmailSizeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
@@ -1006,10 +1014,13 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.test_smtp_connection(autodetect_max_email_size=True)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrMailServer> SendEmailAsync(Guid id, IrMailServerSendEmailRequestDto input)
+        [ApiModel]
+        public async Task<IrMailServer> SendEmailAsync(IrMailServerSendEmailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
@@ -1084,7 +1095,9 @@ namespace Bamboo.Core.Application.Services
             //     raise MailDeliveryException(_("Mail Delivery Failed"), msg)
             // return message_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrMailServer> SmtpLoginInternalAsync(object connection, object smtp_user, object smtp_password)
@@ -1124,7 +1137,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrMailServer> TestSmtpConnectionAsync(Guid id, IrMailServerTestSmtpConnectionRequestDto input)
+        public async Task<IrMailServer> TestSmtpConnectionAsync(IrMailServerTestSmtpConnectionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
@@ -1212,7 +1225,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

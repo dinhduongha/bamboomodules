@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmRecurringPayments", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class RecurringPaymentAppService : GenericApplicationService<RecurringPayment>, IRecurringPaymentAppService
+    public partial class RecurringPaymentAppService : GenericAppService<RecurringPayment>, IRecurringPaymentAppService
     {
 
         public RecurringPaymentAppService(IRepository<RecurringPayment, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RecurringPayment> ComputeNextDateAsync(Guid id, RecurringPaymentComputeNextDateRequestDto input)
+        public async Task<RecurringPayment> ComputeNextDateAsync(RecurringPaymentComputeNextDateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---
@@ -54,10 +54,12 @@ namespace Bamboo.Core.Application.Services
             //     date += relativedelta(years=interval)
             // return date
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RecurringPayment> CreateLinesAsync(Guid id, RecurringPaymentCreateLinesRequestDto input)
+        public async Task<RecurringPayment> CreateLinesAsync(RecurringPaymentCreateLinesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---
@@ -74,10 +76,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // ids.create(vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RecurringPayment> DoneAsync(Guid id)
+        public async Task<RecurringPayment> DoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---
@@ -89,10 +93,12 @@ namespace Bamboo.Core.Application.Services
             //     date_begin = self.compute_next_date(date)
             // self.state = 'done'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RecurringPayment> DraftAsync(Guid id)
+        public async Task<RecurringPayment> DraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---
@@ -104,10 +110,12 @@ namespace Bamboo.Core.Application.Services
             //         line.unlink()
             //     self.state = 'draft'
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<RecurringPayment> GeneratePaymentAsync(Guid id)
+        public async Task<RecurringPayment> GeneratePaymentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---
@@ -117,7 +125,9 @@ namespace Bamboo.Core.Application.Services
             // for line in line_ids:
             //     line.action_create_payment()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

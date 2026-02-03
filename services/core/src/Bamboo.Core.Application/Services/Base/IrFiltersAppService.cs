@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrFiltersAppService : GenericApplicationService<IrFilters>, IIrFiltersAppService
+    public partial class IrFiltersAppService : GenericAppService<IrFilters>, IIrFiltersAppService
     {
 
         public IrFiltersAppService(IRepository<IrFilters, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<IrFilters> CopyDataAsync(Guid id, IrFiltersCopyDataRequestDto input)
+        public async Task<IrFilters> CopyDataAsync(IrFiltersCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
@@ -39,10 +39,13 @@ namespace Bamboo.Core.Application.Services
             //         del vals['embedded_parent_res_id']
             // return [dict(vals, name=self.env._("%s (copy)", ir_filter.name)) for ir_filter, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrFilters> CreateFilterAsync(Guid id, IrFiltersCreateFilterRequestDto input)
+        [ApiModel]
+        public async Task<IrFilters> CreateFilterAsync(IrFiltersCreateFilterRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
@@ -52,9 +55,12 @@ namespace Bamboo.Core.Application.Services
             //     del vals['embedded_parent_res_id']
             // return self.create(vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrFilters> GetActionDomainInternalAsync(Guid action_id, Guid embedded_action_id, Guid embedded_parent_res_id)
         {
             /*
@@ -84,7 +90,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrFilters> GetFiltersAsync(Guid id, IrFiltersGetFiltersRequestDto input)
+        [ApiModel]
+        public async Task<IrFilters> GetFiltersAsync(IrFiltersGetFiltersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
@@ -110,9 +117,12 @@ namespace Bamboo.Core.Application.Services
             //     ['name', 'is_default', 'domain', 'context', 'user_ids', 'sort', 'embedded_action_id', 'embedded_parent_res_id'],
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrFilters> ListAllModelsInternalAsync()
         {
             /*

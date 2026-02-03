@@ -25,16 +25,16 @@ public partial class DmsShopDisplayAudit : FullAuditedAggregateRoot<Guid>, IEnti
     public Guid? OrganizationUnitId { get; set; }
 
     [Column("outlet_visit_id")]
-    public Guid OutletVisitId { get; set; }
+    public Guid? OutletVisitId { get; set; }
 
     [Column("display_score")]
     public decimal DisplayScore { get; set; }
 
-    [Column("photos_before_json")]
-    public string? PhotosBeforeJson { get; set; }
+    [Column("photos_before", TypeName = "jsonb")]
+    public string? PhotosBefore { get; set; }
 
-    [Column("photos_after_json")]
-    public string? PhotosAfterJson { get; set; }
+    [Column("photos_after", TypeName = "jsonb")]
+    public string? PhotosAfter { get; set; }
 
     [Column("competitor_notes")]
     public string? CompetitorNotes { get; set; }

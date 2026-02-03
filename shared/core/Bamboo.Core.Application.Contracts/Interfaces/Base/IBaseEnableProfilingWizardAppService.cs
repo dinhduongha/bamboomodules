@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBaseEnableProfilingWizardAppService : IGenericApplicationService<BaseEnableProfilingWizard>
     {
-        Task<BaseEnableProfilingWizard> SubmitAsync(Guid id);
+        Task<BaseEnableProfilingWizard> SubmitAsync(Guid[] ids);
     }
 }

@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventBoothAppService : IGenericApplicationService<EventBooth>
     {
-        Task<EventBooth> ConfirmAsync(Guid id, EventBoothConfirmRequestDto input);
-        Task<EventBooth> SetPaidAsync(Guid id);
-        Task<EventBooth> ViewSaleOrderAsync(Guid id);
-        Task<EventBooth> ViewSponsorAsync(Guid id);
+        Task<EventBooth> ConfirmAsync(EventBoothConfirmRequestDto input);
+        Task<EventBooth> SetPaidAsync(Guid[] ids);
+        Task<EventBooth> ViewSaleOrderAsync(Guid[] ids);
+        Task<EventBooth> ViewSponsorAsync(Guid[] ids);
     }
 }

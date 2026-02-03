@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISurveyQuestionAppService : IGenericApplicationService<SurveyQuestion>
     {
-        Task<SurveyQuestion> ValidateQuestionAsync(Guid id, SurveyQuestionValidateQuestionRequestDto input);
+        Task<SurveyQuestion> ValidateQuestionAsync(SurveyQuestionValidateQuestionRequestDto input);
     }
 }

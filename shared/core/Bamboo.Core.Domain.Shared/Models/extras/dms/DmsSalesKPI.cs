@@ -24,14 +24,17 @@ public partial class DmsSalesKPI : FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
     [Column("user_id")]
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     [Column("period")]
-    public string Period { get; set; } = "day";
+    public string? Period { get; set; } = "day";
 
     [Column("kpi_type")]
-    public string KPIType { get; set; } = null!;
+    public string? KPIType { get; set; } = null!;
 
     [Column("target_value")]
     public decimal TargetValue { get; set; }
@@ -54,6 +57,18 @@ public partial class DmsSalesKPI : FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TeamId")]
+
+    public virtual ResTeam? Team { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]
     public virtual ResUsers? User { get; set; }

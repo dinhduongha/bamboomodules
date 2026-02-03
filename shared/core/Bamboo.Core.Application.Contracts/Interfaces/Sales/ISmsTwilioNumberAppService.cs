@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISmsTwilioNumberAppService : IGenericApplicationService<SmsTwilioNumber>
     {
-        Task<SmsTwilioNumber> UnlinkAsync(Guid id);
+        Task<SmsTwilioNumber> UnlinkAsync(Guid[] ids);
     }
 }

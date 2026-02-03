@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockLocationAppService : GenericApplicationService<StockLocation>, IStockLocationAppService
+    public partial class StockLocationAppService : GenericAppService<StockLocation>, IStockLocationAppService
     {
 
         public StockLocationAppService(IRepository<StockLocation, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -306,7 +306,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLocation> CopyDataAsync(Guid id, StockLocationCopyDataRequestDto input)
+        public async Task<StockLocation> CopyDataAsync(StockLocationCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
@@ -318,7 +318,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", location.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockLocation> GetNextInventoryDateInternalAsync()
@@ -511,7 +513,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLocation> IsSubcontractAsync(Guid id)
+        public async Task<StockLocation> IsSubcontractAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_location.py) ---
@@ -519,7 +521,9 @@ namespace Bamboo.Core.Application.Services
             // subcontracting_location = self.company_id.subcontracting_location_id
             // return subcontracting_location and self._child_of(subcontracting_location)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockLocation> SearchIsEmptyInternalAsync(object @operator, object @value)
@@ -572,7 +576,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLocation> ShouldBypassReservationAsync(Guid id)
+        public async Task<StockLocation> ShouldBypassReservationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_location.py) ---
@@ -580,7 +584,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.usage in ('supplier', 'customer', 'inventory', 'production')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockLocation> UnlinkExceptMasterDataInternalAsync()
@@ -595,7 +601,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLocation> ViewEquipmentsRecordsAsync(Guid id)
+        public async Task<StockLocation> ViewEquipmentsRecordsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_maintenance, FILE: stock_location.py) ---
@@ -604,7 +610,9 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('location_id', '=', self.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

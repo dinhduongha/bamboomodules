@@ -25,25 +25,25 @@ public partial class DmsEB2BOrder : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
-    public Guid PartnerId { get; set; }
+    public Guid? PartnerId { get; set; }
 
     [Column("channel")]
-    public string Channel { get; set; } = "whatsapp";
+    public string? Channel { get; set; } = "whatsapp";
 
     [Column("order_source_id")]
     public string? OrderSourceId { get; set; }
 
-    [Column("order_content_json")]
-    public string OrderContentJson { get; set; } = null!;
+    [Column("order_content", TypeName = "jsonb")]
+    public string? OrderContent { get; set; }
 
     [Column("order_status")]
-    public string OrderStatus { get; set; } = "pending";
+    public string? OrderStatus { get; set; } = "pending";
 
     [Column("converted_to_sale_order_id")]
     public Guid? ConvertedToSaleOrderId { get; set; }
 
     [Column("timestamp")]
-    public DateTime Timestamp { get; set; }
+    public DateTimeOffset? Timestamp { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -61,4 +61,7 @@ public partial class DmsEB2BOrder : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [ForeignKey("PartnerId")]
     public virtual ResPartner? Partner { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
 }

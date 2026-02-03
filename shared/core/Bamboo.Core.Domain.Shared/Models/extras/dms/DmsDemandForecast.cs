@@ -31,7 +31,7 @@ public partial class DmsDemandForecast : FullAuditedAggregateRoot<Guid>, IEntity
     public Guid? PartnerId { get; set; }
 
     [Column("period")]
-    public string Period { get; set; } = "month";
+    public string? Period { get; set; } = "month";
 
     [Column("forecast_qty")]
     public decimal ForecastQty { get; set; }
@@ -39,17 +39,17 @@ public partial class DmsDemandForecast : FullAuditedAggregateRoot<Guid>, IEntity
     [Column("confidence_score")]
     public decimal ConfidenceScore { get; set; }
 
-    [Column("based_on_history_json")]
-    public string? BasedOnHistoryJson { get; set; }
+    [Column("based_on_history", TypeName = "jsonb")]
+    public string? BasedOnHistory { get; set; }
 
     [Column("season_factor")]
     public decimal SeasonFactor { get; set; }
 
     [Column("forecast_date")]
-    public DateTime ForecastDate { get; set; }
+    public DateTimeOffset? ForecastDate { get; set; }
 
     [Column("status")]
-    public string Status { get; set; } = "draft";
+    public string? Status { get; set; } = "draft";
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -66,4 +66,16 @@ public partial class DmsDemandForecast : FullAuditedAggregateRoot<Guid>, IEntity
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductId")]
     public virtual ProductProduct? Product { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("PartnerId")]
+    public virtual ResPartner? Partner { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
 }

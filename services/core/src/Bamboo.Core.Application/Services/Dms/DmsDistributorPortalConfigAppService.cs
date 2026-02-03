@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsDistributorPortalConfigAppService : IGenericApplicationService<DmsDistributorPortalConfig>
+    public interface IDmsDistributorPortalConfigAppService : IGenericAppService<DmsDistributorPortalConfig>
     {
         Task UpdateAccessLevelAsync(Guid configId, string level);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsDistributorPortalConfigAppService : GenericApplicationService<DmsDistributorPortalConfig>, IDmsDistributorPortalConfigAppService
+    public class DmsDistributorPortalConfigAppService : GenericAppService<DmsDistributorPortalConfig>, IDmsDistributorPortalConfigAppService
     {
         public DmsDistributorPortalConfigAppService(
             IRepository<DmsDistributorPortalConfig, Guid> repository,

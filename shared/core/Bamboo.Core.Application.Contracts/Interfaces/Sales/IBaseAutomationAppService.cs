@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBaseAutomationAppService : IGenericApplicationService<BaseAutomation>
     {
-        Task<BaseAutomation> OpenScheduledActionAsync(Guid id);
-        Task<BaseAutomation> RotateWebhookUuidAsync(Guid id);
-        Task<BaseAutomation> ViewWebhookLogsAsync(Guid id);
+        Task<BaseAutomation> OpenScheduledActionAsync(Guid[] ids);
+        Task<BaseAutomation> RotateWebhookUuidAsync(Guid[] ids);
+        Task<BaseAutomation> ViewWebhookLogsAsync(Guid[] ids);
     }
 }

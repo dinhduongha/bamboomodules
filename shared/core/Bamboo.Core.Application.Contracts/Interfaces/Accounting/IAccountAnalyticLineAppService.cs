@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAnalyticLineAppService : IGenericApplicationService<AccountAnalyticLine>
     {
-        Task<AccountAnalyticLine> GetImportTemplatesAsync(Guid id);
-        Task<AccountAnalyticLine> GetUnusualDaysAsync(Guid id, AccountAnalyticLineGetUnusualDaysRequestDto input);
-        Task<AccountAnalyticLine> GetViewsAsync(Guid id, AccountAnalyticLineGetViewsRequestDto input);
-        Task<AccountAnalyticLine> InvoiceFromTimesheetAsync(Guid id);
-        Task<AccountAnalyticLine> OnChangeUnitAmountAsync(Guid id);
-        Task<AccountAnalyticLine> OpenTimesheetViewPortalAsync(Guid id);
-        Task<AccountAnalyticLine> SaleOrderFromTimesheetAsync(Guid id);
-        Task<AccountAnalyticLine> ViewHeaderGetAsync(Guid id, AccountAnalyticLineViewHeaderGetRequestDto input);
+        Task<AccountAnalyticLine> GetImportTemplatesAsync(Guid[] ids);
+        Task<AccountAnalyticLine> GetUnusualDaysAsync(AccountAnalyticLineGetUnusualDaysRequestDto input);
+        Task<AccountAnalyticLine> GetViewsAsync(AccountAnalyticLineGetViewsRequestDto input);
+        Task<AccountAnalyticLine> InvoiceFromTimesheetAsync(Guid[] ids);
+        Task<AccountAnalyticLine> OnChangeUnitAmountAsync(Guid[] ids);
+        Task<AccountAnalyticLine> OpenTimesheetViewPortalAsync(Guid[] ids);
+        Task<AccountAnalyticLine> SaleOrderFromTimesheetAsync(Guid[] ids);
+        Task<AccountAnalyticLine> ViewHeaderGetAsync(AccountAnalyticLineViewHeaderGetRequestDto input);
     }
 }

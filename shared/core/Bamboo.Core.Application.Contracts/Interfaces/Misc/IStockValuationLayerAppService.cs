@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockValuationLayerAppService : IGenericApplicationService<StockValuationLayer>
     {
-        Task<StockValuationLayer> InitAsync(Guid id);
-        Task<StockValuationLayer> OpenJournalEntryAsync(Guid id);
-        Task<StockValuationLayer> OpenReferenceAsync(Guid id);
-        Task<StockValuationLayer> ValuationAtDateAsync(Guid id);
+        Task<StockValuationLayer> InitAsync(Guid[] ids);
+        Task<StockValuationLayer> OpenJournalEntryAsync(Guid[] ids);
+        Task<StockValuationLayer> OpenReferenceAsync(Guid[] ids);
+        Task<StockValuationLayer> ValuationAtDateAsync(Guid[] ids);
     }
 }

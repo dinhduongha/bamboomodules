@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountFiscalPositionAppService : GenericApplicationService<AccountFiscalPosition>, IAccountFiscalPositionAppService
+    public partial class AccountFiscalPositionAppService : GenericAppService<AccountFiscalPosition>, IAccountFiscalPositionAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public AccountFiscalPositionAppService(IRepository<AccountFiscalPosition, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<AccountFiscalPosition> ArchiveAsync(Guid id)
+        public async Task<AccountFiscalPosition> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: account_fiscal_position.py) ---
@@ -36,7 +36,9 @@ namespace Bamboo.Core.Application.Services
             // configs.default_fiscal_position_id = False
             // return super().action_archive()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountFiscalPosition> CheckZipInternalAsync()
@@ -120,6 +122,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountFiscalPosition> ConvertZipValuesInternalAsync(object zip_from, object zip_to)
         {
             /*
@@ -136,7 +139,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountFiscalPosition> CreateForeignTaxesAsync(Guid id)
+        public async Task<AccountFiscalPosition> CreateForeignTaxesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -150,7 +153,9 @@ namespace Bamboo.Core.Application.Services
             // created_records = self.env["account.chart.template"]._instantiate_foreign_taxes(self.country_id, self.company_id)
             // created_records.get('account.tax', self.env['account.tax']).fiscal_position_ids += self
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountFiscalPosition> GetFirstMatchingFposInternalAsync(object partner)
@@ -167,6 +172,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountFiscalPosition> GetFiscalPositionInternalAsync(object partner, object delivery)
         {
             /*
@@ -262,6 +268,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountFiscalPosition> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -274,6 +281,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountFiscalPosition> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -284,17 +292,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountFiscalPosition> MapAccountAsync(Guid id, AccountFiscalPositionMapAccountRequestDto input)
+        public async Task<AccountFiscalPosition> MapAccountAsync(AccountFiscalPositionMapAccountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def map_account(self, account):
             // return self.env['account.account'].browse((self.account_map or {}).get(account.id, account.id))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<AccountFiscalPosition> MapTaxAsync(Guid id, AccountFiscalPositionMapTaxRequestDto input)
+        public async Task<AccountFiscalPosition> MapTaxAsync(AccountFiscalPositionMapTaxRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -309,7 +319,9 @@ namespace Bamboo.Core.Application.Services
             //     for tax_id in (self.tax_map or {}).get(tax.id, [tax.id])
             // ))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountFiscalPosition> OnchangeCountryGroupIdInternalAsync()
@@ -347,14 +359,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountFiscalPosition> OpenRelatedTaxesAsync(Guid id)
+        public async Task<AccountFiscalPosition> OpenRelatedTaxesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def action_open_related_taxes(self):
             // return self.tax_ids._get_records_action(name=_("%s taxes", self.display_name))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountFiscalPosition> ValidateForeignVatCountryInternalAsync()

@@ -10,17 +10,17 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountAssetAssetAppService : IGenericApplicationService<AccountAssetAsset>
     {
-        Task<AccountAssetAsset> ComputeDepreciationBoardAsync(Guid id);
-        Task<AccountAssetAsset> ComputeGeneratedEntriesAsync(Guid id, AccountAssetAssetComputeGeneratedEntriesRequestDto input);
-        Task<AccountAssetAsset> CopyDataAsync(Guid id, AccountAssetAssetCopyDataRequestDto input);
-        Task<AccountAssetAsset> OnchangeCategoryIdAsync(Guid id);
-        Task<AccountAssetAsset> OnchangeCategoryIdValuesAsync(Guid id, AccountAssetAssetOnchangeCategoryIdValuesRequestDto input);
-        Task<AccountAssetAsset> OnchangeCompanyIdAsync(Guid id);
-        Task<AccountAssetAsset> OnchangeDateFirstDepreciationAsync(Guid id);
-        Task<AccountAssetAsset> OnchangeMethodTimeAsync(Guid id);
-        Task<AccountAssetAsset> OpenEntriesAsync(Guid id);
-        Task<AccountAssetAsset> SetToCloseAsync(Guid id);
-        Task<AccountAssetAsset> SetToDraftAsync(Guid id);
-        Task<AccountAssetAsset> ValidateAsync(Guid id);
+        Task<AccountAssetAsset> ComputeDepreciationBoardAsync(Guid[] ids);
+        Task<AccountAssetAsset> ComputeGeneratedEntriesAsync(AccountAssetAssetComputeGeneratedEntriesRequestDto input);
+        Task<AccountAssetAsset> CopyDataAsync(AccountAssetAssetCopyDataRequestDto input);
+        Task<AccountAssetAsset> OnchangeCategoryIdAsync(Guid[] ids);
+        Task<AccountAssetAsset> OnchangeCategoryIdValuesAsync(AccountAssetAssetOnchangeCategoryIdValuesRequestDto input);
+        Task<AccountAssetAsset> OnchangeCompanyIdAsync(Guid[] ids);
+        Task<AccountAssetAsset> OnchangeDateFirstDepreciationAsync(Guid[] ids);
+        Task<AccountAssetAsset> OnchangeMethodTimeAsync(Guid[] ids);
+        Task<AccountAssetAsset> OpenEntriesAsync(Guid[] ids);
+        Task<AccountAssetAsset> SetToCloseAsync(Guid[] ids);
+        Task<AccountAssetAsset> SetToDraftAsync(Guid[] ids);
+        Task<AccountAssetAsset> ValidateAsync(Guid[] ids);
     }
 }

@@ -135,6 +135,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNextNotifAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ICalendarAlarmManagerable
         {
             /*
@@ -257,6 +258,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNotifyAlertExtraConditionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ICalendarAlarmManagerable
         {
             /*
@@ -296,6 +298,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SendReminderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ICalendarAlarmManagerable
         {
             /*

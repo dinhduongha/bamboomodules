@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBaseDocumentLayoutAppService : IGenericApplicationService<BaseDocumentLayout>
     {
-        Task<BaseDocumentLayout> DocumentLayoutSaveAsync(Guid id);
-        Task<BaseDocumentLayout> ExtractImagePrimarySecondaryColorsAsync(Guid id, BaseDocumentLayoutExtractImagePrimarySecondaryColorsRequestDto input);
+        Task<BaseDocumentLayout> DocumentLayoutSaveAsync(Guid[] ids);
+        Task<BaseDocumentLayout> ExtractImagePrimarySecondaryColorsAsync(BaseDocumentLayoutExtractImagePrimarySecondaryColorsRequestDto input);
     }
 }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ChangePasswordWizardAppService : GenericApplicationService<ChangePasswordWizard>, IChangePasswordWizardAppService
+    public partial class ChangePasswordWizardAppService : GenericAppService<ChangePasswordWizard>, IChangePasswordWizardAppService
     {
 
         public ChangePasswordWizardAppService(IRepository<ChangePasswordWizard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ChangePasswordWizard> ChangePasswordButtonAsync(Guid id)
+        public async Task<ChangePasswordWizard> ChangePasswordButtonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -37,7 +37,9 @@ namespace Bamboo.Core.Application.Services
             //     return {'type': 'ir.actions.client', 'tag': 'reload'}
             // return {'type': 'ir.actions.act_window_close'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ChangePasswordWizard> DefaultUserIdsInternalAsync()

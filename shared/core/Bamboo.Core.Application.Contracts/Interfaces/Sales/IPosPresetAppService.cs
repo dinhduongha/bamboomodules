@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPosPresetAppService : IGenericApplicationService<PosPreset>
     {
-        Task<PosPreset> GetAvailableSlotsAsync(Guid id);
-        Task<PosPreset> OpenLinkedConfigAsync(Guid id);
-        Task<PosPreset> OpenLinkedOrdersAsync(Guid id);
+        Task<PosPreset> GetAvailableSlotsAsync(Guid[] ids);
+        Task<PosPreset> OpenLinkedConfigAsync(Guid[] ids);
+        Task<PosPreset> OpenLinkedOrdersAsync(Guid[] ids);
     }
 }

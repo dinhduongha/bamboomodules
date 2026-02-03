@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProjectRoleAppService : IGenericApplicationService<ProjectRole>
     {
-        Task<ProjectRole> CopyDataAsync(Guid id, ProjectRoleCopyDataRequestDto input);
+        Task<ProjectRole> CopyDataAsync(ProjectRoleCopyDataRequestDto input);
     }
 }

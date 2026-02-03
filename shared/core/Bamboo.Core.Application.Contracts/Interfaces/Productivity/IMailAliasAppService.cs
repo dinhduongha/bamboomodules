@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailAliasAppService : IGenericApplicationService<MailAlias>
     {
-        Task<MailAlias> OpenDocumentAsync(Guid id);
-        Task<MailAlias> OpenParentDocumentAsync(Guid id);
+        Task<MailAlias> OpenDocumentAsync(Guid[] ids);
+        Task<MailAlias> OpenParentDocumentAsync(Guid[] ids);
     }
 }

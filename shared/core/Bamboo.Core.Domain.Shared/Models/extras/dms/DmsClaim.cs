@@ -24,8 +24,11 @@ public partial class DmsClaim : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
     [Column("user_id")]
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }
@@ -34,7 +37,7 @@ public partial class DmsClaim : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public Guid? SaleOrderId { get; set; }
 
     [Column("claim_type")]
-    public string ClaimType { get; set; } = "shortage";
+    public string? ClaimType { get; set; } = "shortage";
 
     [Column("claim_qty")]
     public decimal ClaimQty { get; set; }
@@ -43,10 +46,13 @@ public partial class DmsClaim : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public decimal ClaimAmount { get; set; }
 
     [Column("status")]
-    public string Status { get; set; } = "pending";
+    public string? Status { get; set; } = "pending";
 
-    [Column("evidence_photos_json")]
-    public string? EvidencePhotosJson { get; set; }
+    [Column("evidence_photos", TypeName = "jsonb")]
+    public string? EvidencePhotos { get; set; }
+
+    [Column("claim_at")]
+    public DateTimeOffset? ClaimAt { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -59,6 +65,18 @@ public partial class DmsClaim : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TeamId")]
+    public virtual ResTeam? Team { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]

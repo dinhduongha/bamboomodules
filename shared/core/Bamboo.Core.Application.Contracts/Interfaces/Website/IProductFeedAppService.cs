@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductFeedAppService : IGenericApplicationService<ProductFeed>
     {
-        Task<ProductFeed> InvalidateCacheAsync(Guid id);
+        Task<ProductFeed> InvalidateCacheAsync(Guid[] ids);
     }
 }

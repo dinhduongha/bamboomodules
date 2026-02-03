@@ -31,7 +31,7 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.Period).HasColumnName("period");
             entity.Property(e => e.ForecastQty).HasColumnName("forecast_qty");
             entity.Property(e => e.ConfidenceScore).HasColumnName("confidence_score");
-            entity.Property(e => e.BasedOnHistoryJson).HasColumnName("based_on_history_json");
+            entity.Property(e => e.BasedOnHistory);
             entity.Property(e => e.SeasonFactor).HasColumnName("season_factor");
             entity.Property(e => e.ForecastDate).HasColumnName("forecast_date");
             entity.Property(e => e.Status).HasColumnName("status");

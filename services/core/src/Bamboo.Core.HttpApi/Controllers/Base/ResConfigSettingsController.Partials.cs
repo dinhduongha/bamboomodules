@@ -11,426 +11,479 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-crm-assign-leads")]
-        public async Task<IActionResult> ActionCrmAssignLeadsAsync(Guid id)
+        [Route("action-crm-assign-leads")]
+        public async Task<IActionResult> ActionCrmAssignLeadsAsync(Guid[] ids)
         {
-            var result = await _appService.CrmAssignLeadsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CrmAssignLeadsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-eu-oss-tax-mapping")]
-        public async Task<IActionResult> ActionEuOssTaxMappingAsync(Guid id)
+        [Route("action-eu-oss-tax-mapping")]
+        public async Task<IActionResult> ActionEuOssTaxMappingAsync(Guid[] ids)
         {
-            var result = await _appService.EuOssTaxMappingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.EuOssTaxMappingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-abandoned-cart-mail-template")]
-        public async Task<IActionResult> ActionOpenAbandonedCartMailTemplateAsync(Guid id)
+        [Route("action-open-abandoned-cart-mail-template")]
+        public async Task<IActionResult> ActionOpenAbandonedCartMailTemplateAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAbandonedCartMailTemplateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAbandonedCartMailTemplateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-blocked-third-party-domains")]
-        public async Task<IActionResult> ActionOpenBlockedThirdPartyDomainsAsync(Guid id)
+        [Route("action-open-blocked-third-party-domains")]
+        public async Task<IActionResult> ActionOpenBlockedThirdPartyDomainsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenBlockedThirdPartyDomainsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenBlockedThirdPartyDomainsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-cloud-storage-migration-configurations")]
-        public async Task<IActionResult> ActionOpenCloudStorageMigrationConfigurationsAsync(Guid id)
+        [Route("action-open-cloud-storage-migration-configurations")]
+        public async Task<IActionResult> ActionOpenCloudStorageMigrationConfigurationsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenCloudStorageMigrationConfigurationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenCloudStorageMigrationConfigurationsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-extra-info")]
-        public async Task<IActionResult> ActionOpenExtraInfoAsync(Guid id)
+        [Route("action-open-extra-info")]
+        public async Task<IActionResult> ActionOpenExtraInfoAsync(Guid[] ids)
         {
-            var result = await _appService.OpenExtraInfoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenExtraInfoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-peppol-form")]
-        public async Task<IActionResult> ActionOpenPeppolFormAsync(Guid id)
+        [Route("action-open-peppol-form")]
+        public async Task<IActionResult> ActionOpenPeppolFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenPeppolFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenPeppolFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-product-feeds")]
-        public async Task<IActionResult> ActionOpenProductFeedsAsync(Guid id)
+        [Route("action-open-product-feeds")]
+        public async Task<IActionResult> ActionOpenProductFeedsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenProductFeedsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenProductFeedsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-robots")]
-        public async Task<IActionResult> ActionOpenRobotsAsync(Guid id)
+        [Route("action-open-robots")]
+        public async Task<IActionResult> ActionOpenRobotsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenRobotsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenRobotsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-sale-mail-templates")]
-        public async Task<IActionResult> ActionOpenSaleMailTemplatesAsync(Guid id)
+        [Route("action-open-sale-mail-templates")]
+        public async Task<IActionResult> ActionOpenSaleMailTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenSaleMailTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenSaleMailTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-sms-twilio-account-manage")]
-        public async Task<IActionResult> ActionOpenSmsTwilioAccountManageAsync(Guid id)
+        [Route("action-open-sms-twilio-account-manage")]
+        public async Task<IActionResult> ActionOpenSmsTwilioAccountManageAsync(Guid[] ids)
         {
-            var result = await _appService.OpenSmsTwilioAccountManageAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenSmsTwilioAccountManageAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-template-user")]
-        public async Task<IActionResult> ActionOpenTemplateUserAsync(Guid id)
+        [Route("action-open-template-user")]
+        public async Task<IActionResult> ActionOpenTemplateUserAsync(Guid[] ids)
         {
-            var result = await _appService.OpenTemplateUserAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenTemplateUserAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-pos-config-create-new")]
-        public async Task<IActionResult> ActionPosConfigCreateNewAsync(Guid id)
+        [Route("action-pos-config-create-new")]
+        public async Task<IActionResult> ActionPosConfigCreateNewAsync(Guid[] ids)
         {
-            var result = await _appService.PosConfigCreateNewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PosConfigCreateNewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-pos-printer-dialog")]
-        public async Task<IActionResult> ActionPosPrinterDialogAsync(Guid id)
+        [Route("action-pos-printer-dialog")]
+        public async Task<IActionResult> ActionPosPrinterDialogAsync(Guid[] ids)
         {
-            var result = await _appService.PosPrinterDialogAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PosPrinterDialogAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-update-terms")]
-        public async Task<IActionResult> ActionUpdateTermsAsync(Guid id)
+        [Route("action-update-terms")]
+        public async Task<IActionResult> ActionUpdateTermsAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateTermsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateTermsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-delivery-provider-modules")]
-        public async Task<IActionResult> ActionViewDeliveryProviderModulesAsync(Guid id)
+        [Route("action-view-delivery-provider-modules")]
+        public async Task<IActionResult> ActionViewDeliveryProviderModulesAsync(Guid[] ids)
         {
-            var result = await _appService.ViewDeliveryProviderModulesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewDeliveryProviderModulesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-in-store-delivery-methods")]
-        public async Task<IActionResult> ActionViewInStoreDeliveryMethodsAsync(Guid id)
+        [Route("action-view-in-store-delivery-methods")]
+        public async Task<IActionResult> ActionViewInStoreDeliveryMethodsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewInStoreDeliveryMethodsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewInStoreDeliveryMethodsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-w-payment-start-payment-onboarding")]
-        public async Task<IActionResult> ActionWPaymentStartPaymentOnboardingAsync(Guid id)
+        [Route("action-w-payment-start-payment-onboarding")]
+        public async Task<IActionResult> ActionWPaymentStartPaymentOnboardingAsync(Guid[] ids)
         {
-            var result = await _appService.WPaymentStartPaymentOnboardingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WPaymentStartPaymentOnboardingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-website-create-new")]
-        public async Task<IActionResult> ActionWebsiteCreateNewAsync(Guid id)
+        [Route("action-website-create-new")]
+        public async Task<IActionResult> ActionWebsiteCreateNewAsync(Guid[] ids)
         {
-            var result = await _appService.WebsiteCreateNewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WebsiteCreateNewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-disconnect-this-database")]
-        public async Task<IActionResult> ButtonDisconnectThisDatabaseAsync(Guid id)
+        [Route("button-disconnect-this-database")]
+        public async Task<IActionResult> ButtonDisconnectThisDatabaseAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonDisconnectThisDatabaseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonDisconnectThisDatabaseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-open-peppol-config-wizard")]
-        public async Task<IActionResult> ButtonOpenPeppolConfigWizardAsync(Guid id)
+        [Route("button-open-peppol-config-wizard")]
+        public async Task<IActionResult> ButtonOpenPeppolConfigWizardAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonOpenPeppolConfigWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonOpenPeppolConfigWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-peppol-disconnect-branch-from-parent")]
-        public async Task<IActionResult> ButtonPeppolDisconnectBranchFromParentAsync(Guid id)
+        [Route("button-peppol-disconnect-branch-from-parent")]
+        public async Task<IActionResult> ButtonPeppolDisconnectBranchFromParentAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonPeppolDisconnectBranchFromParentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonPeppolDisconnectBranchFromParentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-peppol-register-sender-as-receiver")]
-        public async Task<IActionResult> ButtonPeppolRegisterSenderAsReceiverAsync(Guid id)
+        [Route("button-peppol-register-sender-as-receiver")]
+        public async Task<IActionResult> ButtonPeppolRegisterSenderAsReceiverAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonPeppolRegisterSenderAsReceiverAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonPeppolRegisterSenderAsReceiverAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-reconnect-this-database")]
-        public async Task<IActionResult> ButtonReconnectThisDatabaseAsync(Guid id)
+        [Route("button-reconnect-this-database")]
+        public async Task<IActionResult> ButtonReconnectThisDatabaseAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonReconnectThisDatabaseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonReconnectThisDatabaseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/cancel")]
-        public async Task<IActionResult> CancelAsync(Guid id)
+        [Route("cancel")]
+        public async Task<IActionResult> CancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/custom-link-action")]
-        public async Task<IActionResult> CustomLinkActionAsync(Guid id)
+        [Route("custom-link-action")]
+        public async Task<IActionResult> CustomLinkActionAsync(Guid[] ids)
         {
-            var result = await _appService.CustomLinkActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CustomLinkActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/edit-external-header")]
-        public async Task<IActionResult> EditExternalHeaderAsync(Guid id)
+        [Route("edit-external-header")]
+        public async Task<IActionResult> EditExternalHeaderAsync(Guid[] ids)
         {
-            var result = await _appService.EditExternalHeaderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.EditExternalHeaderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/execute")]
-        public async Task<IActionResult> ExecuteAsync(Guid id)
+        [Route("execute")]
+        public async Task<IActionResult> ExecuteAsync(Guid[] ids)
         {
-            var result = await _appService.ExecuteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExecuteAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/generate-qr-codes-page")]
-        public async Task<IActionResult> GenerateQrCodesPageAsync(Guid id)
+        [Route("generate-qr-codes-page")]
+        public async Task<IActionResult> GenerateQrCodesPageAsync(Guid[] ids)
         {
-            var result = await _appService.GenerateQrCodesPageAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GenerateQrCodesPageAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/generate-qr-codes-zip")]
-        public async Task<IActionResult> GenerateQrCodesZipAsync(Guid id)
+        [Route("generate-qr-codes-zip")]
+        public async Task<IActionResult> GenerateQrCodesZipAsync(Guid[] ids)
         {
-            var result = await _appService.GenerateQrCodesZipAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GenerateQrCodesZipAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-config-warning")]
-        public async Task<IActionResult> GetConfigWarningAsync(Guid id, [FromBody] ResConfigSettingsGetConfigWarningRequestDto input)
+        [Route("get-config-warning")]
+        public async Task<IActionResult> GetConfigWarningAsync(ResConfigSettingsGetConfigWarningRequestDto input)
         {
-            var result = await _appService.GetConfigWarningAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetConfigWarningAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-option-name")]
-        public async Task<IActionResult> GetOptionNameAsync(Guid id, [FromBody] ResConfigSettingsGetOptionNameRequestDto input)
+        [Route("get-option-name")]
+        public async Task<IActionResult> GetOptionNameAsync(ResConfigSettingsGetOptionNameRequestDto input)
         {
-            var result = await _appService.GetOptionNameAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetOptionNameAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-option-path")]
-        public async Task<IActionResult> GetOptionPathAsync(Guid id, [FromBody] ResConfigSettingsGetOptionPathRequestDto input)
+        [Route("get-option-path")]
+        public async Task<IActionResult> GetOptionPathAsync(ResConfigSettingsGetOptionPathRequestDto input)
         {
-            var result = await _appService.GetOptionPathAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetOptionPathAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-pos-qr-stands")]
-        public async Task<IActionResult> GetPosQrStandsAsync(Guid id)
+        [Route("get-pos-qr-stands")]
+        public async Task<IActionResult> GetPosQrStandsAsync(Guid[] ids)
         {
-            var result = await _appService.GetPosQrStandsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPosQrStandsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-uri")]
-        public async Task<IActionResult> GetUriAsync(Guid id)
+        [Route("get-uri")]
+        public async Task<IActionResult> GetUriAsync(Guid[] ids)
         {
-            var result = await _appService.GetUriAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetUriAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-values")]
-        public async Task<IActionResult> GetValuesAsync(Guid id)
+        [Route("get-values")]
+        public async Task<IActionResult> GetValuesAsync(Guid[] ids)
         {
-            var result = await _appService.GetValuesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetValuesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-adv-location")]
-        public async Task<IActionResult> OnchangeAdvLocationAsync(Guid id)
+        [Route("onchange-adv-location")]
+        public async Task<IActionResult> OnchangeAdvLocationAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeAdvLocationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeAdvLocationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-analytic-accounting")]
-        public async Task<IActionResult> OnchangeAnalyticAccountingAsync(Guid id)
+        [Route("onchange-analytic-accounting")]
+        public async Task<IActionResult> OnchangeAnalyticAccountingAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeAnalyticAccountingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeAnalyticAccountingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-module-account-budget")]
-        public async Task<IActionResult> OnchangeModuleAccountBudgetAsync(Guid id)
+        [Route("onchange-module-account-budget")]
+        public async Task<IActionResult> OnchangeModuleAccountBudgetAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeModuleAccountBudgetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeModuleAccountBudgetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-company")]
-        public async Task<IActionResult> OpenCompanyAsync(Guid id)
+        [Route("open-company")]
+        public async Task<IActionResult> OpenCompanyAsync(Guid[] ids)
         {
-            var result = await _appService.OpenCompanyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenCompanyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-email-layout")]
-        public async Task<IActionResult> OpenEmailLayoutAsync(Guid id)
+        [Route("open-email-layout")]
+        public async Task<IActionResult> OpenEmailLayoutAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmailLayoutAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmailLayoutAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-followup-level-form")]
-        public async Task<IActionResult> OpenFollowupLevelFormAsync(Guid id)
+        [Route("open-followup-level-form")]
+        public async Task<IActionResult> OpenFollowupLevelFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenFollowupLevelFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenFollowupLevelFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-mail-templates")]
-        public async Task<IActionResult> OpenMailTemplatesAsync(Guid id)
+        [Route("open-mail-templates")]
+        public async Task<IActionResult> OpenMailTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenMailTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenMailTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-new-user-default-groups")]
-        public async Task<IActionResult> OpenNewUserDefaultGroupsAsync(Guid id)
+        [Route("open-new-user-default-groups")]
+        public async Task<IActionResult> OpenNewUserDefaultGroupsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenNewUserDefaultGroupsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenNewUserDefaultGroupsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-payment-method-form")]
-        public async Task<IActionResult> OpenPaymentMethodFormAsync(Guid id)
+        [Route("open-payment-method-form")]
+        public async Task<IActionResult> OpenPaymentMethodFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenPaymentMethodFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenPaymentMethodFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pos-close-ui")]
-        public async Task<IActionResult> PosCloseUiAsync(Guid id)
+        [Route("pos-close-ui")]
+        public async Task<IActionResult> PosCloseUiAsync(Guid[] ids)
         {
-            var result = await _appService.PosCloseUiAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PosCloseUiAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pos-open-ui")]
-        public async Task<IActionResult> PosOpenUiAsync(Guid id)
+        [Route("pos-open-ui")]
+        public async Task<IActionResult> PosOpenUiAsync(Guid[] ids)
         {
-            var result = await _appService.PosOpenUiAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PosOpenUiAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/preview-self-order-app")]
-        public async Task<IActionResult> PreviewSelfOrderAppAsync(Guid id)
+        [Route("preview-self-order-app")]
+        public async Task<IActionResult> PreviewSelfOrderAppAsync(Guid[] ids)
         {
-            var result = await _appService.PreviewSelfOrderAppAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PreviewSelfOrderAppAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/redirect-to-buy-autocomplete-credit")]
-        public async Task<IActionResult> RedirectToBuyAutocompleteCreditAsync(Guid id)
+        [Route("redirect-to-buy-autocomplete-credit")]
+        public async Task<IActionResult> RedirectToBuyAutocompleteCreditAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToBuyAutocompleteCreditAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToBuyAutocompleteCreditAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/regenerate-kiosk-key")]
-        public async Task<IActionResult> RegenerateKioskKeyAsync(Guid id)
+        [Route("regenerate-kiosk-key")]
+        public async Task<IActionResult> RegenerateKioskKeyAsync(Guid[] ids)
         {
-            var result = await _appService.RegenerateKioskKeyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RegenerateKioskKeyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/reload-template")]
-        public async Task<IActionResult> ReloadTemplateAsync(Guid id)
+        [Route("reload-template")]
+        public async Task<IActionResult> ReloadTemplateAsync(Guid[] ids)
         {
-            var result = await _appService.ReloadTemplateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReloadTemplateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-values")]
-        public async Task<IActionResult> SetValuesAsync(Guid id)
+        [Route("set-values")]
+        public async Task<IActionResult> SetValuesAsync(Guid[] ids)
         {
-            var result = await _appService.SetValuesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetValuesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-access-tokens")]
-        public async Task<IActionResult> UpdateAccessTokensAsync(Guid id)
+        [Route("update-access-tokens")]
+        public async Task<IActionResult> UpdateAccessTokensAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateAccessTokensAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateAccessTokensAsync(ids);
             return Ok(result);
         }
     }

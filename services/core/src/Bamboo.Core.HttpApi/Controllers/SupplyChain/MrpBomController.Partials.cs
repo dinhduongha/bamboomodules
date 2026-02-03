@@ -11,82 +11,92 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-compute-bom-days")]
-        public async Task<IActionResult> ActionComputeBomDaysAsync(Guid id)
+        [Route("action-compute-bom-days")]
+        public async Task<IActionResult> ActionComputeBomDaysAsync(Guid[] ids)
         {
-            var result = await _appService.ComputeBomDaysAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ComputeBomDaysAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-operation-form")]
-        public async Task<IActionResult> ActionOpenOperationFormAsync(Guid id)
+        [Route("action-open-operation-form")]
+        public async Task<IActionResult> ActionOpenOperationFormAsync(Guid[] ids)
         {
-            var result = await _appService.OpenOperationFormAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenOperationFormAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-bom-on-orderpoint")]
-        public async Task<IActionResult> ActionSetBomOnOrderpointAsync(Guid id)
+        [Route("action-set-bom-on-orderpoint")]
+        public async Task<IActionResult> ActionSetBomOnOrderpointAsync(Guid[] ids)
         {
-            var result = await _appService.SetBomOnOrderpointAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetBomOnOrderpointAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-kit-has-not-orderpoint")]
-        public async Task<IActionResult> CheckKitHasNotOrderpointAsync(Guid id)
+        [Route("check-kit-has-not-orderpoint")]
+        public async Task<IActionResult> CheckKitHasNotOrderpointAsync(Guid[] ids)
         {
-            var result = await _appService.CheckKitHasNotOrderpointAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckKitHasNotOrderpointAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/explode")]
-        public async Task<IActionResult> ExplodeAsync(Guid id, [FromBody] MrpBomExplodeRequestDto input)
+        [Route("explode")]
+        public async Task<IActionResult> ExplodeAsync(MrpBomExplodeRequestDto input)
         {
-            var result = await _appService.ExplodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ExplodeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-bom-structure")]
-        public async Task<IActionResult> OnchangeBomStructureAsync(Guid id)
+        [Route("onchange-bom-structure")]
+        public async Task<IActionResult> OnchangeBomStructureAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeBomStructureAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeBomStructureAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-product-tmpl-id")]
-        public async Task<IActionResult> OnchangeProductTmplIdAsync(Guid id)
+        [Route("onchange-product-tmpl-id")]
+        public async Task<IActionResult> OnchangeProductTmplIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeProductTmplIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeProductTmplIdAsync(ids);
             return Ok(result);
         }
     }

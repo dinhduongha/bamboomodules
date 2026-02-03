@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAccountKpiSummaryAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IKpiProviderable
         {
             /*
@@ -60,6 +61,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetKpiSummaryAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IKpiProviderable
         {
             /*

@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountReconcileModelPartnerMappingAppService : IGenericApplicationService<AccountReconcileModelPartnerMapping>
     {
-        Task<AccountReconcileModelPartnerMapping> ValidateRegexAsync(Guid id);
+        Task<AccountReconcileModelPartnerMapping> ValidateRegexAsync(Guid[] ids);
     }
 }

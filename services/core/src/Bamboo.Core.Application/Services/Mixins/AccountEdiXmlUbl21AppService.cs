@@ -890,6 +890,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IsCustomerBehindChorusProInternalAsync<TEntity>(IEnumerable<TEntity> entities, object customer) where TEntity : IEntity<Guid>, IAccountEdiXmlUbl21able
         {
             /*

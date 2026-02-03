@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IFetchmailServerAppService : IGenericApplicationService<FetchmailServer>
     {
-        Task<FetchmailServer> ButtonConfirmLoginAsync(Guid id);
-        Task<FetchmailServer> FetchMailAsync(Guid id);
-        Task<FetchmailServer> OnchangeServerTypeAsync(Guid id);
-        Task<FetchmailServer> SetDraftAsync(Guid id);
+        Task<FetchmailServer> ButtonConfirmLoginAsync(Guid[] ids);
+        Task<FetchmailServer> FetchMailAsync(Guid[] ids);
+        Task<FetchmailServer> OnchangeServerTypeAsync(Guid[] ids);
+        Task<FetchmailServer> SetDraftAsync(Guid[] ids);
     }
 }

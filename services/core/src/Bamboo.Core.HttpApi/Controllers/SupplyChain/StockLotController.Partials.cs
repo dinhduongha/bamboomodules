@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-lot-open-quants")]
-        public async Task<IActionResult> ActionLotOpenQuantsAsync(Guid id)
+        [Route("action-lot-open-quants")]
+        public async Task<IActionResult> ActionLotOpenQuantsAsync(Guid[] ids)
         {
-            var result = await _appService.LotOpenQuantsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LotOpenQuantsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-lot-open-repairs")]
-        public async Task<IActionResult> ActionLotOpenRepairsAsync(Guid id)
+        [Route("action-lot-open-repairs")]
+        public async Task<IActionResult> ActionLotOpenRepairsAsync(Guid[] ids)
         {
-            var result = await _appService.LotOpenRepairsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LotOpenRepairsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-lot-open-transfers")]
-        public async Task<IActionResult> ActionLotOpenTransfersAsync(Guid id)
+        [Route("action-lot-open-transfers")]
+        public async Task<IActionResult> ActionLotOpenTransfersAsync(Guid[] ids)
         {
-            var result = await _appService.LotOpenTransfersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LotOpenTransfersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-po")]
-        public async Task<IActionResult> ActionViewPoAsync(Guid id)
+        [Route("action-view-po")]
+        public async Task<IActionResult> ActionViewPoAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-ro")]
-        public async Task<IActionResult> ActionViewRoAsync(Guid id)
+        [Route("action-view-ro")]
+        public async Task<IActionResult> ActionViewRoAsync(Guid[] ids)
         {
-            var result = await _appService.ViewRoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewRoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-so")]
-        public async Task<IActionResult> ActionViewSoAsync(Guid id)
+        [Route("action-view-so")]
+        public async Task<IActionResult> ActionViewSoAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockLotCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(StockLotCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/generate-lot-names")]
-        public async Task<IActionResult> GenerateLotNamesAsync(Guid id, [FromBody] StockLotGenerateLotNamesRequestDto input)
+        [Route("generate-lot-names")]
+        public async Task<IActionResult> GenerateLotNamesAsync(StockLotGenerateLotNamesRequestDto input)
         {
-            var result = await _appService.GenerateLotNamesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GenerateLotNamesAsync(input);
             return Ok(result);
         }
     }

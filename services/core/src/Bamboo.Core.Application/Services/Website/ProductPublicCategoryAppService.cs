@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteSale", Category = "Website", Depends = new[] { "website", "sale", "website_payment", "website_mail", "portal_rating", "digest", "delivery", "html_builder" })]
-    public partial class ProductPublicCategoryAppService : GenericApplicationService<ProductPublicCategory>, IProductPublicCategoryAppService
+    public partial class ProductPublicCategoryAppService : GenericAppService<ProductPublicCategory>, IProductPublicCategoryAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         private readonly IWebsiteMultiMixinAppService _websiteMultiMixinAppService;
@@ -33,7 +33,7 @@ namespace Bamboo.Core.Application.Services
             _websiteSeoMetadataAppService = websiteSeoMetadataAppService;
         }
 
-        public async Task<ProductPublicCategory> CheckParentIdAsync(Guid id)
+        public async Task<ProductPublicCategory> CheckParentIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
@@ -41,7 +41,9 @@ namespace Bamboo.Core.Application.Services
             // if self._has_cycle():
             //     raise ValueError(self.env._("Error! You cannot create recursive categories."))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductPublicCategory> ComputeDisplayNameInternalAsync()
@@ -103,6 +105,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductPublicCategory> GetAvailableCategoryDomainInternalAsync(Guid website_id)
         {
             /*
@@ -123,7 +126,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductPublicCategory> GetAvailableSnippetCategoriesAsync(Guid id, ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input)
+        [ApiModel]
+        public async Task<ProductPublicCategory> GetAvailableSnippetCategoriesAsync(ProductPublicCategoryGetAvailableSnippetCategoriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_public_category.py) ---
@@ -144,9 +148,12 @@ namespace Bamboo.Core.Application.Services
             //     'name': f'{parent_category.name} ({child_count})',
             // } for parent_category, child_count in child_count_by_parent if parent_category]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ProductPublicCategory> SearchGetDetailInternalAsync(object website, object order, object options)
         {
             /*
@@ -176,6 +183,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductPublicCategory> SearchHasPublishedProductsInternalAsync(object @operator, object @value)
         {
             /*

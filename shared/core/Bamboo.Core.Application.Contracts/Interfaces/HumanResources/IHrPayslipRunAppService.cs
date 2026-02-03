@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrPayslipRunAppService : IGenericApplicationService<HrPayslipRun>
     {
-        Task<HrPayslipRun> ClosePayslipRunAsync(Guid id);
-        Task<HrPayslipRun> DonePayslipRunAsync(Guid id);
-        Task<HrPayslipRun> DraftPayslipRunAsync(Guid id);
+        Task<HrPayslipRun> ClosePayslipRunAsync(Guid[] ids);
+        Task<HrPayslipRun> DonePayslipRunAsync(Guid[] ids);
+        Task<HrPayslipRun> DraftPayslipRunAsync(Guid[] ids);
     }
 }

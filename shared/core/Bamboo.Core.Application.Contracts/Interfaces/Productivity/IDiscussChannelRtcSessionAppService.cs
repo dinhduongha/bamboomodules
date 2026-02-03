@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IDiscussChannelRtcSessionAppService : IGenericApplicationService<DiscussChannelRtcSession>
     {
-        Task<DiscussChannelRtcSession> DisconnectAsync(Guid id);
+        Task<DiscussChannelRtcSession> DisconnectAsync(Guid[] ids);
     }
 }

@@ -10,25 +10,25 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISlideChannelAppService : IGenericApplicationService<SlideChannel>
     {
-        Task<SlideChannel> ArchiveAsync(Guid id);
-        Task<SlideChannel> ChannelEnrollAsync(Guid id);
-        Task<SlideChannel> ChannelInviteAsync(Guid id);
-        Task<SlideChannel> CopyDataAsync(Guid id, SlideChannelCopyDataRequestDto input);
-        Task<SlideChannel> GetBackendMenuIdAsync(Guid id);
-        Task<SlideChannel> GrantAccessAsync(Guid id, SlideChannelGrantAccessRequestDto input);
-        Task<SlideChannel> MassMailingAttendeesAsync(Guid id);
-        Task<SlideChannel> MessagePostAsync(Guid id);
-        Task<SlideChannel> RedirectToCertifiedMembersAsync(Guid id);
-        Task<SlideChannel> RedirectToCompletedMembersAsync(Guid id);
-        Task<SlideChannel> RedirectToEngagedMembersAsync(Guid id);
-        Task<SlideChannel> RedirectToForumAsync(Guid id);
-        Task<SlideChannel> RedirectToInvitedMembersAsync(Guid id);
-        Task<SlideChannel> RedirectToMembersAsync(Guid id, SlideChannelRedirectToMembersRequestDto input);
-        Task<SlideChannel> RefuseAccessAsync(Guid id, SlideChannelRefuseAccessRequestDto input);
-        Task<SlideChannel> RequestAccessAsync(Guid id);
-        Task<SlideChannel> UnarchiveAsync(Guid id);
-        Task<SlideChannel> ViewRatingsAsync(Guid id);
-        Task<SlideChannel> ViewSalesAsync(Guid id);
-        Task<SlideChannel> ViewSlidesAsync(Guid id);
+        Task<SlideChannel> ArchiveAsync(Guid[] ids);
+        Task<SlideChannel> ChannelEnrollAsync(Guid[] ids);
+        Task<SlideChannel> ChannelInviteAsync(Guid[] ids);
+        Task<SlideChannel> CopyDataAsync(SlideChannelCopyDataRequestDto input);
+        Task<SlideChannel> GetBackendMenuIdAsync(Guid[] ids);
+        Task<SlideChannel> GrantAccessAsync(SlideChannelGrantAccessRequestDto input);
+        Task<SlideChannel> MassMailingAttendeesAsync(Guid[] ids);
+        Task<SlideChannel> MessagePostAsync(Guid[] ids);
+        Task<SlideChannel> RedirectToCertifiedMembersAsync(Guid[] ids);
+        Task<SlideChannel> RedirectToCompletedMembersAsync(Guid[] ids);
+        Task<SlideChannel> RedirectToEngagedMembersAsync(Guid[] ids);
+        Task<SlideChannel> RedirectToForumAsync(Guid[] ids);
+        Task<SlideChannel> RedirectToInvitedMembersAsync(Guid[] ids);
+        Task<SlideChannel> RedirectToMembersAsync(SlideChannelRedirectToMembersRequestDto input);
+        Task<SlideChannel> RefuseAccessAsync(SlideChannelRefuseAccessRequestDto input);
+        Task<SlideChannel> RequestAccessAsync(Guid[] ids);
+        Task<SlideChannel> UnarchiveAsync(Guid[] ids);
+        Task<SlideChannel> ViewRatingsAsync(Guid[] ids);
+        Task<SlideChannel> ViewSalesAsync(Guid[] ids);
+        Task<SlideChannel> ViewSlidesAsync(Guid[] ids);
     }
 }

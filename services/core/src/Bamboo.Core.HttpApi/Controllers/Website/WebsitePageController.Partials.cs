@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-page-debug-view")]
-        public async Task<IActionResult> ActionPageDebugViewAsync(Guid id)
+        [Route("action-page-debug-view")]
+        public async Task<IActionResult> ActionPageDebugViewAsync(Guid[] ids)
         {
-            var result = await _appService.PageDebugViewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PageDebugViewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/clone-page")]
-        public async Task<IActionResult> ClonePageAsync(Guid id, [FromBody] WebsitePageClonePageRequestDto input)
+        [Route("clone-page")]
+        public async Task<IActionResult> ClonePageAsync(WebsitePageClonePageRequestDto input)
         {
-            var result = await _appService.ClonePageAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ClonePageAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] WebsitePageCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(WebsitePageCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-website-meta")]
-        public async Task<IActionResult> GetWebsiteMetaAsync(Guid id)
+        [Route("get-website-meta")]
+        public async Task<IActionResult> GetWebsiteMetaAsync(Guid[] ids)
         {
-            var result = await _appService.GetWebsiteMetaAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetWebsiteMetaAsync(ids);
             return Ok(result);
         }
     }

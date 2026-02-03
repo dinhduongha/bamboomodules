@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Loyalty", Category = "Sales", Depends = new[] { "product", "portal", "account" })]
-    public partial class LoyaltyRewardAppService : GenericApplicationService<LoyaltyReward>, ILoyaltyRewardAppService
+    public partial class LoyaltyRewardAppService : GenericAppService<LoyaltyReward>, ILoyaltyRewardAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public LoyaltyRewardAppService(IRepository<LoyaltyReward, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -221,6 +221,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyReward> GetActiveProductsDomainInternalAsync()
         {
             /*
@@ -333,6 +334,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyReward> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -343,6 +345,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyReward> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -356,6 +359,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LoyaltyReward> LoadPosDataReadInternalAsync(object records, object config)
         {
             /*

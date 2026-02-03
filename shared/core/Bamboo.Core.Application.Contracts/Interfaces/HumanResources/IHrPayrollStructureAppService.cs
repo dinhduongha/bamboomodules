@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrPayrollStructureAppService : IGenericApplicationService<HrPayrollStructure>
     {
-        Task<HrPayrollStructure> GetAllRulesAsync(Guid id);
+        Task<HrPayrollStructure> GetAllRulesAsync(Guid[] ids);
     }
 }

@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/execute-import")]
-        public async Task<IActionResult> ExecuteImportAsync(Guid id, [FromBody] BaseImportImportExecuteImportRequestDto input)
+        [Route("execute-import")]
+        public async Task<IActionResult> ExecuteImportAsync(BaseImportImportExecuteImportRequestDto input)
         {
-            var result = await _appService.ExecuteImportAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ExecuteImportAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-fields-tree")]
-        public async Task<IActionResult> GetFieldsTreeAsync(Guid id, [FromBody] BaseImportImportGetFieldsTreeRequestDto input)
+        [Route("get-fields-tree")]
+        public async Task<IActionResult> GetFieldsTreeAsync(BaseImportImportGetFieldsTreeRequestDto input)
         {
-            var result = await _appService.GetFieldsTreeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFieldsTreeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/parse-preview")]
-        public async Task<IActionResult> ParsePreviewAsync(Guid id, [FromBody] BaseImportImportParsePreviewRequestDto input)
+        [Route("parse-preview")]
+        public async Task<IActionResult> ParsePreviewAsync(BaseImportImportParsePreviewRequestDto input)
         {
-            var result = await _appService.ParsePreviewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ParsePreviewAsync(input);
             return Ok(result);
         }
     }

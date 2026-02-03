@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountBankStatementAppService : IGenericApplicationService<AccountBankStatement>
     {
-        Task<AccountBankStatement> InitAsync(Guid id);
+        Task<AccountBankStatement> InitAsync(Guid[] ids);
     }
 }

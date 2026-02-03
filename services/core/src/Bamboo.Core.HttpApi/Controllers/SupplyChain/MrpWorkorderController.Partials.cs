@@ -11,122 +11,137 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-cancel")]
-        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        [Route("action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-mark-as-done")]
-        public async Task<IActionResult> ActionMarkAsDoneAsync(Guid id)
+        [Route("action-mark-as-done")]
+        public async Task<IActionResult> ActionMarkAsDoneAsync(Guid[] ids)
         {
-            var result = await _appService.MarkAsDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MarkAsDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-wizard")]
-        public async Task<IActionResult> ActionOpenWizardAsync(Guid id)
+        [Route("action-open-wizard")]
+        public async Task<IActionResult> ActionOpenWizardAsync(Guid[] ids)
         {
-            var result = await _appService.OpenWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-replan")]
-        public async Task<IActionResult> ActionReplanAsync(Guid id)
+        [Route("action-replan")]
+        public async Task<IActionResult> ActionReplanAsync(Guid[] ids)
         {
-            var result = await _appService.ReplanAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReplanAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-see-move-scrap")]
-        public async Task<IActionResult> ActionSeeMoveScrapAsync(Guid id)
+        [Route("action-see-move-scrap")]
+        public async Task<IActionResult> ActionSeeMoveScrapAsync(Guid[] ids)
         {
-            var result = await _appService.SeeMoveScrapAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SeeMoveScrapAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-finish")]
-        public async Task<IActionResult> ButtonFinishAsync(Guid id)
+        [Route("button-finish")]
+        public async Task<IActionResult> ButtonFinishAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonFinishAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonFinishAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-pending")]
-        public async Task<IActionResult> ButtonPendingAsync(Guid id)
+        [Route("button-pending")]
+        public async Task<IActionResult> ButtonPendingAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonPendingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonPendingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-scrap")]
-        public async Task<IActionResult> ButtonScrapAsync(Guid id)
+        [Route("button-scrap")]
+        public async Task<IActionResult> ButtonScrapAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonScrapAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonScrapAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-start")]
-        public async Task<IActionResult> ButtonStartAsync(Guid id, [FromBody] MrpWorkorderButtonStartRequestDto input)
+        [Route("button-start")]
+        public async Task<IActionResult> ButtonStartAsync(MrpWorkorderButtonStartRequestDto input)
         {
-            var result = await _appService.ButtonStartAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ButtonStartAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-unblock")]
-        public async Task<IActionResult> ButtonUnblockAsync(Guid id)
+        [Route("button-unblock")]
+        public async Task<IActionResult> ButtonUnblockAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonUnblockAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonUnblockAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/end-all")]
-        public async Task<IActionResult> EndAllAsync(Guid id)
+        [Route("end-all")]
+        public async Task<IActionResult> EndAllAsync(Guid[] ids)
         {
-            var result = await _appService.EndAllAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.EndAllAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/end-previous")]
-        public async Task<IActionResult> EndPreviousAsync(Guid id, [FromBody] MrpWorkorderEndPreviousRequestDto input)
+        [Route("end-previous")]
+        public async Task<IActionResult> EndPreviousAsync(MrpWorkorderEndPreviousRequestDto input)
         {
-            var result = await _appService.EndPreviousAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.EndPreviousAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-duration")]
-        public async Task<IActionResult> GetDurationAsync(Guid id)
+        [Route("get-duration")]
+        public async Task<IActionResult> GetDurationAsync(Guid[] ids)
         {
-            var result = await _appService.GetDurationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetDurationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-working-duration")]
-        public async Task<IActionResult> GetWorkingDurationAsync(Guid id)
+        [Route("get-working-duration")]
+        public async Task<IActionResult> GetWorkingDurationAsync(Guid[] ids)
         {
-            var result = await _appService.GetWorkingDurationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetWorkingDurationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-state")]
-        public async Task<IActionResult> SetStateAsync(Guid id, [FromBody] MrpWorkorderSetStateRequestDto input)
+        [Route("set-state")]
+        public async Task<IActionResult> SetStateAsync(MrpWorkorderSetStateRequestDto input)
         {
-            var result = await _appService.SetStateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetStateAsync(input);
             return Ok(result);
         }
     }

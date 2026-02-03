@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IForumForumAppService : IGenericApplicationService<ForumForum>
     {
-        Task<ForumForum> GoToWebsiteAsync(Guid id);
+        Task<ForumForum> GoToWebsiteAsync(Guid[] ids);
     }
 }

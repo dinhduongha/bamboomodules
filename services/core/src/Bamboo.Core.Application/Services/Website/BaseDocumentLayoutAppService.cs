@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Web", Category = "Website", Depends = new[] { "base" })]
-    public partial class BaseDocumentLayoutAppService : GenericApplicationService<BaseDocumentLayout>, IBaseDocumentLayoutAppService
+    public partial class BaseDocumentLayoutAppService : GenericAppService<BaseDocumentLayout>, IBaseDocumentLayoutAppService
     {
 
         public BaseDocumentLayoutAppService(IRepository<BaseDocumentLayout, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -112,6 +112,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseDocumentLayout> DefaultCompanyDetailsInternalAsync()
         {
             /*
@@ -129,6 +130,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseDocumentLayout> DefaultReportFooterInternalAsync()
         {
             /*
@@ -141,7 +143,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseDocumentLayout> DocumentLayoutSaveAsync(Guid id)
+        public async Task<BaseDocumentLayout> DocumentLayoutSaveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: base_document_layout.py) ---
@@ -149,10 +151,13 @@ namespace Bamboo.Core.Application.Services
             // # meant to be overridden
             // return self.env.context.get('report_action') or {'type': 'ir.actions.act_window_close'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<BaseDocumentLayout> ExtractImagePrimarySecondaryColorsAsync(Guid id, BaseDocumentLayoutExtractImagePrimarySecondaryColorsRequestDto input)
+        [ApiModel]
+        public async Task<BaseDocumentLayout> ExtractImagePrimarySecondaryColorsAsync(BaseDocumentLayoutExtractImagePrimarySecondaryColorsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: base_document_layout.py) ---
@@ -215,7 +220,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return tools.rgb_to_hex(primary), tools.rgb_to_hex(secondary)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BaseDocumentLayout> GetAssetStyleInternalAsync()
@@ -238,6 +245,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<BaseDocumentLayout> GetCssForPreviewInternalAsync(object scss, Guid new_id)
         {
             /*

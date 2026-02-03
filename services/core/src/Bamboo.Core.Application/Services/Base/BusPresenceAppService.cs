@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Bus", Category = "Base", Depends = new[] { "base", "web" })]
-    public partial class BusPresenceAppService : GenericApplicationService<BusPresence>, IBusPresenceAppService
+    public partial class BusPresenceAppService : GenericAppService<BusPresence>, IBusPresenceAppService
     {
 
         public BusPresenceAppService(IRepository<BusPresence, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -82,7 +82,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BusPresence> InitAsync(Guid id)
+        public async Task<BusPresence> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: bus, FILE: bus_presence.py) ---
@@ -92,7 +92,9 @@ namespace Bamboo.Core.Application.Services
             // def init(self):
             // self.env.cr.execute("CREATE UNIQUE INDEX IF NOT EXISTS bus_presence_guest_unique ON %s (guest_id) WHERE guest_id IS NOT NULL" % self._table)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<BusPresence> InvalidateImStatusInternalAsync(object fnames, object flush)
@@ -137,7 +139,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BusPresence> UpdatePresenceAsync(Guid id, BusPresenceUpdatePresenceRequestDto input)
+        [ApiModel]
+        public async Task<BusPresence> UpdatePresenceAsync(BusPresenceUpdatePresenceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: bus, FILE: bus_presence.py) ---
@@ -158,9 +161,12 @@ namespace Bamboo.Core.Application.Services
             //     # ignore concurrency error
             //     return self.env.cr.rollback()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<BusPresence> UpdatePresenceInternalAsync(object inactivity_period, object identity_field, object identity_value)
         {
             /*

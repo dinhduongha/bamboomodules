@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Snailmail", Category = "Misc", Depends = new[] { "iap_mail", "mail" })]
-    public partial class SnailmailLetterAppService : GenericApplicationService<SnailmailLetter>, ISnailmailLetterAppService
+    public partial class SnailmailLetterAppService : GenericAppService<SnailmailLetter>, ISnailmailLetterAppService
     {
 
         public SnailmailLetterAppService(IRepository<SnailmailLetter, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -69,7 +69,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SnailmailLetter> CancelAsync(Guid id)
+        public async Task<SnailmailLetter> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: snailmail_letter.py) ---
@@ -80,7 +80,9 @@ namespace Bamboo.Core.Application.Services
             // })
             // self.message_id._notify_message_notification_update()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SnailmailLetter> ComputeDisplayNameInternalAsync()
@@ -253,6 +255,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SnailmailLetter> IsValidAddressInternalAsync(object record)
         {
             /*
@@ -444,6 +447,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SnailmailLetter> SnailmailCronInternalAsync(object autocommit)
         {
             /*
@@ -467,7 +471,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SnailmailLetter> SnailmailPrintAsync(Guid id)
+        public async Task<SnailmailLetter> SnailmailPrintAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: snailmail_letter.py) ---
@@ -482,7 +486,9 @@ namespace Bamboo.Core.Application.Services
             // if len(self) == 1:
             //     self._snailmail_print()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SnailmailLetter> SnailmailPrintInternalAsync(object immediate)

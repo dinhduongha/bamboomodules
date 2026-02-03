@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockPackageAppService : IGenericApplicationService<StockPackage>
     {
-        Task<StockPackage> AddToPickingAsync(Guid id);
-        Task<StockPackage> PutInPackAsync(Guid id);
-        Task<StockPackage> RemovePackageAsync(Guid id);
-        Task<StockPackage> UnpackAsync(Guid id);
-        Task<StockPackage> ViewPickingAsync(Guid id);
+        Task<StockPackage> AddToPickingAsync(Guid[] ids);
+        Task<StockPackage> PutInPackAsync(Guid[] ids);
+        Task<StockPackage> RemovePackageAsync(Guid[] ids);
+        Task<StockPackage> UnpackAsync(Guid[] ids);
+        Task<StockPackage> ViewPickingAsync(Guid[] ids);
     }
 }

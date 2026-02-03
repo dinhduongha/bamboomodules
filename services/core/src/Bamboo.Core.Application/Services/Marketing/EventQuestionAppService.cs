@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
-    public partial class EventQuestionAppService : GenericApplicationService<EventQuestion>, IEventQuestionAppService
+    public partial class EventQuestionAppService : GenericAppService<EventQuestion>, IEventQuestionAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public EventQuestionAppService(IRepository<EventQuestion, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -53,7 +53,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventQuestion> EventViewAsync(Guid id)
+        public async Task<EventQuestion> EventViewAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
@@ -63,9 +63,12 @@ namespace Bamboo.Core.Application.Services
             // action['domain'] = [('question_ids', 'in', self.ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<EventQuestion> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -76,6 +79,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventQuestion> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -108,7 +112,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventQuestion> ViewQuestionAnswersAsync(Guid id)
+        public async Task<EventQuestion> ViewQuestionAnswersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
@@ -133,7 +137,9 @@ namespace Bamboo.Core.Application.Services
             //     action['views'] = [(False, 'list')]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

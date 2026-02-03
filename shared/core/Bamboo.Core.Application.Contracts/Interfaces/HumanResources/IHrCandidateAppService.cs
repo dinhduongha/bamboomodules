@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrCandidateAppService : IGenericApplicationService<HrCandidate>
     {
-        Task<HrCandidate> CreateApplicationAsync(Guid id);
-        Task<HrCandidate> CreateEmployeeFromCandidateAsync(Guid id);
-        Task<HrCandidate> CreateMeetingAsync(Guid id);
-        Task<HrCandidate> InitAsync(Guid id);
-        Task<HrCandidate> OpenApplicationsAsync(Guid id);
-        Task<HrCandidate> OpenAttachmentsAsync(Guid id);
-        Task<HrCandidate> OpenEmployeeAsync(Guid id);
-        Task<HrCandidate> OpenSimilarCandidatesAsync(Guid id);
-        Task<HrCandidate> SendEmailAsync(Guid id);
+        Task<HrCandidate> CreateApplicationAsync(Guid[] ids);
+        Task<HrCandidate> CreateEmployeeFromCandidateAsync(Guid[] ids);
+        Task<HrCandidate> CreateMeetingAsync(Guid[] ids);
+        Task<HrCandidate> InitAsync(Guid[] ids);
+        Task<HrCandidate> OpenApplicationsAsync(Guid[] ids);
+        Task<HrCandidate> OpenAttachmentsAsync(Guid[] ids);
+        Task<HrCandidate> OpenEmployeeAsync(Guid[] ids);
+        Task<HrCandidate> OpenSimilarCandidatesAsync(Guid[] ids);
+        Task<HrCandidate> SendEmailAsync(Guid[] ids);
     }
 }

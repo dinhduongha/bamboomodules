@@ -10,31 +10,31 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface ISurveySurveyAppService : IGenericApplicationService<SurveySurvey>
     {
-        Task<SurveySurvey> ArchiveAsync(Guid id);
-        Task<SurveySurvey> CheckValidityAsync(Guid id);
-        Task<SurveySurvey> CopyDataAsync(Guid id, SurveySurveyCopyDataRequestDto input);
-        Task<SurveySurvey> EndSessionAsync(Guid id);
-        Task<SurveySurvey> GetFormviewIdAsync(Guid id, SurveySurveyGetFormviewIdRequestDto input);
-        Task<SurveySurvey> GetPrintUrlAsync(Guid id);
-        Task<SurveySurvey> GetStartShortUrlAsync(Guid id);
-        Task<SurveySurvey> GetStartUrlAsync(Guid id);
-        Task<SurveySurvey> GetSurveyTemplatesDataAsync(Guid id);
-        Task<SurveySurvey> LoadSampleCustomAsync(Guid id);
-        Task<SurveySurvey> LoadSurveyTemplateSampleAsync(Guid id, SurveySurveyLoadSurveyTemplateSampleRequestDto input);
-        Task<SurveySurvey> OpenSessionManagerAsync(Guid id);
-        Task<SurveySurvey> PrintSurveyAsync(Guid id, SurveySurveyPrintSurveyRequestDto input);
-        Task<SurveySurvey> ResultSurveyAsync(Guid id);
-        Task<SurveySurvey> SendSurveyAsync(Guid id);
-        Task<SurveySurvey> ShowSampleAsync(Guid id);
-        Task<SurveySurvey> StartSessionAsync(Guid id);
-        Task<SurveySurvey> StartSurveyAsync(Guid id, SurveySurveyStartSurveyRequestDto input);
-        Task<SurveySurvey> SurveyPreviewCertificationTemplateAsync(Guid id);
-        Task<SurveySurvey> SurveySeeLeadsAsync(Guid id);
-        Task<SurveySurvey> SurveyUserInputAsync(Guid id);
-        Task<SurveySurvey> SurveyUserInputCertifiedAsync(Guid id);
-        Task<SurveySurvey> SurveyUserInputCompletedAsync(Guid id);
-        Task<SurveySurvey> SurveyViewSlideChannelsAsync(Guid id);
-        Task<SurveySurvey> TestSurveyAsync(Guid id);
-        Task<SurveySurvey> UnarchiveAsync(Guid id);
+        Task<SurveySurvey> ArchiveAsync(Guid[] ids);
+        Task<SurveySurvey> CheckValidityAsync(Guid[] ids);
+        Task<SurveySurvey> CopyDataAsync(SurveySurveyCopyDataRequestDto input);
+        Task<SurveySurvey> EndSessionAsync(Guid[] ids);
+        Task<SurveySurvey> GetFormviewIdAsync(SurveySurveyGetFormviewIdRequestDto input);
+        Task<SurveySurvey> GetPrintUrlAsync(Guid[] ids);
+        Task<SurveySurvey> GetStartShortUrlAsync(Guid[] ids);
+        Task<SurveySurvey> GetStartUrlAsync(Guid[] ids);
+        Task<SurveySurvey> GetSurveyTemplatesDataAsync(Guid[] ids);
+        Task<SurveySurvey> LoadSampleCustomAsync(Guid[] ids);
+        Task<SurveySurvey> LoadSurveyTemplateSampleAsync(SurveySurveyLoadSurveyTemplateSampleRequestDto input);
+        Task<SurveySurvey> OpenSessionManagerAsync(Guid[] ids);
+        Task<SurveySurvey> PrintSurveyAsync(SurveySurveyPrintSurveyRequestDto input);
+        Task<SurveySurvey> ResultSurveyAsync(Guid[] ids);
+        Task<SurveySurvey> SendSurveyAsync(Guid[] ids);
+        Task<SurveySurvey> ShowSampleAsync(Guid[] ids);
+        Task<SurveySurvey> StartSessionAsync(Guid[] ids);
+        Task<SurveySurvey> StartSurveyAsync(SurveySurveyStartSurveyRequestDto input);
+        Task<SurveySurvey> SurveyPreviewCertificationTemplateAsync(Guid[] ids);
+        Task<SurveySurvey> SurveySeeLeadsAsync(Guid[] ids);
+        Task<SurveySurvey> SurveyUserInputAsync(Guid[] ids);
+        Task<SurveySurvey> SurveyUserInputCertifiedAsync(Guid[] ids);
+        Task<SurveySurvey> SurveyUserInputCompletedAsync(Guid[] ids);
+        Task<SurveySurvey> SurveyViewSlideChannelsAsync(Guid[] ids);
+        Task<SurveySurvey> TestSurveyAsync(Guid[] ids);
+        Task<SurveySurvey> UnarchiveAsync(Guid[] ids);
     }
 }

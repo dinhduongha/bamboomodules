@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResetViewArchWizardAppService : GenericApplicationService<ResetViewArchWizard>, IResetViewArchWizardAppService
+    public partial class ResetViewArchWizardAppService : GenericAppService<ResetViewArchWizard>, IResetViewArchWizardAppService
     {
 
         public ResetViewArchWizardAppService(IRepository<ResetViewArchWizard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -73,7 +73,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResetViewArchWizard> ResetViewButtonAsync(Guid id)
+        public async Task<ResetViewArchWizard> ResetViewButtonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -85,7 +85,9 @@ namespace Bamboo.Core.Application.Services
             //     self.view_id.reset_arch(self.reset_mode)
             // return {'type': 'ir.actions.act_window_close'}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/open-website-url")]
-        public async Task<IActionResult> OpenWebsiteUrlAsync(Guid id)
+        [Route("open-website-url")]
+        public async Task<IActionResult> OpenWebsiteUrlAsync(Guid[] ids)
         {
-            var result = await _appService.OpenWebsiteUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenWebsiteUrlAsync(ids);
             return Ok(result);
         }
     }

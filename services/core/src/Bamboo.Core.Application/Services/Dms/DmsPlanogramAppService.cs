@@ -12,14 +12,14 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsPlanogramAppService : IGenericApplicationService<DmsPlanogram>
+    public interface IDmsPlanogramAppService : IGenericAppService<DmsPlanogram>
     {
     }
 }
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsPlanogramAppService : GenericApplicationService<DmsPlanogram>, IDmsPlanogramAppService
+    public class DmsPlanogramAppService : GenericAppService<DmsPlanogram>, IDmsPlanogramAppService
     {
         public DmsPlanogramAppService(
             IRepository<DmsPlanogram, Guid> repository,

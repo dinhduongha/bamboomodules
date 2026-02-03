@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/reset-view-button")]
-        public async Task<IActionResult> ResetViewButtonAsync(Guid id)
+        [Route("reset-view-button")]
+        public async Task<IActionResult> ResetViewButtonAsync(Guid[] ids)
         {
-            var result = await _appService.ResetViewButtonAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetViewButtonAsync(ids);
             return Ok(result);
         }
     }

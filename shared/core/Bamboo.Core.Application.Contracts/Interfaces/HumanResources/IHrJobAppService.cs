@@ -10,15 +10,15 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrJobAppService : IGenericApplicationService<HrJob>
     {
-        Task<HrJob> ArchiveAsync(Guid id);
-        Task<HrJob> CopyDataAsync(Guid id, HrJobCopyDataRequestDto input);
-        Task<HrJob> GetBackendMenuIdAsync(Guid id);
-        Task<HrJob> NewSurveyAsync(Guid id);
-        Task<HrJob> OpenActivitiesAsync(Guid id);
-        Task<HrJob> OpenAttachmentsAsync(Guid id);
-        Task<HrJob> OpenEmployeesAsync(Guid id);
-        Task<HrJob> SearchMatchingApplicantsAsync(Guid id);
-        Task<HrJob> SetOpenAsync(Guid id);
-        Task<HrJob> TestSurveyAsync(Guid id);
+        Task<HrJob> ArchiveAsync(Guid[] ids);
+        Task<HrJob> CopyDataAsync(HrJobCopyDataRequestDto input);
+        Task<HrJob> GetBackendMenuIdAsync(Guid[] ids);
+        Task<HrJob> NewSurveyAsync(Guid[] ids);
+        Task<HrJob> OpenActivitiesAsync(Guid[] ids);
+        Task<HrJob> OpenAttachmentsAsync(Guid[] ids);
+        Task<HrJob> OpenEmployeesAsync(Guid[] ids);
+        Task<HrJob> SearchMatchingApplicantsAsync(Guid[] ids);
+        Task<HrJob> SetOpenAsync(Guid[] ids);
+        Task<HrJob> TestSurveyAsync(Guid[] ids);
     }
 }

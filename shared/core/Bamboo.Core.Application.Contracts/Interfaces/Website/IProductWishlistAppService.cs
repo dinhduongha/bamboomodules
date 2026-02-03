@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductWishlistAppService : IGenericApplicationService<ProductWishlist>
     {
-        Task<ProductWishlist> CurrentAsync(Guid id);
+        Task<ProductWishlist> CurrentAsync(Guid[] ids);
     }
 }

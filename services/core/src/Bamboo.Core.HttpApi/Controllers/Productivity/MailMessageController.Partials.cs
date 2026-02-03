@@ -11,82 +11,92 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-document")]
-        public async Task<IActionResult> ActionOpenDocumentAsync(Guid id)
+        [Route("action-open-document")]
+        public async Task<IActionResult> ActionOpenDocumentAsync(Guid[] ids)
         {
-            var result = await _appService.OpenDocumentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenDocumentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/cancel-letter")]
-        public async Task<IActionResult> CancelLetterAsync(Guid id)
+        [Route("cancel-letter")]
+        public async Task<IActionResult> CancelLetterAsync(Guid[] ids)
         {
-            var result = await _appService.CancelLetterAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelLetterAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/export-data")]
-        public async Task<IActionResult> ExportDataAsync(Guid id, [FromBody] MailMessageExportDataRequestDto input)
+        [Route("export-data")]
+        public async Task<IActionResult> ExportDataAsync(MailMessageExportDataRequestDto input)
         {
-            var result = await _appService.ExportDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ExportDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/fetch")]
-        public async Task<IActionResult> FetchAsync(Guid id, [FromBody] MailMessageFetchRequestDto input)
+        [Route("fetch")]
+        public async Task<IActionResult> FetchAsync(MailMessageFetchRequestDto input)
         {
-            var result = await _appService.FetchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FetchAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mark-all-as-read")]
-        public async Task<IActionResult> MarkAllAsReadAsync(Guid id, [FromBody] MailMessageMarkAllAsReadRequestDto input)
+        [Route("mark-all-as-read")]
+        public async Task<IActionResult> MarkAllAsReadAsync(MailMessageMarkAllAsReadRequestDto input)
         {
-            var result = await _appService.MarkAllAsReadAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MarkAllAsReadAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/portal-message-format")]
-        public async Task<IActionResult> PortalMessageFormatAsync(Guid id, [FromBody] MailMessagePortalMessageFormatRequestDto input)
+        [Route("portal-message-format")]
+        public async Task<IActionResult> PortalMessageFormatAsync(MailMessagePortalMessageFormatRequestDto input)
         {
-            var result = await _appService.PortalMessageFormatAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PortalMessageFormatAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send-letter")]
-        public async Task<IActionResult> SendLetterAsync(Guid id)
+        [Route("send-letter")]
+        public async Task<IActionResult> SendLetterAsync(Guid[] ids)
         {
-            var result = await _appService.SendLetterAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendLetterAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-message-done")]
-        public async Task<IActionResult> SetMessageDoneAsync(Guid id)
+        [Route("set-message-done")]
+        public async Task<IActionResult> SetMessageDoneAsync(Guid[] ids)
         {
-            var result = await _appService.SetMessageDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetMessageDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-message-starred")]
-        public async Task<IActionResult> ToggleMessageStarredAsync(Guid id)
+        [Route("toggle-message-starred")]
+        public async Task<IActionResult> ToggleMessageStarredAsync(Guid[] ids)
         {
-            var result = await _appService.ToggleMessageStarredAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ToggleMessageStarredAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unstar-all")]
-        public async Task<IActionResult> UnstarAllAsync(Guid id)
+        [Route("unstar-all")]
+        public async Task<IActionResult> UnstarAllAsync(Guid[] ids)
         {
-            var result = await _appService.UnstarAllAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnstarAllAsync(ids);
             return Ok(result);
         }
     }

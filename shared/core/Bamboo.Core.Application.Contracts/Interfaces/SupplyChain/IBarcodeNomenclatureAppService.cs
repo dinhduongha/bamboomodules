@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IBarcodeNomenclatureAppService : IGenericApplicationService<BarcodeNomenclature>
     {
-        Task<BarcodeNomenclature> Gs1DateToDateAsync(Guid id, BarcodeNomenclatureGs1DateToDateRequestDto input);
-        Task<BarcodeNomenclature> Gs1DecomposeExtendedAsync(Guid id, BarcodeNomenclatureGs1DecomposeExtendedRequestDto input);
-        Task<BarcodeNomenclature> MatchPatternAsync(Guid id, BarcodeNomenclatureMatchPatternRequestDto input);
-        Task<BarcodeNomenclature> ParseBarcodeAsync(Guid id, BarcodeNomenclatureParseBarcodeRequestDto input);
-        Task<BarcodeNomenclature> ParseGs1RulePatternAsync(Guid id, BarcodeNomenclatureParseGs1RulePatternRequestDto input);
-        Task<BarcodeNomenclature> ParseNomenclatureBarcodeAsync(Guid id, BarcodeNomenclatureParseNomenclatureBarcodeRequestDto input);
-        Task<BarcodeNomenclature> ParseUriAsync(Guid id, BarcodeNomenclatureParseUriRequestDto input);
-        Task<BarcodeNomenclature> SanitizeEanAsync(Guid id, BarcodeNomenclatureSanitizeEanRequestDto input);
-        Task<BarcodeNomenclature> SanitizeUpcAsync(Guid id, BarcodeNomenclatureSanitizeUpcRequestDto input);
+        Task<BarcodeNomenclature> Gs1DateToDateAsync(BarcodeNomenclatureGs1DateToDateRequestDto input);
+        Task<BarcodeNomenclature> Gs1DecomposeExtendedAsync(BarcodeNomenclatureGs1DecomposeExtendedRequestDto input);
+        Task<BarcodeNomenclature> MatchPatternAsync(BarcodeNomenclatureMatchPatternRequestDto input);
+        Task<BarcodeNomenclature> ParseBarcodeAsync(BarcodeNomenclatureParseBarcodeRequestDto input);
+        Task<BarcodeNomenclature> ParseGs1RulePatternAsync(BarcodeNomenclatureParseGs1RulePatternRequestDto input);
+        Task<BarcodeNomenclature> ParseNomenclatureBarcodeAsync(BarcodeNomenclatureParseNomenclatureBarcodeRequestDto input);
+        Task<BarcodeNomenclature> ParseUriAsync(BarcodeNomenclatureParseUriRequestDto input);
+        Task<BarcodeNomenclature> SanitizeEanAsync(BarcodeNomenclatureSanitizeEanRequestDto input);
+        Task<BarcodeNomenclature> SanitizeUpcAsync(BarcodeNomenclatureSanitizeUpcRequestDto input);
     }
 }

@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductSupplierinfoAppService : IGenericApplicationService<ProductSupplierinfo>
     {
-        Task<ProductSupplierinfo> GetImportTemplatesAsync(Guid id);
-        Task<ProductSupplierinfo> SetSupplierAsync(Guid id);
+        Task<ProductSupplierinfo> GetImportTemplatesAsync(Guid[] ids);
+        Task<ProductSupplierinfo> SetSupplierAsync(Guid[] ids);
     }
 }

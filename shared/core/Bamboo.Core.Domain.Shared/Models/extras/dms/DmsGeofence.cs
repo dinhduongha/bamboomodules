@@ -28,19 +28,7 @@ public partial class DmsGeofence : FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public string Name { get; set; } = null!;
 
     [Column("type")]
-    public string Type { get; set; } = "outlet";
-
-    [Column("radius_meters")]
-    public int? RadiusMeters { get; set; }
-
-    [Column("polygon_geo_json")]
-    public string? PolygonGeoJson { get; set; }
-
-    [Column("center_latitude")]
-    public decimal? CenterLatitude { get; set; }
-
-    [Column("center_longitude")]
-    public decimal? CenterLongitude { get; set; }
+    public string? Type { get; set; } = "outlet";
 
     [Column("is_active")]
     public bool IsActive { get; set; } = true;
@@ -50,6 +38,34 @@ public partial class DmsGeofence : FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("alert_on_exit")]
     public bool AlertOnExit { get; set; } = true;
+
+    [Column("radius_meters")]
+    public long? RadiusMeters { get; set; }
+
+    [Column("h3_indexes")]
+    public string[]? H3Indexes { get; set; }  // mảng h3index bao phủ polygon (level 7-9)
+
+    [Column("center_latitude")]
+    public decimal? CenterLatitude { get; set; }
+
+    [Column("center_longitude")]
+    public decimal? CenterLongitude { get; set; }
+
+    [Column("geom_center")]
+    public NetTopologySuite.Geometries.Point? GeomCenterPoint { get; set; }
+
+    [Column("geom_polygon")]
+    public NetTopologySuite.Geometries.Polygon? GeomPolygon { get; set; }  // geography(POLYGON, 4326)
+
+    // Nếu dùng topology (tùy chọn)
+    [Column("geom_topo")]
+    public NetTopologySuite.Geometries.Geometry? GeomTopo { get; set; }  // chỉ nếu dùng topology
+
+    [Column("_geojson_polygon", TypeName = "jsonb")]
+    public string? GeoJsonPolygon { get; set; }
+
+    [Column("_geojson_tôp", TypeName = "jsonb")]
+    public string? GeoJsonTopo { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -62,4 +78,20 @@ public partial class DmsGeofence : FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("CreatorId")]
+    public virtual ResUsers? CreateU { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("LastModifierId")]
+    public virtual ResUsers? WriteU { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
 }

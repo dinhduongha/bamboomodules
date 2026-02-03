@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/match-rule")]
-        public async Task<IActionResult> MatchRuleAsync(Guid id, [FromBody] ImLivechatChannelRuleMatchRuleRequestDto input)
+        [Route("match-rule")]
+        public async Task<IActionResult> MatchRuleAsync(ImLivechatChannelRuleMatchRuleRequestDto input)
         {
-            var result = await _appService.MatchRuleAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MatchRuleAsync(input);
             return Ok(result);
         }
     }

@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-scheduled-action")]
-        public async Task<IActionResult> ActionOpenScheduledActionAsync(Guid id)
+        [Route("action-open-scheduled-action")]
+        public async Task<IActionResult> ActionOpenScheduledActionAsync(Guid[] ids)
         {
-            var result = await _appService.OpenScheduledActionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenScheduledActionAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-rotate-webhook-uuid")]
-        public async Task<IActionResult> ActionRotateWebhookUuidAsync(Guid id)
+        [Route("action-rotate-webhook-uuid")]
+        public async Task<IActionResult> ActionRotateWebhookUuidAsync(Guid[] ids)
         {
-            var result = await _appService.RotateWebhookUuidAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RotateWebhookUuidAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-webhook-logs")]
-        public async Task<IActionResult> ActionViewWebhookLogsAsync(Guid id)
+        [Route("action-view-webhook-logs")]
+        public async Task<IActionResult> ActionViewWebhookLogsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewWebhookLogsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewWebhookLogsAsync(ids);
             return Ok(result);
         }
     }

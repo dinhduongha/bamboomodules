@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrHolidays", Category = "HumanResources", Depends = new[] { "hr", "calendar", "resource" })]
-    public partial class HrLeaveAccrualPlanAppService : GenericApplicationService<HrLeaveAccrualPlan>, IHrLeaveAccrualPlanAppService
+    public partial class HrLeaveAccrualPlanAppService : GenericAppService<HrLeaveAccrualPlan>, IHrLeaveAccrualPlanAppService
     {
 
         public HrLeaveAccrualPlanAppService(IRepository<HrLeaveAccrualPlan, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -109,7 +109,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAccrualPlan> CopyDataAsync(Guid id, HrLeaveAccrualPlanCopyDataRequestDto input)
+        public async Task<HrLeaveAccrualPlan> CopyDataAsync(HrLeaveAccrualPlanCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
@@ -117,10 +117,12 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", plan.name)) for plan, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeaveAccrualPlan> CreateAccrualPlanLevelAsync(Guid id)
+        public async Task<HrLeaveAccrualPlan> CreateAccrualPlanLevelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
@@ -143,10 +145,12 @@ namespace Bamboo.Core.Application.Services
             //     ),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeaveAccrualPlan> OpenAccrualPlanEmployeesAsync(Guid id)
+        public async Task<HrLeaveAccrualPlan> OpenAccrualPlanEmployeesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
@@ -160,10 +164,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('id', 'in', self.allocation_ids.employee_id.ids)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeaveAccrualPlan> OpenAccrualPlanLevelAsync(Guid id, HrLeaveAccrualPlanOpenAccrualPlanLevelRequestDto input)
+        public async Task<HrLeaveAccrualPlan> OpenAccrualPlanLevelAsync(HrLeaveAccrualPlanOpenAccrualPlanLevelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_accrual_plan.py) ---
@@ -178,7 +184,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': level_id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveAccrualPlan> PreventUsedPlanUnlinkInternalAsync()

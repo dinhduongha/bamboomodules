@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrMailServerAppService : IGenericApplicationService<IrMailServer>
     {
-        Task<IrMailServer> RetrieveMaxEmailSizeAsync(Guid id);
-        Task<IrMailServer> SendEmailAsync(Guid id, IrMailServerSendEmailRequestDto input);
-        Task<IrMailServer> TestSmtpConnectionAsync(Guid id, IrMailServerTestSmtpConnectionRequestDto input);
+        Task<IrMailServer> RetrieveMaxEmailSizeAsync(Guid[] ids);
+        Task<IrMailServer> SendEmailAsync(IrMailServerSendEmailRequestDto input);
+        Task<IrMailServer> TestSmtpConnectionAsync(IrMailServerTestSmtpConnectionRequestDto input);
     }
 }

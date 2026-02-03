@@ -9,7 +9,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResUsersApikeysAppService : IApplicationService
     {
-        Task<ResUsersApikeys> InitAsync(Guid id);
-        Task<ResUsersApikeys> RemoveAsync(Guid id);
+        Task<ResUsersApikeys> InitAsync(Guid[] ids);
+        Task<ResUsersApikeys> RemoveAsync(Guid[] ids);
     }
 }

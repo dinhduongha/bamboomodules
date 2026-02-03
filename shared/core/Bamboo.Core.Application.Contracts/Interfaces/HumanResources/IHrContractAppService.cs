@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrContractAppService : IGenericApplicationService<HrContract>
     {
-        Task<HrContract> GenerateWorkEntriesAsync(Guid id, HrContractGenerateWorkEntriesRequestDto input);
-        Task<HrContract> GetAllStructuresAsync(Guid id);
-        Task<HrContract> GetAttributeAsync(Guid id, HrContractGetAttributeRequestDto input);
-        Task<HrContract> HasStaticWorkEntriesAsync(Guid id);
-        Task<HrContract> OpenContractFormAsync(Guid id);
-        Task<HrContract> OpenContractHistoryAsync(Guid id);
-        Task<HrContract> OpenContractListAsync(Guid id);
-        Task<HrContract> SetAttributeValueAsync(Guid id, HrContractSetAttributeValueRequestDto input);
-        Task<HrContract> UpdateStateAsync(Guid id);
+        Task<HrContract> GenerateWorkEntriesAsync(HrContractGenerateWorkEntriesRequestDto input);
+        Task<HrContract> GetAllStructuresAsync(Guid[] ids);
+        Task<HrContract> GetAttributeAsync(HrContractGetAttributeRequestDto input);
+        Task<HrContract> HasStaticWorkEntriesAsync(Guid[] ids);
+        Task<HrContract> OpenContractFormAsync(Guid[] ids);
+        Task<HrContract> OpenContractHistoryAsync(Guid[] ids);
+        Task<HrContract> OpenContractListAsync(Guid[] ids);
+        Task<HrContract> SetAttributeValueAsync(HrContractSetAttributeValueRequestDto input);
+        Task<HrContract> UpdateStateAsync(Guid[] ids);
     }
 }

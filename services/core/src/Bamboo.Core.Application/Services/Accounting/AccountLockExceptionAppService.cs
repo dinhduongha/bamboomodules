@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountLockExceptionAppService : GenericApplicationService<AccountLockException>, IAccountLockExceptionAppService
+    public partial class AccountLockExceptionAppService : GenericAppService<AccountLockException>, IAccountLockExceptionAppService
     {
 
         public AccountLockExceptionAppService(IRepository<AccountLockException, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -68,6 +68,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountLockException> GetActiveExceptionsDomainInternalAsync(object company, object soft_lock_date_fields)
         {
             /*
@@ -167,7 +168,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountLockException> RevokeAsync(Guid id)
+        public async Task<AccountLockException> RevokeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_lock_exception.py) ---
@@ -182,7 +183,9 @@ namespace Bamboo.Core.Application.Services
             //         record_sudo.end_datetime = fields.Datetime.now()
             //         record._invalidate_affected_user_lock_dates()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountLockException> SearchFiscalyearLockDateInternalAsync(object @operator, object @value)
@@ -262,7 +265,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountLockException> ShowAuditTrailDuringExceptionAsync(Guid id)
+        public async Task<AccountLockException> ShowAuditTrailDuringExceptionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_lock_exception.py) ---
@@ -276,7 +279,9 @@ namespace Bamboo.Core.Application.Services
             //      'domain': [('move_id', 'any', self._get_audit_trail_during_exception_domain())],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

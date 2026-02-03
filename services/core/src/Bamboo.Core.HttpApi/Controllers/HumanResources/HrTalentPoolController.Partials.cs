@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-talent-pool-add-talents")]
-        public async Task<IActionResult> ActionTalentPoolAddTalentsAsync(Guid id)
+        [Route("action-talent-pool-add-talents")]
+        public async Task<IActionResult> ActionTalentPoolAddTalentsAsync(Guid[] ids)
         {
-            var result = await _appService.TalentPoolAddTalentsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TalentPoolAddTalentsAsync(ids);
             return Ok(result);
         }
     }

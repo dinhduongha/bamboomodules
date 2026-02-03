@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-invoice-from-timesheet")]
-        public async Task<IActionResult> ActionInvoiceFromTimesheetAsync(Guid id)
+        [Route("action-invoice-from-timesheet")]
+        public async Task<IActionResult> ActionInvoiceFromTimesheetAsync(Guid[] ids)
         {
-            var result = await _appService.InvoiceFromTimesheetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InvoiceFromTimesheetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-timesheet-view-portal")]
-        public async Task<IActionResult> ActionOpenTimesheetViewPortalAsync(Guid id)
+        [Route("action-open-timesheet-view-portal")]
+        public async Task<IActionResult> ActionOpenTimesheetViewPortalAsync(Guid[] ids)
         {
-            var result = await _appService.OpenTimesheetViewPortalAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenTimesheetViewPortalAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-sale-order-from-timesheet")]
-        public async Task<IActionResult> ActionSaleOrderFromTimesheetAsync(Guid id)
+        [Route("action-sale-order-from-timesheet")]
+        public async Task<IActionResult> ActionSaleOrderFromTimesheetAsync(Guid[] ids)
         {
-            var result = await _appService.SaleOrderFromTimesheetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SaleOrderFromTimesheetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-unusual-days")]
-        public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] AccountAnalyticLineGetUnusualDaysRequestDto input)
+        [Route("get-unusual-days")]
+        public async Task<IActionResult> GetUnusualDaysAsync(AccountAnalyticLineGetUnusualDaysRequestDto input)
         {
-            var result = await _appService.GetUnusualDaysAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetUnusualDaysAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-views")]
-        public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] AccountAnalyticLineGetViewsRequestDto input)
+        [Route("get-views")]
+        public async Task<IActionResult> GetViewsAsync(AccountAnalyticLineGetViewsRequestDto input)
         {
-            var result = await _appService.GetViewsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetViewsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/on-change-unit-amount")]
-        public async Task<IActionResult> OnChangeUnitAmountAsync(Guid id)
+        [Route("on-change-unit-amount")]
+        public async Task<IActionResult> OnChangeUnitAmountAsync(Guid[] ids)
         {
-            var result = await _appService.OnChangeUnitAmountAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnChangeUnitAmountAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/view-header-get")]
-        public async Task<IActionResult> ViewHeaderGetAsync(Guid id, [FromBody] AccountAnalyticLineViewHeaderGetRequestDto input)
+        [Route("view-header-get")]
+        public async Task<IActionResult> ViewHeaderGetAsync(AccountAnalyticLineViewHeaderGetRequestDto input)
         {
-            var result = await _appService.ViewHeaderGetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ViewHeaderGetAsync(input);
             return Ok(result);
         }
     }

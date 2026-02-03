@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrAttachmentAppService : GenericApplicationService<IrAttachment>, IIrAttachmentAppService
+    public partial class IrAttachmentAppService : GenericAppService<IrAttachment>, IIrAttachmentAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public IrAttachmentAppService(IRepository<IrAttachment, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -205,7 +205,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> CheckAsync(Guid id, IrAttachmentCheckRequestDto input)
+        [ApiModel]
+        public async Task<IrAttachment> CheckAsync(IrAttachmentCheckRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -219,7 +220,9 @@ namespace Bamboo.Core.Application.Services
             // if values and any(self._inaccessible_comodel_records({values.get('res_model'): [values.get('res_id')]}, mode)):
             //     raise AccessError(_("Sorry, you are not allowed to access this document."))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrAttachment> CheckContentsInternalAsync(object values)
@@ -426,7 +429,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<IrAttachment> CopyAsync(Guid id, List<string> fields, IrAttachment defaultValues = null)
+        public override async Task<IrAttachment> CopyAsync(CopyRequestDto<IrAttachment> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: attachment_indexation, FILE: ir_attachment.py) ---
@@ -435,10 +438,10 @@ namespace Bamboo.Core.Application.Services
             //     index_content_cache[attachment.checksum] = attachment.index_content
             // return super().copy(default=default)
             */
-            return await base.CopyAsync(id, fields, defaultValues);
+            return await base.CopyAsync(input);
         }
 
-        public async Task<IrAttachment> CopyDataAsync(Guid id, IrAttachmentCopyDataRequestDto input)
+        public async Task<IrAttachment> CopyDataAsync(IrAttachmentCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -451,10 +454,12 @@ namespace Bamboo.Core.Application.Services
             //         vals['raw'] = attachment.raw
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<IrAttachment> CreateAsync(IrAttachment entity, List<string> fields)
+        public override async Task<IrAttachment> CreateAsync(CreateRequestDto<IrAttachment> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: ir_attachment.py) ---
@@ -530,10 +535,11 @@ namespace Bamboo.Core.Application.Services
             // records._check_serving_attachments()
             // return records
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<IrAttachment> CreateUniqueAsync(Guid id, IrAttachmentCreateUniqueRequestDto input)
+        [ApiModel]
+        public async Task<IrAttachment> CreateUniqueAsync(IrAttachmentCreateUniqueRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -561,7 +567,9 @@ namespace Bamboo.Core.Application.Services
             //         ids.append(attachment.id)
             // return ids
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrAttachment> CronMigrateLocalToCloudStorageInternalAsync()
@@ -756,6 +764,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> FileDeleteInternalAsync(object fname)
         {
             /*
@@ -767,6 +776,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> FileReadInternalAsync(object fname, object size)
         {
             /*
@@ -784,6 +794,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> FileWriteInternalAsync(object bin_value, object checksum)
         {
             /*
@@ -805,6 +816,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> FilestoreInternalAsync()
         {
             /*
@@ -815,7 +827,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> ForceStorageAsync(Guid id)
+        [ApiModel]
+        public async Task<IrAttachment> ForceStorageAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -831,7 +844,9 @@ namespace Bamboo.Core.Application.Services
             //     ['&', ('type', '=', 'binary'), '|', ('res_field', '=', False), ('res_field', '!=', False)]
             // ]))._migrate()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrAttachment> FromRequestFileInternalAsync(object file)
@@ -881,6 +896,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> FullPathInternalAsync(object path)
         {
             /*
@@ -991,7 +1007,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> GenerateAccessTokenAsync(Guid id)
+        public async Task<IrAttachment> GenerateAccessTokenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -1006,7 +1022,9 @@ namespace Bamboo.Core.Application.Services
             //     tokens.append(access_token)
             // return tokens
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrAttachment> GenerateAccessTokenInternalAsync()
@@ -1202,14 +1220,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> GetAsync(Guid id)
+        [ApiModel]
+        public async Task<IrAttachment> GetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def action_get(self):
             // return self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrAttachment> GetCloudStorageAzureInfoInternalAsync()
@@ -1315,6 +1336,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> GetPathInternalAsync(object bin_data, object sha)
         {
             /*
@@ -1352,6 +1374,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> GetServeAttachmentInternalAsync(object url, object extra_domain, object order)
         {
             /*
@@ -1369,7 +1392,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> GetServingGroupsAsync(Guid id)
+        [ApiModel]
+        public async Task<IrAttachment> GetServingGroupsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_attachment.py) ---
@@ -1384,9 +1408,12 @@ namespace Bamboo.Core.Application.Services
             // """
             // return ['base.group_system']
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> GetStorageDomainInternalAsync()
         {
             /*
@@ -1510,6 +1537,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> IndexInternalAsync(object bin_data, string file_type, object checksum)
         {
             /*
@@ -1736,7 +1764,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> InitAsync(Guid id)
+        public async Task<IrAttachment> InitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: ir_attachment.py) ---
@@ -1750,7 +1778,9 @@ namespace Bamboo.Core.Application.Services
             //          WHERE res_model = 'hr.applicant'
             //     ''', indexed_field=indexed_field))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrAttachment> InverseDatasInternalAsync()
@@ -1983,7 +2013,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> PreviewAttachmentAsync(Guid id)
+        public async Task<IrAttachment> PreviewAttachmentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: ir_attachment.py) ---
@@ -1994,10 +2024,13 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrAttachment> RegenerateAssetsBundlesAsync(Guid id)
+        [ApiModel]
+        public async Task<IrAttachment> RegenerateAssetsBundlesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -2011,10 +2044,12 @@ namespace Bamboo.Core.Application.Services
             // ]).unlink()
             // self.env.registry.clear_cache('assets')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrAttachment> RegisterAsMainAttachmentAsync(Guid id, IrAttachmentRegisterAsMainAttachmentRequestDto input)
+        public async Task<IrAttachment> RegisterAsMainAttachmentAsync(IrAttachmentRegisterAsMainAttachmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
@@ -2040,9 +2075,12 @@ namespace Bamboo.Core.Application.Services
             //         with contextlib.suppress(AccessError):
             //             related_record._message_set_main_attachment_id(attachment, force=force)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> SameContentInternalAsync(object bin_data, object filepath)
         {
             /*
@@ -2063,6 +2101,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> SearchInternalAsync(object domain, object offset, object limit, object order)
         {
             /*
@@ -2205,6 +2244,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrAttachment> StorageInternalAsync()
         {
             /*
@@ -2371,7 +2411,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrAttachment entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<IrAttachment> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: ir_attachment.py) ---
@@ -2411,7 +2451,7 @@ namespace Bamboo.Core.Application.Services
             //     self._check_serving_attachments()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

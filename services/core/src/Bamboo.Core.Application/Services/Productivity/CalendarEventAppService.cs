@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Calendar", Category = "Productivity", Depends = new[] { "base", "mail" })]
-    public partial class CalendarEventAppService : GenericApplicationService<CalendarEvent>, ICalendarEventAppService
+    public partial class CalendarEventAppService : GenericAppService<CalendarEvent>, ICalendarEventAppService
     {
         private readonly IGoogleCalendarSyncAppService _googleCalendarSyncAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -177,7 +177,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> ChangeAttendeeStatusAsync(Guid id, CalendarEventChangeAttendeeStatusRequestDto input)
+        public async Task<CalendarEvent> ChangeAttendeeStatusAsync(CalendarEventChangeAttendeeStatusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -196,7 +196,9 @@ namespace Bamboo.Core.Application.Services
             //     return attendee.do_decline()
             // return attendee.do_tentative()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> CheckCalendarPrivacyWritePermissionsInternalAsync()
@@ -379,6 +381,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> CheckValuesToSyncInternalAsync(object values)
         {
             /*
@@ -396,14 +399,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> ClearVideocallLocationAsync(Guid id)
+        public async Task<CalendarEvent> ClearVideocallLocationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def clear_videocall_location(self):
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> ComputeAttendeesCountInternalAsync()
@@ -783,7 +788,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<CalendarEvent> CreateAsync(CalendarEvent entity, List<string> fields)
+        public override async Task<CalendarEvent> CreateAsync(CreateRequestDto<CalendarEvent> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -997,7 +1002,7 @@ namespace Bamboo.Core.Application.Services
             //     for vals in vals_list
             // ])
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<CalendarEvent> CreateVideocallChannelIdInternalAsync(object name, List<Guid> partner_ids)
@@ -1037,7 +1042,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<CalendarEvent> DefaultGetAsync(List<string> fields)
+        [ApiModel]
+        public override async Task<CalendarEvent> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1103,9 +1109,10 @@ namespace Bamboo.Core.Application.Services
             // 
             // return defaults
             */
-            return await base.DefaultGetAsync(fields);
+            return await base.DefaultGetAsync(input);
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> DefaultPartnersInternalAsync()
         {
             /*
@@ -1121,6 +1128,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> DefaultStartInternalAsync()
         {
             /*
@@ -1132,6 +1140,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> DefaultStopInternalAsync()
         {
             /*
@@ -1230,7 +1239,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> FindPartnerCustomerAsync(Guid id)
+        public async Task<CalendarEvent> FindPartnerCustomerAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1242,7 +1251,9 @@ namespace Bamboo.Core.Application.Services
             //     self.env['calendar.attendee']
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> ForbidRecurrenceCreationInternalAsync()
@@ -1278,6 +1289,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetActivityDeadlineFromStartInternalAsync(object start, object allday)
         {
             /*
@@ -1296,6 +1308,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetActivityExcludedModelsInternalAsync()
         {
             /*
@@ -1312,6 +1325,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetArchiveValuesInternalAsync()
         {
             /*
@@ -1340,6 +1354,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetContactDetailsDescriptionInternalAsync(object organizer, object partners)
         {
             /*
@@ -1364,6 +1379,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetCustomFieldsInternalAsync()
         {
             /*
@@ -1403,6 +1419,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetDateFormatsInternalAsync()
         {
             /*
@@ -1417,7 +1434,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetDefaultDurationAsync(Guid id)
+        [ApiModel]
+        public async Task<CalendarEvent> GetDefaultDurationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1429,7 +1447,9 @@ namespace Bamboo.Core.Application.Services
             // res = res or ir_default_get('calendar.event', 'duration')
             // return res or 1
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> GetDefaultPrivacyDomainInternalAsync()
@@ -1452,7 +1472,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetDiscussVideocallLocationAsync(Guid id)
+        [ApiModel]
+        public async Task<CalendarEvent> GetDiscussVideocallLocationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1460,9 +1481,12 @@ namespace Bamboo.Core.Application.Services
             // access_token = uuid.uuid4().hex
             // return f"{self.get_base_url()}/{self.DISCUSS_ROUTE}/{access_token}"
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetDisplayTimeInternalAsync(object start, object stop, object zduration, object zallday)
         {
             /*
@@ -1514,7 +1538,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetDisplayTimeTzAsync(Guid id, CalendarEventGetDisplayTimeTzRequestDto input)
+        public async Task<CalendarEvent> GetDisplayTimeTzAsync(CalendarEventGetDisplayTimeTzRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1525,7 +1549,9 @@ namespace Bamboo.Core.Application.Services
             //     self = self.with_context(tz=tz)
             // return self._get_display_time(self.start, self.stop, self.duration, self.allday)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> GetDurationInternalAsync(object start, object stop)
@@ -1619,6 +1645,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetGoogleSyncedFieldsInternalAsync()
         {
             /*
@@ -1744,6 +1771,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetMicrosoftSyncedFieldsInternalAsync()
         {
             /*
@@ -1756,7 +1784,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetNextAlarmDateAsync(Guid id, CalendarEventGetNextAlarmDateRequestDto input)
+        public async Task<CalendarEvent> GetNextAlarmDateAsync(CalendarEventGetNextAlarmDateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1782,7 +1810,9 @@ namespace Bamboo.Core.Application.Services
             //         next_date = next_recurrent_event.start - timedelta(minutes=sorted_alarms[0].duration_minutes)
             // return next_date
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> GetOrganizerInternalAsync()
@@ -1795,6 +1825,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetOrganizerUserChangeInfoInternalAsync(object values)
         {
             /*
@@ -1816,6 +1847,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetPublicFieldsInternalAsync()
         {
             /*
@@ -1829,6 +1861,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetRecurrenceParamsByDateInternalAsync(object event_date)
         {
             /*
@@ -1865,6 +1898,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetRecurrentFieldsInternalAsync()
         {
             /*
@@ -1877,6 +1911,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetRemoveSyncIdValuesInternalAsync()
         {
             /*
@@ -1914,14 +1949,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetStateSelectionsAsync(Guid id)
+        [ApiModel]
+        public async Task<CalendarEvent> GetStateSelectionsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def get_state_selections(self):
             // return CalendarAttendee.STATE_SELECTION
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> GetSyncDomainInternalAsync()
@@ -1945,6 +1983,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetTimeFieldsInternalAsync()
         {
             /*
@@ -2002,16 +2041,20 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetUnusualDaysAsync(Guid id, CalendarEventGetUnusualDaysRequestDto input)
+        [ApiModel]
+        public async Task<CalendarEvent> GetUnusualDaysAsync(CalendarEventGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_calendar, FILE: calendar_event.py) ---
             // def get_unusual_days(self, date_from, date_to=None):
             // return self.env.user.employee_id._get_unusual_days(date_from, date_to)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> GetUpdateFutureEventsValuesInternalAsync()
         {
             /*
@@ -2267,7 +2310,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> JoinMeetingAsync(Guid id, CalendarEventJoinMeetingRequestDto input)
+        public async Task<CalendarEvent> JoinMeetingAsync(CalendarEventJoinMeetingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -2279,10 +2322,12 @@ namespace Bamboo.Core.Application.Services
             // if partner not in self.partner_ids:
             //     self.write({'partner_ids': [(4, partner.id)]})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CalendarEvent> JoinVideoCallAsync(Guid id)
+        public async Task<CalendarEvent> JoinVideoCallAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -2293,7 +2338,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new'
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> MailGetOperationForMailMessageOperationInternalAsync(object message_operation)
@@ -2312,7 +2359,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> MassArchiveAsync(Guid id, CalendarEventMassArchiveRequestDto input)
+        public async Task<CalendarEvent> MassArchiveAsync(CalendarEventMassArchiveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -2355,10 +2402,12 @@ namespace Bamboo.Core.Application.Services
             //     self._forbid_recurrence_update()
             // super().action_mass_archive(recurrence_update_setting)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CalendarEvent> MassDeletionAsync(Guid id, CalendarEventMassDeletionRequestDto input)
+        public async Task<CalendarEvent> MassDeletionAsync(CalendarEventMassDeletionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -2372,9 +2421,12 @@ namespace Bamboo.Core.Application.Services
             //     future_events = self.recurrence_id.calendar_event_ids.filtered(lambda ev: ev.start >= self.start)
             //     future_events.unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> MicrosoftToOdooRecurrenceValuesInternalAsync(object microsoft_event, object default_values)
         {
             /*
@@ -2400,6 +2452,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> MicrosoftToOdooValuesInternalAsync(object microsoft_event, object default_reminders, object default_values, List<Guid> with_ids)
         {
             /*
@@ -2656,6 +2709,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> OdooAttendeeCommandsInternalAsync(object google_event)
         {
             /*
@@ -2705,6 +2759,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> OdooAttendeeCommandsMInternalAsync(object microsoft_event)
         {
             /*
@@ -2759,6 +2814,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> OdooRemindersCommandsInternalAsync(object reminders)
         {
             /*
@@ -2807,6 +2863,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> OdooRemindersCommandsMInternalAsync(object microsoft_event)
         {
             /*
@@ -2869,6 +2926,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> OdooValuesInternalAsync(object google_event, object default_reminders)
         {
             /*
@@ -2953,7 +3011,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> OpenCalendarEventAsync(Guid id)
+        public async Task<CalendarEvent> OpenCalendarEventAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -2962,10 +3020,12 @@ namespace Bamboo.Core.Application.Services
             //     return self.env[self.res_model].browse(self.res_id).get_formview_action()
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CalendarEvent> OpenComposerAsync(Guid id)
+        public async Task<CalendarEvent> OpenComposerAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -2994,9 +3054,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': compose_ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> PreparePartnerContactDetailsHtmlInternalAsync(object section_title, object partner)
         {
             /*
@@ -3025,6 +3088,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<List<object>> ReadGroupInternalAsync(object domain, object groupby, object aggregates, object having, object offset, object limit, object order)
         {
             /*
@@ -3045,6 +3109,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<List<object>> ReadGroupingSetsInternalAsync(object domain, object grouping_sets, object aggregates, object order)
         {
             /*
@@ -3096,6 +3161,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> RestartGoogleSyncInternalAsync()
         {
             /*
@@ -3108,6 +3174,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> RestartMicrosoftSyncInternalAsync()
         {
             /*
@@ -3184,7 +3251,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> SendSmsAsync(Guid id)
+        public async Task<CalendarEvent> SendSmsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar_sms, FILE: calendar_event.py) ---
@@ -3205,10 +3272,12 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CalendarEvent> SendmailAsync(Guid id)
+        public async Task<CalendarEvent> SendmailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -3219,17 +3288,21 @@ namespace Bamboo.Core.Application.Services
             //     )
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CalendarEvent> SetDiscussVideocallLocationAsync(Guid id)
+        public async Task<CalendarEvent> SetDiscussVideocallLocationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
             // def set_discuss_videocall_location(self):
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> SetDiscussVideocallLocationInternalAsync()
@@ -3250,6 +3323,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<CalendarEvent> SetVideocallLocationInternalAsync(object vals_list)
         {
             /*
@@ -3404,7 +3478,7 @@ namespace Bamboo.Core.Application.Services
             return await base.UnlinkAsync(ids);
         }
 
-        public async Task<CalendarEvent> UnlinkEventAsync(Guid id, CalendarEventUnlinkEventRequestDto input)
+        public async Task<CalendarEvent> UnlinkEventAsync(CalendarEventUnlinkEventRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -3449,7 +3523,9 @@ namespace Bamboo.Core.Application.Services
             //         'views': [(False, 'form')],
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<CalendarEvent> UpdateAttendeeStatusInternalAsync(List<Guid> attendee_ids)
@@ -3520,7 +3596,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, CalendarEvent entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<CalendarEvent> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -3703,7 +3779,7 @@ namespace Bamboo.Core.Application.Services
             //     self.recurrence_id.need_sync_m = True
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

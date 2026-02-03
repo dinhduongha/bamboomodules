@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-read-distribution-model")]
-        public async Task<IActionResult> ActionReadDistributionModelAsync(Guid id)
+        [Route("action-read-distribution-model")]
+        public async Task<IActionResult> ActionReadDistributionModelAsync(Guid[] ids)
         {
-            var result = await _appService.ReadDistributionModelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReadDistributionModelAsync(ids);
             return Ok(result);
         }
     }

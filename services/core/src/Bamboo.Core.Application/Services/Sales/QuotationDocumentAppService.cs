@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("SalePdfQuoteBuilder", Category = "Sales", Depends = new[] { "sale_management" })]
-    public partial class QuotationDocumentAppService : GenericApplicationService<QuotationDocument>, IQuotationDocumentAppService
+    public partial class QuotationDocumentAppService : GenericAppService<QuotationDocument>, IQuotationDocumentAppService
     {
 
         public QuotationDocumentAppService(IRepository<QuotationDocument, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -56,7 +56,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<QuotationDocument> OpenPdfFormFieldsAsync(Guid id)
+        public async Task<QuotationDocument> OpenPdfFormFieldsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: quotation_document.py) ---
@@ -76,7 +76,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

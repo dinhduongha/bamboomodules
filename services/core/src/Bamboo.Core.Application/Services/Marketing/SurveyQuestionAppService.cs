@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Survey", Category = "Marketing", Depends = new[] { "auth_signup", "http_routing", "mail", "web_tour", "gamification" })]
-    public partial class SurveyQuestionAppService : GenericApplicationService<SurveyQuestion>, ISurveyQuestionAppService
+    public partial class SurveyQuestionAppService : GenericAppService<SurveyQuestion>, ISurveyQuestionAppService
     {
 
         public SurveyQuestionAppService(IRepository<SurveyQuestion, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -771,7 +771,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SurveyQuestion> ValidateQuestionAsync(Guid id, SurveyQuestionValidateQuestionRequestDto input)
+        public async Task<SurveyQuestion> ValidateQuestionAsync(SurveyQuestionValidateQuestionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_question.py) ---
@@ -811,7 +811,9 @@ namespace Bamboo.Core.Application.Services
             //         return self._validate_scale(answer)
             // return {}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SurveyQuestion> ValidateScaleInternalAsync(object answer)

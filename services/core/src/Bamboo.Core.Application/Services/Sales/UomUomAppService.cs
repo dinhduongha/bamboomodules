@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Uom", Category = "Sales", Depends = new[] { "base" })]
-    public partial class UomUomAppService : GenericApplicationService<UomUom>, IUomUomAppService
+    public partial class UomUomAppService : GenericAppService<UomUom>, IUomUomAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public UomUomAppService(IRepository<UomUom, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -83,7 +83,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<UomUom> CompareAsync(Guid id, UomUomCompareRequestDto input)
+        public async Task<UomUom> CompareAsync(UomUomCompareRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
@@ -98,7 +98,9 @@ namespace Bamboo.Core.Application.Services
             // digits = self.env['decimal.precision'].precision_get('Product Unit')
             // return tools.float_compare(value1, value2, precision_digits=digits)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<UomUom> ComputeDisplayNameInternalAsync()
@@ -271,6 +273,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<UomUom> GetUomFromUneceCodeInternalAsync(object unece_code)
         {
             /*
@@ -304,7 +307,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<bool> IsZeroAsync(Guid id, UomUomIsZeroRequestDto input)
+        public async Task<bool> IsZeroAsync(UomUomIsZeroRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
@@ -314,9 +317,12 @@ namespace Bamboo.Core.Application.Services
             // digits = self.env['decimal.precision'].precision_get('Product Unit')
             // return tools.float_is_zero(value, precision_digits=digits)
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<UomUom> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -351,7 +357,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<UomUom> OpenPackagingBarcodesAsync(Guid id)
+        public async Task<UomUom> OpenPackagingBarcodesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: uom_uom.py) ---
@@ -366,10 +372,12 @@ namespace Bamboo.Core.Application.Services
             //     'domain': [('uom_id', '=', self.id)],
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<float> RoundAsync(Guid id, UomUomRoundRequestDto input)
+        public async Task<float> RoundAsync(UomUomRoundRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
@@ -379,7 +387,9 @@ namespace Bamboo.Core.Application.Services
             // digits = self.env['decimal.precision'].precision_get('Product Unit')
             // return tools.float_round(value, precision_digits=digits, rounding_method=rounding_method)
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<UomUom> UnlinkExceptMasterDataInternalAsync()
@@ -423,7 +433,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, UomUom entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<UomUom> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -460,7 +470,7 @@ namespace Bamboo.Core.Application.Services
             //             raise UserError(error_msg)
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

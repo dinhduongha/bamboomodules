@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrSequenceAppService : GenericApplicationService<IrSequence>, IIrSequenceAppService
+    public partial class IrSequenceAppService : GenericAppService<IrSequence>, IIrSequenceAppService
     {
 
         public IrSequenceAppService(IRepository<IrSequence, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -51,6 +51,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<IrSequence> GetCurrentSequenceInternalAsync(object sequence_date)
         {
             /*
@@ -73,7 +74,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrSequence> GetNextCharAsync(Guid id, IrSequenceGetNextCharRequestDto input)
+        public async Task<IrSequence> GetNextCharAsync(IrSequenceGetNextCharRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
@@ -81,7 +82,9 @@ namespace Bamboo.Core.Application.Services
             // interpolated_prefix, interpolated_suffix = self._get_prefix_suffix()
             // return interpolated_prefix + '%%0%sd' % self.padding % number_next + interpolated_suffix
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrSequence> GetNumberNextActualInternalAsync()
@@ -143,7 +146,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrSequence> NextByCodeAsync(Guid id, IrSequenceNextByCodeRequestDto input)
+        [ApiModel]
+        public async Task<IrSequence> NextByCodeAsync(IrSequenceNextByCodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
@@ -162,10 +166,12 @@ namespace Bamboo.Core.Application.Services
             // seq_id = seq_ids[0]
             // return seq_id._next(sequence_date=sequence_date)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrSequence> NextByIdAsync(Guid id, IrSequenceNextByIdRequestDto input)
+        public async Task<IrSequence> NextByIdAsync(IrSequenceNextByIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
@@ -174,7 +180,9 @@ namespace Bamboo.Core.Application.Services
             // self.browse().check_access('read')
             // return self._next(sequence_date=sequence_date)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrSequence> NextDoInternalAsync()

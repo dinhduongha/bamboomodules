@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-sale-order")]
-        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid id)
+        [Route("action-view-sale-order")]
+        public async Task<IActionResult> ActionViewSaleOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewSaleOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewSaleOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-tasks")]
-        public async Task<IActionResult> ActionViewTasksAsync(Guid id)
+        [Route("action-view-tasks")]
+        public async Task<IActionResult> ActionViewTasksAsync(Guid[] ids)
         {
-            var result = await _appService.ViewTasksAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewTasksAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/toggle-is-reached")]
-        public async Task<IActionResult> ToggleIsReachedAsync(Guid id, [FromBody] ProjectMilestoneToggleIsReachedRequestDto input)
+        [Route("toggle-is-reached")]
+        public async Task<IActionResult> ToggleIsReachedAsync(ProjectMilestoneToggleIsReachedRequestDto input)
         {
-            var result = await _appService.ToggleIsReachedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ToggleIsReachedAsync(input);
             return Ok(result);
         }
     }

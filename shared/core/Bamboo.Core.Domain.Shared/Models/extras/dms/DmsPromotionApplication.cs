@@ -31,16 +31,16 @@ public partial class DmsPromotionApplication : FullAuditedAggregateRoot<Guid>, I
     public Guid? ProvisionOrderId { get; set; }
 
     [Column("promotion_scheme_id")]
-    public Guid PromotionSchemeId { get; set; }
+    public Guid? PromotionSchemeId { get; set; }
 
     [Column("applied_discount_amount")]
     public decimal AppliedDiscountAmount { get; set; }
 
-    [Column("free_items_json")]
+    [Column("free_items", TypeName = "jsonb")]
     public string? FreeItemsJson { get; set; }
 
     [Column("status")]
-    public string Status { get; set; } = "applied";
+    public string? Status { get; set; } = "applied";
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -57,4 +57,12 @@ public partial class DmsPromotionApplication : FullAuditedAggregateRoot<Guid>, I
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("PromotionSchemeId")]
     public virtual DmsPromotionScheme? PromotionScheme { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
 }

@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/add-click")]
-        public async Task<IActionResult> AddClickAsync(Guid id, [FromBody] LinkTrackerClickAddClickRequestDto input)
+        [Route("add-click")]
+        public async Task<IActionResult> AddClickAsync(LinkTrackerClickAddClickRequestDto input)
         {
-            var result = await _appService.AddClickAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AddClickAsync(input);
             return Ok(result);
         }
     }

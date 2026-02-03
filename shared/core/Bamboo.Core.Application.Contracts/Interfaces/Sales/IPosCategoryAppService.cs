@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPosCategoryAppService : IGenericApplicationService<PosCategory>
     {
-        Task<PosCategory> GetDefaultColorAsync(Guid id);
+        Task<PosCategory> GetDefaultColorAsync(Guid[] ids);
     }
 }

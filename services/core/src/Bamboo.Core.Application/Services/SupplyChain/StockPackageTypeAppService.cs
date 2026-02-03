@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockPackageTypeAppService : GenericApplicationService<StockPackageType>, IStockPackageTypeAppService
+    public partial class StockPackageTypeAppService : GenericAppService<StockPackageType>, IStockPackageTypeAppService
     {
 
         public StockPackageTypeAppService(IRepository<StockPackageType, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -94,7 +94,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPackageType> CopyDataAsync(Guid id, StockPackageTypeCopyDataRequestDto input)
+        public async Task<StockPackageType> CopyDataAsync(StockPackageTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package_type.py) ---
@@ -102,7 +102,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", package_type.name)) for package_type, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockPackageType> GetDefaultLengthUomInternalAsync()

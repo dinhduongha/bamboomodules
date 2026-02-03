@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ServerActionHistoryWizardAppService : GenericApplicationService<ServerActionHistoryWizard>, IServerActionHistoryWizardAppService
+    public partial class ServerActionHistoryWizardAppService : GenericAppService<ServerActionHistoryWizard>, IServerActionHistoryWizardAppService
     {
 
         public ServerActionHistoryWizardAppService(IRepository<ServerActionHistoryWizard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -44,6 +44,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ServerActionHistoryWizard> DefaultRevisionInternalAsync()
         {
             /*
@@ -58,7 +59,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ServerActionHistoryWizard> RestoreRevisionAsync(Guid id)
+        public async Task<ServerActionHistoryWizard> RestoreRevisionAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -66,7 +67,9 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // self.action_id.code = self.revision.code
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

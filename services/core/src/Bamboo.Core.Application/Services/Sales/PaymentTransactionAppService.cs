@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Payment", Category = "Sales", Depends = new[] { "onboarding", "portal" })]
-    public partial class PaymentTransactionAppService : GenericApplicationService<PaymentTransaction>, IPaymentTransactionAppService
+    public partial class PaymentTransactionAppService : GenericAppService<PaymentTransaction>, IPaymentTransactionAppService
     {
 
         public PaymentTransactionAppService(IRepository<PaymentTransaction, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -1032,7 +1032,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentTransaction> CaptureAsync(Guid id)
+        public async Task<PaymentTransaction> CaptureAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
@@ -1066,7 +1066,9 @@ namespace Bamboo.Core.Application.Services
             //         captured_txs_sudo |= tx.sudo().with_context(payment_backend_action=True)._capture()
             //     return captured_txs_sudo._build_action_feedback_notification()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentTransaction> CaptureInternalAsync(object amount_to_capture)
@@ -1446,6 +1448,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentTransaction> ComputeReferencePrefixInternalAsync(object separator)
         {
             /*
@@ -1581,7 +1584,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<PaymentTransaction> CreateAsync(PaymentTransaction entity, List<string> fields)
+        public override async Task<PaymentTransaction> CreateAsync(CreateRequestDto<PaymentTransaction> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
@@ -1636,7 +1639,7 @@ namespace Bamboo.Core.Application.Services
             //     tx.provider_reference = tx.reference
             // return transactions
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<PaymentTransaction> CreateChildTransactionInternalAsync(object amount, object is_refund)
@@ -1833,7 +1836,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentTransaction> DemoSetCanceledAsync(Guid id)
+        public async Task<PaymentTransaction> DemoSetCanceledAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
@@ -1851,10 +1854,12 @@ namespace Bamboo.Core.Application.Services
             // payment_data = {'reference': self.reference, 'simulated_state': 'cancel'}
             // self._process('demo', payment_data)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PaymentTransaction> DemoSetDoneAsync(Guid id)
+        public async Task<PaymentTransaction> DemoSetDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
@@ -1872,10 +1877,12 @@ namespace Bamboo.Core.Application.Services
             // payment_data = {'reference': self.reference, 'simulated_state': 'done'}
             // self._process('demo', payment_data)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PaymentTransaction> DemoSetErrorAsync(Guid id)
+        public async Task<PaymentTransaction> DemoSetErrorAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_demo, FILE: payment_transaction.py) ---
@@ -1893,7 +1900,9 @@ namespace Bamboo.Core.Application.Services
             // payment_data = {'reference': self.reference, 'simulated_state': 'error'}
             // self._process('demo', payment_data)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentTransaction> DpoCreateTokenInternalAsync()
@@ -2282,6 +2291,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentTransaction> ExtractReferenceInternalAsync(object provider_code, object payment_data)
         {
             /*
@@ -2899,6 +2909,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentTransaction> GetSpecificCreateValuesInternalAsync(object provider_code, object values)
         {
             /*
@@ -3728,6 +3739,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentTransaction> LangGetInternalAsync()
         {
             /*
@@ -3862,6 +3874,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentTransaction> MercadoPagoGetErrorMsgInternalAsync(object status_detail)
         {
             /*
@@ -4126,7 +4139,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentTransaction> PostProcessAsync(Guid id)
+        public async Task<PaymentTransaction> PostProcessAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
@@ -4142,7 +4155,9 @@ namespace Bamboo.Core.Application.Services
             //     'tag': 'soft_reload',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentTransaction> PostProcessInternalAsync()
@@ -4393,6 +4408,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentTransaction> RazorpayConvertInrToCurrencyInternalAsync(object amount, Guid currency_id)
         {
             /*
@@ -4610,7 +4626,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentTransaction> RefundAsync(Guid id, PaymentTransactionRefundRequestDto input)
+        public async Task<PaymentTransaction> RefundAsync(PaymentTransactionRefundRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
@@ -4631,7 +4647,9 @@ namespace Bamboo.Core.Application.Services
             //     refunded_txs_sudo |= tx.sudo().with_context(payment_backend_action=True)._refund(amount_to_refund=amount_to_refund)
             // return refunded_txs_sudo._build_action_feedback_notification()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentTransaction> RefundInternalAsync(object amount_to_refund)
@@ -4661,6 +4679,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentTransaction> SearchByReferenceInternalAsync(object provider_code, object payment_data)
         {
             /*
@@ -6096,6 +6115,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PaymentTransaction> ValidatePhoneNumberInternalAsync(object phone)
         {
             /*
@@ -6122,7 +6142,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentTransaction> ViewInvoicesAsync(Guid id)
+        public async Task<PaymentTransaction> ViewInvoicesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: payment_transaction.py) ---
@@ -6153,10 +6173,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('id', 'in', invoice_ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PaymentTransaction> ViewPosOrderAsync(Guid id)
+        public async Task<PaymentTransaction> ViewPosOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: payment_transaction.py) ---
@@ -6175,10 +6197,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PaymentTransaction> ViewRefundsAsync(Guid id)
+        public async Task<PaymentTransaction> ViewRefundsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
@@ -6208,10 +6232,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('source_transaction_id', '=', self.id)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PaymentTransaction> ViewSalesOrdersAsync(Guid id)
+        public async Task<PaymentTransaction> ViewSalesOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: payment_transaction.py) ---
@@ -6231,10 +6257,12 @@ namespace Bamboo.Core.Application.Services
             //     action['domain'] = [('id', 'in', sale_order_ids)]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PaymentTransaction> VoidAsync(Guid id)
+        public async Task<PaymentTransaction> VoidAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---
@@ -6255,7 +6283,9 @@ namespace Bamboo.Core.Application.Services
             //     voided_txs_sudo |= tx.sudo().with_context(payment_backend_action=True)._void(amount_to_void=tx.amount - captured_amount)
             // return voided_txs_sudo._build_action_feedback_notification()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PaymentTransaction> VoidInternalAsync(object amount_to_void)

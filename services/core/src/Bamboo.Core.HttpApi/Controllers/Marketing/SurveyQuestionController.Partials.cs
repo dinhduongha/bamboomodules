@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/validate-question")]
-        public async Task<IActionResult> ValidateQuestionAsync(Guid id, [FromBody] SurveyQuestionValidateQuestionRequestDto input)
+        [Route("validate-question")]
+        public async Task<IActionResult> ValidateQuestionAsync(SurveyQuestionValidateQuestionRequestDto input)
         {
-            var result = await _appService.ValidateQuestionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ValidateQuestionAsync(input);
             return Ok(result);
         }
     }

@@ -11,410 +11,461 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-user")]
-        public async Task<IActionResult> ActionCreateUserAsync(Guid id)
+        [Route("action-create-user")]
+        public async Task<IActionResult> ActionCreateUserAsync(Guid[] ids)
         {
-            var result = await _appService.CreateUserAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateUserAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-users")]
-        public async Task<IActionResult> ActionCreateUsersAsync(Guid id)
+        [Route("action-create-users")]
+        public async Task<IActionResult> ActionCreateUsersAsync(Guid[] ids)
         {
-            var result = await _appService.CreateUsersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateUsersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-users-confirmation")]
-        public async Task<IActionResult> ActionCreateUsersConfirmationAsync(Guid id)
+        [Route("action-create-users-confirmation")]
+        public async Task<IActionResult> ActionCreateUsersConfirmationAsync(Guid[] ids)
         {
-            var result = await _appService.CreateUsersConfirmationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateUsersConfirmationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-allocation-wizard")]
-        public async Task<IActionResult> ActionOpenAllocationWizardAsync(Guid id)
+        [Route("action-open-allocation-wizard")]
+        public async Task<IActionResult> ActionOpenAllocationWizardAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAllocationWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAllocationWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-courses")]
-        public async Task<IActionResult> ActionOpenCoursesAsync(Guid id)
+        [Route("action-open-courses")]
+        public async Task<IActionResult> ActionOpenCoursesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenCoursesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenCoursesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employee-cars")]
-        public async Task<IActionResult> ActionOpenEmployeeCarsAsync(Guid id)
+        [Route("action-open-employee-cars")]
+        public async Task<IActionResult> ActionOpenEmployeeCarsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmployeeCarsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmployeeCarsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-last-month-attendances")]
-        public async Task<IActionResult> ActionOpenLastMonthAttendancesAsync(Guid id)
+        [Route("action-open-last-month-attendances")]
+        public async Task<IActionResult> ActionOpenLastMonthAttendancesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLastMonthAttendancesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLastMonthAttendancesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-leave-request")]
-        public async Task<IActionResult> ActionOpenLeaveRequestAsync(Guid id)
+        [Route("action-open-leave-request")]
+        public async Task<IActionResult> ActionOpenLeaveRequestAsync(Guid[] ids)
         {
-            var result = await _appService.OpenLeaveRequestAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenLeaveRequestAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-versions")]
-        public async Task<IActionResult> ActionOpenVersionsAsync(Guid id)
+        [Route("action-open-versions")]
+        public async Task<IActionResult> ActionOpenVersionsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenVersionsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenVersionsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-work-entries")]
-        public async Task<IActionResult> ActionOpenWorkEntriesAsync(Guid id, [FromBody] HrEmployeeOpenWorkEntriesRequestDto input)
+        [Route("action-open-work-entries")]
+        public async Task<IActionResult> ActionOpenWorkEntriesAsync(HrEmployeeOpenWorkEntriesRequestDto input)
         {
-            var result = await _appService.OpenWorkEntriesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.OpenWorkEntriesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-related-contacts")]
-        public async Task<IActionResult> ActionRelatedContactsAsync(Guid id)
+        [Route("action-related-contacts")]
+        public async Task<IActionResult> ActionRelatedContactsAsync(Guid[] ids)
         {
-            var result = await _appService.RelatedContactsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RelatedContactsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-log")]
-        public async Task<IActionResult> ActionSendLogAsync(Guid id)
+        [Route("action-send-log")]
+        public async Task<IActionResult> ActionSendLogAsync(Guid[] ids)
         {
-            var result = await _appService.SendLogAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendLogAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-sms")]
-        public async Task<IActionResult> ActionSendSmsAsync(Guid id)
+        [Route("action-send-sms")]
+        public async Task<IActionResult> ActionSendSmsAsync(Guid[] ids)
         {
-            var result = await _appService.SendSmsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendSmsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-absent")]
-        public async Task<IActionResult> ActionSetAbsentAsync(Guid id)
+        [Route("action-set-absent")]
+        public async Task<IActionResult> ActionSetAbsentAsync(Guid[] ids)
         {
-            var result = await _appService.SetAbsentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetAbsentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-present")]
-        public async Task<IActionResult> ActionSetPresentAsync(Guid id)
+        [Route("action-set-present")]
+        public async Task<IActionResult> ActionSetPresentAsync(Guid[] ids)
         {
-            var result = await _appService.SetPresentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetPresentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-time-off-dashboard")]
-        public async Task<IActionResult> ActionTimeOffDashboardAsync(Guid id)
+        [Route("action-time-off-dashboard")]
+        public async Task<IActionResult> ActionTimeOffDashboardAsync(Guid[] ids)
         {
-            var result = await _appService.TimeOffDashboardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TimeOffDashboardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-timesheet-from-employee")]
-        public async Task<IActionResult> ActionTimesheetFromEmployeeAsync(Guid id)
+        [Route("action-timesheet-from-employee")]
+        public async Task<IActionResult> ActionTimesheetFromEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.TimesheetFromEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TimesheetFromEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-toggle-primary-bank-account-trust")]
-        public async Task<IActionResult> ActionTogglePrimaryBankAccountTrustAsync(Guid id)
+        [Route("action-toggle-primary-bank-account-trust")]
+        public async Task<IActionResult> ActionTogglePrimaryBankAccountTrustAsync(Guid[] ids)
         {
-            var result = await _appService.TogglePrimaryBankAccountTrustAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TogglePrimaryBankAccountTrustAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unlink-wizard")]
-        public async Task<IActionResult> ActionUnlinkWizardAsync(Guid id)
+        [Route("action-unlink-wizard")]
+        public async Task<IActionResult> ActionUnlinkWizardAsync(Guid[] ids)
         {
-            var result = await _appService.UnlinkWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnlinkWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-no-existing-contract")]
-        public async Task<IActionResult> CheckNoExistingContractAsync(Guid id, [FromBody] HrEmployeeCheckNoExistingContractRequestDto input)
+        [Route("check-no-existing-contract")]
+        public async Task<IActionResult> CheckNoExistingContractAsync(HrEmployeeCheckNoExistingContractRequestDto input)
         {
-            var result = await _appService.CheckNoExistingContractAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckNoExistingContractAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-contract")]
-        public async Task<IActionResult> CreateContractAsync(Guid id, [FromBody] HrEmployeeCreateContractRequestDto input)
+        [Route("create-contract")]
+        public async Task<IActionResult> CreateContractAsync(HrEmployeeCreateContractRequestDto input)
         {
-            var result = await _appService.CreateContractAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateContractAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-version")]
-        public async Task<IActionResult> CreateVersionAsync(Guid id, [FromBody] HrEmployeeCreateVersionRequestDto input)
+        [Route("create-version")]
+        public async Task<IActionResult> CreateVersionAsync(HrEmployeeCreateVersionRequestDto input)
         {
-            var result = await _appService.CreateVersionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateVersionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/fetch")]
-        public async Task<IActionResult> FetchAsync(Guid id, [FromBody] HrEmployeeFetchRequestDto input)
+        [Route("fetch")]
+        public async Task<IActionResult> FetchAsync(HrEmployeeFetchRequestDto input)
         {
-            var result = await _appService.FetchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FetchAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/generate-random-barcode")]
-        public async Task<IActionResult> GenerateRandomBarcodeAsync(Guid id)
+        [Route("generate-random-barcode")]
+        public async Task<IActionResult> GenerateRandomBarcodeAsync(Guid[] ids)
         {
-            var result = await _appService.GenerateRandomBarcodeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GenerateRandomBarcodeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/generate-work-entries")]
-        public async Task<IActionResult> GenerateWorkEntriesAsync(Guid id, [FromBody] HrEmployeeGenerateWorkEntriesRequestDto input)
+        [Route("generate-work-entries")]
+        public async Task<IActionResult> GenerateWorkEntriesAsync(HrEmployeeGenerateWorkEntriesRequestDto input)
         {
-            var result = await _appService.GenerateWorkEntriesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GenerateWorkEntriesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-accounts-with-fixed-allocations")]
-        public async Task<IActionResult> GetAccountsWithFixedAllocationsAsync(Guid id)
+        [Route("get-accounts-with-fixed-allocations")]
+        public async Task<IActionResult> GetAccountsWithFixedAllocationsAsync(Guid[] ids)
         {
-            var result = await _appService.GetAccountsWithFixedAllocationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAccountsWithFixedAllocationsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-allocation-requests-amount")]
-        public async Task<IActionResult> GetAllocationRequestsAmountAsync(Guid id)
+        [Route("get-allocation-requests-amount")]
+        public async Task<IActionResult> GetAllocationRequestsAmountAsync(Guid[] ids)
         {
-            var result = await _appService.GetAllocationRequestsAmountAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAllocationRequestsAmountAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-avatar-card-data")]
-        public async Task<IActionResult> GetAvatarCardDataAsync(Guid id, [FromBody] HrEmployeeGetAvatarCardDataRequestDto input)
+        [Route("get-avatar-card-data")]
+        public async Task<IActionResult> GetAvatarCardDataAsync(HrEmployeeGetAvatarCardDataRequestDto input)
         {
-            var result = await _appService.GetAvatarCardDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAvatarCardDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-bank-account-salary-allocation")]
-        public async Task<IActionResult> GetBankAccountSalaryAllocationAsync(Guid id, [FromBody] HrEmployeeGetBankAccountSalaryAllocationRequestDto input)
+        [Route("get-bank-account-salary-allocation")]
+        public async Task<IActionResult> GetBankAccountSalaryAllocationAsync(HrEmployeeGetBankAccountSalaryAllocationRequestDto input)
         {
-            var result = await _appService.GetBankAccountSalaryAllocationAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetBankAccountSalaryAllocationAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-barcodes-and-pin-hashed")]
-        public async Task<IActionResult> GetBarcodesAndPinHashedAsync(Guid id)
+        [Route("get-barcodes-and-pin-hashed")]
+        public async Task<IActionResult> GetBarcodesAndPinHashedAsync(Guid[] ids)
         {
-            var result = await _appService.GetBarcodesAndPinHashedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBarcodesAndPinHashedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-formview-action")]
-        public async Task<IActionResult> GetFormviewActionAsync(Guid id, [FromBody] HrEmployeeGetFormviewActionRequestDto input)
+        [Route("get-formview-action")]
+        public async Task<IActionResult> GetFormviewActionAsync(HrEmployeeGetFormviewActionRequestDto input)
         {
-            var result = await _appService.GetFormviewActionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFormviewActionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-formview-id")]
-        public async Task<IActionResult> GetFormviewIdAsync(Guid id, [FromBody] HrEmployeeGetFormviewIdRequestDto input)
+        [Route("get-formview-id")]
+        public async Task<IActionResult> GetFormviewIdAsync(HrEmployeeGetFormviewIdRequestDto input)
         {
-            var result = await _appService.GetFormviewIdAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFormviewIdAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-internal-resume-lines")]
-        public async Task<IActionResult> GetInternalResumeLinesAsync(Guid id, [FromBody] HrEmployeeGetInternalResumeLinesRequestDto input)
+        [Route("get-internal-resume-lines")]
+        public async Task<IActionResult> GetInternalResumeLinesAsync(HrEmployeeGetInternalResumeLinesRequestDto input)
         {
-            var result = await _appService.GetInternalResumeLinesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetInternalResumeLinesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-mandatory-days")]
-        public async Task<IActionResult> GetMandatoryDaysAsync(Guid id, [FromBody] HrEmployeeGetMandatoryDaysRequestDto input)
+        [Route("get-mandatory-days")]
+        public async Task<IActionResult> GetMandatoryDaysAsync(HrEmployeeGetMandatoryDaysRequestDto input)
         {
-            var result = await _appService.GetMandatoryDaysAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetMandatoryDaysAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-mandatory-days-data")]
-        public async Task<IActionResult> GetMandatoryDaysDataAsync(Guid id, [FromBody] HrEmployeeGetMandatoryDaysDataRequestDto input)
+        [Route("get-mandatory-days-data")]
+        public async Task<IActionResult> GetMandatoryDaysDataAsync(HrEmployeeGetMandatoryDaysDataRequestDto input)
         {
-            var result = await _appService.GetMandatoryDaysDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetMandatoryDaysDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-overtime-data")]
-        public async Task<IActionResult> GetOvertimeDataAsync(Guid id, [FromBody] HrEmployeeGetOvertimeDataRequestDto input)
+        [Route("get-overtime-data")]
+        public async Task<IActionResult> GetOvertimeDataAsync(HrEmployeeGetOvertimeDataRequestDto input)
         {
-            var result = await _appService.GetOvertimeDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetOvertimeDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-overtime-data-by-employee")]
-        public async Task<IActionResult> GetOvertimeDataByEmployeeAsync(Guid id)
+        [Route("get-overtime-data-by-employee")]
+        public async Task<IActionResult> GetOvertimeDataByEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.GetOvertimeDataByEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetOvertimeDataByEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-presence-server-action-data")]
-        public async Task<IActionResult> GetPresenceServerActionDataAsync(Guid id)
+        [Route("get-presence-server-action-data")]
+        public async Task<IActionResult> GetPresenceServerActionDataAsync(Guid[] ids)
         {
-            var result = await _appService.GetPresenceServerDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPresenceServerDataAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-public-holidays-data")]
-        public async Task<IActionResult> GetPublicHolidaysDataAsync(Guid id, [FromBody] HrEmployeeGetPublicHolidaysDataRequestDto input)
+        [Route("get-public-holidays-data")]
+        public async Task<IActionResult> GetPublicHolidaysDataAsync(HrEmployeeGetPublicHolidaysDataRequestDto input)
         {
-            var result = await _appService.GetPublicHolidaysDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetPublicHolidaysDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-remaining-percentage")]
-        public async Task<IActionResult> GetRemainingPercentageAsync(Guid id)
+        [Route("get-remaining-percentage")]
+        public async Task<IActionResult> GetRemainingPercentageAsync(Guid[] ids)
         {
-            var result = await _appService.GetRemainingPercentageAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetRemainingPercentageAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-special-days-data")]
-        public async Task<IActionResult> GetSpecialDaysDataAsync(Guid id, [FromBody] HrEmployeeGetSpecialDaysDataRequestDto input)
+        [Route("get-special-days-data")]
+        public async Task<IActionResult> GetSpecialDaysDataAsync(HrEmployeeGetSpecialDaysDataRequestDto input)
         {
-            var result = await _appService.GetSpecialDaysDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetSpecialDaysDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-time-off-dashboard-data")]
-        public async Task<IActionResult> GetTimeOffDashboardDataAsync(Guid id, [FromBody] HrEmployeeGetTimeOffDashboardDataRequestDto input)
+        [Route("get-time-off-dashboard-data")]
+        public async Task<IActionResult> GetTimeOffDashboardDataAsync(HrEmployeeGetTimeOffDashboardDataRequestDto input)
         {
-            var result = await _appService.GetTimeOffDashboardDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetTimeOffDashboardDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-view")]
-        public async Task<IActionResult> GetViewAsync(Guid id, [FromBody] HrEmployeeGetViewRequestDto input)
+        [Route("get-view")]
+        public async Task<IActionResult> GetViewAsync(HrEmployeeGetViewRequestDto input)
         {
-            var result = await _appService.GetViewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetViewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-views")]
-        public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] HrEmployeeGetViewsRequestDto input)
+        [Route("get-views")]
+        public async Task<IActionResult> GetViewsAsync(HrEmployeeGetViewsRequestDto input)
         {
-            var result = await _appService.GetViewsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetViewsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/new")]
-        public async Task<IActionResult> NewAsync(Guid id, [FromBody] HrEmployeeNewRequestDto input)
+        [Route("new")]
+        public async Task<IActionResult> NewAsync(HrEmployeeNewRequestDto input)
         {
-            var result = await _appService.NewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.NewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/notify-expiring-contract-work-permit")]
-        public async Task<IActionResult> NotifyExpiringContractWorkPermitAsync(Guid id)
+        [Route("notify-expiring-contract-work-permit")]
+        public async Task<IActionResult> NotifyExpiringContractWorkPermitAsync(Guid[] ids)
         {
-            var result = await _appService.NotifyExpiringContractWorkPermitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.NotifyExpiringContractWorkPermitAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-barcode-scanner")]
-        public async Task<IActionResult> OpenBarcodeScannerAsync(Guid id)
+        [Route("open-barcode-scanner")]
+        public async Task<IActionResult> OpenBarcodeScannerAsync(Guid[] ids)
         {
-            var result = await _appService.OpenBarcodeScannerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenBarcodeScannerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-fetch")]
-        public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] HrEmployeeSearchFetchRequestDto input)
+        [Route("search-fetch")]
+        public async Task<IActionResult> SearchFetchAsync(HrEmployeeSearchFetchRequestDto input)
         {
-            var result = await _appService.SearchFetchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchFetchAsync(input);
             return Ok(result);
         }
     }

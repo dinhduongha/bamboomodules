@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailActivityPlanAppService : IGenericApplicationService<MailActivityPlan>
     {
-        Task<MailActivityPlan> CopyDataAsync(Guid id, MailActivityPlanCopyDataRequestDto input);
+        Task<MailActivityPlan> CopyDataAsync(MailActivityPlanCopyDataRequestDto input);
     }
 }

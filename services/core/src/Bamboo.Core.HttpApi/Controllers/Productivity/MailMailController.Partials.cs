@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-document")]
-        public async Task<IActionResult> ActionOpenDocumentAsync(Guid id)
+        [Route("action-open-document")]
+        public async Task<IActionResult> ActionOpenDocumentAsync(Guid[] ids)
         {
-            var result = await _appService.OpenDocumentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenDocumentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-retry")]
-        public async Task<IActionResult> ActionRetryAsync(Guid id)
+        [Route("action-retry")]
+        public async Task<IActionResult> ActionRetryAsync(Guid[] ids)
         {
-            var result = await _appService.RetryAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RetryAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-and-close")]
-        public async Task<IActionResult> ActionSendAndCloseAsync(Guid id)
+        [Route("action-send-and-close")]
+        public async Task<IActionResult> ActionSendAndCloseAsync(Guid[] ids)
         {
-            var result = await _appService.SendAndCloseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendAndCloseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/cancel")]
-        public async Task<IActionResult> CancelAsync(Guid id)
+        [Route("cancel")]
+        public async Task<IActionResult> CancelAsync(Guid[] ids)
         {
-            var result = await _appService.CancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mark-outgoing")]
-        public async Task<IActionResult> MarkOutgoingAsync(Guid id)
+        [Route("mark-outgoing")]
+        public async Task<IActionResult> MarkOutgoingAsync(Guid[] ids)
         {
-            var result = await _appService.MarkOutgoingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MarkOutgoingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/process-email-queue")]
-        public async Task<IActionResult> ProcessEmailQueueAsync(Guid id, [FromBody] MailMailProcessEmailQueueRequestDto input)
+        [Route("process-email-queue")]
+        public async Task<IActionResult> ProcessEmailQueueAsync(MailMailProcessEmailQueueRequestDto input)
         {
-            var result = await _appService.ProcessEmailQueueAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ProcessEmailQueueAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send")]
-        public async Task<IActionResult> SendAsync(Guid id, [FromBody] MailMailSendRequestDto input)
+        [Route("send")]
+        public async Task<IActionResult> SendAsync(MailMailSendRequestDto input)
         {
-            var result = await _appService.SendAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SendAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send-after-commit")]
-        public async Task<IActionResult> SendAfterCommitAsync(Guid id)
+        [Route("send-after-commit")]
+        public async Task<IActionResult> SendAfterCommitAsync(Guid[] ids)
         {
-            var result = await _appService.SendAfterCommitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendAfterCommitAsync(ids);
             return Ok(result);
         }
     }

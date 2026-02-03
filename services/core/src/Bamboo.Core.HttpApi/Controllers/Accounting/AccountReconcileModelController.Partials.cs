@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-reconcile-stat")]
-        public async Task<IActionResult> ActionReconcileStatAsync(Guid id)
+        [Route("action-reconcile-stat")]
+        public async Task<IActionResult> ActionReconcileStatAsync(Guid[] ids)
         {
-            var result = await _appService.ReconcileStatAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReconcileStatAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-auto-reconcile")]
-        public async Task<IActionResult> ActionSetAutoReconcileAsync(Guid id)
+        [Route("action-set-auto-reconcile")]
+        public async Task<IActionResult> ActionSetAutoReconcileAsync(Guid[] ids)
         {
-            var result = await _appService.SetAutoReconcileAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetAutoReconcileAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-manual")]
-        public async Task<IActionResult> ActionSetManualAsync(Guid id)
+        [Route("action-set-manual")]
+        public async Task<IActionResult> ActionSetManualAsync(Guid[] ids)
         {
-            var result = await _appService.SetManualAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetManualAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountReconcileModelCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(AccountReconcileModelCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
     }

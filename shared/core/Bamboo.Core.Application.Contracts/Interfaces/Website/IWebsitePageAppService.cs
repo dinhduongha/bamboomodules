@@ -10,9 +10,9 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWebsitePageAppService : IGenericApplicationService<WebsitePage>
     {
-        Task<WebsitePage> ClonePageAsync(Guid id, WebsitePageClonePageRequestDto input);
-        Task<WebsitePage> CopyDataAsync(Guid id, WebsitePageCopyDataRequestDto input);
-        Task<WebsitePage> GetWebsiteMetaAsync(Guid id);
-        Task<WebsitePage> PageDebugViewAsync(Guid id);
+        Task<WebsitePage> ClonePageAsync(WebsitePageClonePageRequestDto input);
+        Task<WebsitePage> CopyDataAsync(WebsitePageCopyDataRequestDto input);
+        Task<WebsitePage> GetWebsiteMetaAsync(Guid[] ids);
+        Task<WebsitePage> PageDebugViewAsync(Guid[] ids);
     }
 }

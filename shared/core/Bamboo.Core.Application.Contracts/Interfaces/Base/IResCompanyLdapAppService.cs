@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResCompanyLdapAppService : IGenericApplicationService<ResCompanyLdap>
     {
-        Task<ResCompanyLdap> TestLdapConnectionAsync(Guid id);
+        Task<ResCompanyLdap> TestLdapConnectionAsync(Guid[] ids);
     }
 }

@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-add-quiz")]
-        public async Task<IActionResult> ActionAddQuizAsync(Guid id)
+        [Route("action-add-quiz")]
+        public async Task<IActionResult> ActionAddQuizAsync(Guid[] ids)
         {
-            var result = await _appService.AddQuizAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AddQuizAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-quiz")]
-        public async Task<IActionResult> ActionViewQuizAsync(Guid id)
+        [Route("action-view-quiz")]
+        public async Task<IActionResult> ActionViewQuizAsync(Guid[] ids)
         {
-            var result = await _appService.ViewQuizAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewQuizAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-backend-menu-id")]
-        public async Task<IActionResult> GetBackendMenuIdAsync(Guid id)
+        [Route("get-backend-menu-id")]
+        public async Task<IActionResult> GetBackendMenuIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetBackendMenuIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBackendMenuIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-track-speakers-list")]
-        public async Task<IActionResult> OpenTrackSpeakersListAsync(Guid id)
+        [Route("open-track-speakers-list")]
+        public async Task<IActionResult> OpenTrackSpeakersListAsync(Guid[] ids)
         {
-            var result = await _appService.OpenTrackSpeakersListAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenTrackSpeakersListAsync(ids);
             return Ok(result);
         }
     }

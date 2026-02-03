@@ -10,17 +10,17 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrLeaveAppService : IGenericApplicationService<HrLeave>
     {
-        Task<HrLeave> ActivityUpdateAsync(Guid id);
-        Task<HrLeave> AddFollowerAsync(Guid id, HrLeaveAddFollowerRequestDto input);
-        Task<HrLeave> ApproveAsync(Guid id, HrLeaveApproveRequestDto input);
-        Task<HrLeave> BackToApprovalAsync(Guid id);
-        Task<HrLeave> CancelAsync(Guid id);
-        Task<HrLeave> CopyDataAsync(Guid id, HrLeaveCopyDataRequestDto input);
-        Task<HrLeave> DocumentsAsync(Guid id);
-        Task<HrLeave> GetUnusualDaysAsync(Guid id, HrLeaveGetUnusualDaysRequestDto input);
-        Task<HrLeave> MessageSubscribeAsync(Guid id, HrLeaveMessageSubscribeRequestDto input);
-        Task<HrLeave> OpenPendingRequestsAsync(Guid id);
-        Task<HrLeave> RefuseAsync(Guid id);
-        Task<HrLeave> ResetConfirmAsync(Guid id);
+        Task<HrLeave> ActivityUpdateAsync(Guid[] ids);
+        Task<HrLeave> AddFollowerAsync(HrLeaveAddFollowerRequestDto input);
+        Task<HrLeave> ApproveAsync(HrLeaveApproveRequestDto input);
+        Task<HrLeave> BackToApprovalAsync(Guid[] ids);
+        Task<HrLeave> CancelAsync(Guid[] ids);
+        Task<HrLeave> CopyDataAsync(HrLeaveCopyDataRequestDto input);
+        Task<HrLeave> DocumentsAsync(Guid[] ids);
+        Task<HrLeave> GetUnusualDaysAsync(HrLeaveGetUnusualDaysRequestDto input);
+        Task<HrLeave> MessageSubscribeAsync(HrLeaveMessageSubscribeRequestDto input);
+        Task<HrLeave> OpenPendingRequestsAsync(Guid[] ids);
+        Task<HrLeave> RefuseAsync(Guid[] ids);
+        Task<HrLeave> ResetConfirmAsync(Guid[] ids);
     }
 }

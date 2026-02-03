@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ChangePasswordUserAppService : GenericApplicationService<ChangePasswordUser>, IChangePasswordUserAppService
+    public partial class ChangePasswordUserAppService : GenericAppService<ChangePasswordUser>, IChangePasswordUserAppService
     {
 
         public ChangePasswordUserAppService(IRepository<ChangePasswordUser, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ChangePasswordUser> ChangePasswordButtonAsync(Guid id)
+        public async Task<ChangePasswordUser> ChangePasswordButtonAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -37,7 +37,9 @@ namespace Bamboo.Core.Application.Services
             // # don't keep temporary passwords in the database longer than necessary
             // self.write({'new_passwd': False})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

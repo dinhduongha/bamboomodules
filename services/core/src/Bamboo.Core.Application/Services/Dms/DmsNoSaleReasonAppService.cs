@@ -12,14 +12,14 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsNoSaleReasonAppService : IGenericApplicationService<DmsNoSaleReason>
+    public interface IDmsNoSaleReasonAppService : IGenericAppService<DmsNoSaleReason>
     {
     }
 }
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsNoSaleReasonAppService : GenericApplicationService<DmsNoSaleReason>, IDmsNoSaleReasonAppService
+    public class DmsNoSaleReasonAppService : GenericAppService<DmsNoSaleReason>, IDmsNoSaleReasonAppService
     {
         public DmsNoSaleReasonAppService(
             IRepository<DmsNoSaleReason, Guid> repository,

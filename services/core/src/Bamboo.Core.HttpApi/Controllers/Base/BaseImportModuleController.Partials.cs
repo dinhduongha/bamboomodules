@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-module-open")]
-        public async Task<IActionResult> ActionModuleOpenAsync(Guid id)
+        [Route("action-module-open")]
+        public async Task<IActionResult> ActionModuleOpenAsync(Guid[] ids)
         {
-            var result = await _appService.ModuleOpenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ModuleOpenAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-dependencies-to-install-names")]
-        public async Task<IActionResult> GetDependenciesToInstallNamesAsync(Guid id)
+        [Route("get-dependencies-to-install-names")]
+        public async Task<IActionResult> GetDependenciesToInstallNamesAsync(Guid[] ids)
         {
-            var result = await _appService.GetDependenciesToInstallNamesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetDependenciesToInstallNamesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/import-module")]
-        public async Task<IActionResult> ImportModuleAsync(Guid id)
+        [Route("import-module")]
+        public async Task<IActionResult> ImportModuleAsync(Guid[] ids)
         {
-            var result = await _appService.ImportModuleAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ImportModuleAsync(ids);
             return Ok(result);
         }
     }

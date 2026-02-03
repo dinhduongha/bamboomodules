@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrHolidays", Category = "HumanResources", Depends = new[] { "hr", "calendar", "resource" })]
-    public partial class HrLeaveTypeAppService : GenericApplicationService<HrLeaveType>, IHrLeaveTypeAppService
+    public partial class HrLeaveTypeAppService : GenericAppService<HrLeaveType>, IHrLeaveTypeAppService
     {
 
         public HrLeaveTypeAppService(IRepository<HrLeaveType, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -45,7 +45,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveType> CheckAllocationRequirementEditValidityAsync(Guid id)
+        public async Task<HrLeaveType> CheckAllocationRequirementEditValidityAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -53,7 +53,9 @@ namespace Bamboo.Core.Application.Services
             // if not self.env.context.get('install_mode') and self.env['hr.leave'].search_count([('holiday_status_id', 'in', self.ids)], limit=1):
             //     raise UserError(_("The allocation requirement of a time off type cannot be changed once leaves of that type have been taken. You should create a new time off type instead."))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveType> CheckAllowRequestOnTopInternalAsync()
@@ -316,7 +318,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveType> CopyDataAsync(Guid id, HrLeaveTypeCopyDataRequestDto input)
+        public async Task<HrLeaveType> CopyDataAsync(HrLeaveTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -324,10 +326,12 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", leave_type.name)) for leave_type, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeaveType> GetAllocationDataAsync(Guid id, HrLeaveTypeGetAllocationDataRequestDto input)
+        public async Task<HrLeaveType> GetAllocationDataAsync(HrLeaveTypeGetAllocationDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -498,10 +502,13 @@ namespace Bamboo.Core.Application.Services
             //             res[employee].append(lt_info)
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeaveType> GetAllocationDataRequestAsync(Guid id, HrLeaveTypeGetAllocationDataRequestRequestDto input)
+        [ApiModel]
+        public async Task<HrLeaveType> GetAllocationDataRequestAsync(HrLeaveTypeGetAllocationDataRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -519,7 +526,9 @@ namespace Bamboo.Core.Application.Services
             //     return leave_types.get_allocation_data(employee, target_date)[employee]
             // return []
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveType> GetCarriedOverDaysExpirationDataInternalAsync(object allocations, object target_date)
@@ -603,7 +612,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveType> HasAccrualAllocationAsync(Guid id)
+        [ApiModel]
+        public async Task<HrLeaveType> HasAccrualAllocationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -620,7 +630,9 @@ namespace Bamboo.Core.Application.Services
             //     ('date_to', '=', False),
             // ]))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeaveType> LeavesCountByLeaveTypeIdInternalAsync()
@@ -653,6 +665,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrLeaveType> ModelSortingKeyInternalAsync(object leave_type)
         {
             /*
@@ -665,16 +678,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveType> RequestedDisplayNameAsync(Guid id)
+        public async Task<HrLeaveType> RequestedDisplayNameAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
             // def requested_display_name(self):
             // return self.env.context.get('holiday_status_display_name', True) and self.env.context.get('employee_id')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<HrLeaveType> SearchInternalAsync(object domain, object offset, object limit, object order)
         {
             /*
@@ -729,6 +745,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrLeaveType> SearchValidInternalAsync(object @operator, object @value)
         {
             /*
@@ -788,7 +805,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveType> SeeAccrualPlansAsync(Guid id)
+        public async Task<HrLeaveType> SeeAccrualPlansAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -803,10 +820,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeaveType> SeeDaysAllocatedAsync(Guid id)
+        public async Task<HrLeaveType> SeeDaysAllocatedAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -824,10 +843,12 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeaveType> SeeGroupLeavesAsync(Guid id)
+        public async Task<HrLeaveType> SeeGroupLeavesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -842,7 +863,9 @@ namespace Bamboo.Core.Application.Services
             // }
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

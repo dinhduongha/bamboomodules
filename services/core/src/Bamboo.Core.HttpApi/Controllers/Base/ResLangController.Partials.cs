@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-activate-langs")]
-        public async Task<IActionResult> ActionActivateLangsAsync(Guid id)
+        [Route("action-activate-langs")]
+        public async Task<IActionResult> ActionActivateLangsAsync(Guid[] ids)
         {
-            var result = await _appService.ActivateLangsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ActivateLangsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/c-a-c-h-e-d-f-i-e-l-d-s")]
-        public async Task<IActionResult> CACHEDFIELDSAsync(Guid id)
+        [Route("c-a-c-h-e-d-f-i-e-l-d-s")]
+        public async Task<IActionResult> CACHEDFIELDSAsync(Guid[] ids)
         {
-            var result = await _appService.CACHEDFIELDSAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CACHEDFIELDSAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResLangCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ResLangCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format")]
-        public async Task<IActionResult> FormatAsync(Guid id, [FromBody] ResLangFormatRequestDto input)
+        [Route("format")]
+        public async Task<IActionResult> FormatAsync(ResLangFormatRequestDto input)
         {
-            var result = await _appService.FormatAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-installed")]
-        public async Task<IActionResult> GetInstalledAsync(Guid id)
+        [Route("get-installed")]
+        public async Task<IActionResult> GetInstalledAsync(Guid[] ids)
         {
-            var result = await _appService.GetInstalledAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetInstalledAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-locales-for-spreadsheet")]
-        public async Task<IActionResult> GetLocalesForSpreadsheetAsync(Guid id)
+        [Route("get-locales-for-spreadsheet")]
+        public async Task<IActionResult> GetLocalesForSpreadsheetAsync(Guid[] ids)
         {
-            var result = await _appService.GetLocalesForSpreadsheetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetLocalesForSpreadsheetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/install-lang")]
-        public async Task<IActionResult> InstallLangAsync(Guid id)
+        [Route("install-lang")]
+        public async Task<IActionResult> InstallLangAsync(Guid[] ids)
         {
-            var result = await _appService.InstallLangAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InstallLangAsync(ids);
             return Ok(result);
         }
     }

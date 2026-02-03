@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteModule", Category = "Website", Depends = new[] { "digest", "web", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm", "html_builder" })]
-    public partial class WebsiteTechnicalPageAppService : GenericApplicationService<WebsiteTechnicalPage>, IWebsiteTechnicalPageAppService
+    public partial class WebsiteTechnicalPageAppService : GenericAppService<WebsiteTechnicalPage>, IWebsiteTechnicalPageAppService
     {
 
         public WebsiteTechnicalPageAppService(IRepository<WebsiteTechnicalPage, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<WebsiteTechnicalPage> GetStaticRoutesAsync(Guid id)
+        public async Task<WebsiteTechnicalPage> GetStaticRoutesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_technical_page.py) ---
@@ -47,10 +47,12 @@ namespace Bamboo.Core.Application.Services
             //         routes.add((str(route_title), last_static_route))
             // return routes
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<WebsiteTechnicalPage> OpenWebsiteUrlAsync(Guid id)
+        public async Task<WebsiteTechnicalPage> OpenWebsiteUrlAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_technical_page.py) ---
@@ -60,7 +62,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // return self.env["website"].get_client_action(self.website_url)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<WebsiteTechnicalPage> TableQueryInternalAsync()

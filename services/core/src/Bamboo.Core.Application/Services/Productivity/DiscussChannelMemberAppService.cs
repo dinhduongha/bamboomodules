@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class DiscussChannelMemberAppService : GenericApplicationService<DiscussChannelMember>, IDiscussChannelMemberAppService
+    public partial class DiscussChannelMemberAppService : GenericAppService<DiscussChannelMember>, IDiscussChannelMemberAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public DiscussChannelMemberAppService(IRepository<DiscussChannelMember, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,6 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannelMember> CleanupExpiredMutesInternalAsync()
         {
             /*
@@ -180,7 +181,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<DiscussChannelMember> CreateAsync(DiscussChannelMember entity, List<string> fields)
+        public override async Task<DiscussChannelMember> CreateAsync(CreateRequestDto<DiscussChannelMember> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: discuss_channel_member.py) ---
@@ -243,7 +244,7 @@ namespace Bamboo.Core.Application.Services
             //         ).bus_send()
             // return res
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<DiscussChannelMember> CreateOrUpdateHistoryInternalAsync(object values_by_member)
@@ -915,6 +916,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannelMember> SyncFieldNamesInternalAsync()
         {
             /*

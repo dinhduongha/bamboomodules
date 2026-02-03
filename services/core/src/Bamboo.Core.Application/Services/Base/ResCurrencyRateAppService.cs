@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResCurrencyRateAppService : GenericApplicationService<ResCurrencyRate>, IResCurrencyRateAppService
+    public partial class ResCurrencyRateAppService : GenericAppService<ResCurrencyRate>, IResCurrencyRateAppService
     {
 
         public ResCurrencyRateAppService(IRepository<ResCurrencyRate, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -109,6 +109,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrencyRate> GetRateForSpreadsheetInternalAsync(object currency_from_code, object currency_to_code, object date, Guid company_id)
         {
             /*
@@ -128,7 +129,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrencyRate> GetRatesForSpreadsheetAsync(Guid id, ResCurrencyRateGetRatesForSpreadsheetRequestDto input)
+        [ApiModel]
+        public async Task<ResCurrencyRate> GetRatesForSpreadsheetAsync(ResCurrencyRateGetRatesForSpreadsheetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet, FILE: res_currency_rate.py) ---
@@ -149,9 +151,12 @@ namespace Bamboo.Core.Application.Services
             //     result.append(record)
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrencyRate> GetViewCacheKeyInternalAsync(Guid view_id, object view_type)
         {
             /*
@@ -165,6 +170,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrencyRate> GetViewInternalAsync(Guid view_id, object view_type)
         {
             /*
@@ -248,6 +254,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCurrencyRate> SearchDisplayNameInternalAsync(object @operator, object @value)
         {
             /*

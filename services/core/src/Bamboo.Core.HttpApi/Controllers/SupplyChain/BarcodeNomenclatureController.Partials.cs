@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/gs1-date-to-date")]
-        public async Task<IActionResult> Gs1DateToDateAsync(Guid id, [FromBody] BarcodeNomenclatureGs1DateToDateRequestDto input)
+        [Route("gs1-date-to-date")]
+        public async Task<IActionResult> Gs1DateToDateAsync(BarcodeNomenclatureGs1DateToDateRequestDto input)
         {
-            var result = await _appService.Gs1DateToDateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.Gs1DateToDateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/gs1-decompose-extended")]
-        public async Task<IActionResult> Gs1DecomposeExtendedAsync(Guid id, [FromBody] BarcodeNomenclatureGs1DecomposeExtendedRequestDto input)
+        [Route("gs1-decompose-extended")]
+        public async Task<IActionResult> Gs1DecomposeExtendedAsync(BarcodeNomenclatureGs1DecomposeExtendedRequestDto input)
         {
-            var result = await _appService.Gs1DecomposeExtendedAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.Gs1DecomposeExtendedAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/match-pattern")]
-        public async Task<IActionResult> MatchPatternAsync(Guid id, [FromBody] BarcodeNomenclatureMatchPatternRequestDto input)
+        [Route("match-pattern")]
+        public async Task<IActionResult> MatchPatternAsync(BarcodeNomenclatureMatchPatternRequestDto input)
         {
-            var result = await _appService.MatchPatternAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MatchPatternAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/parse-barcode")]
-        public async Task<IActionResult> ParseBarcodeAsync(Guid id, [FromBody] BarcodeNomenclatureParseBarcodeRequestDto input)
+        [Route("parse-barcode")]
+        public async Task<IActionResult> ParseBarcodeAsync(BarcodeNomenclatureParseBarcodeRequestDto input)
         {
-            var result = await _appService.ParseBarcodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ParseBarcodeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/parse-gs1-rule-pattern")]
-        public async Task<IActionResult> ParseGs1RulePatternAsync(Guid id, [FromBody] BarcodeNomenclatureParseGs1RulePatternRequestDto input)
+        [Route("parse-gs1-rule-pattern")]
+        public async Task<IActionResult> ParseGs1RulePatternAsync(BarcodeNomenclatureParseGs1RulePatternRequestDto input)
         {
-            var result = await _appService.ParseGs1RulePatternAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ParseGs1RulePatternAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/parse-nomenclature-barcode")]
-        public async Task<IActionResult> ParseNomenclatureBarcodeAsync(Guid id, [FromBody] BarcodeNomenclatureParseNomenclatureBarcodeRequestDto input)
+        [Route("parse-nomenclature-barcode")]
+        public async Task<IActionResult> ParseNomenclatureBarcodeAsync(BarcodeNomenclatureParseNomenclatureBarcodeRequestDto input)
         {
-            var result = await _appService.ParseNomenclatureBarcodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ParseNomenclatureBarcodeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/parse-uri")]
-        public async Task<IActionResult> ParseUriAsync(Guid id, [FromBody] BarcodeNomenclatureParseUriRequestDto input)
+        [Route("parse-uri")]
+        public async Task<IActionResult> ParseUriAsync(BarcodeNomenclatureParseUriRequestDto input)
         {
-            var result = await _appService.ParseUriAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ParseUriAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/sanitize-ean")]
-        public async Task<IActionResult> SanitizeEanAsync(Guid id, [FromBody] BarcodeNomenclatureSanitizeEanRequestDto input)
+        [Route("sanitize-ean")]
+        public async Task<IActionResult> SanitizeEanAsync(BarcodeNomenclatureSanitizeEanRequestDto input)
         {
-            var result = await _appService.SanitizeEanAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SanitizeEanAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/sanitize-upc")]
-        public async Task<IActionResult> SanitizeUpcAsync(Guid id, [FromBody] BarcodeNomenclatureSanitizeUpcRequestDto input)
+        [Route("sanitize-upc")]
+        public async Task<IActionResult> SanitizeUpcAsync(BarcodeNomenclatureSanitizeUpcRequestDto input)
         {
-            var result = await _appService.SanitizeUpcAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SanitizeUpcAsync(input);
             return Ok(result);
         }
     }

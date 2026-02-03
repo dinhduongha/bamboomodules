@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductSupplierinfoAppService : GenericApplicationService<ProductSupplierinfo>, IProductSupplierinfoAppService
+    public partial class ProductSupplierinfoAppService : GenericAppService<ProductSupplierinfo>, IProductSupplierinfoAppService
     {
 
         public ProductSupplierinfoAppService(IRepository<ProductSupplierinfo, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -172,7 +172,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductSupplierinfo> GetImportTemplatesAsync(Guid id)
+        [ApiModel]
+        public async Task<ProductSupplierinfo> GetImportTemplatesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_supplierinfo.py) ---
@@ -182,7 +183,9 @@ namespace Bamboo.Core.Application.Services
             //     'template': '/product/static/xls/product_supplierinfo.xls'
             // }]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductSupplierinfo> OnchangePartnerIdInternalAsync()
@@ -221,7 +224,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductSupplierinfo> SetSupplierAsync(Guid id)
+        public async Task<ProductSupplierinfo> SetSupplierAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: product.py) ---
@@ -257,7 +260,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // return orderpoint.action_stock_replenishment_info()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

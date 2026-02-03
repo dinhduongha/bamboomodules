@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-user-roots")]
-        public async Task<IActionResult> GetUserRootsAsync(Guid id)
+        [Route("get-user-roots")]
+        public async Task<IActionResult> GetUserRootsAsync(Guid[] ids)
         {
-            var result = await _appService.GetUserRootsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetUserRootsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-menus")]
-        public async Task<IActionResult> LoadMenusAsync(Guid id, [FromBody] IrUiMenuLoadMenusRequestDto input)
+        [Route("load-menus")]
+        public async Task<IActionResult> LoadMenusAsync(IrUiMenuLoadMenusRequestDto input)
         {
-            var result = await _appService.LoadMenusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadMenusAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-menus-root")]
-        public async Task<IActionResult> LoadMenusRootAsync(Guid id)
+        [Route("load-menus-root")]
+        public async Task<IActionResult> LoadMenusRootAsync(Guid[] ids)
         {
-            var result = await _appService.LoadMenusRootAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.LoadMenusRootAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/load-web-menus")]
-        public async Task<IActionResult> LoadWebMenusAsync(Guid id, [FromBody] IrUiMenuLoadWebMenusRequestDto input)
+        [Route("load-web-menus")]
+        public async Task<IActionResult> LoadWebMenusAsync(IrUiMenuLoadWebMenusRequestDto input)
         {
-            var result = await _appService.LoadWebMenusAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.LoadWebMenusAsync(input);
             return Ok(result);
         }
     }

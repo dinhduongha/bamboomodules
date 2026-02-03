@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("StockLandedCosts", Category = "SupplyChain", Depends = new[] { "stock_account", "purchase_stock" })]
-    public partial class StockLandedCostAppService : GenericApplicationService<StockLandedCost>, IStockLandedCostAppService
+    public partial class StockLandedCostAppService : GenericAppService<StockLandedCost>, IStockLandedCostAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -29,7 +29,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<StockLandedCost> ButtonCancelAsync(Guid id)
+        public async Task<StockLandedCost> ButtonCancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
@@ -39,10 +39,12 @@ namespace Bamboo.Core.Application.Services
             //         _('Validated landed costs cannot be cancelled, but you could create negative landed costs to reverse them'))
             // return self.write({'state': 'cancel'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<StockLandedCost> ButtonValidateAsync(Guid id)
+        public async Task<StockLandedCost> ButtonValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
@@ -98,7 +100,9 @@ namespace Bamboo.Core.Application.Services
             //     cost.valuation_adjustment_lines.move_id._set_value()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockLandedCost> CheckCanValidateInternalAsync()
@@ -139,7 +143,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLandedCost> ComputeLandedCostAsync(Guid id)
+        public async Task<StockLandedCost> ComputeLandedCostAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
@@ -208,7 +212,9 @@ namespace Bamboo.Core.Application.Services
             //     AdjustementLines.browse(key).write({'additional_landed_cost': value})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockLandedCost> ComputeTotalAmountInternalAsync()
@@ -251,7 +257,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLandedCost> GetValuationLinesAsync(Guid id)
+        public async Task<StockLandedCost> GetValuationLinesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
@@ -280,7 +286,9 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("You cannot apply landed costs on the chosen %s(s). Landed costs can only be applied for products with FIFO or average costing method.", target_model_descriptions[self.target_model]))
             // return lines
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockLandedCost> OnchangeTargetModelInternalAsync()

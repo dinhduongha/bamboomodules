@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Stock", Category = "SupplyChain", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
-    public partial class StockRuleAppService : GenericApplicationService<StockRule>, IStockRuleAppService
+    public partial class StockRuleAppService : GenericAppService<StockRule>, IStockRuleAppService
     {
 
         public StockRuleAppService(IRepository<StockRule, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -45,6 +45,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> CheckIntercompLocationInternalAsync(object locations)
         {
             /*
@@ -105,7 +106,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockRule> CopyDataAsync(Guid id, StockRuleCopyDataRequestDto input)
+        public async Task<StockRule> CopyDataAsync(StockRuleCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_rule.py) ---
@@ -117,7 +118,9 @@ namespace Bamboo.Core.Application.Services
             //         vals['name'] = _("%s (copy)", rule.name)
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<StockRule> FilterWarehouseRoutesInternalAsync(object product, object warehouses, object route)
@@ -472,6 +475,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> GetMovesToAssignDomainInternalAsync(Guid company_id)
         {
             /*
@@ -493,6 +497,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> GetOrderpointDomainInternalAsync(Guid company_id)
         {
             /*
@@ -522,6 +527,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> GetProcurementsToMergeGroupbyInternalAsync(object procurement)
         {
             /*
@@ -545,6 +551,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> GetProcurementsToMergeInternalAsync(object procurements)
         {
             /*
@@ -578,6 +585,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> GetPushRuleInternalAsync(Guid product_id, Guid location_dest_id, object values)
         {
             /*
@@ -598,6 +606,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> GetRuleDomainInternalAsync(object location, object values)
         {
             /*
@@ -629,6 +638,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> GetRuleInternalAsync(Guid product_id, Guid location_id, object values)
         {
             /*
@@ -711,6 +721,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> GetSchedulerTasksToDoInternalAsync()
         {
             /*
@@ -912,6 +923,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> MergeProcurementsInternalAsync(object procurements_to_merge)
         {
             /*
@@ -1207,7 +1219,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockRule> RunAsync(Guid id, StockRuleRunRequestDto input)
+        [ApiModel]
+        public async Task<StockRule> RunAsync(StockRuleRunRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_rule.py) ---
@@ -1310,9 +1323,12 @@ namespace Bamboo.Core.Application.Services
             //     raise_exception(procurement_errors)
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> RunBuyInternalAsync(object procurements)
         {
             /*
@@ -1428,6 +1444,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> RunManufactureInternalAsync(object procurements)
         {
             /*
@@ -1476,6 +1493,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> RunPullInternalAsync(object procurements)
         {
             /*
@@ -1554,7 +1572,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockRule> RunSchedulerAsync(Guid id, StockRuleRunSchedulerRequestDto input)
+        [ApiModel]
+        public async Task<StockRule> RunSchedulerAsync(StockRuleRunSchedulerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_rule.py) ---
@@ -1569,9 +1588,12 @@ namespace Bamboo.Core.Application.Services
             //     raise
             // return {}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> RunSchedulerTasksInternalAsync(object use_new_cursor, Guid company_id)
         {
             /*
@@ -1624,6 +1646,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> SearchRuleForWarehousesInternalAsync(List<Guid> route_ids, Guid packaging_uom_id, Guid product_id, List<Guid> warehouse_ids, object domain)
         {
             /*
@@ -1734,6 +1757,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<StockRule> SkipProcurementInternalAsync(object procurement)
         {
             /*

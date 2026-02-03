@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/open-mailing-contact")]
-        public async Task<IActionResult> OpenMailingContactAsync(Guid id)
+        [Route("open-mailing-contact")]
+        public async Task<IActionResult> OpenMailingContactAsync(Guid[] ids)
         {
-            var result = await _appService.OpenMailingContactAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenMailingContactAsync(ids);
             return Ok(result);
         }
     }

@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountBudget", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class CrossoveredBudgetLinesAppService : GenericApplicationService<CrossoveredBudgetLines>, ICrossoveredBudgetLinesAppService
+    public partial class CrossoveredBudgetLinesAppService : GenericAppService<CrossoveredBudgetLines>, ICrossoveredBudgetLinesAppService
     {
 
         public CrossoveredBudgetLinesAppService(IRepository<CrossoveredBudgetLines, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -180,7 +180,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrossoveredBudgetLines> OpenBudgetEntriesAsync(Guid id)
+        public async Task<CrossoveredBudgetLines> OpenBudgetEntriesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
@@ -204,7 +204,9 @@ namespace Bamboo.Core.Application.Services
             //                         ]
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

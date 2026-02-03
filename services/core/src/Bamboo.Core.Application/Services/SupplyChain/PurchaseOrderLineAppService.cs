@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Purchase", Category = "SupplyChain", Depends = new[] { "account" })]
-    public partial class PurchaseOrderLineAppService : GenericApplicationService<PurchaseOrderLine>, IPurchaseOrderLineAppService
+    public partial class PurchaseOrderLineAppService : GenericAppService<PurchaseOrderLine>, IPurchaseOrderLineAppService
     {
         private readonly IAnalyticMixinAppService _analyticMixinAppService;
         public PurchaseOrderLineAppService(IRepository<PurchaseOrderLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IAnalyticMixinAppService analyticMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _analyticMixinAppService = analyticMixinAppService;
         }
 
-        public async Task<PurchaseOrderLine> AddFromCatalogAsync(Guid id)
+        public async Task<PurchaseOrderLine> AddFromCatalogAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
@@ -35,7 +35,9 @@ namespace Bamboo.Core.Application.Services
             // order = self.env['purchase.order'].browse(self.env.context.get('order_id'))
             // return order.with_context(child_field='order_line').action_add_from_catalog()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrderLine> CheckOrderpointPickingTypeInternalAsync()
@@ -52,7 +54,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrderLine> ChooseAsync(Guid id)
+        public async Task<PurchaseOrderLine> ChooseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
@@ -71,10 +73,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseOrderLine> ClearQuantitiesAsync(Guid id)
+        public async Task<PurchaseOrderLine> ClearQuantitiesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_requisition, FILE: purchase.py) ---
@@ -93,7 +97,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrderLine> ComputeAllowedUomIdsInternalAsync()
@@ -513,7 +519,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<PurchaseOrderLine> CreateAsync(PurchaseOrderLine entity, List<string> fields)
+        public override async Task<PurchaseOrderLine> CreateAsync(CreateRequestDto<PurchaseOrderLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project_purchase, FILE: purchase_order_line.py) ---
@@ -543,7 +549,7 @@ namespace Bamboo.Core.Application.Services
             // lines.filtered(lambda l: l.order_id.state == 'purchase')._create_or_update_picking()
             // return lines
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<PurchaseOrderLine> CreateOrUpdatePickingInternalAsync()
@@ -600,6 +606,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrderLine> DateInThePastInternalAsync()
         {
             /*
@@ -657,6 +664,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrderLine> GetDatePlannedInternalAsync(object seller, object po)
         {
             /*
@@ -763,7 +771,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrderLine> GetParentSectionLineAsync(Guid id)
+        public async Task<PurchaseOrderLine> GetParentSectionLineAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
@@ -773,7 +781,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return self.parent_id
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrderLine> GetPoLineMovesInternalAsync()
@@ -1011,7 +1021,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrderLine> OnchangeProductIdAsync(Guid id)
+        public async Task<PurchaseOrderLine> OnchangeProductIdAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
@@ -1027,7 +1037,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // self._suggest_quantity()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrderLine> OndeleteStockMovesInternalAsync()
@@ -1049,7 +1061,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrderLine> OpenOrderAsync(Guid id)
+        public async Task<PurchaseOrderLine> OpenOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
@@ -1062,7 +1074,9 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrderLine> PrepareAccountMoveLineInternalAsync(object move)
@@ -1112,6 +1126,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrderLine> PrepareAddMissingFieldsInternalAsync(object values)
         {
             /*
@@ -1156,6 +1171,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrderLine> PreparePurchaseOrderLineFromProcurementInternalAsync(Guid product_id, object product_qty, object product_uom, Guid location_dest_id, object name, object origin, Guid company_id, object values, object po)
         {
             /*
@@ -1201,6 +1217,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrderLine> PreparePurchaseOrderLineInternalAsync(Guid product_id, object product_qty, object product_uom, Guid company_id, Guid partner_id, object po)
         {
             /*
@@ -1462,7 +1479,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrderLine> ProductForecastReportAsync(Guid id)
+        public async Task<PurchaseOrderLine> ProductForecastReportAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase_stock, FILE: purchase_order_line.py) ---
@@ -1480,7 +1497,9 @@ namespace Bamboo.Core.Application.Services
             //     action['context']['warehouse_id'] = warehouse.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseOrderLine> ProductIdChangeInternalAsync()
@@ -1619,6 +1638,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseOrderLine> UpdateQtyReceivedMethodInternalAsync()
         {
             /*
@@ -1647,7 +1667,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, PurchaseOrderLine entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<PurchaseOrderLine> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
@@ -1698,7 +1718,7 @@ namespace Bamboo.Core.Application.Services
             //     self.move_ids.filtered(lambda m: m.is_valued)._set_value()
             // return result
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

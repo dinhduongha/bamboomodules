@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-orderpoints")]
-        public async Task<IActionResult> ActionOpenOrderpointsAsync(Guid id)
+        [Route("action-open-orderpoints")]
+        public async Task<IActionResult> ActionOpenOrderpointsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenOrderpointsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenOrderpointsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-product-forecast-report")]
-        public async Task<IActionResult> ActionProductForecastReportAsync(Guid id)
+        [Route("action-product-forecast-report")]
+        public async Task<IActionResult> ActionProductForecastReportAsync(Guid[] ids)
         {
-            var result = await _appService.ProductForecastReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ProductForecastReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-remove-manual-qty-to-order")]
-        public async Task<IActionResult> ActionRemoveManualQtyToOrderAsync(Guid id)
+        [Route("action-remove-manual-qty-to-order")]
+        public async Task<IActionResult> ActionRemoveManualQtyToOrderAsync(Guid[] ids)
         {
-            var result = await _appService.RemoveManualQtyToOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RemoveManualQtyToOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-replenish")]
-        public async Task<IActionResult> ActionReplenishAsync(Guid id, [FromBody] StockWarehouseOrderpointReplenishRequestDto input)
+        [Route("action-replenish")]
+        public async Task<IActionResult> ActionReplenishAsync(StockWarehouseOrderpointReplenishRequestDto input)
         {
-            var result = await _appService.ReplenishAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ReplenishAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-replenish-auto")]
-        public async Task<IActionResult> ActionReplenishAutoAsync(Guid id)
+        [Route("action-replenish-auto")]
+        public async Task<IActionResult> ActionReplenishAutoAsync(Guid[] ids)
         {
-            var result = await _appService.ReplenishAutoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReplenishAutoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-stock-replenishment-info")]
-        public async Task<IActionResult> ActionStockReplenishmentInfoAsync(Guid id)
+        [Route("action-stock-replenishment-info")]
+        public async Task<IActionResult> ActionStockReplenishmentInfoAsync(Guid[] ids)
         {
-            var result = await _appService.StockReplenishmentInfoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StockReplenishmentInfoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-purchase")]
-        public async Task<IActionResult> ActionViewPurchaseAsync(Guid id)
+        [Route("action-view-purchase")]
+        public async Task<IActionResult> ActionViewPurchaseAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPurchaseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPurchaseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-product-is-not-kit")]
-        public async Task<IActionResult> CheckProductIsNotKitAsync(Guid id)
+        [Route("check-product-is-not-kit")]
+        public async Task<IActionResult> CheckProductIsNotKitAsync(Guid[] ids)
         {
-            var result = await _appService.CheckProductIsNotKitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckProductIsNotKitAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-horizon-days")]
-        public async Task<IActionResult> GetHorizonDaysAsync(Guid id)
+        [Route("get-horizon-days")]
+        public async Task<IActionResult> GetHorizonDaysAsync(Guid[] ids)
         {
-            var result = await _appService.GetHorizonDaysAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetHorizonDaysAsync(ids);
             return Ok(result);
         }
     }

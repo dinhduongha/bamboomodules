@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IUtmMediumAppService : IGenericApplicationService<UtmMedium>
     {
-        Task<UtmMedium> SELFREQUIREDUTMMEDIUMSREFAsync(Guid id);
+        Task<UtmMedium> SELFREQUIREDUTMMEDIUMSREFAsync(Guid[] ids);
     }
 }

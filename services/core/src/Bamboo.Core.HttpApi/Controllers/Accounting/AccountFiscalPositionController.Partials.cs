@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-foreign-taxes")]
-        public async Task<IActionResult> ActionCreateForeignTaxesAsync(Guid id)
+        [Route("action-create-foreign-taxes")]
+        public async Task<IActionResult> ActionCreateForeignTaxesAsync(Guid[] ids)
         {
-            var result = await _appService.CreateForeignTaxesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateForeignTaxesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-related-taxes")]
-        public async Task<IActionResult> ActionOpenRelatedTaxesAsync(Guid id)
+        [Route("action-open-related-taxes")]
+        public async Task<IActionResult> ActionOpenRelatedTaxesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenRelatedTaxesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenRelatedTaxesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/map-account")]
-        public async Task<IActionResult> MapAccountAsync(Guid id, [FromBody] AccountFiscalPositionMapAccountRequestDto input)
+        [Route("map-account")]
+        public async Task<IActionResult> MapAccountAsync(AccountFiscalPositionMapAccountRequestDto input)
         {
-            var result = await _appService.MapAccountAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MapAccountAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/map-tax")]
-        public async Task<IActionResult> MapTaxAsync(Guid id, [FromBody] AccountFiscalPositionMapTaxRequestDto input)
+        [Route("map-tax")]
+        public async Task<IActionResult> MapTaxAsync(AccountFiscalPositionMapTaxRequestDto input)
         {
-            var result = await _appService.MapTaxAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MapTaxAsync(input);
             return Ok(result);
         }
     }

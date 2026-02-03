@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Project", Category = "Services", Depends = new[] { "analytic", "base_setup", "mail", "portal", "rating", "resource", "web", "web_tour", "digest" })]
-    public partial class ProjectUpdateAppService : GenericApplicationService<ProjectUpdate>, IProjectUpdateAppService
+    public partial class ProjectUpdateAppService : GenericAppService<ProjectUpdate>, IProjectUpdateAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadCcAppService _mailThreadCcAppService;
@@ -29,6 +29,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadCcAppService = mailThreadCcAppService;
         }
 
+        [ApiModel]
         protected async Task<ProjectUpdate> BuildDescriptionInternalAsync(object project)
         {
             /*
@@ -105,7 +106,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<ProjectUpdate> CreateAsync(ProjectUpdate entity, List<string> fields)
+        public override async Task<ProjectUpdate> CreateAsync(CreateRequestDto<ProjectUpdate> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: project_update.py) ---
@@ -134,9 +135,10 @@ namespace Bamboo.Core.Application.Services
             //     })
             // return updates
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
+        [ApiModel]
         protected async Task<ProjectUpdate> GetLastUpdatedMilestoneInternalAsync(object project)
         {
             /*
@@ -186,6 +188,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectUpdate> GetMilestoneValuesInternalAsync(object project)
         {
             /*
@@ -219,6 +222,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProjectUpdate> GetTemplateValuesInternalAsync(object project)
         {
             /*

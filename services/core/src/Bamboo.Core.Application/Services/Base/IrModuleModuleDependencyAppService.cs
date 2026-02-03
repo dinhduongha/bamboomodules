@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrModuleModuleDependencyAppService : GenericApplicationService<IrModuleModuleDependency>, IIrModuleModuleDependencyAppService
+    public partial class IrModuleModuleDependencyAppService : GenericAppService<IrModuleModuleDependency>, IIrModuleModuleDependencyAppService
     {
 
         public IrModuleModuleDependencyAppService(IRepository<IrModuleModuleDependency, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,8 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<IrModuleModuleDependency> AllDependenciesAsync(Guid id, IrModuleModuleDependencyAllDependenciesRequestDto input)
+        [ApiModel]
+        public async Task<IrModuleModuleDependency> AllDependenciesAsync(IrModuleModuleDependencyAllDependenciesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -50,7 +51,9 @@ namespace Bamboo.Core.Application.Services
             //     search_direct_deps(to_search, res)
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModuleModuleDependency> ComputeDependInternalAsync()

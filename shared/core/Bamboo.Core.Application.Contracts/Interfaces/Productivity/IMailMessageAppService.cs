@@ -10,15 +10,15 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailMessageAppService : IGenericApplicationService<MailMessage>
     {
-        Task<MailMessage> CancelLetterAsync(Guid id);
-        Task<MailMessage> ExportDataAsync(Guid id, MailMessageExportDataRequestDto input);
-        Task<MailMessage> FetchAsync(Guid id, MailMessageFetchRequestDto input);
-        Task<MailMessage> MarkAllAsReadAsync(Guid id, MailMessageMarkAllAsReadRequestDto input);
-        Task<MailMessage> OpenDocumentAsync(Guid id);
-        Task<MailMessage> PortalMessageFormatAsync(Guid id, MailMessagePortalMessageFormatRequestDto input);
-        Task<MailMessage> SendLetterAsync(Guid id);
-        Task<MailMessage> SetMessageDoneAsync(Guid id);
-        Task<MailMessage> ToggleMessageStarredAsync(Guid id);
-        Task<MailMessage> UnstarAllAsync(Guid id);
+        Task<MailMessage> CancelLetterAsync(Guid[] ids);
+        Task<MailMessage> ExportDataAsync(MailMessageExportDataRequestDto input);
+        Task<MailMessage> FetchAsync(MailMessageFetchRequestDto input);
+        Task<MailMessage> MarkAllAsReadAsync(MailMessageMarkAllAsReadRequestDto input);
+        Task<MailMessage> OpenDocumentAsync(Guid[] ids);
+        Task<MailMessage> PortalMessageFormatAsync(MailMessagePortalMessageFormatRequestDto input);
+        Task<MailMessage> SendLetterAsync(Guid[] ids);
+        Task<MailMessage> SetMessageDoneAsync(Guid[] ids);
+        Task<MailMessage> ToggleMessageStarredAsync(Guid[] ids);
+        Task<MailMessage> UnstarAllAsync(Guid[] ids);
     }
 }

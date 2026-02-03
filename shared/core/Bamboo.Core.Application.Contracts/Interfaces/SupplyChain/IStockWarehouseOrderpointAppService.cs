@@ -10,14 +10,14 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockWarehouseOrderpointAppService : IGenericApplicationService<StockWarehouseOrderpoint>
     {
-        Task<StockWarehouseOrderpoint> CheckProductIsNotKitAsync(Guid id);
-        Task<StockWarehouseOrderpoint> GetHorizonDaysAsync(Guid id);
-        Task<StockWarehouseOrderpoint> OpenOrderpointsAsync(Guid id);
-        Task<StockWarehouseOrderpoint> ProductForecastReportAsync(Guid id);
-        Task<StockWarehouseOrderpoint> RemoveManualQtyToOrderAsync(Guid id);
-        Task<StockWarehouseOrderpoint> ReplenishAsync(Guid id, StockWarehouseOrderpointReplenishRequestDto input);
-        Task<StockWarehouseOrderpoint> ReplenishAutoAsync(Guid id);
-        Task<StockWarehouseOrderpoint> StockReplenishmentInfoAsync(Guid id);
-        Task<StockWarehouseOrderpoint> ViewPurchaseAsync(Guid id);
+        Task<StockWarehouseOrderpoint> CheckProductIsNotKitAsync(Guid[] ids);
+        Task<StockWarehouseOrderpoint> GetHorizonDaysAsync(Guid[] ids);
+        Task<StockWarehouseOrderpoint> OpenOrderpointsAsync(Guid[] ids);
+        Task<StockWarehouseOrderpoint> ProductForecastReportAsync(Guid[] ids);
+        Task<StockWarehouseOrderpoint> RemoveManualQtyToOrderAsync(Guid[] ids);
+        Task<StockWarehouseOrderpoint> ReplenishAsync(StockWarehouseOrderpointReplenishRequestDto input);
+        Task<StockWarehouseOrderpoint> ReplenishAutoAsync(Guid[] ids);
+        Task<StockWarehouseOrderpoint> StockReplenishmentInfoAsync(Guid[] ids);
+        Task<StockWarehouseOrderpoint> ViewPurchaseAsync(Guid[] ids);
     }
 }

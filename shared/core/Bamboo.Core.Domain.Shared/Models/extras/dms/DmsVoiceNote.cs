@@ -24,17 +24,20 @@ public partial class DmsVoiceNote : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
+    [Column("user_id")]
+    public Guid? UserId { get; set; }
+
     [Column("outlet_visit_id")]
     public Guid? OutletVisitId { get; set; }
 
     [Column("sale_order_id")]
     public Guid? SaleOrderId { get; set; }
 
-    [Column("user_id")]
-    public Guid UserId { get; set; }
-
     [Column("audio_url")]
-    public string AudioUrl { get; set; } = null!;
+    public string? AudioUrl { get; set; }
 
     [Column("transcribed_text")]
     public string? TranscribedText { get; set; }

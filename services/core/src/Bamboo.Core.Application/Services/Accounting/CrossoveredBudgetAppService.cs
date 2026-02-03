@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountBudget", Category = "Accounting", Depends = new[] { "account" })]
-    public partial class CrossoveredBudgetAppService : GenericApplicationService<CrossoveredBudget>, ICrossoveredBudgetAppService
+    public partial class CrossoveredBudgetAppService : GenericAppService<CrossoveredBudget>, ICrossoveredBudgetAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public CrossoveredBudgetAppService(IRepository<CrossoveredBudget, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,54 +27,64 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<CrossoveredBudget> BudgetCancelAsync(Guid id)
+        public async Task<CrossoveredBudget> BudgetCancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
             // def action_budget_cancel(self):
             // self.write({'state': 'cancel'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CrossoveredBudget> BudgetConfirmAsync(Guid id)
+        public async Task<CrossoveredBudget> BudgetConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
             // def action_budget_confirm(self):
             // self.write({'state': 'confirm'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CrossoveredBudget> BudgetDoneAsync(Guid id)
+        public async Task<CrossoveredBudget> BudgetDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
             // def action_budget_done(self):
             // self.write({'state': 'done'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CrossoveredBudget> BudgetDraftAsync(Guid id)
+        public async Task<CrossoveredBudget> BudgetDraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
             // def action_budget_draft(self):
             // self.write({'state': 'draft'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<CrossoveredBudget> BudgetValidateAsync(Guid id)
+        public async Task<CrossoveredBudget> BudgetValidateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
             // def action_budget_validate(self):
             // self.write({'state': 'validate'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

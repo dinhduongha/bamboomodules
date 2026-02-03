@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-close")]
-        public async Task<IActionResult> ActionCloseAsync(Guid id)
+        [Route("action-close")]
+        public async Task<IActionResult> ActionCloseAsync(Guid[] ids)
         {
-            var result = await _appService.CloseAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CloseAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-draft")]
-        public async Task<IActionResult> ActionDraftAsync(Guid id)
+        [Route("action-draft")]
+        public async Task<IActionResult> ActionDraftAsync(Guid[] ids)
         {
-            var result = await _appService.DraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DraftAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-expire")]
-        public async Task<IActionResult> ActionExpireAsync(Guid id)
+        [Route("action-expire")]
+        public async Task<IActionResult> ActionExpireAsync(Guid[] ids)
         {
-            var result = await _appService.ExpireAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ExpireAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open")]
-        public async Task<IActionResult> ActionOpenAsync(Guid id)
+        [Route("action-open")]
+        public async Task<IActionResult> ActionOpenAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employee")]
-        public async Task<IActionResult> ActionOpenEmployeeAsync(Guid id)
+        [Route("action-open-employee")]
+        public async Task<IActionResult> ActionOpenEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compute-next-year-date")]
-        public async Task<IActionResult> ComputeNextYearDateAsync(Guid id, [FromBody] FleetVehicleLogContractComputeNextYearDateRequestDto input)
+        [Route("compute-next-year-date")]
+        public async Task<IActionResult> ComputeNextYearDateAsync(FleetVehicleLogContractComputeNextYearDateRequestDto input)
         {
-            var result = await _appService.ComputeNextYearDateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ComputeNextYearDateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/run-scheduler")]
-        public async Task<IActionResult> RunSchedulerAsync(Guid id)
+        [Route("run-scheduler")]
+        public async Task<IActionResult> RunSchedulerAsync(Guid[] ids)
         {
-            var result = await _appService.RunSchedulerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RunSchedulerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/scheduler-manage-contract-expiration")]
-        public async Task<IActionResult> SchedulerManageContractExpirationAsync(Guid id)
+        [Route("scheduler-manage-contract-expiration")]
+        public async Task<IActionResult> SchedulerManageContractExpirationAsync(Guid[] ids)
         {
-            var result = await _appService.SchedulerManageContractExpirationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SchedulerManageContractExpirationAsync(ids);
             return Ok(result);
         }
     }

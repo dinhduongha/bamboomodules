@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/button-cancel")]
-        public async Task<IActionResult> ButtonCancelAsync(Guid id)
+        [Route("button-cancel")]
+        public async Task<IActionResult> ButtonCancelAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonCancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonCancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-validate")]
-        public async Task<IActionResult> ButtonValidateAsync(Guid id)
+        [Route("button-validate")]
+        public async Task<IActionResult> ButtonValidateAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonValidateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonValidateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compute-landed-cost")]
-        public async Task<IActionResult> ComputeLandedCostAsync(Guid id)
+        [Route("compute-landed-cost")]
+        public async Task<IActionResult> ComputeLandedCostAsync(Guid[] ids)
         {
-            var result = await _appService.ComputeLandedCostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ComputeLandedCostAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-valuation-lines")]
-        public async Task<IActionResult> GetValuationLinesAsync(Guid id)
+        [Route("get-valuation-lines")]
+        public async Task<IActionResult> GetValuationLinesAsync(Guid[] ids)
         {
-            var result = await _appService.GetValuationLinesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetValuationLinesAsync(ids);
             return Ok(result);
         }
     }

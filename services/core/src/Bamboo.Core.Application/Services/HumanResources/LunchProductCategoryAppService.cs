@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Lunch", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class LunchProductCategoryAppService : GenericApplicationService<LunchProductCategory>, ILunchProductCategoryAppService
+    public partial class LunchProductCategoryAppService : GenericAppService<LunchProductCategory>, ILunchProductCategoryAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         public LunchProductCategoryAppService(IRepository<LunchProductCategory, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IImageMixinAppService imageMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
             _imageMixinAppService = imageMixinAppService;
         }
 
-        public async Task<LunchProductCategory> ArchiveAsync(Guid id)
+        public async Task<LunchProductCategory> ArchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_product_category.py) ---
@@ -35,7 +35,9 @@ namespace Bamboo.Core.Application.Services
             // super().action_archive()
             // self._sync_active_products()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LunchProductCategory> ComputeProductCountInternalAsync()
@@ -51,6 +53,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<LunchProductCategory> DefaultImageInternalAsync()
         {
             /*
@@ -75,7 +78,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LunchProductCategory> UnarchiveAsync(Guid id)
+        public async Task<LunchProductCategory> UnarchiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_product_category.py) ---
@@ -83,7 +86,9 @@ namespace Bamboo.Core.Application.Services
             // super().action_unarchive()
             // self._sync_active_products()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

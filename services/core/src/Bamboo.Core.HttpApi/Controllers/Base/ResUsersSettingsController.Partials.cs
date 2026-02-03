@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-embedded-actions-settings")]
-        public async Task<IActionResult> GetEmbeddedActionsSettingsAsync(Guid id)
+        [Route("get-embedded-actions-settings")]
+        public async Task<IActionResult> GetEmbeddedActionsSettingsAsync(Guid[] ids)
         {
-            var result = await _appService.GetEmbeddedActionsSettingsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetEmbeddedActionsSettingsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-embedded-actions-setting")]
-        public async Task<IActionResult> SetEmbeddedActionsSettingAsync(Guid id, [FromBody] ResUsersSettingsSetEmbeddedActionsSettingRequestDto input)
+        [Route("set-embedded-actions-setting")]
+        public async Task<IActionResult> SetEmbeddedActionsSettingAsync(ResUsersSettingsSetEmbeddedActionsSettingRequestDto input)
         {
-            var result = await _appService.SetEmbeddedActionsSettingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetEmbeddedActionsSettingAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-res-users-settings")]
-        public async Task<IActionResult> SetResUsersSettingsAsync(Guid id, [FromBody] ResUsersSettingsSetResUsersSettingsRequestDto input)
+        [Route("set-res-users-settings")]
+        public async Task<IActionResult> SetResUsersSettingsAsync(ResUsersSettingsSetResUsersSettingsRequestDto input)
         {
-            var result = await _appService.SetResUsersSettingsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetResUsersSettingsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-volume-setting")]
-        public async Task<IActionResult> SetVolumeSettingAsync(Guid id, [FromBody] ResUsersSettingsSetVolumeSettingRequestDto input)
+        [Route("set-volume-setting")]
+        public async Task<IActionResult> SetVolumeSettingAsync(ResUsersSettingsSetVolumeSettingRequestDto input)
         {
-            var result = await _appService.SetVolumeSettingAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetVolumeSettingAsync(input);
             return Ok(result);
         }
     }

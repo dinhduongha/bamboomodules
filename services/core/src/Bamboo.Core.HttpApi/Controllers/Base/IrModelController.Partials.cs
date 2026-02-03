@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/display-name-for")]
-        public async Task<IActionResult> DisplayNameForAsync(Guid id, [FromBody] IrModelDisplayNameForRequestDto input)
+        [Route("display-name-for")]
+        public async Task<IActionResult> DisplayNameForAsync(IrModelDisplayNameForRequestDto input)
         {
-            var result = await _appService.DisplayNameForAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DisplayNameForAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-authorized-fields")]
-        public async Task<IActionResult> GetAuthorizedFieldsAsync(Guid id, [FromBody] IrModelGetAuthorizedFieldsRequestDto input)
+        [Route("get-authorized-fields")]
+        public async Task<IActionResult> GetAuthorizedFieldsAsync(IrModelGetAuthorizedFieldsRequestDto input)
         {
-            var result = await _appService.GetAuthorizedFieldsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAuthorizedFieldsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-available-models")]
-        public async Task<IActionResult> GetAvailableModelsAsync(Guid id)
+        [Route("get-available-models")]
+        public async Task<IActionResult> GetAvailableModelsAsync(Guid[] ids)
         {
-            var result = await _appService.GetAvailableModelsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAvailableModelsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-compatible-form-models")]
-        public async Task<IActionResult> GetCompatibleFormModelsAsync(Guid id)
+        [Route("get-compatible-form-models")]
+        public async Task<IActionResult> GetCompatibleFormModelsAsync(Guid[] ids)
         {
-            var result = await _appService.GetCompatibleFormModelsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetCompatibleFormModelsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-searchable-parent-relation")]
-        public async Task<IActionResult> HasSearchableParentRelationAsync(Guid id, [FromBody] IrModelHasSearchableParentRelationRequestDto input)
+        [Route("has-searchable-parent-relation")]
+        public async Task<IActionResult> HasSearchableParentRelationAsync(IrModelHasSearchableParentRelationRequestDto input)
         {
-            var result = await _appService.HasSearchableParentRelationAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.HasSearchableParentRelationAsync(input);
             return Ok(result);
         }
     }

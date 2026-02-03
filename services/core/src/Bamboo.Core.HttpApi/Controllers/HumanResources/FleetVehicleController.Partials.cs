@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/act-show-log-cost")]
-        public async Task<IActionResult> ActShowLogCostAsync(Guid id)
+        [Route("act-show-log-cost")]
+        public async Task<IActionResult> ActShowLogCostAsync(Guid[] ids)
         {
-            var result = await _appService.ActShowLogCostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ActShowLogCostAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-accept-driver-change")]
-        public async Task<IActionResult> ActionAcceptDriverChangeAsync(Guid id)
+        [Route("action-accept-driver-change")]
+        public async Task<IActionResult> ActionAcceptDriverChangeAsync(Guid[] ids)
         {
-            var result = await _appService.AcceptDriverChangeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.AcceptDriverChangeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employee")]
-        public async Task<IActionResult> ActionOpenEmployeeAsync(Guid id)
+        [Route("action-open-employee")]
+        public async Task<IActionResult> ActionOpenEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-odometer-report")]
-        public async Task<IActionResult> ActionOpenOdometerReportAsync(Guid id)
+        [Route("action-open-odometer-report")]
+        public async Task<IActionResult> ActionOpenOdometerReportAsync(Guid[] ids)
         {
-            var result = await _appService.OpenOdometerReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenOdometerReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-email")]
-        public async Task<IActionResult> ActionSendEmailAsync(Guid id)
+        [Route("action-send-email")]
+        public async Task<IActionResult> ActionSendEmailAsync(Guid[] ids)
         {
-            var result = await _appService.SendEmailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendEmailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-bills")]
-        public async Task<IActionResult> ActionViewBillsAsync(Guid id)
+        [Route("action-view-bills")]
+        public async Task<IActionResult> ActionViewBillsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewBillsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewBillsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-driver-history")]
-        public async Task<IActionResult> CreateDriverHistoryAsync(Guid id, [FromBody] FleetVehicleCreateDriverHistoryRequestDto input)
+        [Route("create-driver-history")]
+        public async Task<IActionResult> CreateDriverHistoryAsync(FleetVehicleCreateDriverHistoryRequestDto input)
         {
-            var result = await _appService.CreateDriverHistoryAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CreateDriverHistoryAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-assignation-logs")]
-        public async Task<IActionResult> OpenAssignationLogsAsync(Guid id)
+        [Route("open-assignation-logs")]
+        public async Task<IActionResult> OpenAssignationLogsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAssignationLogsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAssignationLogsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/return-action-to-open")]
-        public async Task<IActionResult> ReturnActionToOpenAsync(Guid id)
+        [Route("return-action-to-open")]
+        public async Task<IActionResult> ReturnActionToOpenAsync(Guid[] ids)
         {
-            var result = await _appService.ReturnToOpenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReturnToOpenAsync(ids);
             return Ok(result);
         }
     }

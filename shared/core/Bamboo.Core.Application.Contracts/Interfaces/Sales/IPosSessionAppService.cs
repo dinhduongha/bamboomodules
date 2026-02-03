@@ -10,33 +10,33 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPosSessionAppService : IGenericApplicationService<PosSession>
     {
-        Task<PosSession> CloseSessionFromUiAsync(Guid id, PosSessionCloseSessionFromUiRequestDto input);
-        Task<PosSession> DeleteCashInOutAsync(Guid id, PosSessionDeleteCashInOutRequestDto input);
-        Task<PosSession> DeleteOpeningControlSessionAsync(Guid id);
-        Task<PosSession> FilterLocalDataAsync(Guid id, PosSessionFilterLocalDataRequestDto input);
-        Task<PosSession> FindProductByBarcodeAsync(Guid id, PosSessionFindProductByBarcodeRequestDto input);
-        Task<PosSession> GetCashInOutListAsync(Guid id);
-        Task<PosSession> GetClosingControlDataAsync(Guid id);
-        Task<PosSession> GetPosUiProductPricelistItemByProductAsync(Guid id, PosSessionGetPosUiProductPricelistItemByProductRequestDto input);
-        Task<PosSession> GetSessionOrdersAsync(Guid id);
-        Task<PosSession> GetTotalDiscountAsync(Guid id);
-        Task<PosSession> LoadDataAsync(Guid id, PosSessionLoadDataRequestDto input);
-        Task<PosSession> LoadDataParamsAsync(Guid id);
-        Task<PosSession> LogPartnerMessageAsync(Guid id, PosSessionLogPartnerMessageRequestDto input);
-        Task<PosSession> OpenFrontendCbAsync(Guid id);
-        Task<PosSession> PosSessionCloseAsync(Guid id, PosSessionPosSessionCloseRequestDto input);
-        Task<PosSession> PosSessionClosingControlAsync(Guid id, PosSessionPosSessionClosingControlRequestDto input);
-        Task<PosSession> PosSessionOpenAsync(Guid id);
-        Task<PosSession> PosSessionValidateAsync(Guid id, PosSessionPosSessionValidateRequestDto input);
-        Task<PosSession> PostCloseRegisterMessageAsync(Guid id);
-        Task<PosSession> PostClosingCashDetailsAsync(Guid id, PosSessionPostClosingCashDetailsRequestDto input);
-        Task<PosSession> SetOpeningControlAsync(Guid id, PosSessionSetOpeningControlRequestDto input);
-        Task<PosSession> ShowCashRegisterAsync(Guid id);
-        Task<PosSession> ShowJournalItemsAsync(Guid id);
-        Task<PosSession> ShowPaymentsListAsync(Guid id);
-        Task<PosSession> StockPickingAsync(Guid id);
-        Task<PosSession> TryCashInOutAsync(Guid id, PosSessionTryCashInOutRequestDto input);
-        Task<PosSession> UpdateClosingControlStateSessionAsync(Guid id, PosSessionUpdateClosingControlStateSessionRequestDto input);
-        Task<PosSession> ViewOrderAsync(Guid id);
+        Task<PosSession> CloseSessionFromUiAsync(PosSessionCloseSessionFromUiRequestDto input);
+        Task<PosSession> DeleteCashInOutAsync(PosSessionDeleteCashInOutRequestDto input);
+        Task<PosSession> DeleteOpeningControlSessionAsync(Guid[] ids);
+        Task<PosSession> FilterLocalDataAsync(PosSessionFilterLocalDataRequestDto input);
+        Task<PosSession> FindProductByBarcodeAsync(PosSessionFindProductByBarcodeRequestDto input);
+        Task<PosSession> GetCashInOutListAsync(Guid[] ids);
+        Task<PosSession> GetClosingControlDataAsync(Guid[] ids);
+        Task<PosSession> GetPosUiProductPricelistItemByProductAsync(PosSessionGetPosUiProductPricelistItemByProductRequestDto input);
+        Task<PosSession> GetSessionOrdersAsync(Guid[] ids);
+        Task<PosSession> GetTotalDiscountAsync(Guid[] ids);
+        Task<PosSession> LoadDataAsync(PosSessionLoadDataRequestDto input);
+        Task<PosSession> LoadDataParamsAsync(Guid[] ids);
+        Task<PosSession> LogPartnerMessageAsync(PosSessionLogPartnerMessageRequestDto input);
+        Task<PosSession> OpenFrontendCbAsync(Guid[] ids);
+        Task<PosSession> PosSessionCloseAsync(PosSessionPosSessionCloseRequestDto input);
+        Task<PosSession> PosSessionClosingControlAsync(PosSessionPosSessionClosingControlRequestDto input);
+        Task<PosSession> PosSessionOpenAsync(Guid[] ids);
+        Task<PosSession> PosSessionValidateAsync(PosSessionPosSessionValidateRequestDto input);
+        Task<PosSession> PostCloseRegisterMessageAsync(Guid[] ids);
+        Task<PosSession> PostClosingCashDetailsAsync(PosSessionPostClosingCashDetailsRequestDto input);
+        Task<PosSession> SetOpeningControlAsync(PosSessionSetOpeningControlRequestDto input);
+        Task<PosSession> ShowCashRegisterAsync(Guid[] ids);
+        Task<PosSession> ShowJournalItemsAsync(Guid[] ids);
+        Task<PosSession> ShowPaymentsListAsync(Guid[] ids);
+        Task<PosSession> StockPickingAsync(Guid[] ids);
+        Task<PosSession> TryCashInOutAsync(PosSessionTryCashInOutRequestDto input);
+        Task<PosSession> UpdateClosingControlStateSessionAsync(PosSessionUpdateClosingControlStateSessionRequestDto input);
+        Task<PosSession> ViewOrderAsync(Guid[] ids);
     }
 }

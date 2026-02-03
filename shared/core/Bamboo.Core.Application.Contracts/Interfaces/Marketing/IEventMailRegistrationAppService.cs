@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IEventMailRegistrationAppService : IGenericApplicationService<EventMailRegistration>
     {
-        Task<EventMailRegistration> ExecuteAsync(Guid id);
+        Task<EventMailRegistration> ExecuteAsync(Guid[] ids);
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class PropertiesBaseDefinitionAppService : GenericApplicationService<PropertiesBaseDefinition>, IPropertiesBaseDefinitionAppService
+    public partial class PropertiesBaseDefinitionAppService : GenericAppService<PropertiesBaseDefinition>, IPropertiesBaseDefinitionAppService
     {
 
         public PropertiesBaseDefinitionAppService(IRepository<PropertiesBaseDefinition, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -92,7 +92,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PropertiesBaseDefinition> GetPropertiesBaseDefinitionAsync(Guid id, PropertiesBaseDefinitionGetPropertiesBaseDefinitionRequestDto input)
+        [ApiModel]
+        public async Task<PropertiesBaseDefinition> GetPropertiesBaseDefinitionAsync(PropertiesBaseDefinitionGetPropertiesBaseDefinitionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: properties_base_definition.py) ---
@@ -110,7 +111,9 @@ namespace Bamboo.Core.Application.Services
             //     specification={"display_name": {}, "properties_definition": {}},
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

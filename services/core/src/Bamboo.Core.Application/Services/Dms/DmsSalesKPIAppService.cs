@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsSalesKPIAppService : IGenericApplicationService<DmsSalesKPI>
+    public interface IDmsSalesKPIAppService : IGenericAppService<DmsSalesKPI>
     {
         Task UpdateKPIAsync(Guid kpiId, decimal actualValue);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsSalesKPIAppService : GenericApplicationService<DmsSalesKPI>, IDmsSalesKPIAppService
+    public class DmsSalesKPIAppService : GenericAppService<DmsSalesKPI>, IDmsSalesKPIAppService
     {
         public DmsSalesKPIAppService(
             IRepository<DmsSalesKPI, Guid> repository,

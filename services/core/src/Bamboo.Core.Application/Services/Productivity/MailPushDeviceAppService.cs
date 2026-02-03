@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailPushDeviceAppService : GenericApplicationService<MailPushDevice>, IMailPushDeviceAppService
+    public partial class MailPushDeviceAppService : GenericAppService<MailPushDevice>, IMailPushDeviceAppService
     {
 
         public MailPushDeviceAppService(IRepository<MailPushDevice, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,8 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<MailPushDevice> GetWebPushVapidPublicKeyAsync(Guid id)
+        [ApiModel]
+        public async Task<MailPushDevice> GetWebPushVapidPublicKeyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_push_device.py) ---
@@ -43,10 +44,13 @@ namespace Bamboo.Core.Application.Services
             //     _logger.info("WebPush: missing public key, new VAPID keys generated")
             // return public_key_value
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailPushDevice> RegisterDevicesAsync(Guid id)
+        [ApiModel]
+        public async Task<MailPushDevice> RegisterDevicesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_push_device.py) ---
@@ -77,10 +81,13 @@ namespace Bamboo.Core.Application.Services
             //         'partner_id': self.env.user.partner_id.id,
             //     }])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailPushDevice> UnregisterDevicesAsync(Guid id)
+        [ApiModel]
+        public async Task<MailPushDevice> UnregisterDevicesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_push_device.py) ---
@@ -94,7 +101,9 @@ namespace Bamboo.Core.Application.Services
             // if mail_push_device:
             //     mail_push_device.unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailPushDevice> VerifyVapidPublicKeyInternalAsync(object sw_public_key)

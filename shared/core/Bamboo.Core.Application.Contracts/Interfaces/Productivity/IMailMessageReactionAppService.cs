@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailMessageReactionAppService : IGenericApplicationService<MailMessageReaction>
     {
-        Task<MailMessageReaction> InitAsync(Guid id);
+        Task<MailMessageReaction> InitAsync(Guid[] ids);
     }
 }

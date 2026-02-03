@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResourceCalendarAppService : IGenericApplicationService<ResourceCalendar>
     {
-        Task<ResourceCalendar> CopyDataAsync(Guid id, ResourceCalendarCopyDataRequestDto input);
-        Task<ResourceCalendar> GetWorkDurationDataAsync(Guid id, ResourceCalendarGetWorkDurationDataRequestDto input);
-        Task<ResourceCalendar> GetWorkHoursCountAsync(Guid id, ResourceCalendarGetWorkHoursCountRequestDto input);
-        Task<ResourceCalendar> PlanDaysAsync(Guid id, ResourceCalendarPlanDaysRequestDto input);
-        Task<ResourceCalendar> PlanHoursAsync(Guid id, ResourceCalendarPlanHoursRequestDto input);
-        Task<ResourceCalendar> SwitchBasedOnDurationAsync(Guid id);
-        Task<ResourceCalendar> SwitchCalendarTypeAsync(Guid id);
-        Task<ResourceCalendar> TransferLeavesToAsync(Guid id, ResourceCalendarTransferLeavesToRequestDto input);
+        Task<ResourceCalendar> CopyDataAsync(ResourceCalendarCopyDataRequestDto input);
+        Task<ResourceCalendar> GetWorkDurationDataAsync(ResourceCalendarGetWorkDurationDataRequestDto input);
+        Task<ResourceCalendar> GetWorkHoursCountAsync(ResourceCalendarGetWorkHoursCountRequestDto input);
+        Task<ResourceCalendar> PlanDaysAsync(ResourceCalendarPlanDaysRequestDto input);
+        Task<ResourceCalendar> PlanHoursAsync(ResourceCalendarPlanHoursRequestDto input);
+        Task<ResourceCalendar> SwitchBasedOnDurationAsync(Guid[] ids);
+        Task<ResourceCalendar> SwitchCalendarTypeAsync(Guid[] ids);
+        Task<ResourceCalendar> TransferLeavesToAsync(ResourceCalendarTransferLeavesToRequestDto input);
     }
 }

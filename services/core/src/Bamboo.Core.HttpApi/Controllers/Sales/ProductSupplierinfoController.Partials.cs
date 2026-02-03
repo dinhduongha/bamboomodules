@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-set-supplier")]
-        public async Task<IActionResult> ActionSetSupplierAsync(Guid id)
+        [Route("action-set-supplier")]
+        public async Task<IActionResult> ActionSetSupplierAsync(Guid[] ids)
         {
-            var result = await _appService.SetSupplierAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetSupplierAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
     }

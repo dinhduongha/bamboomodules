@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-rated-object")]
-        public async Task<IActionResult> ActionOpenRatedObjectAsync(Guid id)
+        [Route("action-open-rated-object")]
+        public async Task<IActionResult> ActionOpenRatedObjectAsync(Guid[] ids)
         {
-            var result = await _appService.OpenRatedObjectAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenRatedObjectAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/reset")]
-        public async Task<IActionResult> ResetAsync(Guid id)
+        [Route("reset")]
+        public async Task<IActionResult> ResetAsync(Guid[] ids)
         {
-            var result = await _appService.ResetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetAsync(ids);
             return Ok(result);
         }
     }

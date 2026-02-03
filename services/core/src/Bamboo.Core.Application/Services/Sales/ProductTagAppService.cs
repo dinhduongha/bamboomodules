@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductTagAppService : GenericApplicationService<ProductTag>, IProductTagAppService
+    public partial class ProductTagAppService : GenericAppService<ProductTag>, IProductTagAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         private readonly IWebsiteMultiMixinAppService _websiteMultiMixinAppService;
@@ -63,7 +63,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductTag> CopyDataAsync(Guid id, ProductTagCopyDataRequestDto input)
+        public async Task<ProductTag> CopyDataAsync(ProductTagCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_tag.py) ---
@@ -71,7 +71,9 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", tag.name)) for tag, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductTag> GetDefaultTemplateIdInternalAsync()
@@ -94,6 +96,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductTag> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -104,6 +107,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ProductTag> LoadPosSelfDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -126,7 +130,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, ProductTag entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<ProductTag> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
@@ -135,7 +139,7 @@ namespace Bamboo.Core.Application.Services
             //     vals['pos_description'] = ''
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

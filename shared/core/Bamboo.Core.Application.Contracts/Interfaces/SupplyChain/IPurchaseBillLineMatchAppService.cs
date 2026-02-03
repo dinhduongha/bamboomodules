@@ -9,8 +9,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPurchaseBillLineMatchAppService : IApplicationService
     {
-        Task<PurchaseBillLineMatch> AddToPoAsync(Guid id);
-        Task<PurchaseBillLineMatch> MatchLinesAsync(Guid id);
-        Task<PurchaseBillLineMatch> OpenLineAsync(Guid id);
+        Task<PurchaseBillLineMatch> AddToPoAsync(Guid[] ids);
+        Task<PurchaseBillLineMatch> MatchLinesAsync(Guid[] ids);
+        Task<PurchaseBillLineMatch> OpenLineAsync(Guid[] ids);
     }
 }

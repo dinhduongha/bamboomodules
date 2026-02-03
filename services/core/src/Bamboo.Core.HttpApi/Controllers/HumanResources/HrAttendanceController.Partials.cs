@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-approve-overtime")]
-        public async Task<IActionResult> ActionApproveOvertimeAsync(Guid id)
+        [Route("action-approve-overtime")]
+        public async Task<IActionResult> ActionApproveOvertimeAsync(Guid[] ids)
         {
-            var result = await _appService.ApproveOvertimeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ApproveOvertimeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-in-attendance-maps")]
-        public async Task<IActionResult> ActionInAttendanceMapsAsync(Guid id)
+        [Route("action-in-attendance-maps")]
+        public async Task<IActionResult> ActionInAttendanceMapsAsync(Guid[] ids)
         {
-            var result = await _appService.InAttendanceMapsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InAttendanceMapsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-out-attendance-maps")]
-        public async Task<IActionResult> ActionOutAttendanceMapsAsync(Guid id)
+        [Route("action-out-attendance-maps")]
+        public async Task<IActionResult> ActionOutAttendanceMapsAsync(Guid[] ids)
         {
-            var result = await _appService.OutAttendanceMapsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OutAttendanceMapsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-refuse-overtime")]
-        public async Task<IActionResult> ActionRefuseOvertimeAsync(Guid id)
+        [Route("action-refuse-overtime")]
+        public async Task<IActionResult> ActionRefuseOvertimeAsync(Guid[] ids)
         {
-            var result = await _appService.RefuseOvertimeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RefuseOvertimeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-try-kiosk")]
-        public async Task<IActionResult> ActionTryKioskAsync(Guid id)
+        [Route("action-try-kiosk")]
+        public async Task<IActionResult> ActionTryKioskAsync(Guid[] ids)
         {
-            var result = await _appService.TryKioskAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TryKioskAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-kiosk-url")]
-        public async Task<IActionResult> GetKioskUrlAsync(Guid id)
+        [Route("get-kiosk-url")]
+        public async Task<IActionResult> GetKioskUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetKioskUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetKioskUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-demo-data")]
-        public async Task<IActionResult> HasDemoDataAsync(Guid id)
+        [Route("has-demo-data")]
+        public async Task<IActionResult> HasDemoDataAsync(Guid[] ids)
         {
-            var result = await _appService.HasDemoDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.HasDemoDataAsync(ids);
             return Ok(result);
         }
     }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Product", Category = "Sales", Depends = new[] { "base", "mail", "uom" })]
-    public partial class ProductDocumentAppService : GenericApplicationService<ProductDocument>, IProductDocumentAppService
+    public partial class ProductDocumentAppService : GenericAppService<ProductDocument>, IProductDocumentAppService
     {
 
         public ProductDocumentAppService(IRepository<ProductDocument, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -79,7 +79,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductDocument> CopyDataAsync(Guid id, ProductDocumentCopyDataRequestDto input)
+        public async Task<ProductDocument> CopyDataAsync(ProductDocumentCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_document.py) ---
@@ -96,7 +96,9 @@ namespace Bamboo.Core.Application.Services
             //     ).copy(ir_default).id
             // return vals_list
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductDocument> DefaultAttachedOnMrpInternalAsync()
@@ -148,7 +150,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductDocument> OpenPdfFormFieldsAsync(Guid id)
+        public async Task<ProductDocument> OpenPdfFormFieldsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: product_document.py) ---
@@ -168,7 +170,9 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'current',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ProductDocument> UnsupportedProductProductDocumentOnEcommerceInternalAsync()

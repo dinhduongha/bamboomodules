@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-properties-base-definition")]
-        public async Task<IActionResult> GetPropertiesBaseDefinitionAsync(Guid id, [FromBody] PropertiesBaseDefinitionGetPropertiesBaseDefinitionRequestDto input)
+        [Route("get-properties-base-definition")]
+        public async Task<IActionResult> GetPropertiesBaseDefinitionAsync(PropertiesBaseDefinitionGetPropertiesBaseDefinitionRequestDto input)
         {
-            var result = await _appService.GetPropertiesBaseDefinitionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetPropertiesBaseDefinitionAsync(input);
             return Ok(result);
         }
     }

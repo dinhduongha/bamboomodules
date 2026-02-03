@@ -10,11 +10,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IImLivechatChannelAppService : IGenericApplicationService<ImLivechatChannel>
     {
-        Task<ImLivechatChannel> GetLivechatInfoAsync(Guid id, ImLivechatChannelGetLivechatInfoRequestDto input);
-        Task<ImLivechatChannel> JoinAsync(Guid id);
-        Task<ImLivechatChannel> QuitAsync(Guid id);
-        Task<ImLivechatChannel> ViewChatbotScriptsAsync(Guid id);
-        Task<ImLivechatChannel> ViewRatingAsync(Guid id);
-        Task<List<Dictionary<string, object>>> WebReadAsync(Guid id, ImLivechatChannelWebReadRequestDto input);
+        Task<ImLivechatChannel> GetLivechatInfoAsync(ImLivechatChannelGetLivechatInfoRequestDto input);
+        Task<ImLivechatChannel> JoinAsync(Guid[] ids);
+        Task<ImLivechatChannel> QuitAsync(Guid[] ids);
+        Task<ImLivechatChannel> ViewChatbotScriptsAsync(Guid[] ids);
+        Task<ImLivechatChannel> ViewRatingAsync(Guid[] ids);
+        Task<List<Dictionary<string, object>>> WebReadAsync(ImLivechatChannelWebReadRequestDto input);
     }
 }

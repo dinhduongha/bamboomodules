@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-set-canceled")]
-        public async Task<IActionResult> ActionSetCanceledAsync(Guid id)
+        [Route("action-set-canceled")]
+        public async Task<IActionResult> ActionSetCanceledAsync(Guid[] ids)
         {
-            var result = await _appService.SetCanceledAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetCanceledAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-error")]
-        public async Task<IActionResult> ActionSetErrorAsync(Guid id, [FromBody] SmsSmsSetErrorRequestDto input)
+        [Route("action-set-error")]
+        public async Task<IActionResult> ActionSetErrorAsync(SmsSmsSetErrorRequestDto input)
         {
-            var result = await _appService.SetErrorAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetErrorAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-set-outgoing")]
-        public async Task<IActionResult> ActionSetOutgoingAsync(Guid id)
+        [Route("action-set-outgoing")]
+        public async Task<IActionResult> ActionSetOutgoingAsync(Guid[] ids)
         {
-            var result = await _appService.SetOutgoingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetOutgoingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/resend-failed")]
-        public async Task<IActionResult> ResendFailedAsync(Guid id)
+        [Route("resend-failed")]
+        public async Task<IActionResult> ResendFailedAsync(Guid[] ids)
         {
-            var result = await _appService.ResendFailedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResendFailedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send")]
-        public async Task<IActionResult> SendAsync(Guid id, [FromBody] SmsSmsSendRequestDto input)
+        [Route("send")]
+        public async Task<IActionResult> SendAsync(SmsSmsSendRequestDto input)
         {
-            var result = await _appService.SendAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SendAsync(input);
             return Ok(result);
         }
     }

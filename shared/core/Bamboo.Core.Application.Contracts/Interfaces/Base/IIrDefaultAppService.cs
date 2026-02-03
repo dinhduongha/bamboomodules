@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrDefaultAppService : IGenericApplicationService<IrDefault>
     {
-        Task<IrDefault> DiscardRecordsAsync(Guid id, IrDefaultDiscardRecordsRequestDto input);
-        Task<IrDefault> DiscardValuesAsync(Guid id, IrDefaultDiscardValuesRequestDto input);
-        Task<IrDefault> SetAsync(Guid id, IrDefaultSetRequestDto input);
+        Task<IrDefault> DiscardRecordsAsync(IrDefaultDiscardRecordsRequestDto input);
+        Task<IrDefault> DiscardValuesAsync(IrDefaultDiscardValuesRequestDto input);
+        Task<IrDefault> SetAsync(IrDefaultSetRequestDto input);
     }
 }

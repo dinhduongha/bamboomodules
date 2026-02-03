@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrDemoFailureWizardAppService : IGenericApplicationService<IrDemoFailureWizard>
     {
-        Task<IrDemoFailureWizard> DoneAsync(Guid id);
+        Task<IrDemoFailureWizard> DoneAsync(Guid[] ids);
     }
 }

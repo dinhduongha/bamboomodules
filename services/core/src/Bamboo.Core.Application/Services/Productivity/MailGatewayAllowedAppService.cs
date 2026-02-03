@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailGatewayAllowedAppService : GenericApplicationService<MailGatewayAllowed>, IMailGatewayAllowedAppService
+    public partial class MailGatewayAllowedAppService : GenericAppService<MailGatewayAllowed>, IMailGatewayAllowedAppService
     {
 
         public MailGatewayAllowedAppService(IRepository<MailGatewayAllowed, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGatewayAllowed> GetEmptyListHelpAsync(Guid id, MailGatewayAllowedGetEmptyListHelpRequestDto input)
+        [ApiModel]
+        public async Task<MailGatewayAllowed> GetEmptyListHelpAsync(MailGatewayAllowedGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_gateway_allowed.py) ---
@@ -59,7 +60,9 @@ namespace Bamboo.Core.Application.Services
             //     'minutes': LOOP_MINUTES,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

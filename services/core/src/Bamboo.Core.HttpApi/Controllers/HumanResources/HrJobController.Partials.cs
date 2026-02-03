@@ -11,82 +11,92 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-new-survey")]
-        public async Task<IActionResult> ActionNewSurveyAsync(Guid id)
+        [Route("action-new-survey")]
+        public async Task<IActionResult> ActionNewSurveyAsync(Guid[] ids)
         {
-            var result = await _appService.NewSurveyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.NewSurveyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-activities")]
-        public async Task<IActionResult> ActionOpenActivitiesAsync(Guid id)
+        [Route("action-open-activities")]
+        public async Task<IActionResult> ActionOpenActivitiesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenActivitiesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenActivitiesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-attachments")]
-        public async Task<IActionResult> ActionOpenAttachmentsAsync(Guid id)
+        [Route("action-open-attachments")]
+        public async Task<IActionResult> ActionOpenAttachmentsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAttachmentsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAttachmentsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employees")]
-        public async Task<IActionResult> ActionOpenEmployeesAsync(Guid id)
+        [Route("action-open-employees")]
+        public async Task<IActionResult> ActionOpenEmployeesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmployeesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmployeesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-search-matching-applicants")]
-        public async Task<IActionResult> ActionSearchMatchingApplicantsAsync(Guid id)
+        [Route("action-search-matching-applicants")]
+        public async Task<IActionResult> ActionSearchMatchingApplicantsAsync(Guid[] ids)
         {
-            var result = await _appService.SearchMatchingApplicantsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SearchMatchingApplicantsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-test-survey")]
-        public async Task<IActionResult> ActionTestSurveyAsync(Guid id)
+        [Route("action-test-survey")]
+        public async Task<IActionResult> ActionTestSurveyAsync(Guid[] ids)
         {
-            var result = await _appService.TestSurveyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TestSurveyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] HrJobCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(HrJobCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-backend-menu-id")]
-        public async Task<IActionResult> GetBackendMenuIdAsync(Guid id)
+        [Route("get-backend-menu-id")]
+        public async Task<IActionResult> GetBackendMenuIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetBackendMenuIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBackendMenuIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-open")]
-        public async Task<IActionResult> SetOpenAsync(Guid id)
+        [Route("set-open")]
+        public async Task<IActionResult> SetOpenAsync(Guid[] ids)
         {
-            var result = await _appService.SetOpenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetOpenAsync(ids);
             return Ok(result);
         }
     }

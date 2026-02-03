@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-badge")]
-        public async Task<IActionResult> ActionOpenBadgeAsync(Guid id)
+        [Route("action-open-badge")]
+        public async Task<IActionResult> ActionOpenBadgeAsync(Guid[] ids)
         {
-            var result = await _appService.OpenBadgeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenBadgeAsync(ids);
             return Ok(result);
         }
     }

@@ -10,18 +10,18 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockPickingTypeAppService : IGenericApplicationService<StockPickingType>
     {
-        Task<StockPickingType> BatchAsync(Guid id);
-        Task<StockPickingType> CopyDataAsync(Guid id, StockPickingTypeCopyDataRequestDto input);
-        Task<StockPickingType> GetMrpStockPickingPickingTypeAsync(Guid id);
-        Task<StockPickingType> GetPickingTreeBackorderAsync(Guid id);
-        Task<StockPickingType> GetPickingTreeLateAsync(Guid id);
-        Task<StockPickingType> GetPickingTreeReadyAsync(Guid id);
-        Task<StockPickingType> GetPickingTreeWaitingAsync(Guid id);
-        Task<StockPickingType> GetPickingTypeMovesAnalysisAsync(Guid id);
-        Task<StockPickingType> GetPickingTypeReadyMovesAsync(Guid id);
-        Task<StockPickingType> GetRepairStockPickingPickingTypeAsync(Guid id);
-        Task<StockPickingType> GetStockPickingPickingTypeAsync(Guid id);
-        Task<StockPickingType> RedirectToBarcodeInstallationAsync(Guid id);
-        Task<StockPickingType> WaveAsync(Guid id);
+        Task<StockPickingType> BatchAsync(Guid[] ids);
+        Task<StockPickingType> CopyDataAsync(StockPickingTypeCopyDataRequestDto input);
+        Task<StockPickingType> GetMrpStockPickingPickingTypeAsync(Guid[] ids);
+        Task<StockPickingType> GetPickingTreeBackorderAsync(Guid[] ids);
+        Task<StockPickingType> GetPickingTreeLateAsync(Guid[] ids);
+        Task<StockPickingType> GetPickingTreeReadyAsync(Guid[] ids);
+        Task<StockPickingType> GetPickingTreeWaitingAsync(Guid[] ids);
+        Task<StockPickingType> GetPickingTypeMovesAnalysisAsync(Guid[] ids);
+        Task<StockPickingType> GetPickingTypeReadyMovesAsync(Guid[] ids);
+        Task<StockPickingType> GetRepairStockPickingPickingTypeAsync(Guid[] ids);
+        Task<StockPickingType> GetStockPickingPickingTypeAsync(Guid[] ids);
+        Task<StockPickingType> RedirectToBarcodeInstallationAsync(Guid[] ids);
+        Task<StockPickingType> WaveAsync(Guid[] ids);
     }
 }

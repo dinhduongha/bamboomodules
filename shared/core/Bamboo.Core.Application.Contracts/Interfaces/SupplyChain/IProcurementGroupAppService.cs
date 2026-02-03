@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProcurementGroupAppService : IGenericApplicationService<ProcurementGroup>
     {
-        Task<ProcurementGroup> RunAsync(Guid id, ProcurementGroupRunRequestDto input);
-        Task<ProcurementGroup> RunSchedulerAsync(Guid id, ProcurementGroupRunSchedulerRequestDto input);
+        Task<ProcurementGroup> RunAsync(ProcurementGroupRunRequestDto input);
+        Task<ProcurementGroup> RunSchedulerAsync(ProcurementGroupRunSchedulerRequestDto input);
     }
 }

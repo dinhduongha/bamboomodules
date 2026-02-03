@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Fleet", Category = "HumanResources", Depends = new[] { "base", "mail" })]
-    public partial class FleetVehicleLogContractAppService : GenericApplicationService<FleetVehicleLogContract>, IFleetVehicleLogContractAppService
+    public partial class FleetVehicleLogContractAppService : GenericAppService<FleetVehicleLogContract>, IFleetVehicleLogContractAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -29,14 +29,16 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<FleetVehicleLogContract> CloseAsync(Guid id)
+        public async Task<FleetVehicleLogContract> CloseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_log_contract.py) ---
             // def action_close(self):
             // self.write({'state': 'closed'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FleetVehicleLogContract> ComputeContractNameInternalAsync()
@@ -94,7 +96,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicleLogContract> ComputeNextYearDateAsync(Guid id, FleetVehicleLogContractComputeNextYearDateRequestDto input)
+        public async Task<FleetVehicleLogContract> ComputeNextYearDateAsync(FleetVehicleLogContractComputeNextYearDateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_log_contract.py) ---
@@ -103,40 +105,48 @@ namespace Bamboo.Core.Application.Services
             // start_date = fields.Date.from_string(strdate)
             // return fields.Date.to_string(start_date + oneyear)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicleLogContract> DraftAsync(Guid id)
+        public async Task<FleetVehicleLogContract> DraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_log_contract.py) ---
             // def action_draft(self):
             // self.write({'state': 'futur'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicleLogContract> ExpireAsync(Guid id)
+        public async Task<FleetVehicleLogContract> ExpireAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_log_contract.py) ---
             // def action_expire(self):
             // self.write({'state': 'expired'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicleLogContract> OpenAsync(Guid id)
+        public async Task<FleetVehicleLogContract> OpenAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_log_contract.py) ---
             // def action_open(self):
             // self.write({'state': 'open'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicleLogContract> OpenEmployeeAsync(Guid id)
+        public async Task<FleetVehicleLogContract> OpenEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_fleet, FILE: fleet_vehicle_log_contract.py) ---
@@ -150,20 +160,25 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.purchaser_employee_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicleLogContract> RunSchedulerAsync(Guid id)
+        public async Task<FleetVehicleLogContract> RunSchedulerAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_log_contract.py) ---
             // def run_scheduler(self):
             // self.scheduler_manage_contract_expiration()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<FleetVehicleLogContract> SchedulerManageContractExpirationAsync(Guid id)
+        [ApiModel]
+        public async Task<FleetVehicleLogContract> SchedulerManageContractExpirationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_log_contract.py) ---
@@ -198,7 +213,9 @@ namespace Bamboo.Core.Application.Services
             // now_running_contracts = self.search([('state', '=', 'futur'), ('start_date', '<=', fields.Date.today())])
             // now_running_contracts.action_open()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

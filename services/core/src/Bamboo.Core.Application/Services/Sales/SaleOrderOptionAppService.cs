@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("SaleManagement", Category = "Sales", Depends = new[] { "sale", "digest" })]
-    public partial class SaleOrderOptionAppService : GenericApplicationService<SaleOrderOption>, ISaleOrderOptionAppService
+    public partial class SaleOrderOptionAppService : GenericAppService<SaleOrderOption>, ISaleOrderOptionAppService
     {
 
         public SaleOrderOptionAppService(IRepository<SaleOrderOption, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<SaleOrderOption> AddOptionToOrderAsync(Guid id)
+        public async Task<SaleOrderOption> AddOptionToOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order_option.py) ---
@@ -43,17 +43,21 @@ namespace Bamboo.Core.Application.Services
             // 
             // return order_line
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<SaleOrderOption> ButtonAddToOrderAsync(Guid id)
+        public async Task<SaleOrderOption> ButtonAddToOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order_option.py) ---
             // def button_add_to_order(self):
             // self.add_option_to_order()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<SaleOrderOption> ComputeDiscountInternalAsync()
@@ -155,6 +159,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<SaleOrderOption> ProductIdDomainInternalAsync()
         {
             /*

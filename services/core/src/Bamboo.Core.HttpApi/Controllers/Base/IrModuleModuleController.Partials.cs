@@ -11,234 +11,263 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-install-request")]
-        public async Task<IActionResult> ActionOpenInstallRequestAsync(Guid id)
+        [Route("action-open-install-request")]
+        public async Task<IActionResult> ActionOpenInstallRequestAsync(Guid[] ids)
         {
-            var result = await _appService.OpenInstallRequestAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenInstallRequestAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-delivery-methods")]
-        public async Task<IActionResult> ActionViewDeliveryMethodsAsync(Guid id)
+        [Route("action-view-delivery-methods")]
+        public async Task<IActionResult> ActionViewDeliveryMethodsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewDeliveryMethodsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewDeliveryMethodsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-choose-theme")]
-        public async Task<IActionResult> ButtonChooseThemeAsync(Guid id)
+        [Route("button-choose-theme")]
+        public async Task<IActionResult> ButtonChooseThemeAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonChooseThemeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonChooseThemeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-immediate-install")]
-        public async Task<IActionResult> ButtonImmediateInstallAsync(Guid id)
+        [Route("button-immediate-install")]
+        public async Task<IActionResult> ButtonImmediateInstallAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonImmediateInstallAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonImmediateInstallAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-immediate-install-app")]
-        public async Task<IActionResult> ButtonImmediateInstallAppAsync(Guid id)
+        [Route("button-immediate-install-app")]
+        public async Task<IActionResult> ButtonImmediateInstallAppAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonImmediateInstallAppAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonImmediateInstallAppAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-immediate-uninstall")]
-        public async Task<IActionResult> ButtonImmediateUninstallAsync(Guid id)
+        [Route("button-immediate-uninstall")]
+        public async Task<IActionResult> ButtonImmediateUninstallAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonImmediateUninstallAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonImmediateUninstallAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-immediate-upgrade")]
-        public async Task<IActionResult> ButtonImmediateUpgradeAsync(Guid id)
+        [Route("button-immediate-upgrade")]
+        public async Task<IActionResult> ButtonImmediateUpgradeAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonImmediateUpgradeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonImmediateUpgradeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-install")]
-        public async Task<IActionResult> ButtonInstallAsync(Guid id)
+        [Route("button-install")]
+        public async Task<IActionResult> ButtonInstallAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonInstallAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonInstallAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-refresh-theme")]
-        public async Task<IActionResult> ButtonRefreshThemeAsync(Guid id)
+        [Route("button-refresh-theme")]
+        public async Task<IActionResult> ButtonRefreshThemeAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonRefreshThemeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonRefreshThemeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-remove-theme")]
-        public async Task<IActionResult> ButtonRemoveThemeAsync(Guid id)
+        [Route("button-remove-theme")]
+        public async Task<IActionResult> ButtonRemoveThemeAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonRemoveThemeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonRemoveThemeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-reset-state")]
-        public async Task<IActionResult> ButtonResetStateAsync(Guid id)
+        [Route("button-reset-state")]
+        public async Task<IActionResult> ButtonResetStateAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonResetStateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonResetStateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-uninstall")]
-        public async Task<IActionResult> ButtonUninstallAsync(Guid id)
+        [Route("button-uninstall")]
+        public async Task<IActionResult> ButtonUninstallAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonUninstallAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonUninstallAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-uninstall-wizard")]
-        public async Task<IActionResult> ButtonUninstallWizardAsync(Guid id)
+        [Route("button-uninstall-wizard")]
+        public async Task<IActionResult> ButtonUninstallWizardAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonUninstallWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonUninstallWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-upgrade")]
-        public async Task<IActionResult> ButtonUpgradeAsync(Guid id)
+        [Route("button-upgrade")]
+        public async Task<IActionResult> ButtonUpgradeAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonUpgradeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonUpgradeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-external-dependencies")]
-        public async Task<IActionResult> CheckExternalDependenciesAsync(Guid id, [FromBody] IrModuleModuleCheckExternalDependenciesRequestDto input)
+        [Route("check-external-dependencies")]
+        public async Task<IActionResult> CheckExternalDependenciesAsync(IrModuleModuleCheckExternalDependenciesRequestDto input)
         {
-            var result = await _appService.CheckExternalDependenciesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckExternalDependenciesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-module-update")]
-        public async Task<IActionResult> CheckModuleUpdateAsync(Guid id)
+        [Route("check-module-update")]
+        public async Task<IActionResult> CheckModuleUpdateAsync(Guid[] ids)
         {
-            var result = await _appService.CheckModuleUpdateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckModuleUpdateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/downstream-dependencies")]
-        public async Task<IActionResult> DownstreamDependenciesAsync(Guid id, [FromBody] IrModuleModuleDownstreamDependenciesRequestDto input)
+        [Route("downstream-dependencies")]
+        public async Task<IActionResult> DownstreamDependenciesAsync(IrModuleModuleDownstreamDependenciesRequestDto input)
         {
-            var result = await _appService.DownstreamDependenciesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DownstreamDependenciesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-module-info")]
-        public async Task<IActionResult> GetModuleInfoAsync(Guid id, [FromBody] IrModuleModuleGetModuleInfoRequestDto input)
+        [Route("get-module-info")]
+        public async Task<IActionResult> GetModuleInfoAsync(IrModuleModuleGetModuleInfoRequestDto input)
         {
-            var result = await _appService.GetModuleInfoAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetModuleInfoAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-themes-domain")]
-        public async Task<IActionResult> GetThemesDomainAsync(Guid id)
+        [Route("get-themes-domain")]
+        public async Task<IActionResult> GetThemesDomainAsync(Guid[] ids)
         {
-            var result = await _appService.GetThemesDomainAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetThemesDomainAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-values-from-terp")]
-        public async Task<IActionResult> GetValuesFromTerpAsync(Guid id)
+        [Route("get-values-from-terp")]
+        public async Task<IActionResult> GetValuesFromTerpAsync(Guid[] ids)
         {
-            var result = await _appService.GetValuesFromTerpAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetValuesFromTerpAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/module-uninstall")]
-        public async Task<IActionResult> ModuleUninstallAsync(Guid id)
+        [Route("module-uninstall")]
+        public async Task<IActionResult> ModuleUninstallAsync(Guid[] ids)
         {
-            var result = await _appService.ModuleUninstallAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ModuleUninstallAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/more-info")]
-        public async Task<IActionResult> MoreInfoAsync(Guid id)
+        [Route("more-info")]
+        public async Task<IActionResult> MoreInfoAsync(Guid[] ids)
         {
-            var result = await _appService.MoreInfoAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MoreInfoAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/next")]
-        public async Task<IActionResult> NextAsync(Guid id)
+        [Route("next")]
+        public async Task<IActionResult> NextAsync(Guid[] ids)
         {
-            var result = await _appService.NextAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.NextAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-panel-select-range")]
-        public async Task<IActionResult> SearchPanelSelectRangeAsync(Guid id, [FromBody] IrModuleModuleSearchPanelSelectRangeRequestDto input)
+        [Route("search-panel-select-range")]
+        public async Task<IActionResult> SearchPanelSelectRangeAsync(IrModuleModuleSearchPanelSelectRangeRequestDto input)
         {
-            var result = await _appService.SearchPanelSelectRangeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchPanelSelectRangeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-list")]
-        public async Task<IActionResult> UpdateListAsync(Guid id)
+        [Route("update-list")]
+        public async Task<IActionResult> UpdateListAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateListAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateListAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/update-theme-images")]
-        public async Task<IActionResult> UpdateThemeImagesAsync(Guid id)
+        [Route("update-theme-images")]
+        public async Task<IActionResult> UpdateThemeImagesAsync(Guid[] ids)
         {
-            var result = await _appService.UpdateThemeImagesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UpdateThemeImagesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/upstream-dependencies")]
-        public async Task<IActionResult> UpstreamDependenciesAsync(Guid id, [FromBody] IrModuleModuleUpstreamDependenciesRequestDto input)
+        [Route("upstream-dependencies")]
+        public async Task<IActionResult> UpstreamDependenciesAsync(IrModuleModuleUpstreamDependenciesRequestDto input)
         {
-            var result = await _appService.UpstreamDependenciesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UpstreamDependenciesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/web-read")]
-        public async Task<IActionResult> WebReadAsync(Guid id, [FromBody] IrModuleModuleWebReadRequestDto input)
+        [Route("web-read")]
+        public async Task<IActionResult> WebReadAsync(IrModuleModuleWebReadRequestDto input)
         {
-            var result = await _appService.WebReadAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.WebReadAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/web-search-read")]
-        public async Task<IActionResult> WebSearchReadAsync(Guid id, [FromBody] IrModuleModuleWebSearchReadRequestDto input)
+        [Route("web-search-read")]
+        public async Task<IActionResult> WebSearchReadAsync(IrModuleModuleWebSearchReadRequestDto input)
         {
-            var result = await _appService.WebSearchReadAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.WebSearchReadAsync(input);
             return Ok(result);
         }
     }

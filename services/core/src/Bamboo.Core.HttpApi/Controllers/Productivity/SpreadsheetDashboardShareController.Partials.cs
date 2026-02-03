@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-get-share-url")]
-        public async Task<IActionResult> ActionGetShareUrlAsync(Guid id, [FromBody] SpreadsheetDashboardShareGetShareUrlRequestDto input)
+        [Route("action-get-share-url")]
+        public async Task<IActionResult> ActionGetShareUrlAsync(SpreadsheetDashboardShareGetShareUrlRequestDto input)
         {
-            var result = await _appService.GetShareUrlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetShareUrlAsync(input);
             return Ok(result);
         }
     }

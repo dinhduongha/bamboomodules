@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-unarchive")]
-        public async Task<IActionResult> ActionUnarchiveAsync(Guid id)
+        [Route("action-unarchive")]
+        public async Task<IActionResult> ActionUnarchiveAsync(Guid[] ids)
         {
-            var result = await _appService.UnarchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnarchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProjectProjectStageCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ProjectProjectStageCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unlink-wizard")]
-        public async Task<IActionResult> UnlinkWizardAsync(Guid id, [FromBody] ProjectProjectStageUnlinkWizardRequestDto input)
+        [Route("unlink-wizard")]
+        public async Task<IActionResult> UnlinkWizardAsync(ProjectProjectStageUnlinkWizardRequestDto input)
         {
-            var result = await _appService.UnlinkWizardAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UnlinkWizardAsync(input);
             return Ok(result);
         }
     }

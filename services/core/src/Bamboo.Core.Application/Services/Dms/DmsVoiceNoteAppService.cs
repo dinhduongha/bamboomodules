@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsVoiceNoteAppService : IGenericApplicationService<DmsVoiceNote>
+    public interface IDmsVoiceNoteAppService : IGenericAppService<DmsVoiceNote>
     {
         Task TranscribeVoiceAsync(Guid noteId);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsVoiceNoteAppService : GenericApplicationService<DmsVoiceNote>, IDmsVoiceNoteAppService
+    public class DmsVoiceNoteAppService : GenericAppService<DmsVoiceNote>, IDmsVoiceNoteAppService
     {
         public DmsVoiceNoteAppService(
             IRepository<DmsVoiceNote, Guid> repository,

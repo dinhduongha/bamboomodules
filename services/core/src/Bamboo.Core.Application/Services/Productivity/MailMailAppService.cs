@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailMailAppService : GenericApplicationService<MailMail>, IMailMailAppService
+    public partial class MailMailAppService : GenericAppService<MailMail>, IMailMailAppService
     {
 
         public MailMailAppService(IRepository<MailMail, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,14 +27,16 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<MailMail> CancelAsync(Guid id)
+        public async Task<MailMail> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
             // def cancel(self):
             // return self.write({'state': 'cancel'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMail> CheckMailServerIdInternalAsync()
@@ -87,6 +89,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMail> EstimateEmailSizeInternalAsync(object headers, object body, object attachments_size)
         {
             /*
@@ -142,6 +145,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailMail> GenerateMailRecipientTokenInternalAsync(Guid mail_id)
         {
             /*
@@ -221,17 +225,19 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMail> MarkOutgoingAsync(Guid id)
+        public async Task<MailMail> MarkOutgoingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
             // def mark_outgoing(self):
             // return self.write({'state': 'outgoing'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailMail> OpenDocumentAsync(Guid id)
+        public async Task<MailMail> OpenDocumentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
@@ -246,7 +252,9 @@ namespace Bamboo.Core.Application.Services
             //     'view_mode': 'form',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMail> ParseScheduledDatetimeInternalAsync(object scheduled_datetime)
@@ -622,7 +630,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMail> ProcessEmailQueueAsync(Guid id, MailMailProcessEmailQueueRequestDto input)
+        [ApiModel]
+        public async Task<MailMail> ProcessEmailQueueAsync(MailMailProcessEmailQueueRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
@@ -676,17 +685,21 @@ namespace Bamboo.Core.Application.Services
             // 
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailMail> RetryAsync(Guid id)
+        public async Task<MailMail> RetryAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
             // def action_retry(self):
             // self.filtered(lambda mail: mail.state == 'exception').mark_outgoing()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMail> SearchBodyContentInternalAsync(object @operator, object @value)
@@ -699,7 +712,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMail> SendAfterCommitAsync(Guid id)
+        public async Task<MailMail> SendAfterCommitAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
@@ -725,10 +738,12 @@ namespace Bamboo.Core.Application.Services
             //         env = api.Environment(cr, SUPERUSER_ID, _context)
             //         env['mail.mail'].browse(email_ids).send()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailMail> SendAndCloseAsync(Guid id)
+        public async Task<MailMail> SendAndCloseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
@@ -744,10 +759,12 @@ namespace Bamboo.Core.Application.Services
             //     'type': 'ir.actions.act_window',
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailMail> SendAsync(Guid id, MailMailSendRequestDto input)
+        public async Task<MailMail> SendAsync(MailMailSendRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
@@ -812,7 +829,9 @@ namespace Bamboo.Core.Application.Services
             //                     "Ignoring SMTPServerDisconnected while trying to quit non open session"
             //                 )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailMail> SendInternalAsync(object auto_commit, object raise_exception, object smtp_session, Guid alias_domain_id, object mail_server, object post_send_callback)

@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-revoke")]
-        public async Task<IActionResult> ActionRevokeAsync(Guid id)
+        [Route("action-revoke")]
+        public async Task<IActionResult> ActionRevokeAsync(Guid[] ids)
         {
-            var result = await _appService.RevokeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RevokeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-audit-trail-during-exception")]
-        public async Task<IActionResult> ActionShowAuditTrailDuringExceptionAsync(Guid id)
+        [Route("action-show-audit-trail-during-exception")]
+        public async Task<IActionResult> ActionShowAuditTrailDuringExceptionAsync(Guid[] ids)
         {
-            var result = await _appService.ShowAuditTrailDuringExceptionAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowAuditTrailDuringExceptionAsync(ids);
             return Ok(result);
         }
     }

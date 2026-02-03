@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IProductAttributeAppService : IGenericApplicationService<ProductAttribute>
     {
-        Task<ProductAttribute> ArchiveAsync(Guid id);
-        Task<ProductAttribute> OpenProductTemplateAttributeLinesAsync(Guid id);
+        Task<ProductAttribute> ArchiveAsync(Guid[] ids);
+        Task<ProductAttribute> OpenProductTemplateAttributeLinesAsync(Guid[] ids);
     }
 }

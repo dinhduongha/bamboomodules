@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class DiscussChannelRtcSessionAppService : GenericApplicationService<DiscussChannelRtcSession>, IDiscussChannelRtcSessionAppService
+    public partial class DiscussChannelRtcSessionAppService : GenericAppService<DiscussChannelRtcSession>, IDiscussChannelRtcSessionAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public DiscussChannelRtcSessionAppService(IRepository<DiscussChannelRtcSession, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<DiscussChannelRtcSession> CreateAsync(DiscussChannelRtcSession entity, List<string> fields)
+        public override async Task<DiscussChannelRtcSession> CreateAsync(CreateRequestDto<DiscussChannelRtcSession> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: discuss_channel_rtc_session.py) ---
@@ -78,7 +78,7 @@ namespace Bamboo.Core.Application.Services
             //     Store(bus_channel=channel).add(message, [Store.Many("call_history_ids", [])]).bus_send()
             // return rtc_sessions
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<DiscussChannelRtcSession> DeleteInactiveRtcSessionsInternalAsync()
@@ -92,7 +92,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannelRtcSession> DisconnectAsync(Guid id)
+        public async Task<DiscussChannelRtcSession> DisconnectAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel_rtc_session.py) ---
@@ -117,7 +117,9 @@ namespace Bamboo.Core.Application.Services
             //                 _logger.warning("Could not disconnect sessions at sfu server %s: %s", url, error)
             // self.unlink()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DiscussChannelRtcSession> GcInactiveSessionsInternalAsync()
@@ -144,6 +146,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<DiscussChannelRtcSession> InactiveRtcSessionDomainInternalAsync()
         {
             /*

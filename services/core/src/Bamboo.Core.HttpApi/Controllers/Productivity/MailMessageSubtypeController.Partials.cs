@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/default-subtypes")]
-        public async Task<IActionResult> DefaultSubtypesAsync(Guid id, [FromBody] MailMessageSubtypeDefaultSubtypesRequestDto input)
+        [Route("default-subtypes")]
+        public async Task<IActionResult> DefaultSubtypesAsync(MailMessageSubtypeDefaultSubtypesRequestDto input)
         {
-            var result = await _appService.DefaultSubtypesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DefaultSubtypesAsync(input);
             return Ok(result);
         }
     }

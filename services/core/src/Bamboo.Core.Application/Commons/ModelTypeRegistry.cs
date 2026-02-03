@@ -126,7 +126,7 @@ namespace Bamboo.Core.Application
             while (currentType != null && currentType != typeof(object))
             {
                 // Kiểm tra xem lớp hiện tại có phải là một generic type không
-                if (currentType.IsGenericType && currentType.GetGenericTypeDefinition() == typeof(GenericApplicationService<>))
+                if (currentType.IsGenericType && currentType.GetGenericTypeDefinition() == typeof(GenericAppService<>))
                 {
                     // Nếu đúng, lấy generic argument đầu tiên (chính là TEntity)
                     return currentType.GetGenericArguments()[0];

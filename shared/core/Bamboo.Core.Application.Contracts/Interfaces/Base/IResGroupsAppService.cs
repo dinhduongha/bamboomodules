@@ -10,8 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResGroupsAppService : IGenericApplicationService<ResGroups>
     {
-        Task<ResGroups> CopyDataAsync(Guid id, ResGroupsCopyDataRequestDto input);
-        Task<ResGroups> GetApplicationGroupsAsync(Guid id, ResGroupsGetApplicationGroupsRequestDto input);
-        Task<ResGroups> ShowAllUsersAsync(Guid id);
+        Task<ResGroups> CopyDataAsync(ResGroupsCopyDataRequestDto input);
+        Task<ResGroups> GetApplicationGroupsAsync(ResGroupsGetApplicationGroupsRequestDto input);
+        Task<ResGroups> ShowAllUsersAsync(Guid[] ids);
     }
 }

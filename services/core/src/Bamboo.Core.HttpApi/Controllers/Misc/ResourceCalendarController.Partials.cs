@@ -11,66 +11,74 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResourceCalendarCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ResourceCalendarCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-work-duration-data")]
-        public async Task<IActionResult> GetWorkDurationDataAsync(Guid id, [FromBody] ResourceCalendarGetWorkDurationDataRequestDto input)
+        [Route("get-work-duration-data")]
+        public async Task<IActionResult> GetWorkDurationDataAsync(ResourceCalendarGetWorkDurationDataRequestDto input)
         {
-            var result = await _appService.GetWorkDurationDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetWorkDurationDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-work-hours-count")]
-        public async Task<IActionResult> GetWorkHoursCountAsync(Guid id, [FromBody] ResourceCalendarGetWorkHoursCountRequestDto input)
+        [Route("get-work-hours-count")]
+        public async Task<IActionResult> GetWorkHoursCountAsync(ResourceCalendarGetWorkHoursCountRequestDto input)
         {
-            var result = await _appService.GetWorkHoursCountAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetWorkHoursCountAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/plan-days")]
-        public async Task<IActionResult> PlanDaysAsync(Guid id, [FromBody] ResourceCalendarPlanDaysRequestDto input)
+        [Route("plan-days")]
+        public async Task<IActionResult> PlanDaysAsync(ResourceCalendarPlanDaysRequestDto input)
         {
-            var result = await _appService.PlanDaysAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PlanDaysAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/plan-hours")]
-        public async Task<IActionResult> PlanHoursAsync(Guid id, [FromBody] ResourceCalendarPlanHoursRequestDto input)
+        [Route("plan-hours")]
+        public async Task<IActionResult> PlanHoursAsync(ResourceCalendarPlanHoursRequestDto input)
         {
-            var result = await _appService.PlanHoursAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.PlanHoursAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/switch-based-on-duration")]
-        public async Task<IActionResult> SwitchBasedOnDurationAsync(Guid id)
+        [Route("switch-based-on-duration")]
+        public async Task<IActionResult> SwitchBasedOnDurationAsync(Guid[] ids)
         {
-            var result = await _appService.SwitchBasedOnDurationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SwitchBasedOnDurationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/switch-calendar-type")]
-        public async Task<IActionResult> SwitchCalendarTypeAsync(Guid id)
+        [Route("switch-calendar-type")]
+        public async Task<IActionResult> SwitchCalendarTypeAsync(Guid[] ids)
         {
-            var result = await _appService.SwitchCalendarTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SwitchCalendarTypeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/transfer-leaves-to")]
-        public async Task<IActionResult> TransferLeavesToAsync(Guid id, [FromBody] ResourceCalendarTransferLeavesToRequestDto input)
+        [Route("transfer-leaves-to")]
+        public async Task<IActionResult> TransferLeavesToAsync(ResourceCalendarTransferLeavesToRequestDto input)
         {
-            var result = await _appService.TransferLeavesToAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.TransferLeavesToAsync(input);
             return Ok(result);
         }
     }

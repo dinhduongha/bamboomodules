@@ -24,14 +24,17 @@ public partial class DmsBIReportConfig : FullAuditedAggregateRoot<Guid>, IEntity
     [Column("organization_unit_id")]
     public Guid? OrganizationUnitId { get; set; }
 
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
+
     [Column("user_id")]
     public Guid UserId { get; set; }
 
     [Column("report_type")]
-    public string ReportType { get; set; } = null!;
+    public string? ReportType { get; set; } = null!;
 
-    [Column("filters_json")]
-    public string? FiltersJson { get; set; }
+    [Column("filters", TypeName = "jsonb")]
+    public string? Filters { get; set; }
 
     [Column("schedule_time")]
     public string? ScheduleTime { get; set; }
@@ -47,6 +50,26 @@ public partial class DmsBIReportConfig : FullAuditedAggregateRoot<Guid>, IEntity
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("CreatorId")]
+    public virtual ResUsers? CreateU { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("LastModifierId")]
+    public virtual ResUsers? WriteU { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TeamId")]
+    public virtual ResTeam? Team { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("UserId")]

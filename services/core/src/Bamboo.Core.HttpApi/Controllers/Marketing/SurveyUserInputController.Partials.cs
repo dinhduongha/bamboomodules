@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-print-answers")]
-        public async Task<IActionResult> ActionPrintAnswersAsync(Guid id)
+        [Route("action-print-answers")]
+        public async Task<IActionResult> ActionPrintAnswersAsync(Guid[] ids)
         {
-            var result = await _appService.PrintAnswersAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PrintAnswersAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-lead")]
-        public async Task<IActionResult> ActionRedirectLeadAsync(Guid id)
+        [Route("action-redirect-lead")]
+        public async Task<IActionResult> ActionRedirectLeadAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectLeadAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectLeadAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-redirect-to-attempts")]
-        public async Task<IActionResult> ActionRedirectToAttemptsAsync(Guid id)
+        [Route("action-redirect-to-attempts")]
+        public async Task<IActionResult> ActionRedirectToAttemptsAsync(Guid[] ids)
         {
-            var result = await _appService.RedirectToAttemptsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RedirectToAttemptsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-resend")]
-        public async Task<IActionResult> ActionResendAsync(Guid id)
+        [Route("action-resend")]
+        public async Task<IActionResult> ActionResendAsync(Guid[] ids)
         {
-            var result = await _appService.ResendAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResendAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-print-url")]
-        public async Task<IActionResult> GetPrintUrlAsync(Guid id)
+        [Route("get-print-url")]
+        public async Task<IActionResult> GetPrintUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetPrintUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPrintUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-start-url")]
-        public async Task<IActionResult> GetStartUrlAsync(Guid id)
+        [Route("get-start-url")]
+        public async Task<IActionResult> GetStartUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetStartUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetStartUrlAsync(ids);
             return Ok(result);
         }
     }

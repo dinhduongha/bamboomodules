@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrRecruitment", Category = "HumanResources", Depends = new[] { "hr", "calendar", "utm", "attachment_indexation", "web_tour", "digest" })]
-    public partial class HrTalentPoolAppService : GenericApplicationService<HrTalentPool>, IHrTalentPoolAppService
+    public partial class HrTalentPoolAppService : GenericAppService<HrTalentPool>, IHrTalentPoolAppService
     {
         private readonly IMailThreadAppService _mailThreadAppService;
         public HrTalentPoolAppService(IRepository<HrTalentPool, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -52,7 +52,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrTalentPool> TalentPoolAddTalentsAsync(Guid id)
+        public async Task<HrTalentPool> TalentPoolAddTalentsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_talent_pool.py) ---
@@ -68,7 +68,9 @@ namespace Bamboo.Core.Application.Services
             //     },
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

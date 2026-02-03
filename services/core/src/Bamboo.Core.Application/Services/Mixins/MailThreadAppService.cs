@@ -753,6 +753,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionCheckHashIntegrityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -1485,6 +1486,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionFetchFavoritesAsync<TEntity>(IEnumerable<TEntity> entities, object extra_domain) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -2735,6 +2737,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionOpenWebsiteThemeSelectorAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -6254,6 +6257,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AdaptPriceUnitToAnotherTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object price_unit, object product, object original_taxes, object new_taxes, object product_uom) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -6309,6 +6313,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddAccountingDataInBaseLinesTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object include_caba_tags) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -6328,6 +6333,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddAccountingDataToBaseLineTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object company, object include_caba_tags) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -6470,6 +6476,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddAndRoundRawGrossTotalExcludedAndDiscountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency, object account_discount_base_lines) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -6893,6 +6900,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddPostmortemInternalAsync<TEntity>(IEnumerable<TEntity> entities, object e) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -6961,6 +6969,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddTaxDetailsInBaseLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object company, object rounding_method) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -7041,6 +7050,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddTaxDetailsInBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -7060,6 +7070,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AggregateBaseLineTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object grouping_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -7192,6 +7203,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AggregateBaseLinesAggregatedValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines_aggregated_values) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -7245,6 +7257,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AggregateBaseLinesTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object grouping_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -7268,6 +7281,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AlertOldSessionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -7319,6 +7333,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AliasPrepareAliasNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object alias_name, object name, object code, object jtype, object company) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -7414,6 +7429,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AllowPublishRatingStatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -7475,6 +7491,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ApplyBaseLinesManualAmountsToReachInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object target_base_amount_currency, object target_base_amount, object target_tax_amounts_mapping) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -8054,6 +8071,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> BomFindDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object products, object picking_type, Guid company_id, object bom_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -8075,6 +8093,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> BomFindInternalAsync<TEntity>(IEnumerable<TEntity> entities, object products, object picking_type, Guid company_id, object bom_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -8752,6 +8771,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CalculateDateCategoryAsync<TEntity>(IEnumerable<TEntity> entities, object datetime) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -10951,6 +10971,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckPhonenumbersImportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -11612,6 +11633,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckValuesToSyncInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -11798,6 +11820,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CompleteInverseExclusionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object exclusions) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -11820,6 +11843,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CompleteValuesFromSessionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object session, object values) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -16019,6 +16043,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ComputeGeneratedEntriesAsync<TEntity>(IEnumerable<TEntity> entities, object date, object asset_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -21595,6 +21620,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ComputeSubsetBaseLinesTotalInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -23761,6 +23787,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ConvertCommentToAnswerAsync<TEntity>(IEnumerable<TEntity> entities, Guid message_id) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -25793,6 +25820,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateChannelInternalAsync<TEntity>(IEnumerable<TEntity> entities, object name, Guid group_id) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -25862,6 +25890,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateDefaultAccountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object journal_type, object vals) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26229,6 +26258,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateGroupInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partners_to, object default_display_mode, object name) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26607,6 +26637,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingDropshipPickingTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26622,6 +26653,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingDropshipRuleAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26637,6 +26669,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingDropshipSequenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26650,6 +26683,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingInventoryLossLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26664,6 +26698,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingProductionLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26678,6 +26713,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingScrapLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26691,6 +26727,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingScrapSequenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26704,6 +26741,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingSubcontractingDropshippingPickingTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26720,6 +26758,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingSubcontractingDropshippingRulesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26732,6 +26771,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingSubcontractingDropshippingSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26745,6 +26785,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingSubcontractingLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26757,6 +26798,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingTransitLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26768,6 +26810,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingUnbuildSequencesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -26781,6 +26824,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingWarehouseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -27833,6 +27877,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CronGenerateEntriesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -27843,6 +27888,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CronPostStockValuationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -27858,6 +27904,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CronProcessTimeBasedActionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -27904,6 +27951,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CronSendPendingEmailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -27928,6 +27976,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CronUpdateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object ids, object commit) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -27966,6 +28015,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DateCategoryToDomainAsync<TEntity>(IEnumerable<TEntity> entities, object field_name, object date_category) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28178,6 +28228,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28419,6 +28470,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultPartnersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28453,6 +28505,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultProjectTimeModeIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28506,6 +28559,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultStartInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28517,6 +28571,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultStopInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28540,6 +28595,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultTimesheetEncodeUomIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28550,6 +28606,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultUpdatePathInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28644,6 +28701,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DemoConfigureVariantsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28664,6 +28722,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DetectIsBounceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object message_dict) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28703,6 +28762,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DetectLoopHeadersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object msg_dict) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28719,6 +28779,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DetectLoopSenderDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email_from_normalized) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28744,6 +28805,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DetectLoopSenderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object message_dict, object routes) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28838,6 +28900,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DetectWriteToCatchallInternalAsync<TEntity>(IEnumerable<TEntity> entities, object msg_dict) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28892,6 +28955,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DispatchGlobalDiscountLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -28965,6 +29029,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DispatchReturnOfMerchandiseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29070,6 +29135,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DispatchTaxesIntoNewBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object exclude_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29234,6 +29300,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DistributeDeltaAmountSmoothlyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object precision_digits, object delta_amount, object target_factors) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29443,6 +29510,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EncodeLinkInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_link, object @params) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29590,6 +29658,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EnsureUniqueAliasInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object company) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29704,6 +29773,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EvalTaxesComputationPrepareProductDefaultValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_names) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29760,6 +29830,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EvalTaxesComputationPrepareProductUomDefaultValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_names) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29816,6 +29887,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EvalTaxesComputationPrepareProductUomValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object default_product_uom_values, object product_uom) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29842,6 +29914,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EvalTaxesComputationPrepareProductValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object default_product_values, object product) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -29962,6 +30035,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ExcludeTaxGroupsFromTaxTotalsSummaryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_totals, object ids_to_exclude) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -30224,6 +30298,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ExportBaseLineExtraTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -30802,6 +30877,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FillMissingValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals, object protected_codes) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31274,6 +31350,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FixBaseLinesTaxDetailsOnManualTaxAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object filter_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31323,6 +31400,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FixTaxIncludedPriceCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object price, object prod_taxes, object line_taxes, Guid company_id) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31337,6 +31415,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FixTaxIncludedPriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object price, object prod_taxes, object line_taxes) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31447,6 +31526,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FormatLockDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lock_dates) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31525,6 +31605,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GenerateCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31670,6 +31751,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GenerateInviteTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31680,6 +31762,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GenerateLotNamesAsync<TEntity>(IEnumerable<TEntity> entities, object first_lot, object count) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31852,6 +31935,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GenerateRandomTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -31899,6 +31983,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GenerateTrackingMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object return_line) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32050,6 +32135,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAccountIdAsync<TEntity>(IEnumerable<TEntity> entities, object service_name) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32223,6 +32309,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActionClickGraphAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32283,6 +32370,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActionPickingTreeIncomingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32293,6 +32381,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActionPickingTreeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32303,6 +32392,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActionPickingTreeOutgoingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32353,6 +32443,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActivityDeadlineFromStartInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object allday) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32371,6 +32462,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActivityExcludedModelsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32397,6 +32489,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAllowedAccessParamsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32410,6 +32503,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAllowedChannelMemberCreateParamsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32518,6 +32612,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetArchiveValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32545,6 +32640,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAsync<TEntity>(IEnumerable<TEntity> entities, object service_name, object force_create) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32919,6 +33015,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAvailableQrMethodsInSequenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -32934,6 +33031,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAvailableQrMethodsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -33073,6 +33171,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetBaseLineFieldValueFromRecordInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field, object extra_values, object fallback, object from_base_line) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -33232,6 +33331,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCalendarInternalAsync<TEntity>(IEnumerable<TEntity> entities, object automation, object record) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -33253,6 +33353,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCanPublishErrorMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -33403,6 +33504,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetChannelsAsMemberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -33448,6 +33550,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetChildrenDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -33859,6 +33962,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetConfigAccountUrlAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -33963,6 +34067,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetContactDetailsDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object organizer, object partners) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34168,6 +34273,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCreditsAsync<TEntity>(IEnumerable<TEntity> entities, object service_name) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34196,6 +34302,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCreditsUrlAsync<TEntity>(IEnumerable<TEntity> entities, object service_name, object account_token) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34300,6 +34407,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCustomFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34380,6 +34488,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDateFormatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34433,6 +34542,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDayStartAndDayInternalAsync<TEntity>(IEnumerable<TEntity> entities, object employee, object dt) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34468,6 +34578,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultAccessTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34552,6 +34663,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultDateFinishedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34566,6 +34678,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultDateStartInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34580,6 +34693,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultDurationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34605,6 +34719,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultIsLockedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34615,6 +34730,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultMailServerIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34653,6 +34769,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultOpeningMoveValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34710,6 +34827,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultPickingTypeIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34800,6 +34918,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultStageIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34917,6 +35036,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultWelcomeMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -34946,6 +35066,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDeltaAmountToReachTargetInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_amount, object target_currency, object raw_current_amount, object raw_current_amount_precision_digits) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -35077,6 +35198,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDiscussVideocallLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -35088,6 +35210,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDisplayTimeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object stop, object zduration, object zallday) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -35318,6 +35441,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetEmptyListHelpAsync<TEntity>(IEnumerable<TEntity> entities, object help_message) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -35438,6 +35562,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetEvalContextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object action) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -35474,6 +35599,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetEventBoothFieldsWhitelistInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -35584,6 +35710,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetExtraBalanceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -35649,6 +35776,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetFieldsToExportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -35806,6 +35934,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetFiscalDatesAsync<TEntity>(IEnumerable<TEntity> entities, object payload) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -36135,6 +36264,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -36215,6 +36345,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInvoiceLinesValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_values, object pos_line, object move_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -36631,6 +36762,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLengthUomIdFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -36650,6 +36782,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLengthUomNameFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37025,6 +37158,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMainCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37065,6 +37199,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMaritalStatusSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37094,6 +37229,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMentionSuggestionsAsync<TEntity>(IEnumerable<TEntity> entities, object search, object limit) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37249,6 +37385,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetModelDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model_name) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37290,6 +37427,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMostFrequentAccountForPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid partner_id, object move_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37301,6 +37439,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMostFrequentAccountsForPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid partner_id, object move_type, object filter_never_user_accounts, object limit) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37490,6 +37629,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNameBackorderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object name, object sequence) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37618,6 +37758,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNextJournalDefaultCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object journal_type, object company, object cache, object protected_codes) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37738,6 +37879,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNextSerialInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object product) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -37876,6 +38018,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNoteUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -38014,6 +38157,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetOrCreateChatInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partners_to, object pin) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -38153,6 +38297,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetOrdersToRemindInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -38203,6 +38348,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetOutgoingDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -38369,6 +38515,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPagesOrQuestionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object user_input) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -38501,6 +38648,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPartnerPricelistMultiInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> partner_ids) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -39329,6 +39477,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPublicFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -39496,6 +39645,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRandomBarcodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -39617,6 +39767,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRecurrenceParamsByDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object event_date) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -39653,6 +39804,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRecurrentFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -39685,6 +39837,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRefundedOrdersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -39851,6 +40004,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRemoveSyncIdValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -39862,6 +40016,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRenderFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -40733,6 +40888,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetStateSelectionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -40853,6 +41009,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSupportedAccountTypesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -40863,6 +41020,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSupportedAccountTypesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -41180,6 +41338,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetTaxTotalsSummaryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object currency, object company, object cash_rounding) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -41503,6 +41662,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetThreadWithAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid thread_id) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -41543,6 +41703,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetTimeFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42050,6 +42211,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetUpdateFutureEventsValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42333,6 +42495,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42377,6 +42540,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewsAsync<TEntity>(IEnumerable<TEntity> entities, object views, object options) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42441,6 +42605,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetVolumeUomIdFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42460,6 +42625,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetVolumeUomNameFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42584,6 +42750,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWeightUomIdFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42603,6 +42770,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWeightUomNameFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42613,6 +42781,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWhitelistFieldsFromTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42764,6 +42933,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> HasDemoDataAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42917,6 +43087,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> HashIapTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object key) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -42996,6 +43167,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ImportBaseLineExtraTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object extra_tax_data) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -43111,6 +43283,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InitDataResourceCalendarInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -43884,6 +44057,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IsNotificationScheduledInternalAsync<TEntity>(IEnumerable<TEntity> entities, object notify_scheduled_date) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -44159,6 +44333,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LangGetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -44618,6 +44793,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -44631,6 +44807,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -44644,6 +44821,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataModelsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -44658,6 +44836,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataRelationsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object fields) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -44698,6 +44877,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPrecommitUpdateOpeningMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -45012,6 +45192,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MailFindPartnerFromEmailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object emails, object records, object force_create, object extra_domain) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -45141,6 +45322,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MailTemplateDefaultValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -45311,6 +45493,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MergeTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_details_1, object tax_details_2) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -46138,6 +46321,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MessageNewAsync<TEntity>(IEnumerable<TEntity> entities, object msg_dict, object custom_values) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -46349,6 +46533,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MessageParseAsync<TEntity>(IEnumerable<TEntity> entities, object message, object save_original) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -47196,6 +47381,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MessageProcessAsync<TEntity>(IEnumerable<TEntity> entities, object model, object message, object custom_values, object save_original, object strip_attachments, Guid thread_id) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -47328,6 +47514,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MessageRouteAsync<TEntity>(IEnumerable<TEntity> entities, object message, object message_dict, object model, Guid thread_id, object custom_values) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -47546,6 +47733,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MessageRouteProcessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object message_dict, object routes) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -48191,6 +48379,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NameCreateAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -48238,6 +48427,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NameSearchAsync<TEntity>(IEnumerable<TEntity> entities, object name, object domain, object @operator, object limit) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -48333,6 +48523,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NormalizeTargetFactorsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_factors) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -48818,6 +49009,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NotifyCancelByTypeAsync<TEntity>(IEnumerable<TEntity> entities, object notification_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -51635,6 +51827,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> OrderAccountsByFrequencyForPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid partner_id, object move_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -51718,6 +51911,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PartitionBaseLinesTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object partition_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -52655,6 +52849,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareBaseLineForTaxesComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -52762,6 +52957,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareBaseLineGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -52786,6 +52982,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareBaseLineTaxRepartitionGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object base_line_grouping_key, object tax_data, object tax_rep_data) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -52824,6 +53021,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareBaseLinesForDownPaymentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object exclude_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -52882,6 +53080,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareCreditAccountValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object code, object vals) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -52898,6 +53097,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareDiscountableBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object exclude_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -52969,6 +53169,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareDownPaymentLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -53124,6 +53325,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareGlobalDiscountLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -53675,6 +53877,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareLiquidityAccountValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object code, object vals) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -53811,6 +54014,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object picking_type, object sequence_code, Guid company_id) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -53822,6 +54026,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PreparePartnerContactDetailsHtmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object section_title, object partner) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -54217,6 +54422,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareTaxLineForTaxesComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -54268,6 +54474,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareTaxLineRepartitionGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_line) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -54296,6 +54503,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareTaxLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object tax_lines) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -55023,6 +55231,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProcessMassMailingQueueInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -55060,6 +55269,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProcessOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object existing_order) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -55736,6 +55946,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReadGroupCategoryIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object categories, object domain) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -55777,6 +55988,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<List<object>> ReadGroupInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object groupby, object aggregates, object having, object offset, object limit, object order) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -55856,6 +56068,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<List<object>> ReadGroupingSetsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object grouping_sets, object aggregates, object order) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -55895,6 +56108,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReadPosDataUuidAsync<TEntity>(IEnumerable<TEntity> entities, object uuid) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -55905,6 +56119,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReadPosOrdersAsync<TEntity>(IEnumerable<TEntity> entities, object domain) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -56051,6 +56266,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReduceBaseLinesToTargetAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function, object aggregate_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -56286,6 +56502,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReduceBaseLinesWithGroupingFunctionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object grouping_function, object aggregate_function, object computation_key) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -56480,6 +56697,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RegisterAttendeeAsync<TEntity>(IEnumerable<TEntity> entities, object barcode, Guid event_id) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -56763,6 +56981,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RemoveAccentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @string) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -56784,6 +57003,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RemoveFromUiAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> server_ids) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57110,6 +57330,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RetrieveAccTypeAsync<TEntity>(IEnumerable<TEntity> entities, object acc_number) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57129,6 +57350,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RetrieveDashboardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57267,6 +57489,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReverseQuantityBaseLineExtraTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object extra_tax_data) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57381,6 +57604,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundBaseLinesTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object tax_lines) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57499,6 +57723,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundLastLineDoneInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lines_done) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57509,6 +57734,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundRawTaxAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines_aggregated_values, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57613,6 +57839,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundRawTotalExcludedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57691,6 +57918,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundTaxDetailsBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object mode) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57801,6 +58029,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundTaxDetailsTaxAmountsFromTaxLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object tax_lines) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57886,6 +58115,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundTaxDetailsTaxAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object mode) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -57990,6 +58220,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoutingCheckRouteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object message_dict, object route, object raise_exception) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -58125,6 +58356,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoutingHandleBounceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email_message, object message_dict) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -58221,6 +58453,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoutingResetBounceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email_message, object message_dict) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -58684,6 +58917,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SanitizePeppolEndpointInValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -58951,6 +59185,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SchedulerManageContractExpirationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -59167,6 +59402,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchComponentsAvailabilityStateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -59251,6 +59487,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchDelayAlertDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -59269,6 +59506,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -59387,6 +59625,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchEventBeginDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -59400,6 +59639,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchEventEndDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -59413,6 +59653,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchGetDetailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object website, object order, object options) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -59733,6 +59974,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -59846,6 +60088,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchIsBlacklistedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60080,6 +60323,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchMessageHasErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60093,6 +60337,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchMessageHasSmsErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60105,6 +60350,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchMessageIsFollowerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60122,6 +60368,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchMessageNeedactionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60132,6 +60379,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchMessagePartnerIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60167,6 +60415,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchNewAccountCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start_code, object cache) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60269,6 +60518,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPaidOrderIdsAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id, object domain, object limit, object offset) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60460,6 +60710,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPhoneSanitizedBlacklistedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60790,6 +61041,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchVehicleCountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -60861,6 +61113,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SelectionTargetModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -61006,6 +61259,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SendErrorNotificationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object title) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -61016,6 +61270,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SendNoCreditNotificationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object service_name, object title) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -61275,6 +61530,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SendStatusNotificationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object status, object title) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -61291,6 +61547,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SendSuccessNotificationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object title) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -61301,6 +61558,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SerializeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object header, object @value) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -61314,6 +61572,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<List<object>> ServiceTrackingBlacklistInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62003,6 +62262,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SetVideocallLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62052,6 +62312,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SettingInitBankAccountActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62073,6 +62334,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SettingInitCreditCardAccountActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62338,6 +62600,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SkipForNoVariantInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product, object bom_attribule_values, object never_attribute_values) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62414,6 +62677,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SplitBaseLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object company, object target_factors, object populate_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62708,6 +62972,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SplitTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data, object company, object target_factors) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62770,6 +63035,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SplitTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object company, object target_factors) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62850,6 +63116,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SquashGlobalDiscountLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -62878,6 +63145,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SquashReturnOfMerchandiseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -63081,6 +63349,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SyncFromUiAsync<TEntity>(IEnumerable<TEntity> entities, object orders) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -63912,6 +64181,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> TurnBaseLinesIsRefundFlagOffInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -63929,6 +64199,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> TurnRemovedTaxesIntoNewBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object grouping_function, object aggregate_function) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -64575,6 +64846,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> UpdateAccrualInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -65792,6 +66064,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ViewHeaderGetAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -65829,6 +66102,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WarningDependsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -65916,6 +66190,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WebPushTruncatePayloadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object payload) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*
@@ -66002,6 +66277,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WithLockedRecordsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object allow_raising) where TEntity : IEntity<Guid>, IMailThreadable
         {
             /*

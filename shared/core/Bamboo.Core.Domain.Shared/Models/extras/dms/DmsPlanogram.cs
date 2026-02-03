@@ -28,19 +28,19 @@ public partial class DmsPlanogram : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? ProductCategoryId { get; set; }
 
     [Column("res_partner_type")]
-    public string ResPartnerType { get; set; } = "outlet";
+    public string? ResPartnerType { get; set; } = "outlet";
 
     [Column("planogram_image_url")]
-    public string PlanogramImageUrl { get; set; } = null!;
+    public string? PlanogramImageUrl { get; set; }
 
     [Column("version")]
-    public string Version { get; set; } = null!;
+    public string? Version { get; set; } = null!;
 
     [Column("compliance_score")]
     public decimal ComplianceScore { get; set; }
 
     [Column("last_checked_date")]
-    public DateTime? LastCheckedDate { get; set; }
+    public DateTimeOffset? LastCheckedDate { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }
@@ -53,4 +53,13 @@ public partial class DmsPlanogram : FullAuditedAggregateRoot<Guid>, IEntityDto<G
 
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("TenantId")]
+    public virtual ResCompany? Company { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("OrganizationUnitId")]
+    public virtual ResOrganization? Organization { get; set; }
+
 }

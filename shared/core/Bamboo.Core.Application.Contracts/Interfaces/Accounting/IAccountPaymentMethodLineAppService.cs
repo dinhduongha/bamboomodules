@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IAccountPaymentMethodLineAppService : IGenericApplicationService<AccountPaymentMethodLine>
     {
-        Task<AccountPaymentMethodLine> OpenProviderFormAsync(Guid id);
+        Task<AccountPaymentMethodLine> OpenProviderFormAsync(Guid[] ids);
     }
 }

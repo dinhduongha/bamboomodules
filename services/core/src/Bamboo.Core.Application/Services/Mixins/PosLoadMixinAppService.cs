@@ -283,10 +283,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionAddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_add_from_catalog(self):
-            // order = self.env['sale.order'].browse(self.env.context.get('order_id'))
-            // return order.with_context(child_field='order_line').action_add_from_catalog()
+            // res = super().action_add_from_catalog()
+            // res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
+            // return res
             */
             return default;
         }
@@ -384,12 +385,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_move.py) ---
             // def action_cancel(self):
-            // """ Cancel sales order and related draft invoices. """
-            // if any(order.locked for order in self):
-            //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
-            // return self._action_cancel()
+            // res = super(AccountMove, self).action_cancel()
+            // assets = self.env['account.asset.asset'].sudo().search(
+            //     [('invoice_id', 'in', self.ids)])
+            // if assets:
+            //     assets.sudo().write({'active': False})
+            //     for asset in assets:
+            //         asset.sudo().message_post(body=_("Vendor bill cancelled."))
+            // return res
             */
             return default;
         }
@@ -490,6 +495,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionCheckHashIntegrityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -1235,11 +1241,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionEventViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
             // def action_event_view(self):
+            // self.ensure_one()
             // action = self.env["ir.actions.actions"]._for_xml_id("event.action_event_view")
-            // action['context'] = {}
-            // action['domain'] = [('registration_ids.partner_id', 'child_of', self.ids)]
+            // action['domain'] = [('question_ids', 'in', self.ids)]
             // return action
             */
             return default;
@@ -1305,6 +1311,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionGetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -1648,15 +1655,30 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionOpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def action_open_business_doc(self):
             // self.ensure_one()
+            // if self.origin_payment_id:
+            //     name = _("Payment")
+            //     res_model = 'account.payment'
+            //     res_id = self.origin_payment_id.id
+            // elif self.statement_line_id:
+            //     name = _("Bank Transaction")
+            //     res_model = 'account.bank.statement.line'
+            //     res_id = self.statement_line_id.id
+            // else:
+            //     name = _("Journal Entry")
+            //     res_model = 'account.move'
+            //     res_id = self.id
+            // 
             // return {
-            //     'name': _("Order"),
+            //     'name': name,
             //     'type': 'ir.actions.act_window',
-            //     'res_model': 'sale.order',
-            //     'res_id': self.id,
+            //     'view_mode': 'form',
             //     'views': [(False, 'form')],
+            //     'res_model': res_model,
+            //     'res_id': res_id,
+            //     'target': 'current',
             // }
             */
             return default;
@@ -2135,9 +2157,18 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionOpenRelatedTaxesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def action_open_related_taxes(self):
-            // return self.tax_ids._get_records_action(name=_("%s taxes", self.display_name))
+            // related_taxes_ids = self.env['account.tax'].search([
+            //     ('repartition_line_ids.account_id', '=', self.id),
+            // ]).ids
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Taxes'),
+            //     'res_model': 'account.tax',
+            //     'views': [[False, 'list'], [False, 'form']],
+            //     'domain': [('id', 'in', related_taxes_ids)],
+            // }
             */
             return default;
         }
@@ -2260,6 +2291,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionOpenWebsiteThemeSelectorAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -2777,6 +2809,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionRedirectToBarcodeInstallationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -3225,6 +3258,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionSetupOutgoingMailServerAsync<TEntity>(IEnumerable<TEntity> entities, object server_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -3556,6 +3590,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionTestOutgoingMailServerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -3764,14 +3799,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionUnarchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
             // def action_unarchive(self):
-            // records = self.filtered(lambda rec: not rec.active)
-            // super().action_unarchive()
-            // # We activate product templates which are inactive with active variants.
-            // records.product_tmpl_id.filtered(
-            //     lambda product_tmpl: not product_tmpl.active and product_tmpl.product_variant_ids
-            // ).action_unarchive()
+            // activated = self.filtered(lambda rec: not rec.active)
+            // res = super(ResLang, activated).action_unarchive()
+            // # Automatically load translation
+            // if activated:
+            //     active_lang = activated.mapped('code')
+            //     mods = self.env['ir.module.module'].search([('state', '=', 'installed')])
+            //     mods._update_translations(active_lang)
+            // return res
             */
             return default;
         }
@@ -5050,42 +5087,31 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionViewTimesheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: account_move.py) ---
             // def action_view_timesheet(self):
             // self.ensure_one()
-            // if not self.order_line:
-            //     return {'type': 'ir.actions.act_window_close'}
-            // 
-            // action = self.env["ir.actions.actions"]._for_xml_id("sale_timesheet.timesheet_action_from_sales_order")
-            // default_sale_line = next((sale_line for sale_line in self.order_line if sale_line.is_service and sale_line.product_id.service_policy in ['ordered_prepaid', 'delivered_timesheet']), self.env['sale.order.line'])
-            // context = {
-            //     'search_default_billable_timesheet': True,
-            //     'default_is_so_line_edited': True,
-            //     'default_so_line': default_sale_line.id,
-            // }  # erase default filters
-            // 
-            // tasks = self.order_line.task_id._filtered_access('write')
-            // if tasks:
-            //     context['default_task_id'] = tasks[0].id
-            // else:
-            //     projects = self.order_line.project_id._filtered_access('write')
-            //     if projects:
-            //         context['default_project_id'] = projects[0].id
-            //     elif self.project_ids:
-            //         context['default_project_id'] = self.project_ids[0].id
-            // action.update({
-            //     'context': context,
-            //     'domain': [('so_line', 'in', self.order_line.ids), ('project_id', '!=', False)],
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Timesheets'),
+            //     'domain': [('project_id', '!=', False)],
+            //     'res_model': 'account.analytic.line',
+            //     'view_id': False,
+            //     'view_mode': 'list,form',
             //     'help': _("""
             //         <p class="o_view_nocontent_smiling_face">
-            //             No activities found. Let's start a new one!
+            //             Record timesheets
             //         </p><p>
-            //             Track your working hours by projects every day and invoice this time to your customers.
+            //             You can register and track your workings hours by project every
+            //             day. Every time spent on a project will become a cost and can be re-invoiced to
+            //             customers if required.
             //         </p>
-            //     """)
-            // })
-            // 
-            // return action
+            //     """),
+            //     'limit': 80,
+            //     'context': {
+            //         'default_project_id': self.id,
+            //         'search_default_project_id': [self.id]
+            //     }
+            // }
             */
             return default;
         }
@@ -5144,6 +5170,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActivateGroupMultiCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -5241,6 +5268,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AdaptPriceUnitToAnotherTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object price_unit, object product, object original_taxes, object new_taxes, object product_uom) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -5296,6 +5324,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddAccountingDataInBaseLinesTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object include_caba_tags) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -5315,6 +5344,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddAccountingDataToBaseLineTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object company, object include_caba_tags) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -5457,6 +5487,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddAndRoundRawGrossTotalExcludedAndDiscountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency, object account_discount_base_lines) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -5645,6 +5676,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddCertificationActivityToEmployeesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -5907,6 +5939,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddTaxDetailsInBaseLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object company, object rounding_method) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -5987,6 +6020,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddTaxDetailsInBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6047,6 +6081,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AddressFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6137,6 +6172,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AggregateBaseLineTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object grouping_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6269,6 +6305,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AggregateBaseLinesAggregatedValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines_aggregated_values) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6322,6 +6359,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AggregateBaseLinesTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object grouping_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6345,6 +6383,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AlertOldSessionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6415,6 +6454,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AllowPublishRatingStatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6489,6 +6529,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ApplyBaseLinesManualAmountsToReachInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object target_base_amount_currency, object target_base_amount, object target_tax_amounts_mapping) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6599,6 +6640,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ApplyDeltaRecurringEntriesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date, object date_origin, object period) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -6798,6 +6840,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ApplyTaxesToPriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object price, object currency, object product_taxes, object taxes, object product_or_template, object website) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -7009,6 +7052,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AuthOauthAsync<TEntity>(IEnumerable<TEntity> entities, object provider, object @params) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -7054,6 +7098,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AuthOauthSigninInternalAsync<TEntity>(IEnumerable<TEntity> entities, object provider, object validation, object @params) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -7091,6 +7136,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AuthOauthValidateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object provider, object access_token) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -7241,25 +7287,43 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> AutoInitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_service, FILE: sale_order_line.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: product_template.py) ---
             // def _auto_init(self):
-            // """
-            // Create column to stop ORM from computing it himself (too slow)
-            // """
-            // if not column_exists(self.env.cr, 'sale_order_line', 'is_service'):
-            //     create_column(self.env.cr, 'sale_order_line', 'is_service', 'bool')
-            //     self.env.cr.execute("""
-            //         UPDATE sale_order_line line
-            //         SET is_service = (pt.type = 'service')
-            //         FROM product_product pp
-            //         LEFT JOIN product_template pt ON pt.id = pp.product_tmpl_id
-            //         WHERE pp.id = line.product_id
-            //     """)
+            // if not column_exists(self.env.cr, "product_template", "can_be_expensed"):
+            //     create_column(self.env.cr, "product_template", "can_be_expensed", "boolean")
+            //     self.env.cr.execute(
+            //         """
+            //         UPDATE product_template
+            //         SET can_be_expensed = false
+            //         WHERE type NOT IN ('consu', 'service')
+            //         """
+            //     )
+            // return super()._auto_init()
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_template.py) ---
+            // def _auto_init(self):
+            // """Override _auto_init to prevent MemoryError on ecommerce installation in dbs with lots of products"""
+            // if not column_exists(self.env.cr, 'product_template', 'variants_default_code'):
+            //     create_column(self.env.cr, 'product_template', 'variants_default_code', 'varchar')
+            //     self.env.cr.execute(SQL(
+            //         """
+            //             UPDATE product_template
+            //             SET variants_default_code = variants.default_codes
+            //             FROM (
+            //                 SELECT pt.id AS template_id,
+            //                        STRING_AGG(pv.default_code, %s) AS default_codes
+            //                 FROM product_template pt
+            //                 JOIN product_product pv ON pv.product_tmpl_id = pt.id
+            //                 WHERE pv.default_code IS NOT NULL
+            //                 GROUP BY pt.id
+            //             ) AS variants
+            //             WHERE product_template.id = variants.template_id
+            //         """, RARE_DELIMITER))
             // return super()._auto_init()
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AutocompleteByNameAsync<TEntity>(IEnumerable<TEntity> entities, object query, Guid query_country_id, object timeout) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -7283,6 +7347,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> AutocompleteByVatAsync<TEntity>(IEnumerable<TEntity> entities, object vat, Guid query_country_id, object timeout) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -7417,11 +7482,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> BaseDomainItemIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist.py) ---
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
             // def _base_domain_item_ids(self):
             // return [
-            //     '|', ('product_tmpl_id', '=', None), ('product_tmpl_id.active', '=', True),
-            //     '|', ('product_id', '=', None), ('product_id.active', '=', True),
+            //     '|',
+            //     ('pricelist_id', '=', False),
+            //     ('pricelist_id.active', '=', True),
             // ]
             */
             return default;
@@ -7681,6 +7747,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> BuildVatErrorMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object country_code, object wrong_vat, object record_label) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -8380,6 +8447,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ButtonResetStateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -8574,6 +8642,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CallAppsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object payload) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -9329,6 +9398,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ChangePasswordAsync<TEntity>(IEnumerable<TEntity> entities, object old_passwd, object new_passwd) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -9664,6 +9734,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckAndNormalizeFormulaInternalAsync<TEntity>(IEnumerable<TEntity> entities, object formula) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -9771,13 +9842,15 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckBarcodeUniquenessInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_uom.py) ---
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _check_barcode_uniqueness(self):
             // """ With GS1 nomenclature, products and packagings use the same pattern. Therefore, we need
             // to ensure the uniqueness between products' barcodes and packagings' ones"""
-            // domain = [('barcode', 'in', [b for b in self.mapped('barcode') if b])]
-            // if self.env['product.product'].search_count(domain, limit=1):
-            //     raise ValidationError(_("A product already uses the barcode"))
+            // # Barcodes should only be unique within a company
+            // self_ctx = self.with_context(skip_preprocess_gs1=True)
+            // for company_id, barcodes_within_company in self_ctx._get_barcodes_by_company():
+            //     self_ctx._check_duplicated_product_barcodes(barcodes_within_company, company_id)
+            //     self_ctx._check_duplicated_packaging_barcodes(barcodes_within_company, company_id)
             */
             return default;
         }
@@ -9822,6 +9895,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckCalendarCredentialsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -10777,18 +10851,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckFieldAccessRightsAsync<TEntity>(IEnumerable<TEntity> entities, object operation, object field_names) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def check_field_access_rights(self, operation, field_names):
-            // # DISCLAIMER: Dirty hack to avoid having to create a bridge module to override only a
-            // # groups on a field which is not prefetched (because not stored) but would crash anyway
-            // # if we try to read them directly (very uncommon use case). Don't add your field on this
-            // # list if you can specify the group on the field directly (as all the other fields).
             // result = super().check_field_access_rights(operation, field_names)
-            // if not self.env.user.has_group("hr.group_hr_user"):
-            //     result = [field for field in result if field not in ['activity_calendar_event_id', 'rating_ids', 'website_message_ids', 'message_has_sms_error']]
+            // if not field_names:
+            //     weirdos = ['needed_terms', 'quick_encoding_vals', 'payment_term_details']
+            //     result = [fname for fname in result if fname not in weirdos]
             // return result
             */
             return default;
@@ -11048,6 +11120,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckImportConsistencyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -11334,6 +11407,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckModuleUpdateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -11584,6 +11658,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckPeppolParticipantExistsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object participant_info, object edi_identification) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -11622,6 +11697,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckPhonenumbersImportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -11652,15 +11728,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckPrepaymentPercentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _check_prepayment_percent(self):
-            // for company in self:
-            //     if company.portal_confirmation_pay and not (0 < company.prepayment_percent <= 1.0):
+            // for order in self:
+            //     if order.require_payment and not (0 < order.prepayment_percent <= 1.0):
             //         raise ValidationError(_("Prepayment percentage must be a valid percentage."))
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckPresenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -12325,6 +12402,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckUidPasswdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object uid, object passwd) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -12798,6 +12876,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CheckVatNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities, object country_code, object vat_number) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -13326,6 +13405,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CleanupWriteOrmValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object vals) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -13340,6 +13420,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ClearRemovedEdiFormatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -13521,6 +13602,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CommercialFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -13578,6 +13660,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CompanyDependentCommercialFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -13660,6 +13743,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CompleteInverseExclusionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object exclusions) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -13682,6 +13766,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CompleteValuesFromSessionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object session, object values) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -13829,11 +13914,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeAccessUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_access_url(self):
             // super()._compute_access_url()
-            // for order in self:
-            //     order.access_url = f'/my/orders/{order.id}'
+            // for move in self.filtered(lambda move: move.is_invoice()):
+            //     move.access_url = '/my/invoices/%s' % (move.id)
             */
             return default;
         }
@@ -14750,11 +14835,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeAuthorizedTransactionIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_move.py) ---
             // def _compute_authorized_transaction_ids(self):
-            // for trans in self:
-            //     trans.authorized_transaction_ids = trans.transaction_ids.filtered(lambda t: t.state == 'authorized')
-            //     trans.has_authorized_transaction_ids = bool(trans.authorized_transaction_ids)
+            // for invoice in self:
+            //     invoice.authorized_transaction_ids = invoice.transaction_ids.filtered(
+            //         lambda tx: tx.state == 'authorized'
+            //     )
             */
             return default;
         }
@@ -15456,12 +15542,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _compute_code(self):
-            // # Reset code when mode is set to auto
-            // for rule in self:
-            //     if rule.mode == 'auto':
-            //         rule.code = False
+            // for record, record_root in zip(self, self.with_company(self.env.company.root_id).sudo()):
+            //     # Need to set record.code with `company = self.env.company`, not `self.env.company.root_id`
+            //     record.code = record_root.code_store
             */
             return default;
         }
@@ -15637,10 +15722,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeCompanyIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist_item.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_company_id(self):
-            // for item in self:
-            //     item.company_id = item.pricelist_id.company_id or item.product_tmpl_id.company_id
+            // for move in self:
+            //     if move.journal_id.company_id not in move.company_id.parent_ids:
+            //         move.company_id = (move.journal_id.company_id or self.env.company)._accessible_branches()[:1]
             */
             return default;
         }
@@ -15953,8 +16039,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
             // def _compute_country_id(self):
-            // for group in self:
-            //     group.country_id = group.company_id.account_fiscal_country_id or group.company_id.country_id
+            // for tax in self:
+            //     tax.country_id = tax.company_id.account_fiscal_country_id or tax.company_id.country_id or tax.country_id
             */
             return default;
         }
@@ -16058,14 +16144,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeCurrencyIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist_item.py) ---
+            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def _compute_currency_id(self):
-            // for item in self:
-            //     item.currency_id = (
-            //         item.pricelist_id.currency_id
-            //         or item.company_id.currency_id
-            //         or item.env.company.currency_id
-            //     )
+            // for program in self:
+            //     program.currency_id = program.company_id.currency_id or program.currency_id
             */
             return default;
         }
@@ -16287,10 +16369,22 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_date(self):
-            // for currency in self:
-            //     currency.date = currency.rate_ids[:1].name
+            // for move in self:
+            //     accounting_date = move._get_accounting_date_source()
+            //     if not accounting_date or not move.is_invoice(include_receipts=True):
+            //         if not move.date:
+            //             move.date = fields.Date.context_today(self)
+            //         continue
+            //     if not move.is_sale_document(include_receipts=True):
+            //         accounting_date = move._get_accounting_date(accounting_date, move._affect_tax_report())
+            //     if accounting_date and accounting_date != move.date:
+            //         move.date = accounting_date
+            //         # _affect_tax_report may trigger premature recompute of line_ids.date
+            //         self.env.add_to_compute(move.line_ids._fields['date'], move.line_ids)
+            //         # might be protected because `_get_accounting_date` requires the `name`
+            //         self.env.add_to_compute(self._fields['name'], move)
             */
             return default;
         }
@@ -17308,11 +17402,15 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeEventCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question.py) ---
             // def _compute_event_count(self):
-            // self.event_count = 0
-            // for partner in self:
-            //     partner.event_count = self.env['event.event'].search_count([('registration_ids.partner_id', 'child_of', partner.ids)])
+            // event_count_per_question = dict(self.env['event.event']._read_group(
+            //     domain=[('question_ids', 'in', self.ids)],
+            //     groupby=['question_ids'],
+            //     aggregates=['__count']
+            // ))
+            // for question in self:
+            //     question.event_count = event_count_per_question.get(question, 0)
             */
             return default;
         }
@@ -17846,10 +17944,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeFiscalCountryCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: uom_uom.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: product.py) ---
             // def _compute_fiscal_country_codes(self):
             // for record in self:
-            //     record.fiscal_country_codes = ",".join(self.env.companies.mapped("account_fiscal_country_id.code"))
+            //     allowed_companies = record.company_id or self.env.companies
+            //     record.fiscal_country_codes = ",".join(allowed_companies.mapped('account_fiscal_country_id.code'))
             */
             return default;
         }
@@ -19560,14 +19659,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeJournalIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_journal_id(self):
-            // self.journal_id = False
-            --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order.py) ---
-            // def _compute_journal_id(self):
-            // super()._compute_journal_id()
-            // for order in self.filtered('sale_order_template_id'):
-            //     order.journal_id = order.sale_order_template_id.journal_id
+            // for move in self.filtered(lambda r: r.journal_id.type not in r._get_valid_journal_types()):
+            //     move.journal_id = move._search_default_journal()
             */
             return default;
         }
@@ -21088,17 +21183,21 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputePartnerCreditWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_partner_credit_warning(self):
-            // for order in self:
-            //     order.with_company(order.company_id)
-            //     order.partner_credit_warning = ''
-            //     show_warning = order.state in ('draft', 'sent') and \
-            //                    order.company_id.account_use_credit_limit
+            // for move in self:
+            //     move.with_company(move.company_id)
+            //     move.partner_credit_warning = ''
+            //     show_warning = move.state == 'draft' and \
+            //                    move.move_type == 'out_invoice' and \
+            //                    move.company_id.account_use_credit_limit
             //     if show_warning:
-            //         order.partner_credit_warning = self.env['account.move']._build_credit_warning_message(
-            //             order.sudo(),  # ensure access to `credit` & `credit_limit` fields
-            //             current_amount=(order.amount_total / order.currency_rate),
+            //         total_field = 'total_amount_currency' if move.currency_id == move.company_currency_id else 'total_amount'
+            //         current_amount = move.tax_totals[total_field]
+            //         move.partner_credit_warning = self._build_credit_warning_message(
+            //             move,
+            //             current_amount=current_amount,
+            //             exclude_amount=move._get_partner_credit_warning_exclude_amount(),
             //         )
             */
             return default;
@@ -21172,24 +21271,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputePartnerShippingIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_partner_shipping_id(self):
-            // """ Override to reset the delivery address when a pickup location was selected. """
-            // super()._compute_partner_shipping_id()
-            // for order in self:
-            //     if order.partner_shipping_id.is_pickup_location:
-            //         order.partner_shipping_id = order.partner_id
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _compute_partner_shipping_id(self):
-            // for order in self:
-            //     order.partner_shipping_id = order.partner_id.address_get(['delivery'])['delivery'] if order.partner_id else False
-            --- ODOO METHOD SOURCE (MODULE: website_sale_mondialrelay, FILE: sale_order.py) ---
-            // def _compute_partner_shipping_id(self):
-            // super()._compute_partner_shipping_id()
-            // ecommerce_orders = self.filtered('website_id')
-            // for order in ecommerce_orders:
-            //     if order.partner_shipping_id.is_mondialrelay and not order.carrier_id.is_mondialrelay:
-            //         order.partner_shipping_id = order.partner_id
+            // for move in self:
+            //     if move.is_invoice(include_receipts=True):
+            //         addr = move.partner_id.address_get(['delivery'])
+            //         move.partner_shipping_id = addr and addr.get('delivery')
+            //     else:
+            //         move.partner_shipping_id = False
             */
             return default;
         }
@@ -21901,11 +21990,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputePreferredPaymentMethodLineIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_preferred_payment_method_line_id(self):
-            // for order in self:
-            //     order = order.with_company(order.company_id)
-            //     order.preferred_payment_method_line_id = order.partner_id.property_inbound_payment_method_line_id
+            // for move in self:
+            //     partner = move.partner_id.with_company(move.company_id)
+            //     if move.is_sale_document():
+            //         move.preferred_payment_method_line_id = partner.property_inbound_payment_method_line_id
+            //     else:
+            //         move.preferred_payment_method_line_id = partner.property_outbound_payment_method_line_id
             */
             return default;
         }
@@ -24435,19 +24527,22 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeSaleWarningTextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: account_move.py) ---
             // def _compute_sale_warning_text(self):
             // if not self.env.user.has_group('sale.group_warning_sale'):
             //     self.sale_warning_text = ''
             //     return
-            // for order in self:
+            // for move in self:
+            //     if move.move_type != 'out_invoice':
+            //         move.sale_warning_text = ''
+            //         continue
             //     warnings = OrderedSet()
-            //     if partner_msg := order.partner_id.sale_warn_msg:
-            //         warnings.add((order.partner_id.name or order.partner_id.display_name) + ' - ' + partner_msg)
-            //     for line in order.order_line:
-            //         if product_msg := line.sale_line_warn_msg:
-            //             warnings.add(line.product_id.display_name + ' - ' + product_msg)
-            //     order.sale_warning_text = '\n'.join(warnings)
+            //     if partner_msg := move.partner_id.sale_warn_msg:
+            //         warnings.add((move.partner_id.name or move.partner_id.display_name) + ' - ' + partner_msg)
+            //     for product in move.invoice_line_ids.product_id:
+            //         if product_msg := product.sale_line_warn_msg:
+            //             warnings.add(product.display_name + ' - ' + product_msg)
+            //     move.sale_warning_text = '\n'.join(warnings)
             */
             return default;
         }
@@ -25224,6 +25319,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ComputeSubsetBaseLinesTotalInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -25471,13 +25567,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeTaxCountryIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_tax_country_id(self):
-            // for record in self:
-            //     if record.fiscal_position_id.foreign_vat:
-            //         record.tax_country_id = record.fiscal_position_id.country_id
-            //     else:
-            //         record.tax_country_id = record.company_id.account_fiscal_country_id
+            // self.fetch(['fiscal_position_id', 'company_id'])
+            // foreign_vat_records = self.filtered(lambda r: r.fiscal_position_id.foreign_vat)
+            // for fiscal_position_id, record_group in groupby(foreign_vat_records, key=lambda r: r.fiscal_position_id):
+            //     self.env['account.move'].concat(*record_group).tax_country_id = fiscal_position_id.country_id
+            // for company_id, record_group in groupby((self-foreign_vat_records), key=lambda r: r.company_id):
+            //     self.env['account.move'].concat(*record_group).tax_country_id = company_id.account_fiscal_country_id
             */
             return default;
         }
@@ -25654,22 +25751,18 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeTeamIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: account_move.py) ---
             // def _compute_team_id(self):
-            // cached_teams = {}
-            // for order in self:
-            //     default_team_id = order._default_team_id()
-            //     user_id = order.user_id.id
-            //     company_id = order.company_id.id
-            //     key = (default_team_id, user_id, company_id)
-            //     if key not in cached_teams:
-            //         cached_teams[key] = self.env['crm.team'].with_context(
-            //             default_team_id=default_team_id,
-            //         )._get_default_team_id(
-            //             user_id=user_id,
-            //             domain=self.env['crm.team']._check_company_domain(company_id),
-            //         )
-            //     order.team_id = cached_teams[key]
+            // sale_moves = self.filtered(lambda move: move.is_sale_document(include_receipts=True))
+            // for ((user_id, company_id), moves) in groupby(
+            //     sale_moves,
+            //     key=lambda m: (m.invoice_user_id.id, m.company_id.id)
+            // ):
+            //     self.env['account.move'].concat(*moves).team_id = self.env['crm.team'].with_context(
+            //         allowed_company_ids=[company_id],
+            //     )._get_default_team_id(
+            //         user_id=user_id,
+            //     )
             */
             return default;
         }
@@ -25769,19 +25862,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeTimesheetCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: account_move.py) ---
             // def _compute_timesheet_count(self):
-            // timesheets_per_so = {
-            //     order.id: count
-            //     for order, count in self.env['account.analytic.line']._read_group(
-            //         [('order_id', 'in', self.ids), ('project_id', '!=', False)],
-            //         ['order_id'],
-            //         ['__count'],
-            //     )
-            // }
-            // 
-            // for order in self:
-            //     order.timesheet_count = timesheets_per_so.get(order.id, 0)
+            // timesheet_data = self.env['account.analytic.line']._read_group([('timesheet_invoice_id', 'in', self.ids)], ['timesheet_invoice_id'], ['__count'])
+            // mapped_data = {timesheet_invoice.id: count for timesheet_invoice, count in timesheet_data}
+            // for invoice in self:
+            //     invoice.timesheet_count = mapped_data.get(invoice.id, 0)
             */
             return default;
         }
@@ -25789,20 +25875,23 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeTimesheetTotalDurationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: account_move.py) ---
             // def _compute_timesheet_total_duration(self):
+            // if not self.env.user.has_group('hr_timesheet.group_hr_timesheet_user'):
+            //     self.timesheet_total_duration = 0
+            //     return
             // group_data = self.env['account.analytic.line']._read_group([
-            //     ('order_id', 'in', self.ids), ('project_id', '!=', False)
-            // ], ['order_id'], ['unit_amount:sum'])
+            //     ('timesheet_invoice_id', 'in', self.ids)
+            // ], ['timesheet_invoice_id'], ['unit_amount:sum'])
             // timesheet_unit_amount_dict = defaultdict(float)
-            // timesheet_unit_amount_dict.update({order.id: unit_amount for order, unit_amount in group_data})
-            // for sale_order in self:
-            //     total_time = sale_order.company_id.project_time_mode_id._compute_quantity(
-            //         timesheet_unit_amount_dict[sale_order.id],
-            //         sale_order.timesheet_encode_uom_id,
+            // timesheet_unit_amount_dict.update({timesheet_invoice.id: amount for timesheet_invoice, amount in group_data})
+            // for invoice in self:
+            //     total_time = invoice.company_id.project_time_mode_id._compute_quantity(
+            //         timesheet_unit_amount_dict[invoice.id],
+            //         invoice.timesheet_encode_uom_id,
             //         rounding_method='HALF-UP',
             //     )
-            //     sale_order.timesheet_total_duration = round(total_time)
+            //     invoice.timesheet_total_duration = round(total_time)
             */
             return default;
         }
@@ -26060,13 +26149,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeTypeNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _compute_type_name(self):
+            // type_name_mapping = dict(
+            //     self._fields['move_type']._description_selection(self.env),
+            //     out_invoice=_('Invoice'),
+            //     out_refund=_('Credit Note'),
+            // )
+            // 
             // for record in self:
-            //     if record.state in ('draft', 'sent', 'cancel'):
-            //         record.type_name = _("Quotation")
-            //     else:
-            //         record.type_name = _("Sales Order")
+            //     record.type_name = type_name_mapping[record.move_type]
             */
             return default;
         }
@@ -26346,7 +26438,7 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeUserHasDebugInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_rule.py) ---
+            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_reward.py) ---
             // def _compute_user_has_debug(self):
             // self.user_has_debug = self.env.user.has_group('base.group_no_one')
             */
@@ -26790,20 +26882,40 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeWarehouseIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order.py) ---
             // def _compute_warehouse_id(self):
-            // for picking_type in self:
-            //     if picking_type.warehouse_id:
-            //         continue
-            //     if picking_type.company_id:
-            //         warehouse = self.env['stock.warehouse'].search([('company_id', '=', picking_type.company_id.id)], limit=1)
-            //         picking_type.warehouse_id = warehouse
-            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: stock.py) ---
+            // for order in self:
+            //     default_warehouse_id = self.env['ir.default'].with_company(
+            //         order.company_id.id)._get_model_defaults('sale.order').get('warehouse_id')
+            //     if order.state in ['draft', 'sent'] or not order.ids:
+            //         # Should expect empty
+            //         if default_warehouse_id is not None:
+            //             order.warehouse_id = default_warehouse_id
+            //         else:
+            //             order.warehouse_id = order.user_id.with_company(order.company_id.id)._get_default_warehouse_id()
+            --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: sale_order.py) ---
             // def _compute_warehouse_id(self):
-            // super()._compute_warehouse_id()
-            // for picking_type in self:
-            //     if picking_type.code == 'dropship':
-            //         picking_type.warehouse_id = False
+            // """ Override of `website_sale_stock` to avoid recomputations for in_store orders
+            // when the warehouse was set by the pickup_location_data"""
+            // in_store_orders_with_pickup_data = self.filtered(
+            //     lambda so: (
+            //         so.carrier_id.delivery_type == 'in_store' and so.pickup_location_data
+            //     )
+            // )
+            // super(SaleOrder, self - in_store_orders_with_pickup_data)._compute_warehouse_id()
+            // for order in in_store_orders_with_pickup_data:
+            //     order.warehouse_id = order.pickup_location_data['id']
+            --- ODOO METHOD SOURCE (MODULE: website_sale_stock, FILE: sale_order.py) ---
+            // def _compute_warehouse_id(self):
+            // website_orders = self.filtered('website_id')
+            // super(SaleOrder, self - website_orders)._compute_warehouse_id()
+            // for order in website_orders:
+            //     if order.website_id.warehouse_id:
+            //         order.warehouse_id = order.website_id.warehouse_id
+            //     else:
+            //         super(SaleOrder, order)._compute_warehouse_id()
+            //     if not order.warehouse_id:
+            //         order.warehouse_id = self.env.user._get_default_warehouse_id()
             */
             return default;
         }
@@ -26811,10 +26923,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeWebsiteIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: account_move.py) ---
             // def _compute_website_id(self):
-            // for company in self:
-            //     company.website_id = self.env['website'].search([('company_id', '=', company.id)], limit=1)
+            // for move in self:
+            //     source_websites = move.line_ids.sale_line_ids.order_id.website_id
+            //     if len(source_websites) == 1:
+            //         move.website_id = source_websites
+            //     else:
+            //         move.website_id = False
             */
             return default;
         }
@@ -26949,12 +27065,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeWebsiteUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_template.py) ---
             // def _compute_website_url(self):
             // super()._compute_website_url()
-            // for event in self:
-            //     if event.id:  # avoid to perform a slug on a not yet saved record in case of an onchange.
-            //         event.website_url = '/event/%s' % self.env['ir.http']._slug(event)
+            // for product in self:
+            //     if product.id:
+            //         product.website_url = "/shop/%s" % self.env['ir.http']._slug(product)
             */
             return default;
         }
@@ -26972,10 +27088,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeWeightUomNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: delivery_stock_picking_batch, FILE: stock_picking.py) ---
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
             // def _compute_weight_uom_name(self):
-            // for picking_type in self:
-            //     picking_type.weight_uom_name = self.env['product.template']._get_weight_uom_name_from_ir_config_parameter()
+            // self.weight_uom_name = self._get_weight_uom_name_from_ir_config_parameter()
             */
             return default;
         }
@@ -27394,6 +27509,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ContextGetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -27455,6 +27571,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ConvertHuLocalToEuVatInternalAsync<TEntity>(IEnumerable<TEntity> entities, object local_vat) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -27517,6 +27634,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ConvertQtyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sale_line, object qty, object direction) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -27582,6 +27700,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ConvertZipValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object zip_from, object zip_to) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -27601,11 +27720,27 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def copy(self, default=None):
-            // res = super().copy(default=default)
-            // res.copy_event_menus(self)
-            // return res
+            // """Variants are generated depending on the configuration of attributes
+            // and values on the template, so copying them does not make sense.
+            // 
+            // For convenience the template is copied instead and its first variant is
+            // returned.
+            // """
+            // # copy variant is disabled in https://github.com/odoo/odoo/pull/38303
+            // # this returns the first possible combination of variant to make it
+            // # works for now, need to be fixed to return product_variant_id if it's
+            // # possible in the future
+            // 
+            // # Use tmp recordset in case we copy several variants from the same template
+            // templates = [product.product_tmpl_id for product in self]
+            // templates_to_copy = self.env['product.template'].concat(*templates)
+            // new_templates = templates_to_copy.copy(default=default)
+            // new_products = self.env['product.product']
+            // for new_template in new_templates:
+            //     new_products += new_template.product_variant_id or new_template._create_first_product_variant()
+            // return new_products
             */
             return default;
         }
@@ -27746,6 +27881,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CountReturnedSnProductsDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sn_lot, object or_domains) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -27777,6 +27913,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CountReturnedSnProductsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sn_lot) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -28091,6 +28228,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateCashPaymentMethodInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cash_journal_vals) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -28615,6 +28753,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateFromTemplateAsync<TEntity>(IEnumerable<TEntity> entities, Guid template_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -28679,6 +28818,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29255,6 +29395,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingDropshipPickingTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29270,6 +29411,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingDropshipRuleAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29285,6 +29427,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingDropshipSequenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29298,6 +29441,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingInventoryLossLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29312,6 +29456,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingProductionLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29326,6 +29471,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingScrapLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29339,6 +29485,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingScrapSequenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29352,6 +29499,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingSubcontractingDropshippingPickingTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29368,6 +29516,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingSubcontractingDropshippingRulesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29380,6 +29529,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingSubcontractingDropshippingSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29393,6 +29543,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingSubcontractingLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29405,6 +29556,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingTransitLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29416,6 +29568,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingUnbuildSequencesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29429,6 +29582,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateMissingWarehouseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -29449,6 +29603,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreateModelDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object views) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -30819,6 +30974,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CreditSearchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -30829,6 +30985,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CronAccountMoveSendInternalAsync<TEntity>(IEnumerable<TEntity> entities, object job_count) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -30858,6 +31015,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CronPostStockValuationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -30873,6 +31031,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> CronSendPendingEmailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -30934,6 +31093,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DateInThePastInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -30964,6 +31124,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DeactivateGroupMultiCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -31117,6 +31278,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DebitSearchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -31260,19 +31422,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def default_get(self, fields):
-            // result = super().default_get(fields)
-            // if 'date_begin' in fields and 'date_begin' not in result:
-            //     now = Datetime.now()
-            //     # Round the datetime to the nearest half hour (e.g. 08:17 => 08:30 and 08:37 => 09:00)
-            //     result['date_begin'] = now.replace(second=0, microsecond=0) + timedelta(minutes=-now.minute % 30)
-            // if 'date_end' in fields and 'date_end' not in result and result.get('date_begin'):
-            //     result['date_end'] = result['date_begin'] + timedelta(days=1)
-            // return result
+            // defaults = super().default_get(fields)
+            // program_type = defaults.get('program_type')
+            // if program_type:
+            //     program_default_values = self._program_type_default_values()
+            //     if program_type in program_default_values:
+            //         default_values = program_default_values[program_type]
+            //         defaults.update({k: v for k, v in default_values.items() if k in fields})
+            // return defaults
             */
             return default;
         }
@@ -31311,10 +31474,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DefaultOrderLineValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object child_field) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _default_order_line_values(self, child_field=False):
             // default_data = super()._default_order_line_values(child_field)
-            // new_default_data = self.env['sale.order.line']._get_product_catalog_lines_data()
+            // new_default_data = self.env['account.move.line']._get_product_catalog_lines_data()
             // return {**default_data, **new_default_data}
             */
             return default;
@@ -31355,6 +31518,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultPosSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -31391,6 +31555,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultProjectTimeModeIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -31460,6 +31625,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultTimesheetEncodeUomIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -31470,6 +31636,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultUserCalendarDefaultPrivacyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -31521,21 +31688,19 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DefaultWebsiteMetaInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_template.py) ---
             // def _default_website_meta(self):
             // res = super()._default_website_meta()
-            // event_cover_properties = json.loads(self.cover_properties)
-            // # background-image might contain single quotes eg `url('/my/url')`
-            // res['default_opengraph']['og:image'] = res['default_twitter']['twitter:image'] = event_cover_properties.get('background-image', 'none')[4:-1].strip("'")
+            // res['default_opengraph']['og:description'] = res['default_twitter']['twitter:description'] = self.description_sale
             // res['default_opengraph']['og:title'] = res['default_twitter']['twitter:title'] = self.name
-            // res['default_opengraph']['og:description'] = res['default_twitter']['twitter:description'] = self.subtitle
-            // res['default_twitter']['twitter:card'] = 'summary'
-            // res['default_meta_description'] = self.subtitle
+            // res['default_opengraph']['og:image'] = res['default_twitter']['twitter:image'] = self.env['website'].image_url(self, 'image_1024')
+            // res['default_meta_description'] = self.description_sale
             // return res
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DefaultWebsiteSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -31653,6 +31818,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DemoConfigureVariantsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -32003,6 +32169,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DispatchGlobalDiscountLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -32076,6 +32243,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DispatchReturnOfMerchandiseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -32181,6 +32349,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DispatchTaxesIntoNewBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object exclude_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -32378,6 +32547,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> DistributeDeltaAmountSmoothlyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object precision_digits, object delta_amount, object target_factors) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -32760,6 +32930,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EnrichByDomainAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object timeout) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -32773,6 +32944,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EnrichByDunsAsync<TEntity>(IEnumerable<TEntity> entities, object duns, object timeout) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -32786,6 +32958,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EnrichByGstAsync<TEntity>(IEnumerable<TEntity> entities, object gst, object timeout) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33133,6 +33306,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EvalTaxesComputationPrepareProductDefaultValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_names) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33196,6 +33370,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EvalTaxesComputationPrepareProductUomDefaultValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field_names) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33259,6 +33434,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EvalTaxesComputationPrepareProductUomValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object default_product_uom_values, object product_uom) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33285,6 +33461,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> EvalTaxesComputationPrepareProductValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object default_product_values, object product) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33363,6 +33540,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ExcludeTaxGroupsFromTaxTotalsSummaryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_totals, object ids_to_exclude) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33446,6 +33624,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ExportBaseLineExtraTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33537,6 +33716,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ExtractResourceAttachmentTranslationsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object module, object lang) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33782,6 +33962,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FetchIsParticipatingEventsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33847,16 +34028,68 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<object> FieldToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, string @alias, string field_expr, object query) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def _field_to_sql(self, alias: str, field_expr: str, query: (Query | None) = None) -> SQL:
-            // """This is required to search for the related fields of version_id as version_id is not stored"""
-            // if field_expr == 'version_id':
-            //     field_expr = 'current_version_id'
+            // if field_expr == 'internal_group':
+            //     return SQL("split_part(%s, '_', 1)", self._field_to_sql(alias, 'account_type', query))
+            // if field_expr == 'code':
+            //     return self.with_company(self.env.company.root_id).sudo()._field_to_sql(alias, 'code_store', query)
+            // if field_expr == 'placeholder_code':
+            //     if 'account_first_company' not in query._joins:
+            //         # When multiple accounts are selected, ``placeholder_code`` is used for all of them
+            //         # as it is in the default ``_order`` (e.g., for ``account_asset_id`` and
+            //         # ``account_depreciation_id`` in ``account_assets``).
+            // 
+            //         # As ``placeholder_code`` represents the account's code in the first active company
+            //         # to which the account belongs in the hierarchy, we must ensure that we do not introduce
+            //         # a second ``JOIN`` to the account-company relation to avoid redundancy in joins.
+            //         query.add_join(
+            //             'LEFT JOIN',
+            //             'account_first_company',
+            //             SQL(
+            //                 """(
+            //                     SELECT DISTINCT ON (rel.account_account_id)
+            //                         rel.account_account_id AS account_id,
+            //                         rel.res_company_id AS company_id,
+            //                         SPLIT_PART(res_company.parent_path, '/', 1) AS root_company_id,
+            //                         res_company.name AS company_name
+            //                     FROM account_account_res_company_rel rel
+            //                     JOIN res_company
+            //                         ON res_company.id = rel.res_company_id
+            //                     WHERE rel.res_company_id IN %(authorized_company_ids)s
+            //                 ORDER BY rel.account_account_id, company_id
+            //                 )""",
+            //                 authorized_company_ids=self.env.user._get_company_ids(),
+            //                 to_flush=self._fields['company_ids'],
+            //             ),
+            //             SQL('account_first_company.account_id = %(account_id)s', account_id=SQL.identifier(alias, 'id')),
+            //         )
+            // 
+            //     return SQL(
+            //         """
+            //             COALESCE(
+            //                 %(code_store)s->>%(active_company_root_id)s,
+            //                 %(code_store)s->>%(account_first_company_root_id)s || ' (' || %(account_first_company_name)s || ')'
+            //             )
+            //         """,
+            //         code_store=SQL.identifier(alias, 'code_store'),
+            //         active_company_root_id=str(self.env.company.root_id.id),
+            //         account_first_company_name=SQL.identifier('account_first_company', 'company_name'),
+            //         account_first_company_root_id=SQL.identifier('account_first_company', 'root_company_id'),
+            //         to_flush=self._fields['code_store'],
+            //     )
+            // if field_expr == 'root_id':
+            //     return SQL(
+            //         "SUBSTRING(%(placeholder_code)s, 1, 2)",
+            //         placeholder_code=self._field_to_sql(alias, 'placeholder_code', query),
+            //     )
+            // 
             // return super()._field_to_sql(alias, field_expr, query)
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FieldWillChangeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object vals, object field_name) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -33884,24 +34117,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FieldsGetAsync<TEntity>(IEnumerable<TEntity> entities, object allfields, object attributes) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
             // def fields_get(self, allfields=None, attributes=None):
-            // res = super().fields_get(allfields, attributes=attributes)
-            // 
-            // # add self readable/writable fields
-            // readable_fields, writeable_fields = self._self_accessible_fields()
-            // missing = (writeable_fields | readable_fields).difference(res.keys())
-            // if allfields:
-            //     missing = missing.intersection(allfields)
-            // if missing:
-            //     self = self.sudo()  # noqa: PLW0642
-            //     res.update({
-            //         key: dict(values, readonly=key not in writeable_fields, searchable=False)
-            //         for key, values in super().fields_get(sorted(missing), attributes).items()
-            //     })
+            // res = super().fields_get(allfields, attributes)
+            // context_location = self.env.context.get('location') or self.env.context.get('search_location')
+            // if context_location and isinstance(context_location, int):
+            //     location = self.env['stock.location'].browse(context_location)
+            //     if location.usage == 'supplier':
+            //         if res.get('virtual_available'):
+            //             res['virtual_available']['string'] = _('Future Receipts')
+            //         if res.get('qty_available'):
+            //             res['qty_available']['string'] = _('Received Qty')
+            //     elif location.usage == 'internal':
+            //         if res.get('virtual_available'):
+            //             res['virtual_available']['string'] = _('Forecasted Quantity')
+            //     elif location.usage == 'customer':
+            //         if res.get('virtual_available'):
+            //             res['virtual_available']['string'] = _('Future Deliveries')
+            //         if res.get('qty_available'):
+            //             res['qty_available']['string'] = _('Delivered Qty')
+            //     elif location.usage == 'inventory':
+            //         if res.get('virtual_available'):
+            //             res['virtual_available']['string'] = _('Future P&L')
+            //         if res.get('qty_available'):
+            //             res['qty_available']['string'] = _('P&L Qty')
+            //     elif location.usage == 'production':
+            //         if res.get('virtual_available'):
+            //             res['virtual_available']['string'] = _('Future Productions')
+            //         if res.get('qty_available'):
+            //             res['qty_available']['string'] = _('Produced Qty')
             // return res
             */
             return default;
@@ -34531,6 +34779,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FindOrCreateAsync<TEntity>(IEnumerable<TEntity> entities, object email, object assert_valid_email) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -34586,6 +34835,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FindOrCreateFromEmailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object emails, object ban_emails, object filter_found, object additional_values, object no_create, object sort_key, object sort_reverse) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -34737,6 +34987,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FixBaseLinesTaxDetailsOnManualTaxAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object filter_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -34786,6 +35037,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FixTaxIncludedPriceCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object price, object prod_taxes, object line_taxes, Guid company_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -34800,6 +35052,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FixTaxIncludedPriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object price, object prod_taxes, object line_taxes) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -34948,20 +35201,40 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> FormatAsync<TEntity>(IEnumerable<TEntity> entities, object amount) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<string> FormatAsync<TEntity>(IEnumerable<TEntity> entities, string percent, object @value, bool grouping) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
-            // def format(self, amount):
-            // """Return ``amount`` formatted according to ``self``'s rounding rules, symbols and positions.
-            // 
-            //    Also take care of removing the minus sign when 0.0 is negative
-            // 
-            //    :param float amount: the amount to round
-            //    :return: formatted str
-            // """
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
+            // def format(self, percent: str, value, grouping: bool = False) -> str:
+            // """ Format() will return the language-specific output for float values"""
             // self.ensure_one()
-            // return tools.format_amount(self.env, amount + 0.0, self)
+            // if percent[0] != '%':
+            //     raise ValueError(_("format() must be given exactly one %char format specifier"))
+            // 
+            // formatted = percent % value
+            // 
+            // data = self._get_data(id=self.id)
+            // if not data:
+            //     raise UserError(_("The language %s is not installed.", self.name))
+            // decimal_point = data.decimal_point
+            // # floats and decimal ints need special action!
+            // if grouping:
+            //     lang_grouping, thousands_sep = data.grouping, data.thousands_sep or ''
+            //     eval_lang_grouping = ast.literal_eval(lang_grouping)
+            // 
+            //     if percent[-1] in 'eEfFgG':
+            //         parts = formatted.split('.')
+            //         parts[0] = intersperse(parts[0], eval_lang_grouping, thousands_sep)[0]
+            // 
+            //         formatted = decimal_point.join(parts)
+            // 
+            //     elif percent[-1] in 'diu':
+            //         formatted = intersperse(formatted, eval_lang_grouping, thousands_sep)[0]
+            // 
+            // elif percent[-1] in 'eEfFgG' and '.' in formatted:
+            //     formatted = formatted.replace('.', decimal_point)
+            // 
+            // return formatted
             */
             return default;
         }
@@ -34981,6 +35254,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FormatDataCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object iap_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -34994,6 +35268,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FormatLockDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lock_dates) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -35093,6 +35368,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FormatVatNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities, object country_code, object vat) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -35136,6 +35412,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> FormattingAddressFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -35286,6 +35563,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GenerateCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -35629,6 +35907,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GenerateProfileTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid user_id, object email) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -35740,6 +36019,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GenerateSignupValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object provider, object validation, object @params) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -36175,6 +36455,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GeoLocalizeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object street, object zip, object city, object state, object country) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -36210,6 +36491,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAccountGroupAsync<TEntity>(IEnumerable<TEntity> entities, object account_types) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -36333,14 +36615,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetActionAddFromCatalogExtraContextInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_action_add_from_catalog_extra_context(self):
-            // return {
-            //     **super()._get_action_add_from_catalog_extra_context(),
-            //     'product_catalog_currency_id': self.currency_id.id,
-            //     'product_catalog_digits': self.order_line._fields['price_unit'].get_digits(self.env),
-            //     'show_sections': bool(self.id),
-            // }
+            // res = super()._get_action_add_from_catalog_extra_context()
+            // if self.is_purchase_document() and self.partner_id:
+            //     res['search_default_seller_ids'] = self.partner_id.name
+            // 
+            // res['product_catalog_currency_id'] = self.currency_id.id
+            // res['product_catalog_digits'] = self.line_ids._fields['price_unit'].get_digits(self.env)
+            // res['show_sections'] = bool(self.id)
+            // return res
             */
             return default;
         }
@@ -36385,49 +36669,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetActionPerItemInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order_line.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: account_move.py) ---
             // def _get_action_per_item(self):
-            // """ Get action per Sales Order Item
-            // 
-            //     :returns: Dict containing id of SOL as key and the action as value
-            // """
-            // return {}
-            --- ODOO METHOD SOURCE (MODULE: sale_project_stock, FILE: sale_order_line.py) ---
-            // def _get_action_per_item(self):
-            // """ Get action per Sales Order Item to display the stock moves linked
-            // 
-            //     :returns: Dict containing id of SOL as key and the action as value
-            // """
-            // action_per_sol = super()._get_action_per_item()
-            // stock_move_action = self.env.ref('sale_project_stock.stock_move_per_sale_order_line_action').id
-            // stock_move_ids_per_sol = {}
-            // if self.env.user.has_group('stock.group_stock_user'):
-            //     stock_move_read_group = self.env['stock.move']._read_group([('sale_line_id', 'in', self.ids)], ['sale_line_id'], ['id:array_agg'])
-            //     stock_move_ids_per_sol = {sale_line.id: ids for sale_line, ids in stock_move_read_group}
-            // for sol in self:
-            //     stock_move_ids = stock_move_ids_per_sol.get(sol.id, [])
-            //     if not sol.is_service and stock_move_ids:
-            //         action_per_sol[sol.id] = stock_move_action, stock_move_ids[0] if len(stock_move_ids) == 1 else False
-            // return action_per_sol
-            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: sale_order_line.py) ---
-            // def _get_action_per_item(self):
-            // """ Get action per Sales Order Item
-            // 
-            //     When the Sales Order Item contains a service product then the action will be View Timesheets.
-            // 
-            //     :returns: Dict containing id of SOL as key and the action as value
-            // """
-            // action_per_sol = super()._get_action_per_item()
-            // timesheet_action = self.env.ref('sale_timesheet.timesheet_action_from_sales_order_item').id
-            // timesheet_ids_per_sol = {}
-            // if self.env.user.has_group('hr_timesheet.group_hr_timesheet_user'):
-            //     timesheet_read_group = self.env['account.analytic.line']._read_group([('so_line', 'in', self.ids), ('project_id', '!=', False)], ['so_line'], ['id:array_agg'])
-            //     timesheet_ids_per_sol = {so_line.id: ids for so_line, ids in timesheet_read_group}
-            // for sol in self:
-            //     timesheet_ids = timesheet_ids_per_sol.get(sol.id, [])
-            //     if sol.is_service and len(timesheet_ids) > 0:
-            //         action_per_sol[sol.id] = timesheet_action, timesheet_ids[0] if len(timesheet_ids) == 1 else False
-            // return action_per_sol
+            // action = self.env.ref('account.action_move_out_invoice_type').id
+            // return {invoice.id: action for invoice in self}
             */
             return default;
         }
@@ -36532,6 +36777,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActionViewRelatedPutawayRulesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -36612,6 +36858,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActiveProductsDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -36634,6 +36881,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetActivityGroupsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -36914,6 +37162,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAdditionalConfiguratorDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product_or_template, object date, object currency, object pricelist) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -37229,6 +37478,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAddressFormatInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -37469,6 +37719,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAllCurrenciesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -37571,6 +37822,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAllVersionsWithContractOverlapWithPeriodInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_from, object date_to) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -37586,6 +37838,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAllocationRequestsAmountAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -37600,6 +37853,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetAlternativeProductFilterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -38179,6 +38433,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetBaseLineFieldValueFromRecordInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object field, object extra_values, object fallback, object from_base_line) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -38229,6 +38484,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetBatchAndWaveGroupByKeysInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -38239,6 +38495,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetBatchGroupByKeysInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -38542,6 +38799,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCertificateSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -39320,6 +39578,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCompanyCurrencyForSpreadsheetAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -39347,6 +39606,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCompanyCurrencyIdAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -39536,6 +39796,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetConfiguratorDisplayPriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product_or_template, object quantity, object date, object currency, object pricelist) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -39595,6 +39856,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetConfiguratorPriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product_or_template, object quantity, object date, object currency, object pricelist) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -39941,6 +40203,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetContextualEmployeeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -40169,6 +40432,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetConversionRateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object from_currency, object to_currency, object company, object date) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -40253,6 +40517,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCurrentDayLocationFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -40311,6 +40576,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetCurrentPersonaInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -40395,6 +40661,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDatePeriodBoundariesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_period, object company) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -40470,6 +40737,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultAddressFormatInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -40520,6 +40788,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultOpeningMoveValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -40554,24 +40823,39 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetDefaultPaymentLinkValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_move.py) ---
             // def _get_default_payment_link_values(self):
-            // """ Override of `payment` to compute the default values of the payment link wizard. """
-            // self.ensure_one()
+            // next_payment_values = self._get_invoice_next_payment_values()
+            // amount_max = next_payment_values.get('amount_due')
+            // additional_info = {}
+            // open_installments = []
+            // installment_state = next_payment_values.get('installment_state')
+            // next_amount_to_pay = next_payment_values.get('next_amount_to_pay')
+            // if installment_state in ('next', 'overdue'):
+            //     open_installments = []
+            //     for installment in next_payment_values.get('not_reconciled_installments'):
+            //         data = {
+            //             'type': installment['type'],
+            //             'number': installment['number'],
+            //             'amount': installment['amount_residual_currency_unsigned'],
+            //             'date_maturity': format_date(self.env, installment['date_maturity']),
+            //         }
+            //         open_installments.append(data)
             // 
-            // prepayment_amount = self._get_prepayment_required_amount()
-            // remaining_balance = self.amount_total - self.amount_paid
-            // if self.state in ('draft', 'sent') and self.require_payment:
-            //     suggested_amount = prepayment_amount  # Suggest the amount needed to confirm the quote.
-            // else:  # The order is confirmed or doesn't require payment.
-            //     suggested_amount = remaining_balance
+            // elif installment_state == 'epd':
+            //     amount_max = next_amount_to_pay  # with epd, next_amount_to_pay is the invoice amount residual
+            //     additional_info.update({
+            //         'has_eligible_epd': True,
+            //         'discount_date': next_payment_values.get('discount_date')
+            //     })
+            // 
             // return {
             //     'currency_id': self.currency_id.id,
-            //     'partner_id': self.partner_invoice_id.id,
-            //     'amount': suggested_amount,
-            //     'amount_max': remaining_balance,
-            //     'amount_paid': self.amount_paid,
-            //     'prepayment_amount': prepayment_amount,
+            //     'partner_id': self.partner_id.id,
+            //     'open_installments': open_installments,
+            //     'amount': next_amount_to_pay,
+            //     'amount_max': amount_max,
+            //     **additional_info
             // }
             */
             return default;
@@ -40614,6 +40898,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDefaultReadFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -40789,6 +41074,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDeltaAmountToReachTargetInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_amount, object target_currency, object raw_current_amount, object raw_current_amount_precision_digits) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -41430,6 +41716,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetEdiBuilderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice_edi_format) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -41489,16 +41776,23 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetEdiDecoderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object file_data, object @new) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move.py) ---
             // def _get_edi_decoder(self, file_data, new=False):
-            // """ Override of sale to add edi decoder for xml files.
+            // def _get_child_models(model):
+            //     child_models = {model}
+            //     for child in self.env.registry[model]._inherit_children:
+            //         child_models.update(_get_child_models(child))
+            //     return child_models
             // 
-            // :param dict file_data: File data to decode.
-            // """
-            // if file_data['import_file_type'] == 'sale.edi.xml.ubl_bis3':
+            // importable_models = [
+            //     *_get_child_models('account.edi.xml.ubl_20'),
+            //     *_get_child_models('account.edi.xml.cii'),
+            // ]
+            // 
+            // if file_data['import_file_type'] in importable_models:
             //     return {
             //         'priority': 20,
-            //         'decoder': self.env['sale.edi.xml.ubl_bis3']._import_order_ubl,
+            //         'decoder': self.env[file_data['import_file_type']]._import_invoice_ubl_cii,
             //     }
             // return super()._get_edi_decoder(file_data, new)
             */
@@ -41515,6 +41809,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetEmailDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object email) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -41554,6 +41849,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetEmployeeWorkingNowInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -41601,6 +41897,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetEmptyListHelpAsync<TEntity>(IEnumerable<TEntity> entities, object help_message) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -41674,6 +41971,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetEventTicketFieldsWhitelistInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -41690,6 +41988,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetExistingLotsAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid config_id, Guid product_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -41808,6 +42107,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetExtraBalanceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -42147,6 +42447,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetFiscalDatesAsync<TEntity>(IEnumerable<TEntity> entities, object payload) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -42175,6 +42476,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetFiscalPositionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner, object delivery) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -42428,6 +42730,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetFrequentAccountAndTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid partner_id, object move_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -42619,6 +42922,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetGiftCardStatusAsync<TEntity>(IEnumerable<TEntity> entities, object gift_code, Guid config_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -42966,33 +43270,52 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetImportFileTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object file_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move.py) ---
             // def _get_import_file_type(self, file_data):
             // """ Identify UBL files. """
             // # EXTENDS 'account'
             // if (tree := file_data['xml_tree']) is not None:
-            //     customization_id = tree.find('{*}CustomizationID')
-            //     if customization_id is not None:
-            //         if customization_id.text == 'urn:fdc:peppol.eu:poacc:trns:order:3':
-            //             return 'sale.edi.xml.ubl_bis3'
+            //     if etree.QName(tree).localname == 'AttachedDocument':
+            //         return 'account.edi.xml.ubl.attached_document'
+            //     if tree.tag == '{urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100}CrossIndustryInvoice':
+            //         return 'account.edi.xml.cii'
+            //     if ubl_version := tree.findtext('{*}UBLVersionID'):
+            //         if ubl_version == '2.0':
+            //             return 'account.edi.xml.ubl_20'
+            //         if ubl_version in ('2.1', '2.2', '2.3'):
+            //             return 'account.edi.xml.ubl_21'
+            //     if customization_id := tree.findtext('{*}CustomizationID'):
+            //         if 'xrechnung' in customization_id:
+            //             return 'account.edi.xml.ubl_de'
+            //         if customization_id == 'urn:cen.eu:en16931:2017#compliant#urn:fdc:nen.nl:nlcius:v1.0':
+            //             return 'account.edi.xml.ubl_nl'
+            //         if customization_id == 'urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:aunz:3.0':
+            //             return 'account.edi.xml.ubl_a_nz'
+            //         if customization_id == 'urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:sg:3.0':
+            //             return 'account.edi.xml.ubl_sg'
+            //         if 'urn:cen.eu:en16931:2017' in customization_id:
+            //             return 'account.edi.xml.ubl_bis3'
+            // 
             // return super()._get_import_file_type(file_data)
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetImportTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
             // def get_import_templates(self):
             // return [{
-            //     'label': _('Import Template for Quotations'),
-            //     'template': '/sale/static/xls/quotations_import_template.xlsx',
+            //     'label': _('Import Template for Chart of Accounts'),
+            //     'template': '/account/static/xls/coa_import_template.xlsx'
             // }]
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetImportedModuleNamesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43003,6 +43326,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetImportedModuleTranslationsForWebclientInternalAsync<TEntity>(IEnumerable<TEntity> entities, object module, object lang) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43043,6 +43367,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInboundTypesAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43053,6 +43378,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetIncomingOutgoingMovesFilterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43093,6 +43419,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetIncompatibleTypesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43103,6 +43430,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetIndustryCategoriesFromAppsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43125,6 +43453,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<List<object>> GetInstalledAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43245,6 +43574,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInternalResumeLinesAsync<TEntity>(IEnumerable<TEntity> entities, Guid res_id, object res_model) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43325,6 +43655,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInvalidationFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43352,6 +43683,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInvoiceCounterpartAmlsForEarlyPaymentDiscountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object aml_values_list, object open_balance) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43630,6 +43962,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInvoiceFilterTypeDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43655,6 +43988,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInvoiceInPaymentStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43783,6 +44117,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInvoiceLinesValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line_values, object pos_line, object move_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -43819,6 +44154,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInvoiceLocalisationFieldsRequiredToInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, Guid country_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -44158,6 +44494,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetInvoiceTypesAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -44529,6 +44866,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLeadContactFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -44842,6 +45180,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLengthUomIdFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -44861,6 +45200,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLengthUomNameFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -44944,21 +45284,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLineValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lines_vals) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_edi_ubl, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move.py) ---
             // def _get_line_vals_list(self, lines_vals):
-            // """ Get sale order line values list.
+            // """ Get invoice line values list.
             // 
-            // :param list lines_vals: List of values [name, qty, price, tax].
-            // :return: List of dict values.
+            // :param list[tuple] lines_vals: List of values ``[(name, qty, price, tax), ...]``.
+            // :returns: List of invoice line values.
             // """
-            // 
             // return [{
-            //     'sequence': 0,  # be sure to put these lines above the 'real' order lines
+            //     'sequence': 0,  # be sure to put these lines above the 'real' invoice lines
             //     'name': name,
-            //     'product_uom_qty': quantity,
+            //     'quantity': quantity,
             //     'price_unit': price_unit,
             //     'tax_ids': [Command.set(tax_ids)],
             // } for name, quantity, price_unit, tax_ids in lines_vals]
@@ -45113,6 +45453,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLocalesForSpreadsheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45329,6 +45670,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLoginDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object login) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45343,6 +45685,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLoginOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45367,6 +45710,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetLoyaltyCardPartnerByCodeAsync<TEntity>(IEnumerable<TEntity> entities, object code) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45444,6 +45788,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMailServerSetupEndActionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object smtp_server) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45464,6 +45809,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMailServerValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object server_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45524,6 +45870,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMainCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45559,6 +45906,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMandatoryDaysDataAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_end) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45744,6 +46092,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMentionSuggestionsAsync<TEntity>(IEnumerable<TEntity> entities, object search, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45766,6 +46115,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMentionSuggestionsDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object search) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45776,6 +46126,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMentionSuggestionsFromChannelAsync<TEntity>(IEnumerable<TEntity> entities, Guid channel_id, object search, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -45966,6 +46317,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMissingDependenciesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object zip_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46102,6 +46454,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetModulesFromAppsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields, object module_type, object module_name, object domain, object limit, object offset) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46185,6 +46538,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMonthlyDemandMovesLocationDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46259,6 +46613,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMostFrequentAccountForPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid partner_id, object move_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46270,6 +46625,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMostFrequentAccountsForPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid partner_id, object move_type, object filter_never_user_accounts, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46361,6 +46717,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetMoveHashDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object common_domain, object force_hash) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46529,6 +46886,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNewHireFieldInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46539,6 +46897,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNewPartnerAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id, object domain, object offset) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46687,6 +47046,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetNoteUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46703,6 +47063,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46724,6 +47085,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetOnchangeServicePolicyUpdatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object service_tracking, object service_policy, Guid project_id, Guid project_template_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46913,6 +47275,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetOutboundTypesAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -46970,6 +47333,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetOvertimeDataAsync<TEntity>(IEnumerable<TEntity> entities, object domain, Guid employee_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -47101,9 +47465,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetParentFieldOnChildModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_parent_field_on_child_model(self):
-            // return 'order_id'
+            // return 'move_id'
             */
             return default;
         }
@@ -47121,6 +47485,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetParticipantInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object edi_identification) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -47219,6 +47584,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPartnerFromTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object token) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -47235,6 +47601,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPartnerLocalisationFieldsRequiredToInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, Guid country_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -47270,6 +47637,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPartnerPricelistMultiInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> partner_ids) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -47388,6 +47756,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPasswordPolicyAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -47486,6 +47855,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPeppolFormatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -47497,6 +47867,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPeppolVerificationStateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object peppol_endpoint, object peppol_eas, object invoice_edi_format, object process_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -47688,13 +48059,14 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiPrivate]
         public async Task<TEntity> GetPortalLastTransactionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_move.py) ---
             // def get_portal_last_transaction(self):
             // self.ensure_one()
-            // return self.sudo().transaction_ids._get_last()
+            // return self.with_context(active_test=False).sudo().transaction_ids._get_last()
             */
             return default;
         }
@@ -47750,6 +48122,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPosKanbanViewStateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -48215,15 +48588,15 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetProductCatalogDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event_booth_sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_product_catalog_domain(self):
-            // return super()._get_product_catalog_domain() & Domain('service_tracking', '!=', 'event_booth')
-            --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: sale_order.py) ---
-            // def _get_product_catalog_domain(self):
-            // return super()._get_product_catalog_domain() & Domain('service_tracking', '!=', 'event')
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def _get_product_catalog_domain(self):
-            // return super()._get_product_catalog_domain() & Domain('sale_ok', '=', True)
+            // domain = super()._get_product_catalog_domain()
+            // if self.is_sale_document():
+            //     return domain & Domain('sale_ok', '=', True)
+            // elif self.is_purchase_document():
+            //     return domain & Domain('purchase_ok', '=', True)
+            // else:  # In case of an entry
+            //     return domain
             */
             return default;
         }
@@ -48324,22 +48697,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetProductCatalogOrderDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object products) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_product_catalog_order_data(self, products, **kwargs):
-            // pricelist = self.pricelist_id._get_products_price(
-            //     quantity=1.0,
-            //     products=products,
-            //     currency=self.currency_id,
-            //     date=self.date_order,
-            //     **kwargs,
-            // )
-            // res = super()._get_product_catalog_order_data(products, **kwargs)
-            // has_warning_group = self.env.user.has_group('sale.group_warning_sale')
+            // product_catalog = super()._get_product_catalog_order_data(products, **kwargs)
             // for product in products:
-            //     res[product.id]['price'] = pricelist.get(product.id)
-            //     if product.sale_line_warn_msg and has_warning_group:
-            //         res[product.id]['warning'] = product.sale_line_warn_msg
-            // return res
+            //     product_catalog[product.id] |= self._get_product_price_and_data(product)
+            // return product_catalog
             */
             return default;
         }
@@ -48347,23 +48710,22 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetProductCatalogRecordLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> product_ids) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_product_catalog_record_lines(self, product_ids, *, section_id=None, **kwargs):
-            // grouped_lines = defaultdict(lambda: self.env['sale.order.line'])
+            // grouped_lines = defaultdict(lambda: self.env['account.move.line'])
             // if section_id is None:
             //     section_id = (
-            //         self.order_line[:1].id
-            //         if self.order_line[:1].display_type == 'line_section'
+            //         self.line_ids[:1].id
+            //         if self.line_ids[:1].display_type == 'line_section'
             //         else False
             //     )
-            // for line in self.order_line:
+            // for line in self.line_ids:
             //     if (
-            //         line.display_type
-            //         or line.product_id.id not in product_ids
-            //         or line.get_parent_section_line().id != section_id
+            //         line.get_parent_section_line().id == section_id
+            //         and line.display_type == 'product'
+            //         and line.product_id.id in product_ids
             //     ):
-            //         continue
-            //     grouped_lines[line.product_id] |= line
+            //         grouped_lines[line.product_id] |= line
             // return grouped_lines
             */
             return default;
@@ -48741,6 +49103,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetProductServicePolicyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -48754,6 +49117,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetProductTypesAllowZeroPriceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -48865,6 +49229,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetProgramTemplatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -49024,6 +49389,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetProviderStatusAsync<TEntity>(IEnumerable<TEntity> entities, object modules_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -49036,6 +49402,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPublicHolidaysDataAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_end) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -49114,6 +49481,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetPurchaseTypesAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -49287,6 +49655,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRandomBarcodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -49513,6 +49882,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetRefundedOrdersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -49675,10 +50045,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetReportBaseFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _get_report_base_filename(self):
-            // self.ensure_one()
-            // return f'{self.type_name} {self.name}'
+            // return self._get_move_display_name()
             */
             return default;
         }
@@ -50168,6 +50537,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSaleOrderDomainCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -50319,6 +50689,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSaleTypesAsync<TEntity>(IEnumerable<TEntity> entities, object include_receipts) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -50368,6 +50739,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSaleableTrackingTypesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -50904,6 +51276,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSignupInvitationScopeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -51145,6 +51518,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSpecialDaysDataAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_end) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -51635,6 +52009,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetSuitableJournalIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move_type, object company) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -52206,6 +52581,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetTaxTotalsSummaryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object currency, object company, object cash_rounding) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -52576,6 +52952,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetTemplateValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -52726,6 +53103,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetTimeOffDashboardDataAsync<TEntity>(IEnumerable<TEntity> entities, object target_date) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -52966,6 +53344,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetUblCiiFormatsByCountryInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -52984,6 +53363,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetUblCiiFormatsInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -53006,6 +53386,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetUblCiiFormatsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -53267,6 +53648,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetUomFromUneceCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object unece_code) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -53430,6 +53812,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<List<string>> GetUserCalendarConfigurationFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -53520,6 +53903,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetUserSpreadsheetLocaleInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -53569,13 +53953,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetValidProductsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> GetValidProductsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object products) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_rule.py) ---
-            // def _get_valid_products(self):
-            // self.ensure_one()
-            // return self.env['product.product'].search(self._get_valid_product_domain())
+            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
+            // def _get_valid_products(self, products):
+            // '''
+            // Returns a dict containing the products that match per rule of the program
+            // '''
+            // rule_products = dict()
+            // for rule in self.rule_ids:
+            //     domain = rule._get_valid_product_domain()
+            //     if domain:
+            //         rule_products[rule] = products.filtered_domain(domain)
+            //     elif not domain and rule.program_type != 'gift_card':
+            //         rule_products[rule] = products
+            //     else:
+            //         continue
+            // return rule_products
             */
             return default;
         }
@@ -53803,6 +54198,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -53825,19 +54221,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewCacheKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
             // def _get_view_cache_key(self, view_id=None, view_type='form', **options):
-            // """The override of _get_view changing the rate field labels according to the company currency
-            // makes the view cache dependent on the company currency"""
+            // """Add context variable force_email in the key as _get_view depends on it."""
             // key = super()._get_view_cache_key(view_id, view_type, **options)
-            // return key + ((self.env['res.company'].browse(self.env.context.get('company_id')) or self.env.company).currency_id.name,)
+            // return key + (self.env.context.get('force_email'),)
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -53879,6 +54276,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetViewsAsync<TEntity>(IEnumerable<TEntity> entities, object views, object options) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -53937,27 +54335,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetViolatedLockDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object accounting_date, object has_tax, object journal) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> GetViolatedLockDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice_date, object has_tax) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
-            // def _get_violated_lock_dates(self, accounting_date, has_tax, journal):
-            // """Get all the lock dates affecting the current accounting_date.
-            // :param accounting_date: The accounting date
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _get_violated_lock_dates(self, invoice_date, has_tax):
+            // """Get all the lock dates affecting the current invoice_date.
+            // :param invoice_date: The invoice date
             // :param has_tax: If any taxes are involved in the lines of the invoice
-            // :param journal: The affected journal
-            // :return: a list of tuples containing the lock dates ordered chronologically.
+            // :return: a list of tuples containing the lock dates affecting this move, ordered chronologically.
             // """
-            // locks = self._get_lock_date_violations(
-            //     accounting_date,
-            //     fiscalyear=True,
-            //     sale=(journal and journal.type == 'sale'),
-            //     purchase=(journal and journal.type == 'purchase'),
-            //     tax=has_tax,
-            //     hard=True,
-            // )
-            // locks.sort()
-            // return locks
+            // self.ensure_one()
+            // return self.company_id._get_violated_lock_dates(invoice_date, has_tax, self.journal_id)
             */
             return default;
         }
@@ -53988,6 +54377,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetVolumeUomIdFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54007,6 +54397,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetVolumeUomNameFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54017,6 +54408,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWaveGroupByKeysInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54130,6 +54522,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWeekTypeAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54146,6 +54539,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWeightUomIdFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54165,6 +54559,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWeightUomNameFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54175,6 +54570,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetWorkingHoursForAllAttendeesAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> attendee_ids, object date_from, object date_to, object everybody) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54712,6 +55108,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> HasSetupCredentialsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54726,6 +55123,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> HasSetupMicrosoftCredentialsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -54779,28 +55177,26 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> HasToBePaidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_move.py) ---
             // def _has_to_be_paid(self):
-            // """A sale order has to be paid when:
-            // - its state is 'draft' or `sent`;
-            // - it's not expired;
-            // - it requires a payment;
-            // - the last transaction's state isn't `done`;
-            // - the total amount is strictly positive.
-            // - confirmation amount is not reached
-            // 
-            // Note: self.ensure_one()
-            // 
-            // :return: Whether the sale order has to be paid.
-            // :rtype: bool
-            // """
             // self.ensure_one()
-            // return (
-            //     self.state in ['draft', 'sent']
-            //     and not self.is_expired
-            //     and self.require_payment
-            //     and self.amount_total > 0
-            //     and not self._is_confirmation_amount_reached()
+            // transactions = self.transaction_ids.filtered(lambda tx: tx.state in ('pending', 'authorized', 'done'))
+            // pending_transactions = transactions.filtered(
+            //     lambda tx: tx.state in {'pending', 'authorized'}
+            //                and tx.provider_code not in {'none', 'custom'})
+            // enabled_feature = str2bool(
+            //     self.env['ir.config_parameter'].sudo().get_param(
+            //         'account_payment.enable_portal_payment'
+            //     )
+            // )
+            // return enabled_feature and bool(
+            //     (self.amount_residual or not transactions)
+            //     and self.state == 'posted'
+            //     and self.payment_state in ('not_paid', 'in_payment', 'partial')
+            //     and not self.currency_id.is_zero(self.amount_residual)
+            //     and self.amount_total
+            //     and self.move_type == 'out_invoice'
+            //     and not pending_transactions
             // )
             */
             return default;
@@ -54987,6 +55383,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IapReplaceIndustryCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object iap_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55000,6 +55397,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IapReplaceLanguageCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object iap_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55017,6 +55415,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IapReplaceLocationCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object iap_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55080,6 +55479,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ImportBaseLineExtraTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object extra_tax_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55362,6 +55762,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ImportZipfileInternalAsync<TEntity>(IEnumerable<TEntity> entities, object module_file, object force, object with_demo) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55481,15 +55882,28 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> InitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
             // def init(self):
-            // for company in self.search([('paperformat_id', '=', False)]):
-            //     paperformat_euro = self.env.ref('base.paperformat_euro', False)
-            //     if paperformat_euro:
-            //         company.write({'paperformat_id': paperformat_euro.id})
-            // sup = super()
-            // if hasattr(sup, 'init'):
-            //     sup.init()
+            // super().init()
+            // if not sql.column_exists(self.env.cr, self._table, "totp_secret"):
+            //     self.env.cr.execute("ALTER TABLE res_users ADD COLUMN totp_secret varchar")
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def init(self):
+            // cr = self.env.cr
+            // 
+            // # allow setting plaintext passwords via SQL and have them
+            // # automatically encrypted at startup: look for passwords which don't
+            // # match the "extended" MCF and pass those through passlib.
+            // # Alternative: iterate on *all* passwords and use CryptContext.identify
+            // cr.execute(r"""
+            // SELECT id, password FROM res_users
+            // WHERE password IS NOT NULL
+            //   AND password !~ '^\$[^$]+\$[^$]+\$.'
+            // """)
+            // if self.env.cr.rowcount:
+            //     ResUsers = self.sudo()
+            //     for uid, pw in cr.fetchall():
+            //         ResUsers.browse(uid).password = pw
             */
             return default;
         }
@@ -55497,30 +55911,30 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> InitColumnInternalAsync<TEntity>(IEnumerable<TEntity> entities, object column_name) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_template.py) ---
             // def _init_column(self, column_name):
-            // """ Initialize the value of the given column for existing rows.
-            //     Overridden here because we need to generate different access tokens
-            //     and by default _init_column calls the default method once and applies
-            //     it for every record.
-            // """
-            // if column_name != 'attendance_kiosk_key':
-            //     super(ResCompany, self)._init_column(column_name)
-            // else:
-            //     self.env.cr.execute("SELECT id FROM %s WHERE attendance_kiosk_key IS NULL" % self._table)
-            //     attendance_ids = self.env.cr.dictfetchall()
-            //     values_args = [(attendance_id['id'], self._default_company_token()) for attendance_id in attendance_ids]
-            //     query = """
-            //         UPDATE {table}
-            //         SET attendance_kiosk_key = vals.token
-            //         FROM (VALUES %s) AS vals(id, token)
-            //         WHERE {table}.id = vals.id
-            //     """.format(table=self._table)
+            // # to avoid generating a single default website_sequence when installing the module,
+            // # we need to set the default row by row for this column
+            // if column_name == "website_sequence":
+            //     _logger.debug("Table '%s': setting default value of new column %s to unique values for each row", self._table, column_name)
+            //     self.env.cr.execute("SELECT id FROM %s WHERE website_sequence IS NULL" % self._table)
+            //     prod_tmpl_ids = self.env.cr.dictfetchall()
+            //     max_seq = self._default_website_sequence()
+            //     query = f"""
+            //         UPDATE {self._table}
+            //         SET website_sequence = p.web_seq
+            //         FROM (VALUES %s) AS p(p_id, web_seq)
+            //         WHERE id = p.p_id
+            //     """
+            //     values_args = [(prod_tmpl['id'], max_seq + i * 5) for i, prod_tmpl in enumerate(prod_tmpl_ids)]
             //     self.env.cr.execute_values(query, values_args)
+            // else:
+            //     super()._init_column(column_name)
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InitDataResourceCalendarInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55624,6 +56038,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InitStoreDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object store) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55762,6 +56177,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InstallLangAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55792,6 +56208,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InstallPosRestaurantAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -55804,6 +56221,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> InstalledInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -56814,6 +57232,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IsAutoBatchGroupedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -56825,6 +57244,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IsAutoWaveGroupedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -57033,6 +57453,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IsDiscountFeatureEnabledInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -57136,6 +57557,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IsFieldAcceptedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object field) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -57348,6 +57770,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> IsMoveRestrictedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move, object force_hash) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -57494,18 +57917,13 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> IsReadonlyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _is_readonly(self):
-            // """ Return Whether the sale order is read-only or not based on the state or the lock status.
-            // 
-            // A sale order is considered read-only if its state is 'cancel' or if the sale order is
-            // locked.
-            // 
-            // :return: Whether the sale order is read-only or not.
-            // :rtype: bool
+            // """
+            //     Check if the move has been canceled
             // """
             // self.ensure_one()
-            // return self.state == 'cancel' or self.locked
+            // return self.state == 'cancel'
             */
             return default;
         }
@@ -57710,15 +58128,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<bool> IsZeroAsync<TEntity>(IEnumerable<TEntity> entities, float @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> IsZeroAsync<TEntity>(IEnumerable<TEntity> entities, object amount) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def is_zero(self, value: float) -> bool:
-            // """Check if the value is zero after rounding with the 'Product Unit' precision"""
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
+            // def is_zero(self, amount):
+            // """Returns true if ``amount`` is small enough to be treated as
+            //    zero according to current currency's rounding rules.
+            //    Warning: ``is_zero(amount1-amount2)`` is not always equivalent to
+            //    ``compare_amounts(amount1,amount2) == 0``, as the former will round after
+            //    computing the difference, while the latter will round before, giving
+            //    different results for e.g. 0.006 and 0.002 at 2 digits precision.
+            // 
+            //    :param float amount: amount to compare with currency's zero
+            // 
+            //    With the new API, call it like: ``currency.is_zero(amount)``.
+            // """
             // self.ensure_one()
-            // digits = self.env['decimal.precision'].precision_get('Product Unit')
-            // return tools.float_is_zero(value, precision_digits=digits)
+            // return tools.float_is_zero(amount, precision_rounding=self.rounding)
             */
             return default;
         }
@@ -57781,12 +58208,13 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LangGetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> LangGetInternalAsync<TEntity>(IEnumerable<TEntity> entities, string code) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def _lang_get(self):
-            // return self.env['res.lang'].get_installed()
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
+            // def _lang_get(self, code: str):
+            // """ Return the language using this code if it is active """
+            // return self.browse(self._get_data(code=code).id)
             */
             return default;
         }
@@ -57995,6 +58423,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadModuleTermsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object modules, object langs, object overwrite) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58205,6 +58634,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingBakeryScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58253,6 +58683,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingClothesScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58304,6 +58735,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingFurnitureScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58333,6 +58765,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadOnboardingRetailScenarioAsync<TEntity>(IEnumerable<TEntity> entities, object with_demo_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58357,6 +58790,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58590,6 +59024,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58835,6 +59270,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataModelsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58849,6 +59285,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataReadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58945,6 +59382,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataRelationsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object model, object fields) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -58985,6 +59423,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosDataSearchReadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59061,6 +59500,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosSelfDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59075,6 +59515,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosSelfDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59093,6 +59534,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosSelfDataReadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59109,6 +59551,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPosSelfDataSearchReadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59128,6 +59571,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadPrecommitUpdateOpeningMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59153,6 +59597,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> LoadProductFromPosAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id, object domain, object offset, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59513,6 +59958,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MailTemplateDefaultValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59530,10 +59976,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> MailingGetDefaultDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object mailing) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing_sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _mailing_get_default_domain(self, mailing):
-            // """ Exclude by default canceled orders when performing a mass mailing. """
-            // return [('state', '!=', 'cancel')]
+            // return ['&', ('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]
             */
             return default;
         }
@@ -59734,6 +60179,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MergeTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_details_1, object tax_details_2) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -59942,6 +60388,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MessageNewAsync<TEntity>(IEnumerable<TEntity> entities, object msg_dict, object custom_values) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -60007,15 +60454,89 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> MessagePostAfterHookInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object msg_vals) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> MessagePostAfterHookInternalAsync<TEntity>(IEnumerable<TEntity> entities, object new_message, object message_values) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _message_post_after_hook(self, message, msg_vals):
-            // # After sending recovery cart emails, update orders to avoid sending it again
-            // if self.env.context.get('website_sale_send_recovery_email'):
-            //     self.cart_recovery_email_sent = True
-            // return super()._message_post_after_hook(message, msg_vals)
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _message_post_after_hook(self, new_message, message_values):
+            // """ This method processes the attachments of a new mail.message. It handles the 3 following situations:
+            //     (1) receiving an e-mail from a mail alias. In that case, we potentially want to split the attachments into several invoices.
+            //     (2) receiving an e-mail / posting a message on an existing invoice via the webclient:
+            //         (2)(a): If the poster is an internal user, we enhance the invoice with the attachments.
+            //         (2)(b): Otherwise, we don't do any further processing.
+            //     (3) posting a message on an invoice in application code. In that case, don't do anything.
+            // 
+            //     Furthermore, in cases (1) and (2), we decide for each attachment whether to add it as an attachment on the invoice,
+            //     based on its mimetype.
+            // """
+            // # EXTENDS mail mail.thread
+            // attachments = new_message.attachment_ids
+            // 
+            // if not attachments or new_message.message_type not in {'email', 'comment'} or self.env.context.get('disable_attachment_import'):
+            //     # No attachments, or the message was created in application code, so don't do anything.
+            //     return super()._message_post_after_hook(new_message, message_values)
+            // 
+            // files_data = self._to_files_data(attachments)
+            // 
+            // # Extract embedded files. Note that `_unwrap_attachments` may create ir.attachment records - for example
+            // # see l10n_{es,it}_edi, so to retrieve those attachments you should use the `_from_files_data` method.
+            // files_data.extend(self._unwrap_attachments(files_data))
+            // 
+            // if self.env.context.get('from_alias'):
+            //     # This is a newly-created invoice from a mail alias.
+            //     # So dispatch the attachments into groups, and create a new invoice for each group beyond the first.
+            //     valid_files_data = []
+            //     extra_files_data = []
+            //     for file_data in files_data:
+            //         if self._should_attach_to_record(file_data['attachment']) or file_data['xml_tree'] is not None:
+            //             valid_files_data.append(file_data)
+            //         else:
+            //             extra_files_data.append(file_data)
+            // 
+            //     file_data_groups = self._group_files_data_into_groups_of_mixed_types(valid_files_data) or [[]]
+            //     invoices = self
+            //     if len(file_data_groups) > 1:
+            //         create_vals = (len(file_data_groups) - 1) * self.copy_data()
+            //         invoices |= self.with_context(skip_is_manually_modified=True).create(create_vals)
+            // 
+            //     for invoice, file_data_group in zip(invoices, file_data_groups):
+            //         attachment_records = self._from_files_data(file_data_group)
+            //         if invoice == self:
+            //             attachment_records |= self._from_files_data(extra_files_data)
+            //             new_message.attachment_ids = [Command.set(attachment_records.ids)]
+            //             message_values['attachment_ids'] = [Command.link(attachment.id) for attachment in attachment_records]
+            //             res = super()._message_post_after_hook(new_message, message_values)
+            //         else:
+            //             sub_new_message = new_message.copy({
+            //                 'res_id': invoice.id,
+            //                 'attachment_ids': [Command.set(attachment_records.ids)],
+            //             })
+            //             sub_message_values = {
+            //                 **message_values,
+            //                 'res_id': invoice.id,
+            //                 'attachment_ids': [Command.link(attachment.id) for attachment in attachment_records],
+            //             }
+            //             super(AccountMove, invoice)._message_post_after_hook(sub_new_message, sub_message_values)
+            //         invoice._fix_attachments_on_record(attachment_records)
+            // 
+            //     for invoice, file_data_group in zip(invoices, file_data_groups):
+            //         if file_data_group:
+            //             invoice._extend_with_attachments(file_data_group, new=True)
+            // 
+            //     return res
+            // 
+            // else:
+            //     # This is an existing invoice on which a message was posted either by e-mail or via the webclient.
+            //     attachment_records = self._from_files_data(files_data)
+            //     self._fix_attachments_on_record(attachment_records)
+            // 
+            //     # Only trigger decoding if the message was sent by an active internal user (note OdooBot is always inactive).
+            //     if self.env.user.active and self.env.user._is_internal():
+            //         self._extend_with_attachments(files_data)
+            // 
+            //     new_message.attachment_ids = [Command.set(attachment_records.ids)]
+            //     message_values['attachment_ids'] = [Command.link(attachment.id) for attachment in attachment_records]
+            //     return super()._message_post_after_hook(new_message, message_values)
             */
             return default;
         }
@@ -60156,6 +60677,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MondialrelaySearchOrCreateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -60203,6 +60725,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> MoveDictToPreviewValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move_vals, Guid currency_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -60235,6 +60758,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NameCreateAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -60250,34 +60774,52 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NameSearchAsync<TEntity>(IEnumerable<TEntity> entities, object name, object domain, object @operator, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_country.py) ---
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def name_search(self, name='', domain=None, operator='ilike', limit=100):
-            // result = []
+            // if not name:
+            //     return super().name_search(name, domain, operator, limit)
+            // # search progressively by the most specific attributes
+            // positive_operators = ['=', 'ilike', '=ilike', 'like', '=like']
+            // is_positive = not operator in Domain.NEGATIVE_OPERATORS
+            // products = self.browse()
             // domain = Domain(domain or Domain.TRUE)
-            // # accepting 'in' as operator (see odoo/addons/base/tests/test_res_country.py)
-            // if operator == 'in':
-            //     if limit is None:
-            //         limit = 100  # force a limit
-            //     for item in name:
-            //         result.extend(self.name_search(item, domain, operator='=', limit=limit - len(result)))
-            //         if len(result) == limit:
-            //             break
-            //     return result
-            // # first search by code (with =ilike)
-            // if not operator in Domain.NEGATIVE_OPERATORS and name:
-            //     states = self.search_fetch(domain & Domain('code', '=like', name), ['display_name'], limit=limit)
-            //     result.extend((state.id, state.display_name) for state in states.sudo())
-            //     domain &= Domain('id', 'not in', states.ids)
-            //     if limit is not None:
-            //         limit -= len(states)
-            //         if limit <= 0:
-            //             return result
-            // # normal search
-            // result.extend(super().name_search(name, domain, operator, limit))
-            // return result
+            // if operator in positive_operators:
+            //     products = self.search_fetch(domain & Domain('default_code', '=', name), ['display_name'], limit=limit) \
+            //         or self.search_fetch(domain & Domain('barcode', '=', name), ['display_name'], limit=limit)
+            // if not products:
+            //     if is_positive:
+            //         # Do not merge the 2 next lines into one single search, SQL search performance would be abysmal
+            //         # on a database with thousands of matching products, due to the huge merge+unique needed for the
+            //         # OR operator (and given the fact that the 'name' lookup results come from the ir.translation table
+            //         # Performing a quick memory merge of ids in Python will give much better performance
+            //         products = self.search_fetch(domain & Domain('default_code', operator, name), ['display_name'], limit=limit)
+            //         limit_rest = limit and limit - len(products)
+            //         if limit_rest is None or limit_rest > 0:
+            //             products_query = self._search(domain & Domain('default_code', operator, name), limit=limit)
+            //             products |= self.search_fetch(domain & Domain('id', 'not in', products_query) & Domain('name', operator, name), ['display_name'], limit=limit_rest)
+            //     else:
+            //         domain_neg = Domain('name', operator, name) & (
+            //             Domain('default_code', operator, name) | Domain('default_code', '=', False)
+            //         )
+            //         products = self.search_fetch(domain & domain_neg, ['display_name'], limit=limit)
+            // if not products and operator in positive_operators and (m := re.search(r'(\[(.*?)\])', name)):
+            //     match_domain = Domain('default_code', '=', m.group(2))
+            //     products = self.search_fetch(domain & match_domain, ['display_name'], limit=limit)
+            // if not products and (partner_id := self.env.context.get('partner_id')):
+            //     # still no results, partner in context: search on supplier info as last hope to find something
+            //     supplier_domain = Domain([
+            //         ('partner_id', '=', partner_id),
+            //         '|',
+            //         ('product_code', operator, name),
+            //         ('product_name', operator, name),
+            //     ])
+            //     match_domain = Domain('product_tmpl_id.seller_ids', 'any', supplier_domain)
+            //     products = self.search_fetch(domain & match_domain, ['display_name'], limit=limit)
+            // return [(product.id, product.display_name) for product in products.sudo()]
             */
             return default;
         }
@@ -60326,6 +60868,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NewAsync<TEntity>(IEnumerable<TEntity> entities, object values, object origin, object @ref) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -60370,6 +60913,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NormalizeTargetFactorsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_factors) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -60410,7 +60954,31 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> NotifyByEmailPrepareRenderingContextInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object msg_vals, object model_description, object force_email_company, object force_email_lang, object force_record_name) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
+            //                                            force_email_company=False, force_email_lang=False,
+            //                                            force_record_name=False):
+            // # EXTENDS mail mail.thread
+            // render_context = super()._notify_by_email_prepare_rendering_context(
+            //     message, msg_vals=msg_vals, model_description=model_description,
+            //     force_email_company=force_email_company, force_email_lang=force_email_lang,
+            //     force_record_name=force_record_name,
+            // )
+            // record = render_context['record']
+            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id.name else record.name]
+            // if self.is_invoice(include_receipts=True):
+            //     # Only show the amount in emails for non-miscellaneous moves. It might confuse recipients otherwise.
+            //     if self.invoice_date_due and self.payment_state not in ('in_payment', 'paid'):
+            //         subtitles.append(_(
+            //             '%(amount)s due\N{NO-BREAK SPACE}%(date)s',
+            //             amount=format_amount(self.env, self.amount_total, self.currency_id, lang_code=render_context.get('lang')),
+            //             date=format_date(self.env, self.invoice_date_due, lang_code=render_context.get('lang')),
+            //         ))
+            //     else:
+            //         subtitles.append(format_amount(self.env, self.amount_total, self.currency_id, lang_code=render_context.get('lang')))
+            // render_context['subtitles'] = subtitles
+            // return render_context
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move.py) ---
             // def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
             //                                            force_email_company=False, force_email_lang=False,
             //                                            force_record_name=False):
@@ -60419,21 +60987,23 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     force_email_company=force_email_company, force_email_lang=force_email_lang,
             //     force_record_name=force_record_name,
             // )
-            // lang_code = render_context.get('lang')
-            // record = render_context['record']
-            // subtitles = [f"{record.name} - {record.partner_id.name}" if record.partner_id.name else record.name]
-            // if self.amount_total:
-            //     # Do not show the price in subtitles if zero (e.g. e-commerce orders are created empty)
-            //     subtitles.append(
-            //         format_amount(self.env, self.amount_total, self.currency_id, lang_code=lang_code),
-            //     )
-            // 
-            // render_context['subtitles'] = subtitles
+            // invoice = render_context['record']
+            // invoice_country = invoice.commercial_partner_id.country_code
+            // company_country = invoice.company_id.country_code
+            // can_send = self.env['account_edi_proxy_client.user']._get_can_send_domain()
+            // company_on_peppol = invoice.company_id.account_peppol_proxy_state in can_send
+            // if company_on_peppol and company_country in PEPPOL_MAILING_COUNTRIES and invoice_country in PEPPOL_MAILING_COUNTRIES:
+            //     render_context['peppol_info'] = {
+            //         'peppol_country': invoice_country,
+            //         'is_peppol_sent': invoice.peppol_move_state in ('processing', 'done'),
+            //         'partner_on_peppol': invoice.commercial_partner_id.peppol_verification_state in ('valid', 'not_valid_format'),
+            //     }
             // return render_context
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> NotifyExpiringContractWorkPermitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -60477,60 +61047,30 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> NotifyGetRecipientsGroupsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object model_description, object msg_vals) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
-            // # Give access button to users and portal customer as portal is integrated
-            // # in sale. Customer and portal group have probably no right to see
-            // # the document so they don't have the access button.
-            // groups = super()._notify_get_recipients_groups(
-            //     message, model_description, msg_vals=msg_vals
-            // )
-            // if not self:
-            //     return groups
-            // 
+            // groups = super()._notify_get_recipients_groups(message, model_description, msg_vals=msg_vals)
             // self.ensure_one()
-            // if self.env.context.get('proforma'):
-            //     for group in [g for g in groups if g[0] in ('portal_customer', 'portal', 'follower', 'customer')]:
-            //         group[2]['has_button_access'] = False
-            //     return groups
-            // local_msg_vals = dict(msg_vals or {})
             // 
-            // # portal customers have full access (existence not granted, depending on partner_id)
-            // try:
-            //     customer_portal_group = next(group for group in groups if group[0] == 'portal_customer')
-            // except StopIteration:
-            //     pass
-            // else:
-            //     access_opt = customer_portal_group[2].setdefault('button_access', {})
-            //     is_tx_pending = self.get_portal_last_transaction().state == 'pending'
-            //     if self._has_to_be_signed():
-            //         if self._has_to_be_paid():
-            //             access_opt['title'] = _("View Quotation") if is_tx_pending else _("Sign & Pay Quotation")
-            //         else:
-            //             access_opt['title'] = _("Accept & Sign Quotation")
-            //     elif self._has_to_be_paid() and not is_tx_pending:
-            //         access_opt['title'] = _("Accept & Pay Quotation")
-            //     elif self.state in ('draft', 'sent'):
-            //         access_opt['title'] = _("View Quotation")
+            // if self.move_type != 'entry':
+            //     local_msg_vals = dict(msg_vals or {})
+            //     partner_ids = local_msg_vals.get('partner_ids', []) if 'partner_ids' in local_msg_vals else message.partner_ids.ids
+            //     self._portal_ensure_token()
+            //     access_link = self._notify_get_action_link('view', **local_msg_vals, access_token=self.access_token)
             // 
-            // return groups
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _notify_get_recipients_groups(self, message, model_description, msg_vals=False):
-            // # In case of cart recovery email, update link to redirect directly
-            // # to the cart (like ``mail_template_sale_cart_recovery`` template).
-            // groups = super()._notify_get_recipients_groups(
-            //     message, model_description, msg_vals=msg_vals
-            // )
-            // if not self:
-            //     return groups
+            //     # Create a new group for partners that have been manually added as recipients.
+            //     # Those partners should have access to the invoice.
+            //     button_access = {'url': access_link} if access_link else {}
+            //     recipient_group = (
+            //         'additional_intended_recipient',
+            //         lambda pdata: pdata['id'] in partner_ids and pdata['id'] != self.partner_id.id and pdata['type'] != 'user',
+            //         {
+            //             'has_button_access': True,
+            //             'button_access': button_access,
+            //         }
+            //     )
+            //     groups.insert(0, recipient_group)
             // 
-            // self.ensure_one()
-            // customer_portal_group = next((group for group in groups if group[0] == 'portal_customer'), None)
-            // if customer_portal_group:
-            //     access_opt = customer_portal_group[2].setdefault('button_access', {})
-            //     if self.env.context.get('website_sale_send_recovery_email'):
-            //         access_opt['title'] = _('Resume Order')
-            //         access_opt['url'] = f'{self.get_base_url()}/shop/cart?id={self.id}&access_token={self.access_token}'
             // return groups
             */
             return default;
@@ -60895,12 +61435,29 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangeAsync<TEntity>(IEnumerable<TEntity> entities, object values, object field_names, object fields_spec) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def onchange(self, values, field_names, fields_spec):
-            // # Hacky fix to access fields in `SELF_READABLE_FIELDS` in the onchange logic.
-            // # Put field values in the cache.
-            // if self == self.env.user:
-            //     [self.sudo()[field_name] for field_name in self._self_accessible_fields()[0]]
+            // # Since only one field can be changed at the same time (the record is
+            // # saved when changing tabs) we can avoid building the snapshots for the
+            // # other field
+            // if 'line_ids' in field_names:
+            //     values = {key: val for key, val in values.items() if key != 'invoice_line_ids'}
+            //     fields_spec = {key: val for key, val in fields_spec.items() if key != 'invoice_line_ids'}
+            // elif 'invoice_line_ids' in field_names:
+            //     values = {key: val for key, val in values.items() if key != 'line_ids'}
+            //     fields_spec = {key: val for key, val in fields_spec.items() if key != 'line_ids'}
+            //     # When product_id and price_unit are in values, values is reordered to make sure
+            //     # that product_id is before price_unit because product_id is triggering an onchange
+            //     # of price_unit that could override the one defined here if the product_id is set
+            //     # after price_unit
+            //     invoice_line_ids = values.get('invoice_line_ids')
+            //     for invoice_line_idx, invoice_line in enumerate(invoice_line_ids):
+            //         if (len(invoice_line) == 3 and invoice_line[0] == 1 and isinstance(invoice_line[2], dict) and
+            //             'product_id' in invoice_line[2] and 'price_unit' in invoice_line[2]
+            //         ):
+            //             if isinstance(invoice_line, tuple):
+            //                 invoice_line_ids[invoice_line_idx] = invoice_line = list(invoice_line)
+            //             invoice_line[2] = dict(sorted(invoice_line[2].items(), key=lambda item: item[0] != 'product_id'))
             // return super().onchange(values, field_names, fields_spec)
             */
             return default;
@@ -61134,10 +61691,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangeCountryIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def _onchange_country_id(self):
             // if self.country_id:
-            //     self.currency_id = self.country_id.currency_id
+            //     self.zip_from = self.zip_to = False
+            //     self.state_ids = [(5,)]
+            //     self.states_count = len(self.country_id.state_ids)
             */
             return default;
         }
@@ -61383,13 +61942,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangeFposIdShowUpdateFposInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _onchange_fpos_id_show_update_fpos(self):
-            // if self.order_line and (
-            //     not self.fiscal_position_id
-            //     or (self.fiscal_position_id and self._origin.fiscal_position_id != self.fiscal_position_id)
-            // ):
-            //     self.show_update_fpos = True
+            // self.show_update_fpos = self.line_ids and self._origin.fiscal_position_id != self.fiscal_position_id
             */
             return default;
         }
@@ -62635,9 +63190,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OpenWebsiteUrlAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
             // def open_website_url(self):
-            // return self.mapped('partner_id').open_website_url()
+            // self.ensure_one()
+            // res = self.product_tmpl_id.open_website_url()
+            // res['url'] = self.website_url
+            // return res
             */
             return default;
         }
@@ -62653,6 +63211,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> OrderAccountsByFrequencyForPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid company_id, Guid partner_id, object move_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -62787,6 +63346,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PartitionBaseLinesTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object partition_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -62847,9 +63407,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> PaymentActionCaptureAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_move.py) ---
             // def payment_action_capture(self):
-            // """ Capture all transactions linked to this sale order. """
+            // """ Capture all transactions linked to this invoice. """
             // self.ensure_one()
             // payment_utils.check_rights_on_recordset(self)
             // 
@@ -62862,9 +63422,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> PaymentActionVoidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_move.py) ---
             // def payment_action_void(self):
-            // """ Void all transactions linked to this sale order. """
+            // """ Void all transactions linked to this invoice. """
             // payment_utils.check_rights_on_recordset(self)
             // 
             // # In sudo mode to bypass the checks on the rights on the transactions.
@@ -62946,6 +63506,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PeppolLookupParticipantInternalAsync<TEntity>(IEnumerable<TEntity> entities, object edi_identification) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -63031,6 +63592,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PhoneCodeForInternalAsync<TEntity>(IEnumerable<TEntity> entities, object code) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -63521,6 +64083,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrecisionGetAsync<TEntity>(IEnumerable<TEntity> entities, object application) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -63843,6 +64406,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareBaseLineTaxRepartitionGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object base_line_grouping_key, object tax_data, object tax_rep_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -63881,6 +64445,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareBaseLinesForDownPaymentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object exclude_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -64065,6 +64630,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareDiscountableBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object exclude_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -64161,6 +64727,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareDownPaymentLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -64416,6 +64983,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareGlobalDiscountLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -65624,59 +66192,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PrepareTaxLineForTaxesComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> PrepareTaxLineForTaxesComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_line) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
-            // def _prepare_tax_line_for_taxes_computation(self, record, **kwargs):
-            // """ Convert any representation of an accounting tax line ('record') into a python
-            // dictionary that will be used to use by `_prepare_tax_lines` to detect which tax line
-            // could be updated, the ones to be created and the ones to be deleted.
-            // We can't use directly an account.move.line because this is also used by
-            // - expense (to create the journal entry)
-            // - the bank reconciliation widget
-            // All fields in this list are the same as the corresponding fields defined in account.move.line.
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def _prepare_tax_line_for_taxes_computation(self, tax_line):
+            // """ Convert an account.move.line having display_type='tax' into a tax line for the taxes computation.
             // 
-            // The mechanism is the same as '_prepare_base_line_for_taxes_computation'.
-            // 
-            // [!] Only added python-side.
-            // 
-            // :param record:  A representation of a business object a.k.a a record or a dictionary.
-            // :param kwargs:  The extra values to override some values that will be taken from the record.
-            // :return:        A dictionary representing a tax line.
+            // :param tax_line: An account.move.line.
+            // :return: A tax line returned by '_prepare_tax_line_for_taxes_computation'.
             // """
-            // def load(field, fallback):
-            //     return self._get_base_line_field_value_from_record(record, field, kwargs, fallback)
-            // 
-            // currency = (
-            //     load('currency_id', None)
-            //     or load('company_currency_id', None)
-            //     or load('company_id', self.env['res.company']).currency_id
-            //     or self.env['res.currency']
+            // self.ensure_one()
+            // return self.env['account.tax']._prepare_tax_line_for_taxes_computation(
+            //     tax_line,
+            //     sign=self.direction_sign,
             // )
-            // 
-            // return {
-            //     **kwargs,
-            //     'record': record,
-            //     'id': load('id', 0),
-            //     'tax_repartition_line_id': load('tax_repartition_line_id', self.env['account.tax.repartition.line']),
-            //     'group_tax_id': load('group_tax_id', self.env['account.tax']),
-            //     'tax_ids': load('tax_ids', self.env['account.tax']),
-            //     'tax_tag_ids': load('tax_tag_ids', self.env['account.account.tag']),
-            //     'currency_id': currency,
-            //     'partner_id': load('partner_id', self.env['res.partner']),
-            //     'account_id': load('account_id', self.env['account.account']),
-            //     'analytic_distribution': load('analytic_distribution', None),
-            //     'sign': load('sign', 1.0),
-            //     'amount_currency': load('amount_currency', 0.0),
-            //     'balance': load('balance', 0.0),
-            // }
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: account_tax.py) ---
-            // def _prepare_tax_line_for_taxes_computation(self, record, **kwargs):
-            // # EXTENDS 'account'
-            // results = super()._prepare_tax_line_for_taxes_computation(record, **kwargs)
-            // results['expense_id'] = self._get_base_line_field_value_from_record(record, 'expense_id', kwargs, self.env['hr.expense'])
-            // return results
             */
             return default;
         }
@@ -65727,6 +66257,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> PrepareTaxLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object tax_lines) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -66032,6 +66563,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProcessEnrichedResponseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object response, object error) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -66062,6 +66594,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProcessOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order, object existing_order) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -66426,6 +66959,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProgramItemsNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -66445,6 +66979,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ProgramTypeDefaultValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -67111,13 +67646,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ReadAsync<TEntity>(IEnumerable<TEntity> entities, object fields, object load) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def read(self, fields=None, load='_classic_read'):
-            // readable, _ = self._self_accessible_fields()
-            // if fields and self == self.env.user and all(key in readable or key.startswith('context_') for key in fields):
-            //     # safe fields only, so we read as super-user to bypass access rights
-            //     self = self.sudo()
-            // return super().read(fields=fields, load=load)
+            // fields = fields or self._get_default_read_fields()
+            // return super().read(fields, load)
             */
             return default;
         }
@@ -67211,6 +67743,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReadGroupInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object groupby, object aggregates, object having, object offset, object limit, object order) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -67313,6 +67846,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReadPosDataUuidAsync<TEntity>(IEnumerable<TEntity> entities, object uuid) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -67323,6 +67857,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReadPosOrdersAsync<TEntity>(IEnumerable<TEntity> entities, object domain) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -67807,6 +68342,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReduceBaseLinesToTargetAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object amount_type, object amount, object computation_key, object grouping_function, object aggregate_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -68042,6 +68578,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReduceBaseLinesWithGroupingFunctionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object grouping_function, object aggregate_function, object computation_key) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -68239,6 +68776,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RefundCleanupLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lines) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -68312,6 +68850,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RegisterAttendeeAsync<TEntity>(IEnumerable<TEntity> entities, object barcode, Guid event_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -68344,10 +68883,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> RegisterHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
             // def _register_hook(self):
-            // if hasattr(self, 'check_credentials'):
-            //     _logger.warning("The check_credentials method of res.users has been renamed _check_credentials. One of your installed modules defines one, but it will not be called anymore.")
+            // # check that there is at least one active language
+            // if not self.search_count([]):
+            //     _logger.error("No language is active.")
             */
             return default;
         }
@@ -68414,6 +68954,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RemoveFromUiAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> server_ids) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -68787,6 +69328,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RetrievePartnerWithNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object name, object extra_domain) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -68799,6 +69341,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RetrievePartnerWithPhoneEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object phone, object email, object extra_domain) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -68821,6 +69364,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RetrievePartnerWithVatInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vat, object extra_domain) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69006,6 +69550,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ReverseQuantityBaseLineExtraTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object extra_tax_data) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69089,6 +69634,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundBaseLinesTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object tax_lines) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69207,6 +69753,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundRawTaxAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines_aggregated_values, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69311,6 +69858,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundRawTotalExcludedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69389,6 +69937,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundTaxDetailsBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object mode) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69499,6 +70048,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundTaxDetailsTaxAmountsFromTaxLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object tax_lines) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69584,6 +70134,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoundTaxDetailsTaxAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object mode) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69688,6 +70239,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RoutingCheckRouteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object message_dict, object route, object raise_exception) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -69953,6 +70505,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RunVatChecksInternalAsync<TEntity>(IEnumerable<TEntity> entities, object country, object vat, object partner_name, object validation) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -70178,6 +70731,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SanitizePeppolEndpointInValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -70231,35 +70785,28 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> SanitizeValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _sanitize_vals(self, vals):
-            // """Normalize the create/write values."""
-            // sanitized = vals.copy()
-            // 
-            // # Wrap plain text in <div> if description has no HTML tags to avoid the padding with automatically added <p>
-            // if sanitized.get('description') and not re.search(r'<[^>]+>', sanitized['description']):
-            //     sanitized['description'] = f"<div>{sanitized['description']}</div>"
-            // 
-            // # Allow to provide invoice_repartition_line_ids and refund_repartition_line_ids by dispatching them
-            // # correctly in the repartition_line_ids
-            // if 'repartition_line_ids' in sanitized and (
-            //     'invoice_repartition_line_ids' in sanitized
-            //     or 'refund_repartition_line_ids' in sanitized
-            // ):
-            //     del sanitized['repartition_line_ids']
-            // for doc_type in ('invoice', 'refund'):
-            //     fname = f"{doc_type}_repartition_line_ids"
-            //     if fname in sanitized:
-            //         repartition = sanitized.setdefault('repartition_line_ids', [])
-            //         for command_vals in sanitized.pop(fname):
-            //             if command_vals[0] == Command.CREATE:
-            //                 repartition.append(Command.create({'document_type': doc_type, **command_vals[2]}))
-            //             elif command_vals[0] == Command.UPDATE:
-            //                 repartition.append(Command.update(command_vals[1], {'document_type': doc_type, **command_vals[2]}))
-            //             else:
-            //                 repartition.append(command_vals)
-            //         sanitized[fname] = []
-            // return sanitized
+            // if vals.get('invoice_line_ids') and vals.get('line_ids'):
+            //     # values can sometimes be in only one of the two fields, sometimes in
+            //     # both fields, sometimes one field can be explicitely empty while the other
+            //     # one is not, sometimes not...
+            //     update_vals = {
+            //         line_id: line_vals[0]
+            //         for command, line_id, *line_vals in vals['invoice_line_ids']
+            //         if command == Command.UPDATE
+            //     }
+            //     for command, line_id, *line_vals in vals['line_ids']:
+            //         if command == Command.UPDATE and line_id in update_vals:
+            //             line_vals[0].update(update_vals.pop(line_id))
+            //     for line_id, line_vals in update_vals.items():
+            //         vals['line_ids'] += [Command.update(line_id, line_vals)]
+            //     for command, line_id, *line_vals in vals['invoice_line_ids']:
+            //         assert command not in (Command.SET, Command.CLEAR)
+            //         if [command, line_id, *line_vals] not in vals['line_ids']:
+            //             vals['line_ids'] += [(command, line_id, *line_vals)]
+            //     del vals['invoice_line_ids']
+            // return vals
             */
             return default;
         }
@@ -70419,6 +70966,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchBuildDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -70550,26 +71098,71 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_country.py) ---
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _search_display_name(self, operator, value):
-            // domain = super()._search_display_name(operator, value)
-            // if value and not operator in Domain.NEGATIVE_OPERATORS:
-            //     if operator in ('ilike', '='):
-            //         domain |= self._get_name_search_domain(value, operator)
-            //     elif operator == 'in':
-            //         domain |= Domain.OR(
-            //             self._get_name_search_domain(name, '=') for name in value
-            //         )
-            // if country_id := self.env.context.get('country_id'):
-            //     domain &= Domain('country_id', '=', country_id)
-            // return domain
+            // is_positive = operator not in Domain.NEGATIVE_OPERATORS
+            // template_domains = [[('name', operator, value)]]
+            // product_domains = [[('default_code', operator, value)]]
+            // 
+            // if operator == 'in':
+            //     product_domains.append([('barcode', 'in', value)])
+            //     for v in value:
+            //         if isinstance(v, str) and (m := re.search(r'(\[(.*?)\])', v)):
+            //             product_domains.append([('default_code', '=', m.group(2))])
+            // elif operator.endswith('like') and is_positive:
+            //     product_domains.append([('barcode', 'in', [value])])
+            // 
+            // supplier_domain = []
+            // if partner_id := self.env.context.get('partner_id'):
+            //     supplier_domain = [
+            //         ('partner_id', '=', partner_id),
+            //         '|',
+            //         ('product_code', operator, value),
+            //         ('product_name', operator, value),
+            //     ]
+            // 
+            // # AND clauses properly hit indexes so no need for custom sql in this case.
+            // if operator in Domain.NEGATIVE_OPERATORS:
+            //     domains = template_domains + product_domains
+            //     if supplier_domain:
+            //         domains.append([('product_tmpl_id.seller_ids', 'any', supplier_domain)])
+            //     return Domain.AND(domains)
+            // 
+            // # Disable active_test to simplify subqueries
+            // self_no_active_test = self.with_context(active_test=False)
+            // queries = [
+            //     self_no_active_test._search([
+            //         ('product_tmpl_id', 'in', self_no_active_test.env['product.template']._search(Domain.OR(template_domains)))
+            //     ]),
+            //     self_no_active_test._search(Domain.OR(product_domains)),
+            // ]
+            // if supplier_domain:
+            //     queries.append(
+            //         self_no_active_test._search([
+            //             (
+            //                 'product_tmpl_id',
+            //                 'in',
+            //                 self_no_active_test.env['product.supplierinfo']._search(supplier_domain).subselect('product_tmpl_id'),
+            //             )
+            //         ])
+            //     )
+            // query = SQL(
+            //     """(%s)""",
+            //     SQL("UNION ALL").join(
+            //         [SQL("(%s)", query.select()) for query in queries]
+            //     )
+            // )
+            // 
+            // return [('id', 'in', query)]
             */
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchEventBeginDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -70595,6 +71188,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchEventEndDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -70608,6 +71202,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchFetchAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object field_names, object offset, object limit, object order) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -70679,6 +71274,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchForChannelInviteAsync<TEntity>(IEnumerable<TEntity> entities, object search_term, Guid channel_id, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -70733,6 +71329,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchForChannelInviteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object store, object search_term, Guid channel_id, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -70825,92 +71422,67 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchGetDetailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object website, object order, object options) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_template.py) ---
             // def _search_get_detail(self, website, order, options):
+            // with_image = options['displayImage']
             // with_description = options['displayDescription']
-            // with_date = options['displayDetail']
-            // date = options.get('date', 'all')
-            // country = options.get('country')
+            // with_category = options['displayExtraLink']
+            // with_price = options['displayDetail']
+            // domains = [website.sale_product_domain()]
+            // category = options.get('category')
             // tags = options.get('tags')
-            // event_type = options.get('type', 'all')
-            // 
-            // domain = [website.website_domain()]
-            // domain.append([('is_visible_on_website', '=', True)])
-            // 
-            // if event_type != 'all':
-            //     domain.append([("event_type_id", "=", int(event_type))])
-            // search_tags = self.env['event.tag']
+            // min_price = options.get('min_price')
+            // max_price = options.get('max_price')
+            // attribute_value_dict = options.get('attribute_value_dict')
+            // if category:
+            //     domains.append([('public_categ_ids', 'child_of', self.env['ir.http']._unslug(category)[1])])
             // if tags:
-            //     try:
-            //         tag_ids = list(filter(None, [self.env['ir.http']._unslug(tag)[1] for tag in tags.split(',')])) or literal_eval(tags)
-            //     except SyntaxError:
-            //         pass
-            //     else:
-            //         # perform a search to filter on existing / valid tags implicitely + apply rules on color
-            //         search_tags = self.env['event.tag'].search([('id', 'in', tag_ids)])
-            // 
-            //     # Example: You filter on age: 10-12 and activity: football.
-            //     # Doing it this way allows to only get events who are tagged "age: 10-12" AND "activity: football".
-            //     # Add another tag "age: 12-15" to the search and it would fetch the ones who are tagged:
-            //     # ("age: 10-12" OR "age: 12-15") AND "activity: football
-            //     for tags in search_tags.grouped('category_id').values():
-            //         domain.append([('tag_ids', 'in', tags.ids)])
-            // 
-            // no_country_domain = domain.copy()
-            // if country:
-            //     if country == 'online':
-            //         domain.append([("country_id", "=", False)])
-            //     elif country != 'all':
-            //         domain.append([("country_id", "=", int(country))])
-            // 
-            // no_date_domain = domain.copy()
-            // dates = self._search_build_dates()
-            // current_date = None
-            // for date_details in dates:
-            //     if date == date_details[0]:
-            //         domain.append(date_details[2])
-            //         no_country_domain.append(date_details[2])
-            //         if date_details[0] != 'scheduled':
-            //             current_date = date_details[1]
-            // 
-            // search_fields = ['name']
-            // fetch_fields = ['name', 'website_url', 'address_name']
+            //     if isinstance(tags, str):
+            //         tags = tags.split(',')
+            //     tags = list(map(int, tags))  # Convert list of strings to list of integers
+            //     domains.append(Domain.OR([
+            //         Domain('product_tag_ids', 'in', tags),
+            //         Domain('product_variant_ids.additional_product_tag_ids', 'in', tags),
+            //     ]))
+            // if min_price:
+            //     domains.append([('list_price', '>=', min_price)])
+            // if max_price:
+            //     domains.append([('list_price', '<=', max_price)])
+            // if attribute_value_dict:
+            //     domains.extend(self._get_attribute_value_domain(attribute_value_dict))
+            // search_fields = ['name', 'default_code', 'variants_default_code']
+            // fetch_fields = ['id', 'name', 'website_url']
             // mapping = {
             //     'name': {'name': 'name', 'type': 'text', 'match': True},
+            //     'default_code': {'name': 'default_code', 'type': 'text', 'match': True},
+            //     'product_variant_ids.default_code': {'name': 'product_variant_ids.default_code', 'type': 'text', 'match': True},
             //     'website_url': {'name': 'website_url', 'type': 'text', 'truncate': False},
-            //     'address_name': {'name': 'address_name', 'type': 'text', 'match': True},
             // }
+            // if with_image:
+            //     mapping['image_url'] = {'name': 'image_url', 'type': 'html'}
             // if with_description:
-            //     search_fields.append('subtitle')
-            //     fetch_fields.append('subtitle')
-            //     mapping['description'] = {'name': 'subtitle', 'type': 'text', 'match': True}
-            // if with_date:
-            //     mapping['detail'] = {'name': 'range', 'type': 'html'}
-            // 
-            // # Bypassing the access rigths of partner to search the address.
-            // def search_in_address(env, search_term):
-            //     ret = env['event.event'].sudo()._search([
-            //        ('address_search', 'ilike', search_term),
-            //     ])
-            //     return [('id', 'in', ret)]
-            // 
+            //     # Internal note is not part of the rendering.
+            //     search_fields.append('description')
+            //     fetch_fields.append('description')
+            //     search_fields.append('description_sale')
+            //     fetch_fields.append('description_sale')
+            //     mapping['description'] = {'name': 'description_sale', 'type': 'text', 'match': True}
+            // if with_price:
+            //     mapping['detail'] = {'name': 'price', 'type': 'html', 'display_currency': options['display_currency']}
+            //     mapping['detail_strike'] = {'name': 'list_price', 'type': 'html', 'display_currency': options['display_currency']}
+            // if with_category:
+            //     mapping['extra_link'] = {'name': 'category', 'type': 'html'}
             // return {
-            //     'model': 'event.event',
-            //     'base_domain': domain,
+            //     'model': 'product.template',
+            //     'base_domain': domains,
             //     'search_fields': search_fields,
-            //     'search_extra': search_in_address,
             //     'fetch_fields': fetch_fields,
             //     'mapping': mapping,
-            //     'icon': 'fa-ticket',
-            //     # for website_event main controller:
-            //     'dates': dates,
-            //     'current_date': current_date,
-            //     'search_tags': search_tags,
-            //     'no_date_domain': no_date_domain,
-            //     'no_country_domain': no_country_domain,
+            //     'icon': 'fa-shopping-cart',
             // }
             */
             return default;
@@ -70939,6 +71511,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71012,6 +71585,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchIsFavoriteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71109,6 +71683,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchIsParticipatingInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71148,6 +71723,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchIsVisibleOnWebsiteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71208,6 +71784,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchMentionSuggestionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object limit, object extra_domain) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71249,6 +71826,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchNewAccountCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start_code, object cache) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71375,6 +71953,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPaidOrderIdsAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id, object domain, object limit, object offset) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71432,6 +72011,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchPanelSelectRangeAsync<TEntity>(IEnumerable<TEntity> entities, object field_name) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71733,6 +72313,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchReadAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object fields, object offset, object limit, object order) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71760,17 +72341,33 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> SearchRenderResultsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fetch_fields, object mapping, object icon, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_template.py) ---
             // def _search_render_results(self, fetch_fields, mapping, icon, limit):
-            // with_date = 'detail' in mapping
+            // with_image = 'image_url' in mapping
+            // with_category = 'extra_link' in mapping
+            // with_price = 'detail' in mapping
             // results_data = super()._search_render_results(fetch_fields, mapping, icon, limit)
-            // if with_date:
-            //     for event, data in zip(self, results_data):
-            //         begin = self.env['ir.qweb.field.date'].record_to_html(event, 'date_begin', {})
-            //         end = self.env['ir.qweb.field.date'].record_to_html(event, 'date_end', {})
-            //         data['range'] = (
-            //             Markup('{} <i class="fa fa-long-arrow-right"></i> {}').format(begin, end)
-            //             if begin != end else begin
+            // current_website = self.env['website'].get_current_website()
+            // for product, data in zip(self, results_data):
+            //     categ_ids = product.public_categ_ids.filtered(lambda c: not c.website_id or c.website_id == current_website)
+            //     if with_price:
+            //         combination_info = product._get_combination_info(only_template=True)
+            //         data['price'], list_price = self._search_render_results_prices(
+            //             mapping, combination_info
+            //         )
+            //         if list_price:
+            //             data['list_price'] = list_price
+            // 
+            //     if with_image:
+            //         data['image_url'] = '/web/image/product.template/%s/image_128' % data['id']
+            //     if with_category and categ_ids:
+            //         data['category'] = self.env['ir.ui.view'].sudo()._render_template(
+            //             "website_sale.product_category_extra_link",
+            //             {
+            //                 'categories': categ_ids,
+            //                 'slug': self.env['ir.http']._slug,
+            //                 'shop_path': SHOP_PATH,
+            //             }
             //         )
             // return results_data
             */
@@ -71804,6 +72401,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchResUsersSettingsIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object operand) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71896,6 +72494,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchTasksIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -71913,6 +72512,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SearchTemplateCategoryInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -72100,6 +72700,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SelfAccessibleFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -72830,6 +73431,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SetCalendarLastNotifAckInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -72870,6 +73472,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SetDefaultPosLoadLimitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -73554,6 +74157,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SettingInitBankAccountActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -73575,6 +74179,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SettingInitCreditCardAccountActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -73817,6 +74422,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SignupAsync<TEntity>(IEnumerable<TEntity> entities, object values, object token) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -73884,6 +74490,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SignupCreateUserInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -73950,6 +74557,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SignupRetrieveInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object token) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -73987,6 +74595,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SignupRetrievePartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object token, object check_validity, object raise_exception) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74007,6 +74616,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SplitBaseLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object company, object target_factors, object populate_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74084,6 +74694,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SplitTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data, object company, object target_factors) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74146,6 +74757,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SplitTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object company, object target_factors) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74239,6 +74851,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SpreadsheetFetchBalanceTagAsync<TEntity>(IEnumerable<TEntity> entities, object args_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74275,6 +74888,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SpreadsheetFetchDebitCreditAsync<TEntity>(IEnumerable<TEntity> entities, object args_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74306,6 +74920,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SpreadsheetFetchPartnerBalanceAsync<TEntity>(IEnumerable<TEntity> entities, object args_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74343,6 +74958,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SpreadsheetFetchResidualAmountAsync<TEntity>(IEnumerable<TEntity> entities, object args_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74374,6 +74990,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SpreadsheetMoveLineActionAsync<TEntity>(IEnumerable<TEntity> entities, object args) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74393,6 +75010,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SquashGlobalDiscountLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74421,6 +75039,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SquashReturnOfMerchandiseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74796,6 +75415,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SwitchTourEnabledAsync<TEntity>(IEnumerable<TEntity> entities, object val) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74807,6 +75427,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SyncAllGoogleCalendarInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74827,6 +75448,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SyncAllMicrosoftCalendarInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -74950,6 +75572,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SyncDynamicLineNeededValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values_list) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -75014,6 +75637,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SyncFromUiAsync<TEntity>(IEnumerable<TEntity> entities, object name, object background_color, Guid config_id) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -75701,6 +76325,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> SyncedCommercialFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -76004,6 +76629,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ThemeRemoveInternalAsync<TEntity>(IEnumerable<TEntity> entities, object website) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -76510,6 +77136,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ToggleGroupMultiCurrencyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -76729,13 +77356,21 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> TrackSubtypeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object init_values) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _track_subtype(self, init_values):
+            // # EXTENDS mail mail.thread
+            // # add custom subtype depending of the state.
             // self.ensure_one()
-            // if init_values.keys() & {'is_published', 'website_published'}:
-            //     if self.is_published:
-            //         return self.env.ref('website_event.mt_event_published', raise_if_not_found=False)
-            //     return self.env.ref('website_event.mt_event_unpublished', raise_if_not_found=False)
+            // 
+            // if not self.is_invoice(include_receipts=True):
+            //     if self.origin_payment_id and 'state' in init_values:
+            //         self.origin_payment_id._message_track(['state'], {self.origin_payment_id.id: init_values})
+            //     return super()._track_subtype(init_values)
+            // 
+            // if 'payment_state' in init_values and self.payment_state == 'paid':
+            //     return self.env.ref('account.mt_invoice_paid')
+            // elif 'state' in init_values and self.state == 'posted' and self.is_sale_document(include_receipts=True):
+            //     return self.env.ref('account.mt_invoice_validated')
             // return super()._track_subtype(init_values)
             */
             return default;
@@ -77001,6 +77636,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> TurnBaseLinesIsRefundFlagOffInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -77018,6 +77654,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> TurnRemovedTaxesIntoNewBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object grouping_function, object aggregate_function) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -77047,6 +77684,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> UblParseAttachedDocumentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -77389,20 +78027,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> UnlinkExceptMasterDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: product_product.py) ---
             // def _unlink_except_master_data(self):
-            // portal_user_template = self.env.ref('base.template_portal_user_id', False)
-            // public_user = self.env.ref('base.public_user', False)
-            // if SUPERUSER_ID in self.ids:
-            //     raise UserError(_('You can not remove the admin user as it is used internally for resources created by Odoo (updates, module installation, ...)'))
-            // user_admin = self.env.ref('base.user_admin', raise_if_not_found=False)
-            // if user_admin and user_admin in self:
-            //     raise UserError(_('You cannot delete the admin user because it is utilized in various places (such as security configurations,...). Instead, archive it.'))
-            // self.env.registry.clear_cache()
-            // if portal_user_template and portal_user_template in self:
-            //     raise UserError(_('Deleting the template users is not allowed. Deleting this profile will compromise critical functionalities.'))
-            // if public_user and public_user in self:
-            //     raise UserError(_("Deleting the public user is not allowed. Deleting this profile will compromise critical functionalities."))
+            // time_product = self.env.ref('sale_timesheet.time_product')
+            // if time_product in self:
+            //     raise ValidationError(_('The %s product is required by the Timesheets app and cannot be archived, deleted nor linked to a company.', time_product.name))
             */
             return default;
         }
@@ -78104,6 +78733,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> UpdateLastLoginInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -78224,6 +78854,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> UpdateListAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -78433,69 +79064,50 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> UpdateOrderLineInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid product_id, object quantity) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: delivery, FILE: sale_order.py) ---
-            // def _update_order_line_info(self, product_id, quantity, **kwargs):
-            // """ Override of `sale` to recompute the delivery prices.
-            // 
-            // :param int product_id: The product, as a `product.product` id.
-            // :return: The unit price price of the product, based on the pricelist of the sale order and
-            //          the quantity selected.
-            // :rtype: float
-            // """
-            // price_unit = super()._update_order_line_info(product_id, quantity, **kwargs)
-            // if self:
-            //     self.onchange_order_line()
-            // return price_unit
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _update_order_line_info(
-            //     self, product_id, quantity, *, section_id=False, child_field='order_line', **kwargs
+            //     self, product_id, quantity, *, section_id=False, child_field='line_ids', **kwargs
             // ):
-            //     """ Update sale order line information for a given product or create a
+            //     """ Update account_move_line information for a given product or create a
             //     new one if none exists yet.
             //     :param int product_id: The product, as a `product.product` id.
-            //     :param int quantity: The quantity selected in the catalog.
+            //     :param int quantity: The quantity selected in the catalog
             //     :param int section_id: The id of section selected in the catalog.
             //     :return: The unit price of the product, based on the pricelist of the
             //              sale order and the quantity selected.
             //     :rtype: float
             //     """
-            //     request.update_context(catalog_skip_tracking=True)
-            //     sol = self.order_line.filtered(
-            //         lambda l: l.product_id.id == product_id
-            //         and l.get_parent_section_line().id == section_id,
+            //     move_line = self.line_ids.filtered(
+            //         lambda line: line.product_id.id == product_id
+            //         and line.get_parent_section_line().id == section_id,
             //     )
-            //     if sol:
+            //     if move_line:
             //         if quantity != 0:
-            //             sol.product_uom_qty = quantity
-            //         elif self.state in ['draft', 'sent']:
-            //             price_unit = self.pricelist_id._get_product_price(
-            //                 product=sol.product_id,
-            //                 quantity=1.0,
-            //                 currency=self.currency_id,
-            //                 date=self.date_order,
-            //                 **kwargs,
-            //             )
-            //             sol.unlink()
+            //             move_line.quantity = quantity
+            //         elif self.state in {'draft', 'sent'}:
+            //             price_unit = self._get_product_price_and_data(move_line.product_id)['price']
+            //             # The catalog is designed to allow the user to select products quickly.
+            //             # Therefore, sometimes they may select the wrong product or decide to remove
+            //             # some of them from the quotation. The unlink is there for that reason.
+            //             move_line.unlink()
             //             return price_unit
             //         else:
-            //             sol.product_uom_qty = 0
+            //             move_line.quantity = 0
             //     elif quantity > 0:
-            //         sol = self.env['sale.order.line'].create({
-            //             'order_id': self.id,
+            //         move_line = self.env['account.move.line'].create({
+            //             'move_id': self.id,
+            //             'quantity': quantity,
             //             'product_id': product_id,
-            //             'product_uom_qty': quantity,
             //             'sequence': self._get_new_line_sequence(child_field, section_id),
             //         })
-            //     else:  # quantity of 0, no line to update, return defaut pricelist price
-            //         return self.pricelist_id._get_product_price(
-            //             product=self.env['product.product'].browse(product_id),
-            //             quantity=1.0,
-            //             currency=self.currency_id,
-            //             date=self.date_order,
-            //             **kwargs,
-            //         )
-            // 
-            //     return sol._get_discounted_price()
+            //     return move_line.price_unit
+            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: account_move.py) ---
+            // def _update_order_line_info(self, product_id, quantity, **kwargs):
+            // price_unit = super()._update_order_line_info(product_id, quantity, **kwargs)
+            // move_line = self.line_ids.filtered(lambda line: line.product_id.id == product_id)
+            // if move_line:
+            //     move_line.is_landed_costs_line = move_line.product_id.landed_cost_ok
+            // return price_unit
             */
             return default;
         }
@@ -78927,6 +79539,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> UpdateThemeImagesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -79916,6 +80529,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> ViewHeaderGetAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -79940,6 +80554,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WebCreateUsersAsync<TEntity>(IEnumerable<TEntity> entities, object emails) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -79997,6 +80612,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WebSearchReadAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object specification, object offset, object limit, object order, object count_limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
@@ -80018,9 +80634,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> WebsitePublishButtonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_product.py) ---
             // def website_publish_button(self):
-            // return self.partner_id.website_publish_button()
+            // self.ensure_one()
+            // return self.product_tmpl_id.website_publish_button()
             */
             return default;
         }
@@ -80041,6 +80658,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> WithLockedRecordsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object records, object allow_raising) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*

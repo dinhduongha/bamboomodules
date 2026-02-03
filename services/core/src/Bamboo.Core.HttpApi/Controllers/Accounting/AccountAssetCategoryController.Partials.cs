@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/onchange-account-asset")]
-        public async Task<IActionResult> OnchangeAccountAssetAsync(Guid id)
+        [Route("onchange-account-asset")]
+        public async Task<IActionResult> OnchangeAccountAssetAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeAccountAssetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeAccountAssetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-type")]
-        public async Task<IActionResult> OnchangeTypeAsync(Guid id)
+        [Route("onchange-type")]
+        public async Task<IActionResult> OnchangeTypeAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeTypeAsync(ids);
             return Ok(result);
         }
     }

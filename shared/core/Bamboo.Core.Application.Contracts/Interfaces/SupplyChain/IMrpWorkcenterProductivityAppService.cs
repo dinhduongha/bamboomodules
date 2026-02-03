@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMrpWorkcenterProductivityAppService : IGenericApplicationService<MrpWorkcenterProductivity>
     {
-        Task<MrpWorkcenterProductivity> ButtonBlockAsync(Guid id);
+        Task<MrpWorkcenterProductivity> ButtonBlockAsync(Guid[] ids);
     }
 }

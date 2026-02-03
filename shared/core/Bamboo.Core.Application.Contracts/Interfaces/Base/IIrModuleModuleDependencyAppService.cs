@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrModuleModuleDependencyAppService : IGenericApplicationService<IrModuleModuleDependency>
     {
-        Task<IrModuleModuleDependency> AllDependenciesAsync(Guid id, IrModuleModuleDependencyAllDependenciesRequestDto input);
+        Task<IrModuleModuleDependency> AllDependenciesAsync(IrModuleModuleDependencyAllDependenciesRequestDto input);
     }
 }

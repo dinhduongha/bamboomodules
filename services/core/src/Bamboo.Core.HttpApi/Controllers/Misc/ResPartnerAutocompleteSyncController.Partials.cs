@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/add-to-queue")]
-        public async Task<IActionResult> AddToQueueAsync(Guid id, [FromBody] ResPartnerAutocompleteSyncAddToQueueRequestDto input)
+        [Route("add-to-queue")]
+        public async Task<IActionResult> AddToQueueAsync(ResPartnerAutocompleteSyncAddToQueueRequestDto input)
         {
-            var result = await _appService.AddToQueueAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AddToQueueAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/start-sync")]
-        public async Task<IActionResult> StartSyncAsync(Guid id, [FromBody] ResPartnerAutocompleteSyncStartSyncRequestDto input)
+        [Route("start-sync")]
+        public async Task<IActionResult> StartSyncAsync(ResPartnerAutocompleteSyncStartSyncRequestDto input)
         {
-            var result = await _appService.StartSyncAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.StartSyncAsync(input);
             return Ok(result);
         }
     }

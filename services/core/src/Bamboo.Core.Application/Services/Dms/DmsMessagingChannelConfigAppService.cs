@@ -12,7 +12,7 @@ using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsMessagingChannelConfigAppService : IGenericApplicationService<DmsMessagingChannelConfig>
+    public interface IDmsMessagingChannelConfigAppService : IGenericAppService<DmsMessagingChannelConfig>
     {
         Task SendNotificationAsync(Guid configId, string message);
     }
@@ -20,7 +20,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsMessagingChannelConfigAppService : GenericApplicationService<DmsMessagingChannelConfig>, IDmsMessagingChannelConfigAppService
+    public class DmsMessagingChannelConfigAppService : GenericAppService<DmsMessagingChannelConfig>, IDmsMessagingChannelConfigAppService
     {
         public DmsMessagingChannelConfigAppService(
             IRepository<DmsMessagingChannelConfig, Guid> repository,

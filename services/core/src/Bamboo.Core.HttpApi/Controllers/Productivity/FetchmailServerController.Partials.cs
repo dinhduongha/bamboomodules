@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/button-confirm-login")]
-        public async Task<IActionResult> ButtonConfirmLoginAsync(Guid id)
+        [Route("button-confirm-login")]
+        public async Task<IActionResult> ButtonConfirmLoginAsync(Guid[] ids)
         {
-            var result = await _appService.ButtonConfirmLoginAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ButtonConfirmLoginAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/fetch-mail")]
-        public async Task<IActionResult> FetchMailAsync(Guid id)
+        [Route("fetch-mail")]
+        public async Task<IActionResult> FetchMailAsync(Guid[] ids)
         {
-            var result = await _appService.FetchMailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.FetchMailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-server-type")]
-        public async Task<IActionResult> OnchangeServerTypeAsync(Guid id)
+        [Route("onchange-server-type")]
+        public async Task<IActionResult> OnchangeServerTypeAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeServerTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeServerTypeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/set-draft")]
-        public async Task<IActionResult> SetDraftAsync(Guid id)
+        [Route("set-draft")]
+        public async Task<IActionResult> SetDraftAsync(Guid[] ids)
         {
-            var result = await _appService.SetDraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SetDraftAsync(ids);
             return Ok(result);
         }
     }

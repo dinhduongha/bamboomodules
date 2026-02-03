@@ -10,11 +10,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IMailTemplateAppService : IGenericApplicationService<MailTemplate>
     {
-        Task<MailTemplate> CopyDataAsync(Guid id, MailTemplateCopyDataRequestDto input);
-        Task<MailTemplate> CreateActionAsync(Guid id);
-        Task<MailTemplate> OpenMailPreviewAsync(Guid id);
-        Task<MailTemplate> SendMailAsync(Guid id, MailTemplateSendMailRequestDto input);
-        Task<MailTemplate> SendMailBatchAsync(Guid id, MailTemplateSendMailBatchRequestDto input);
-        Task<MailTemplate> UnlinkActionAsync(Guid id);
+        Task<MailTemplate> CopyDataAsync(MailTemplateCopyDataRequestDto input);
+        Task<MailTemplate> CreateActionAsync(Guid[] ids);
+        Task<MailTemplate> OpenMailPreviewAsync(Guid[] ids);
+        Task<MailTemplate> SendMailAsync(MailTemplateSendMailRequestDto input);
+        Task<MailTemplate> SendMailBatchAsync(MailTemplateSendMailBatchRequestDto input);
+        Task<MailTemplate> UnlinkActionAsync(Guid[] ids);
     }
 }

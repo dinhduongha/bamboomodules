@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Lunch", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class LunchSupplierAppService : GenericApplicationService<LunchSupplier>, ILunchSupplierAppService
+    public partial class LunchSupplierAppService : GenericAppService<LunchSupplier>, ILunchSupplierAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -129,7 +129,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LunchSupplier> ConfirmOrdersAsync(Guid id)
+        public async Task<LunchSupplier> ConfirmOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_supplier.py) ---
@@ -147,7 +147,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LunchSupplier> GetCurrentOrdersInternalAsync(object state)
@@ -245,7 +247,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LunchSupplier> SendOrdersAsync(Guid id)
+        public async Task<LunchSupplier> SendOrdersAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_supplier.py) ---
@@ -267,7 +269,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<LunchSupplier> SyncCronInternalAsync()

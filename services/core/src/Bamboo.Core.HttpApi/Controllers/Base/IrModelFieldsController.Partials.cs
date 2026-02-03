@@ -11,42 +11,47 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/formbuilder-whitelist")]
-        public async Task<IActionResult> FormbuilderWhitelistAsync(Guid id, [FromBody] IrModelFieldsFormbuilderWhitelistRequestDto input)
+        [Route("formbuilder-whitelist")]
+        public async Task<IActionResult> FormbuilderWhitelistAsync(IrModelFieldsFormbuilderWhitelistRequestDto input)
         {
-            var result = await _appService.FormbuilderWhitelistAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormbuilderWhitelistAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-field-help")]
-        public async Task<IActionResult> GetFieldHelpAsync(Guid id, [FromBody] IrModelFieldsGetFieldHelpRequestDto input)
+        [Route("get-field-help")]
+        public async Task<IActionResult> GetFieldHelpAsync(IrModelFieldsGetFieldHelpRequestDto input)
         {
-            var result = await _appService.GetFieldHelpAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFieldHelpAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-field-selection")]
-        public async Task<IActionResult> GetFieldSelectionAsync(Guid id, [FromBody] IrModelFieldsGetFieldSelectionRequestDto input)
+        [Route("get-field-selection")]
+        public async Task<IActionResult> GetFieldSelectionAsync(IrModelFieldsGetFieldSelectionRequestDto input)
         {
-            var result = await _appService.GetFieldSelectionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFieldSelectionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-field-string")]
-        public async Task<IActionResult> GetFieldStringAsync(Guid id, [FromBody] IrModelFieldsGetFieldStringRequestDto input)
+        [Route("get-field-string")]
+        public async Task<IActionResult> GetFieldStringAsync(IrModelFieldsGetFieldStringRequestDto input)
         {
-            var result = await _appService.GetFieldStringAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFieldStringAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("init")]
+        public async Task<IActionResult> InitAsync(Guid[] ids)
         {
-            var result = await _appService.InitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InitAsync(ids);
             return Ok(result);
         }
     }

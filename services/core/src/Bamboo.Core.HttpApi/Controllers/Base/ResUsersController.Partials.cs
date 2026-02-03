@@ -11,506 +11,569 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-archive")]
-        public async Task<IActionResult> ActionArchiveAsync(Guid id)
+        [Route("action-archive")]
+        public async Task<IActionResult> ActionArchiveAsync(Guid[] ids)
         {
-            var result = await _appService.ArchiveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ArchiveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-change-password-wizard")]
-        public async Task<IActionResult> ActionChangePasswordWizardAsync(Guid id)
+        [Route("action-change-password-wizard")]
+        public async Task<IActionResult> ActionChangePasswordWizardAsync(Guid[] ids)
         {
-            var result = await _appService.ChangePasswordWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ChangePasswordWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-employee")]
-        public async Task<IActionResult> ActionCreateEmployeeAsync(Guid id)
+        [Route("action-create-employee")]
+        public async Task<IActionResult> ActionCreateEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.CreateEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-passkey")]
-        public async Task<IActionResult> ActionCreatePasskeyAsync(Guid id)
+        [Route("action-create-passkey")]
+        public async Task<IActionResult> ActionCreatePasskeyAsync(Guid[] ids)
         {
-            var result = await _appService.CreatePasskeyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreatePasskeyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-get")]
-        public async Task<IActionResult> ActionGetAsync(Guid id)
+        [Route("action-get")]
+        public async Task<IActionResult> ActionGetAsync(Guid[] ids)
         {
-            var result = await _appService.GetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-karma-report")]
-        public async Task<IActionResult> ActionKarmaReportAsync(Guid id)
+        [Route("action-karma-report")]
+        public async Task<IActionResult> ActionKarmaReportAsync(Guid[] ids)
         {
-            var result = await _appService.KarmaReportAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.KarmaReportAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employees")]
-        public async Task<IActionResult> ActionOpenEmployeesAsync(Guid id)
+        [Route("action-open-employees")]
+        public async Task<IActionResult> ActionOpenEmployeesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmployeesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmployeesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-my-account-settings")]
-        public async Task<IActionResult> ActionOpenMyAccountSettingsAsync(Guid id)
+        [Route("action-open-my-account-settings")]
+        public async Task<IActionResult> ActionOpenMyAccountSettingsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenMyAccountSettingsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenMyAccountSettingsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-related-contact")]
-        public async Task<IActionResult> ActionRelatedContactAsync(Guid id)
+        [Route("action-related-contact")]
+        public async Task<IActionResult> ActionRelatedContactAsync(Guid[] ids)
         {
-            var result = await _appService.RelatedContactAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RelatedContactAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-reset-password")]
-        public async Task<IActionResult> ActionResetPasswordAsync(Guid id)
+        [Route("action-reset-password")]
+        public async Task<IActionResult> ActionResetPasswordAsync(Guid[] ids)
         {
-            var result = await _appService.ResetPasswordAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ResetPasswordAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-revoke-all-devices")]
-        public async Task<IActionResult> ActionRevokeAllDevicesAsync(Guid id)
+        [Route("action-revoke-all-devices")]
+        public async Task<IActionResult> ActionRevokeAllDevicesAsync(Guid[] ids)
         {
-            var result = await _appService.RevokeAllDevicesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RevokeAllDevicesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-setup-outgoing-mail-server")]
-        public async Task<IActionResult> ActionSetupOutgoingMailServerAsync(Guid id, [FromBody] ResUsersSetupOutgoingMailServerRequestDto input)
+        [Route("action-setup-outgoing-mail-server")]
+        public async Task<IActionResult> ActionSetupOutgoingMailServerAsync(ResUsersSetupOutgoingMailServerRequestDto input)
         {
-            var result = await _appService.SetupOutgoingMailServerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SetupOutgoingMailServerAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-accesses")]
-        public async Task<IActionResult> ActionShowAccessesAsync(Guid id)
+        [Route("action-show-accesses")]
+        public async Task<IActionResult> ActionShowAccessesAsync(Guid[] ids)
         {
-            var result = await _appService.ShowAccessesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowAccessesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-groups")]
-        public async Task<IActionResult> ActionShowGroupsAsync(Guid id)
+        [Route("action-show-groups")]
+        public async Task<IActionResult> ActionShowGroupsAsync(Guid[] ids)
         {
-            var result = await _appService.ShowGroupsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowGroupsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-show-rules")]
-        public async Task<IActionResult> ActionShowRulesAsync(Guid id)
+        [Route("action-show-rules")]
+        public async Task<IActionResult> ActionShowRulesAsync(Guid[] ids)
         {
-            var result = await _appService.ShowRulesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ShowRulesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-test-outgoing-mail-server")]
-        public async Task<IActionResult> ActionTestOutgoingMailServerAsync(Guid id)
+        [Route("action-test-outgoing-mail-server")]
+        public async Task<IActionResult> ActionTestOutgoingMailServerAsync(Guid[] ids)
         {
-            var result = await _appService.TestOutgoingMailServerAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TestOutgoingMailServerAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-totp-disable")]
-        public async Task<IActionResult> ActionTotpDisableAsync(Guid id)
+        [Route("action-totp-disable")]
+        public async Task<IActionResult> ActionTotpDisableAsync(Guid[] ids)
         {
-            var result = await _appService.TotpDisableAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TotpDisableAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-totp-enable-wizard")]
-        public async Task<IActionResult> ActionTotpEnableWizardAsync(Guid id)
+        [Route("action-totp-enable-wizard")]
+        public async Task<IActionResult> ActionTotpEnableWizardAsync(Guid[] ids)
         {
-            var result = await _appService.TotpEnableWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TotpEnableWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-totp-invite")]
-        public async Task<IActionResult> ActionTotpInviteAsync(Guid id)
+        [Route("action-totp-invite")]
+        public async Task<IActionResult> ActionTotpInviteAsync(Guid[] ids)
         {
-            var result = await _appService.TotpInviteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.TotpInviteAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/api-key-wizard")]
-        public async Task<IActionResult> ApiKeyWizardAsync(Guid id)
+        [Route("api-key-wizard")]
+        public async Task<IActionResult> ApiKeyWizardAsync(Guid[] ids)
         {
-            var result = await _appService.ApiKeyWizardAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ApiKeyWizardAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/auth-oauth")]
-        public async Task<IActionResult> AuthOauthAsync(Guid id, [FromBody] ResUsersAuthOauthRequestDto input)
+        [Route("auth-oauth")]
+        public async Task<IActionResult> AuthOauthAsync(ResUsersAuthOauthRequestDto input)
         {
-            var result = await _appService.AuthOauthAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AuthOauthAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/authenticate")]
-        public async Task<IActionResult> AuthenticateAsync(Guid id, [FromBody] ResUsersAuthenticateRequestDto input)
+        [Route("authenticate")]
+        public async Task<IActionResult> AuthenticateAsync(ResUsersAuthenticateRequestDto input)
         {
-            var result = await _appService.AuthenticateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AuthenticateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/change-password")]
-        public async Task<IActionResult> ChangePasswordAsync(Guid id, [FromBody] ResUsersChangePasswordRequestDto input)
+        [Route("change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(ResUsersChangePasswordRequestDto input)
         {
-            var result = await _appService.ChangePasswordAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ChangePasswordAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-calendar-credentials")]
-        public async Task<IActionResult> CheckCalendarCredentialsAsync(Guid id)
+        [Route("check-calendar-credentials")]
+        public async Task<IActionResult> CheckCalendarCredentialsAsync(Guid[] ids)
         {
-            var result = await _appService.CheckCalendarCredentialsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckCalendarCredentialsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-synchronization-status")]
-        public async Task<IActionResult> CheckSynchronizationStatusAsync(Guid id)
+        [Route("check-synchronization-status")]
+        public async Task<IActionResult> CheckSynchronizationStatusAsync(Guid[] ids)
         {
-            var result = await _appService.CheckSynchronizationStatusAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckSynchronizationStatusAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/context-get")]
-        public async Task<IActionResult> ContextGetAsync(Guid id)
+        [Route("context-get")]
+        public async Task<IActionResult> ContextGetAsync(Guid[] ids)
         {
-            var result = await _appService.ContextGetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ContextGetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResUsersCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ResUsersCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-company-currency-id")]
-        public async Task<IActionResult> GetCompanyCurrencyIdAsync(Guid id)
+        [Route("get-company-currency-id")]
+        public async Task<IActionResult> GetCompanyCurrencyIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetCompanyCurrencyIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetCompanyCurrencyIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-formview-action")]
-        public async Task<IActionResult> GetFormviewActionAsync(Guid id, [FromBody] ResUsersGetFormviewActionRequestDto input)
+        [Route("get-formview-action")]
+        public async Task<IActionResult> GetFormviewActionAsync(ResUsersGetFormviewActionRequestDto input)
         {
-            var result = await _appService.GetFormviewActionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetFormviewActionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-gamification-redirection-data")]
-        public async Task<IActionResult> GetGamificationRedirectionDataAsync(Guid id)
+        [Route("get-gamification-redirection-data")]
+        public async Task<IActionResult> GetGamificationRedirectionDataAsync(Guid[] ids)
         {
-            var result = await _appService.GetGamificationRedirectionDataAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetGamificationRedirectionDataAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-password-policy")]
-        public async Task<IActionResult> GetPasswordPolicyAsync(Guid id)
+        [Route("get-password-policy")]
+        public async Task<IActionResult> GetPasswordPolicyAsync(Guid[] ids)
         {
-            var result = await _appService.GetPasswordPolicyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetPasswordPolicyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-selected-calendars-partner-ids")]
-        public async Task<IActionResult> GetSelectedCalendarsPartnerIdsAsync(Guid id, [FromBody] ResUsersGetSelectedCalendarsPartnerIdsRequestDto input)
+        [Route("get-selected-calendars-partner-ids")]
+        public async Task<IActionResult> GetSelectedCalendarsPartnerIdsAsync(ResUsersGetSelectedCalendarsPartnerIdsRequestDto input)
         {
-            var result = await _appService.GetSelectedCalendarsPartnerIdsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetSelectedCalendarsPartnerIdsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-totp-invite-url")]
-        public async Task<IActionResult> GetTotpInviteUrlAsync(Guid id)
+        [Route("get-totp-invite-url")]
+        public async Task<IActionResult> GetTotpInviteUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetTotpInviteUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetTotpInviteUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-view")]
-        public async Task<IActionResult> GetViewAsync(Guid id, [FromBody] ResUsersGetViewRequestDto input)
+        [Route("get-view")]
+        public async Task<IActionResult> GetViewAsync(ResUsersGetViewRequestDto input)
         {
-            var result = await _appService.GetViewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetViewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-views")]
-        public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] ResUsersGetViewsRequestDto input)
+        [Route("get-views")]
+        public async Task<IActionResult> GetViewsAsync(ResUsersGetViewsRequestDto input)
         {
-            var result = await _appService.GetViewsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetViewsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-group")]
-        public async Task<IActionResult> HasGroupAsync(Guid id, [FromBody] ResUsersHasGroupRequestDto input)
+        [Route("has-group")]
+        public async Task<IActionResult> HasGroupAsync(ResUsersHasGroupRequestDto input)
         {
-            var result = await _appService.HasGroupAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.HasGroupAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/has-groups")]
-        public async Task<IActionResult> HasGroupsAsync(Guid id, [FromBody] ResUsersHasGroupsRequestDto input)
+        [Route("has-groups")]
+        public async Task<IActionResult> HasGroupsAsync(ResUsersHasGroupsRequestDto input)
         {
-            var result = await _appService.HasGroupsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.HasGroupsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("init")]
+        public async Task<IActionResult> InitAsync(Guid[] ids)
         {
-            var result = await _appService.InitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InitAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-google-calendar-synced")]
-        public async Task<IActionResult> IsGoogleCalendarSyncedAsync(Guid id)
+        [Route("is-google-calendar-synced")]
+        public async Task<IActionResult> IsGoogleCalendarSyncedAsync(Guid[] ids)
         {
-            var result = await _appService.IsGoogleCalendarSyncedAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.IsGoogleCalendarSyncedAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/new")]
-        public async Task<IActionResult> NewAsync(Guid id, [FromBody] ResUsersNewRequestDto input)
+        [Route("new")]
+        public async Task<IActionResult> NewAsync(ResUsersNewRequestDto input)
         {
-            var result = await _appService.NewAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.NewAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/on-change-login")]
-        public async Task<IActionResult> OnChangeLoginAsync(Guid id)
+        [Route("on-change-login")]
+        public async Task<IActionResult> OnChangeLoginAsync(Guid[] ids)
         {
-            var result = await _appService.OnChangeLoginAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnChangeLoginAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-parent-id")]
-        public async Task<IActionResult> OnchangeParentIdAsync(Guid id)
+        [Route("onchange-parent-id")]
+        public async Task<IActionResult> OnchangeParentIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeParentIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeParentIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-website-url")]
-        public async Task<IActionResult> OpenWebsiteUrlAsync(Guid id)
+        [Route("open-website-url")]
+        public async Task<IActionResult> OpenWebsiteUrlAsync(Guid[] ids)
         {
-            var result = await _appService.OpenWebsiteUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenWebsiteUrlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pause-google-synchronization")]
-        public async Task<IActionResult> PauseGoogleSynchronizationAsync(Guid id)
+        [Route("pause-google-synchronization")]
+        public async Task<IActionResult> PauseGoogleSynchronizationAsync(Guid[] ids)
         {
-            var result = await _appService.PauseGoogleSynchronizationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PauseGoogleSynchronizationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/pause-microsoft-synchronization")]
-        public async Task<IActionResult> PauseMicrosoftSynchronizationAsync(Guid id)
+        [Route("pause-microsoft-synchronization")]
+        public async Task<IActionResult> PauseMicrosoftSynchronizationAsync(Guid[] ids)
         {
-            var result = await _appService.PauseMicrosoftSynchronizationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PauseMicrosoftSynchronizationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/preference-change-password")]
-        public async Task<IActionResult> PreferenceChangePasswordAsync(Guid id)
+        [Route("preference-change-password")]
+        public async Task<IActionResult> PreferenceChangePasswordAsync(Guid[] ids)
         {
-            var result = await _appService.PreferenceChangePasswordAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PreferenceChangePasswordAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/preference-save")]
-        public async Task<IActionResult> PreferenceSaveAsync(Guid id)
+        [Route("preference-save")]
+        public async Task<IActionResult> PreferenceSaveAsync(Guid[] ids)
         {
-            var result = await _appService.PreferenceSaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PreferenceSaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/remove-oauth-access-token")]
-        public async Task<IActionResult> RemoveOauthAccessTokenAsync(Guid id)
+        [Route("remove-oauth-access-token")]
+        public async Task<IActionResult> RemoveOauthAccessTokenAsync(Guid[] ids)
         {
-            var result = await _appService.RemoveOauthAccessTokenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RemoveOauthAccessTokenAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/reset-password")]
-        public async Task<IActionResult> ResetPasswordAsync(Guid id, [FromBody] ResUsersResetPasswordRequestDto input)
+        [Route("reset-password")]
+        public async Task<IActionResult> ResetPasswordAsync(ResUsersResetPasswordRequestDto input)
         {
-            var result = await _appService.ResetPasswordAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ResetPasswordAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/restart-google-synchronization")]
-        public async Task<IActionResult> RestartGoogleSynchronizationAsync(Guid id)
+        [Route("restart-google-synchronization")]
+        public async Task<IActionResult> RestartGoogleSynchronizationAsync(Guid[] ids)
         {
-            var result = await _appService.RestartGoogleSynchronizationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RestartGoogleSynchronizationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/restart-microsoft-synchronization")]
-        public async Task<IActionResult> RestartMicrosoftSynchronizationAsync(Guid id)
+        [Route("restart-microsoft-synchronization")]
+        public async Task<IActionResult> RestartMicrosoftSynchronizationAsync(Guid[] ids)
         {
-            var result = await _appService.RestartMicrosoftSynchronizationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RestartMicrosoftSynchronizationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/revoke-all-devices")]
-        public async Task<IActionResult> RevokeAllDevicesAsync(Guid id)
+        [Route("revoke-all-devices")]
+        public async Task<IActionResult> RevokeAllDevicesAsync(Guid[] ids)
         {
-            var result = await _appService.RevokeAllDevicesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RevokeAllDevicesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/s-e-l-f-r-e-a-d-a-b-l-e-f-i-e-l-d-s")]
-        public async Task<IActionResult> SELFREADABLEFIELDSAsync(Guid id)
+        [Route("s-e-l-f-r-e-a-d-a-b-l-e-f-i-e-l-d-s")]
+        public async Task<IActionResult> SELFREADABLEFIELDSAsync(Guid[] ids)
         {
-            var result = await _appService.SELFREADABLEFIELDSAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SELFREADABLEFIELDSAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/s-e-l-f-w-r-i-t-e-a-b-l-e-f-i-e-l-d-s")]
-        public async Task<IActionResult> SELFWRITEABLEFIELDSAsync(Guid id)
+        [Route("s-e-l-f-w-r-i-t-e-a-b-l-e-f-i-e-l-d-s")]
+        public async Task<IActionResult> SELFWRITEABLEFIELDSAsync(Guid[] ids)
         {
-            var result = await _appService.SELFWRITEABLEFIELDSAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SELFWRITEABLEFIELDSAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/send-unregistered-user-reminder")]
-        public async Task<IActionResult> SendUnregisteredUserReminderAsync(Guid id)
+        [Route("send-unregistered-user-reminder")]
+        public async Task<IActionResult> SendUnregisteredUserReminderAsync(Guid[] ids)
         {
-            var result = await _appService.SendUnregisteredUserReminderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendUnregisteredUserReminderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/signup")]
-        public async Task<IActionResult> SignupAsync(Guid id, [FromBody] ResUsersSignupRequestDto input)
+        [Route("signup")]
+        public async Task<IActionResult> SignupAsync(ResUsersSignupRequestDto input)
         {
-            var result = await _appService.SignupAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SignupAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/stop-google-synchronization")]
-        public async Task<IActionResult> StopGoogleSynchronizationAsync(Guid id)
+        [Route("stop-google-synchronization")]
+        public async Task<IActionResult> StopGoogleSynchronizationAsync(Guid[] ids)
         {
-            var result = await _appService.StopGoogleSynchronizationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StopGoogleSynchronizationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/stop-microsoft-synchronization")]
-        public async Task<IActionResult> StopMicrosoftSynchronizationAsync(Guid id)
+        [Route("stop-microsoft-synchronization")]
+        public async Task<IActionResult> StopMicrosoftSynchronizationAsync(Guid[] ids)
         {
-            var result = await _appService.StopMicrosoftSynchronizationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.StopMicrosoftSynchronizationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/switch-tour-enabled")]
-        public async Task<IActionResult> SwitchTourEnabledAsync(Guid id, [FromBody] ResUsersSwitchTourEnabledRequestDto input)
+        [Route("switch-tour-enabled")]
+        public async Task<IActionResult> SwitchTourEnabledAsync(ResUsersSwitchTourEnabledRequestDto input)
         {
-            var result = await _appService.SwitchTourEnabledAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SwitchTourEnabledAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unpause-google-synchronization")]
-        public async Task<IActionResult> UnpauseGoogleSynchronizationAsync(Guid id)
+        [Route("unpause-google-synchronization")]
+        public async Task<IActionResult> UnpauseGoogleSynchronizationAsync(Guid[] ids)
         {
-            var result = await _appService.UnpauseGoogleSynchronizationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnpauseGoogleSynchronizationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unpause-microsoft-synchronization")]
-        public async Task<IActionResult> UnpauseMicrosoftSynchronizationAsync(Guid id)
+        [Route("unpause-microsoft-synchronization")]
+        public async Task<IActionResult> UnpauseMicrosoftSynchronizationAsync(Guid[] ids)
         {
-            var result = await _appService.UnpauseMicrosoftSynchronizationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.UnpauseMicrosoftSynchronizationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/web-create-users")]
-        public async Task<IActionResult> WebCreateUsersAsync(Guid id, [FromBody] ResUsersWebCreateUsersRequestDto input)
+        [Route("web-create-users")]
+        public async Task<IActionResult> WebCreateUsersAsync(ResUsersWebCreateUsersRequestDto input)
         {
-            var result = await _appService.WebCreateUsersAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.WebCreateUsersAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/website-publish-button")]
-        public async Task<IActionResult> WebsitePublishButtonAsync(Guid id)
+        [Route("website-publish-button")]
+        public async Task<IActionResult> WebsitePublishButtonAsync(Guid[] ids)
         {
-            var result = await _appService.WebsitePublishButtonAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.WebsitePublishButtonAsync(ids);
             return Ok(result);
         }
     }

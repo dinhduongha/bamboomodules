@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
-    public partial class EventRegistrationAppService : GenericApplicationService<EventRegistration>, IEventRegistrationAppService
+    public partial class EventRegistrationAppService : GenericAppService<EventRegistration>, IEventRegistrationAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -61,14 +61,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventRegistration> CancelAsync(Guid id)
+        public async Task<EventRegistration> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def action_cancel(self):
             // self.write({'state': 'cancel'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventRegistration> CheckEventSlotInternalAsync()
@@ -371,14 +373,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventRegistration> ConfirmAsync(Guid id)
+        public async Task<EventRegistration> ConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def action_confirm(self):
             // self.write({'state': 'open'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventRegistration> ConvertValueInternalAsync(object @value, object field_name)
@@ -396,7 +400,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<EventRegistration> CreateAsync(EventRegistration entity, List<string> fields)
+        public override async Task<EventRegistration> CreateAsync(CreateRequestDto<EventRegistration> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
@@ -455,7 +459,7 @@ namespace Bamboo.Core.Application.Services
             // result._update_available_seat()
             // return result
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<EventRegistration> FindFirstNotnullInternalAsync(object field_name)
@@ -484,6 +488,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventRegistration> GetLeadContactFieldsInternalAsync()
         {
             /*
@@ -797,6 +802,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventRegistration> GetRandomBarcodeInternalAsync()
         {
             /*
@@ -883,6 +889,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventRegistration> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -893,6 +900,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventRegistration> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -928,6 +936,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventRegistration> MailTemplateDefaultValuesInternalAsync()
         {
             /*
@@ -1046,7 +1055,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventRegistration> RegisterAttendeeAsync(Guid id, EventRegistrationRegisterAttendeeRequestDto input)
+        [ApiModel]
+        public async Task<EventRegistration> RegisterAttendeeAsync(EventRegistrationRegisterAttendeeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
@@ -1072,7 +1082,9 @@ namespace Bamboo.Core.Application.Services
             // res.update({'status': status})
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventRegistration> SaleOrderRegistrationDataChangeNotifyInternalAsync(object new_record_field, object new_record)
@@ -1098,6 +1110,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventRegistration> SearchEventBeginDateInternalAsync(object @operator, object @value)
         {
             /*
@@ -1111,6 +1124,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<EventRegistration> SearchEventEndDateInternalAsync(object @operator, object @value)
         {
             /*
@@ -1124,7 +1138,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventRegistration> SendBadgeEmailAsync(Guid id)
+        public async Task<EventRegistration> SendBadgeEmailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
@@ -1153,10 +1167,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventRegistration> SetDoneAsync(Guid id)
+        public async Task<EventRegistration> SetDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
@@ -1164,17 +1180,21 @@ namespace Bamboo.Core.Application.Services
             // """ Close Registration """
             // self.write({'state': 'done'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventRegistration> SetDraftAsync(Guid id)
+        public async Task<EventRegistration> SetDraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def action_set_draft(self):
             // self.write({'state': 'draft'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<EventRegistration> SynchronizePartnerValuesInternalAsync(object partner, object fnames)
@@ -1346,7 +1366,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventRegistration> ViewPosOrderAsync(Guid id)
+        public async Task<EventRegistration> ViewPosOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_registration.py) ---
@@ -1356,10 +1376,12 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = self.pos_order_id.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<EventRegistration> ViewSaleOrderAsync(Guid id)
+        public async Task<EventRegistration> ViewSaleOrderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_registration.py) ---
@@ -1369,10 +1391,12 @@ namespace Bamboo.Core.Application.Services
             // action['res_id'] = self.sale_order_id.id
             // return action
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, EventRegistration entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<EventRegistration> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
@@ -1448,7 +1472,7 @@ namespace Bamboo.Core.Application.Services
             // self._update_available_seat()
             // return result
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

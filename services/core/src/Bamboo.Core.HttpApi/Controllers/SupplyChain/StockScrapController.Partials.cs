@@ -11,50 +11,56 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-get-stock-move-lines")]
-        public async Task<IActionResult> ActionGetStockMoveLinesAsync(Guid id)
+        [Route("action-get-stock-move-lines")]
+        public async Task<IActionResult> ActionGetStockMoveLinesAsync(Guid[] ids)
         {
-            var result = await _appService.GetStockMoveLinesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetStockMoveLinesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-get-stock-picking")]
-        public async Task<IActionResult> ActionGetStockPickingAsync(Guid id)
+        [Route("action-get-stock-picking")]
+        public async Task<IActionResult> ActionGetStockPickingAsync(Guid[] ids)
         {
-            var result = await _appService.GetStockPickingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetStockPickingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-validate")]
-        public async Task<IActionResult> ActionValidateAsync(Guid id)
+        [Route("action-validate")]
+        public async Task<IActionResult> ActionValidateAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-available-qty")]
-        public async Task<IActionResult> CheckAvailableQtyAsync(Guid id)
+        [Route("check-available-qty")]
+        public async Task<IActionResult> CheckAvailableQtyAsync(Guid[] ids)
         {
-            var result = await _appService.CheckAvailableQtyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckAvailableQtyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-replenish")]
-        public async Task<IActionResult> DoReplenishAsync(Guid id, [FromBody] StockScrapDoReplenishRequestDto input)
+        [Route("do-replenish")]
+        public async Task<IActionResult> DoReplenishAsync(StockScrapDoReplenishRequestDto input)
         {
-            var result = await _appService.DoReplenishAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DoReplenishAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-scrap")]
-        public async Task<IActionResult> DoScrapAsync(Guid id)
+        [Route("do-scrap")]
+        public async Task<IActionResult> DoScrapAsync(Guid[] ids)
         {
-            var result = await _appService.DoScrapAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoScrapAsync(ids);
             return Ok(result);
         }
     }

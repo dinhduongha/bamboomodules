@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("SpreadsheetDashboardModule", Category = "Productivity", Depends = new[] { "spreadsheet" })]
-    public partial class SpreadsheetDashboardShareAppService : GenericApplicationService<SpreadsheetDashboardShare>, ISpreadsheetDashboardShareAppService
+    public partial class SpreadsheetDashboardShareAppService : GenericAppService<SpreadsheetDashboardShare>, ISpreadsheetDashboardShareAppService
     {
         private readonly ISpreadsheetMixinAppService _spreadsheetMixinAppService;
         public SpreadsheetDashboardShareAppService(IRepository<SpreadsheetDashboardShare, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, ISpreadsheetMixinAppService spreadsheetMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -65,7 +65,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SpreadsheetDashboardShare> GetShareUrlAsync(Guid id, SpreadsheetDashboardShareGetShareUrlRequestDto input)
+        [ApiModel]
+        public async Task<SpreadsheetDashboardShare> GetShareUrlAsync(SpreadsheetDashboardShareGetShareUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard_share.py) ---
@@ -78,7 +79,9 @@ namespace Bamboo.Core.Application.Services
             //     vals["excel_export"] = base64.b64encode(excel_zip)
             // return self.create(vals).full_url
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

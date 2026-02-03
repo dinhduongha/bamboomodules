@@ -11,34 +11,38 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-open-packaging-barcodes")]
-        public async Task<IActionResult> ActionOpenPackagingBarcodesAsync(Guid id)
+        [Route("action-open-packaging-barcodes")]
+        public async Task<IActionResult> ActionOpenPackagingBarcodesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenPackagingBarcodesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenPackagingBarcodesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compare")]
-        public async Task<IActionResult> CompareAsync(Guid id, [FromBody] UomUomCompareRequestDto input)
+        [Route("compare")]
+        public async Task<IActionResult> CompareAsync(UomUomCompareRequestDto input)
         {
-            var result = await _appService.CompareAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CompareAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-zero")]
-        public async Task<IActionResult> IsZeroAsync(Guid id, [FromBody] UomUomIsZeroRequestDto input)
+        [Route("is-zero")]
+        public async Task<IActionResult> IsZeroAsync(UomUomIsZeroRequestDto input)
         {
-            var result = await _appService.IsZeroAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.IsZeroAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/round")]
-        public async Task<IActionResult> RoundAsync(Guid id, [FromBody] UomUomRoundRequestDto input)
+        [Route("round")]
+        public async Task<IActionResult> RoundAsync(UomUomRoundRequestDto input)
         {
-            var result = await _appService.RoundAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RoundAsync(input);
             return Ok(result);
         }
     }

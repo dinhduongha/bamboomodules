@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountCashRoundingAppService : GenericApplicationService<AccountCashRounding>, IAccountCashRoundingAppService
+    public partial class AccountCashRoundingAppService : GenericAppService<AccountCashRounding>, IAccountCashRoundingAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public AccountCashRoundingAppService(IRepository<AccountCashRounding, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountCashRounding> ComputeDifferenceAsync(Guid id, AccountCashRoundingComputeDifferenceRequestDto input)
+        public async Task<AccountCashRounding> ComputeDifferenceAsync(AccountCashRoundingComputeDifferenceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py) ---
@@ -56,9 +56,12 @@ namespace Bamboo.Core.Application.Services
             // difference = self.round(amount) - amount
             // return currency.round(difference)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<AccountCashRounding> LoadPosDataDomainInternalAsync(object data, object config)
         {
             /*
@@ -69,6 +72,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountCashRounding> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -79,7 +83,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountCashRounding> RoundAsync(Guid id, AccountCashRoundingRoundRequestDto input)
+        public async Task<AccountCashRounding> RoundAsync(AccountCashRoundingRoundRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py) ---
@@ -91,7 +95,9 @@ namespace Bamboo.Core.Application.Services
             // """
             // return float_round(amount, precision_rounding=self.rounding, rounding_method=self.rounding_method)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountCashRounding> UnlinkExceptPosConfigInternalAsync()
@@ -105,7 +111,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountCashRounding> ValidateRoundingAsync(Guid id)
+        public async Task<AccountCashRounding> ValidateRoundingAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py) ---
@@ -114,7 +120,9 @@ namespace Bamboo.Core.Application.Services
             //     if record.rounding <= 0:
             //         raise ValidationError(_("Please set a strictly positive rounding value."))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

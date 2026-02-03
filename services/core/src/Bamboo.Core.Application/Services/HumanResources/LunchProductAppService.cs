@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Lunch", Category = "HumanResources", Depends = new[] { "mail" })]
-    public partial class LunchProductAppService : GenericApplicationService<LunchProduct>, ILunchProductAppService
+    public partial class LunchProductAppService : GenericAppService<LunchProduct>, ILunchProductAppService
     {
         private readonly IImageMixinAppService _imageMixinAppService;
         public LunchProductAppService(IRepository<LunchProduct, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IImageMixinAppService imageMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -143,7 +143,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LunchProduct> ToggleActiveAsync(Guid id)
+        public async Task<LunchProduct> ToggleActiveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_product.py) ---
@@ -156,7 +156,9 @@ namespace Bamboo.Core.Application.Services
             //     raise UserError(_("The following suppliers are archived. You should either unarchive the suppliers or change the supplier of the product.\n%s", '\n'.join(invalid_products.supplier_id.mapped('name'))))
             // return super().toggle_active()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

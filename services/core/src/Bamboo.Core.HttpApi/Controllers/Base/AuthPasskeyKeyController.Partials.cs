@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-delete-passkey")]
-        public async Task<IActionResult> ActionDeletePasskeyAsync(Guid id)
+        [Route("action-delete-passkey")]
+        public async Task<IActionResult> ActionDeletePasskeyAsync(Guid[] ids)
         {
-            var result = await _appService.DeletePasskeyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DeletePasskeyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-rename-passkey")]
-        public async Task<IActionResult> ActionRenamePasskeyAsync(Guid id)
+        [Route("action-rename-passkey")]
+        public async Task<IActionResult> ActionRenamePasskeyAsync(Guid[] ids)
         {
-            var result = await _appService.RenamePasskeyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RenamePasskeyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("init")]
+        public async Task<IActionResult> InitAsync(Guid[] ids)
         {
-            var result = await _appService.InitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InitAsync(ids);
             return Ok(result);
         }
     }

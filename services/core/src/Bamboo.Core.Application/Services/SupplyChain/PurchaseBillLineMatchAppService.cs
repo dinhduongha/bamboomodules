@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Purchase", Category = "SupplyChain", Depends = new[] { "account" })]
-    public partial class PurchaseBillLineMatchAppService : GenericApplicationService<PurchaseBillLineMatch>, IPurchaseBillLineMatchAppService
+    public partial class PurchaseBillLineMatchAppService : GenericAppService<PurchaseBillLineMatch>, IPurchaseBillLineMatchAppService
     {
 
         public PurchaseBillLineMatchAppService(IRepository<PurchaseBillLineMatch, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,6 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<PurchaseBillLineMatch> ActionCreateBillFromPoLinesInternalAsync(object partner, object po_lines)
         {
             /*
@@ -42,7 +43,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseBillLineMatch> AddToPoAsync(Guid id)
+        public async Task<PurchaseBillLineMatch> AddToPoAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_bill_line_match.py) ---
@@ -70,7 +71,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': context,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<PurchaseBillLineMatch> ComputeAmountUntaxedFieldsInternalAsync()
@@ -161,7 +164,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseBillLineMatch> MatchLinesAsync(Guid id)
+        public async Task<PurchaseBillLineMatch> MatchLinesAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_bill_line_match.py) ---
@@ -193,10 +196,12 @@ namespace Bamboo.Core.Application.Services
             //     # Add all remaining POL to the residual bill
             //     residual_bill._add_purchase_order_lines(residual_purchase_order_lines)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<PurchaseBillLineMatch> OpenLineAsync(Guid id)
+        public async Task<PurchaseBillLineMatch> OpenLineAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_bill_line_match.py) ---
@@ -209,9 +214,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.account_move_id.id if self.account_move_id else self.purchase_order_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseBillLineMatch> SelectAmLineInternalAsync()
         {
             /*
@@ -244,6 +252,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<PurchaseBillLineMatch> SelectPoLineInternalAsync()
         {
             /*

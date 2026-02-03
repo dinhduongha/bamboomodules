@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-backend-menu-id")]
-        public async Task<IActionResult> GetBackendMenuIdAsync(Guid id)
+        [Route("get-backend-menu-id")]
+        public async Task<IActionResult> GetBackendMenuIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetBackendMenuIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBackendMenuIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-base-url")]
-        public async Task<IActionResult> GetBaseUrlAsync(Guid id)
+        [Route("get-base-url")]
+        public async Task<IActionResult> GetBaseUrlAsync(Guid[] ids)
         {
-            var result = await _appService.GetBaseUrlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBaseUrlAsync(ids);
             return Ok(result);
         }
     }

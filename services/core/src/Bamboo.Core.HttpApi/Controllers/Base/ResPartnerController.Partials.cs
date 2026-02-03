@@ -11,754 +11,848 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-done")]
-        public async Task<IActionResult> ActionDoneAsync(Guid id)
+        [Route("action-done")]
+        public async Task<IActionResult> ActionDoneAsync(Guid[] ids)
         {
-            var result = await _appService.DoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-event-view")]
-        public async Task<IActionResult> ActionEventViewAsync(Guid id)
+        [Route("action-event-view")]
+        public async Task<IActionResult> ActionEventViewAsync(Guid[] ids)
         {
-            var result = await _appService.EventViewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.EventViewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-business-doc")]
-        public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid id)
+        [Route("action-open-business-doc")]
+        public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid[] ids)
         {
-            var result = await _appService.OpenBusinessDocAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenBusinessDocAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employees")]
-        public async Task<IActionResult> ActionOpenEmployeesAsync(Guid id)
+        [Route("action-open-employees")]
+        public async Task<IActionResult> ActionOpenEmployeesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmployeesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmployeesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-privacy-lookup")]
-        public async Task<IActionResult> ActionPrivacyLookupAsync(Guid id)
+        [Route("action-privacy-lookup")]
+        public async Task<IActionResult> ActionPrivacyLookupAsync(Guid[] ids)
         {
-            var result = await _appService.PrivacyLookupAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PrivacyLookupAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-signup-prepare")]
-        public async Task<IActionResult> ActionSignupPrepareAsync(Guid id)
+        [Route("action-signup-prepare")]
+        public async Task<IActionResult> ActionSignupPrepareAsync(Guid[] ids)
         {
-            var result = await _appService.SignupPrepareAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SignupPrepareAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-certifications")]
-        public async Task<IActionResult> ActionViewCertificationsAsync(Guid id)
+        [Route("action-view-certifications")]
+        public async Task<IActionResult> ActionViewCertificationsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewCertificationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewCertificationsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-courses")]
-        public async Task<IActionResult> ActionViewCoursesAsync(Guid id)
+        [Route("action-view-courses")]
+        public async Task<IActionResult> ActionViewCoursesAsync(Guid[] ids)
         {
-            var result = await _appService.ViewCoursesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewCoursesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-livechat-sessions")]
-        public async Task<IActionResult> ActionViewLivechatSessionsAsync(Guid id)
+        [Route("action-view-livechat-sessions")]
+        public async Task<IActionResult> ActionViewLivechatSessionsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewLivechatSessionsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewLivechatSessionsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-loyalty-cards")]
-        public async Task<IActionResult> ActionViewLoyaltyCardsAsync(Guid id)
+        [Route("action-view-loyalty-cards")]
+        public async Task<IActionResult> ActionViewLoyaltyCardsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewLoyaltyCardsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewLoyaltyCardsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-opportunity")]
-        public async Task<IActionResult> ActionViewOpportunityAsync(Guid id)
+        [Route("action-view-opportunity")]
+        public async Task<IActionResult> ActionViewOpportunityAsync(Guid[] ids)
         {
-            var result = await _appService.ViewOpportunityAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewOpportunityAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-partner-invoices")]
-        public async Task<IActionResult> ActionViewPartnerInvoicesAsync(Guid id)
+        [Route("action-view-partner-invoices")]
+        public async Task<IActionResult> ActionViewPartnerInvoicesAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPartnerInvoicesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPartnerInvoicesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-pos-order")]
-        public async Task<IActionResult> ActionViewPosOrderAsync(Guid id)
+        [Route("action-view-pos-order")]
+        public async Task<IActionResult> ActionViewPosOrderAsync(Guid[] ids)
         {
-            var result = await _appService.ViewPosOrderAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewPosOrderAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-stock-serial")]
-        public async Task<IActionResult> ActionViewStockSerialAsync(Guid id)
+        [Route("action-view-stock-serial")]
+        public async Task<IActionResult> ActionViewStockSerialAsync(Guid[] ids)
         {
-            var result = await _appService.ViewStockSerialAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewStockSerialAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-view-tasks")]
-        public async Task<IActionResult> ActionViewTasksAsync(Guid id)
+        [Route("action-view-tasks")]
+        public async Task<IActionResult> ActionViewTasksAsync(Guid[] ids)
         {
-            var result = await _appService.ViewTasksAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewTasksAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/address-get")]
-        public async Task<IActionResult> AddressGetAsync(Guid id, [FromBody] ResPartnerAddressGetRequestDto input)
+        [Route("address-get")]
+        public async Task<IActionResult> AddressGetAsync(ResPartnerAddressGetRequestDto input)
         {
-            var result = await _appService.AddressGetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AddressGetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/autocomplete-by-name")]
-        public async Task<IActionResult> AutocompleteByNameAsync(Guid id, [FromBody] ResPartnerAutocompleteByNameRequestDto input)
+        [Route("autocomplete-by-name")]
+        public async Task<IActionResult> AutocompleteByNameAsync(ResPartnerAutocompleteByNameRequestDto input)
         {
-            var result = await _appService.AutocompleteByNameAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AutocompleteByNameAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/autocomplete-by-vat")]
-        public async Task<IActionResult> AutocompleteByVatAsync(Guid id, [FromBody] ResPartnerAutocompleteByVatRequestDto input)
+        [Route("autocomplete-by-vat")]
+        public async Task<IActionResult> AutocompleteByVatAsync(ResPartnerAutocompleteByVatRequestDto input)
         {
-            var result = await _appService.AutocompleteByVatAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.AutocompleteByVatAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/button-account-peppol-check-partner-endpoint")]
-        public async Task<IActionResult> ButtonAccountPeppolCheckPartnerEndpointAsync(Guid id, [FromBody] ResPartnerButtonAccountPeppolCheckPartnerEndpointRequestDto input)
+        [Route("button-account-peppol-check-partner-endpoint")]
+        public async Task<IActionResult> ButtonAccountPeppolCheckPartnerEndpointAsync(ResPartnerButtonAccountPeppolCheckPartnerEndpointRequestDto input)
         {
-            var result = await _appService.ButtonAccountPeppolCheckPartnerEndpointAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ButtonAccountPeppolCheckPartnerEndpointAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/can-edit-vat")]
-        public async Task<IActionResult> CanEditVatAsync(Guid id)
+        [Route("can-edit-vat")]
+        public async Task<IActionResult> CanEditVatAsync(Guid[] ids)
         {
-            var result = await _appService.CanEditVatAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CanEditVatAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-al")]
-        public async Task<IActionResult> CheckVatAlAsync(Guid id, [FromBody] ResPartnerCheckVatAlRequestDto input)
+        [Route("check-vat-al")]
+        public async Task<IActionResult> CheckVatAlAsync(ResPartnerCheckVatAlRequestDto input)
         {
-            var result = await _appService.CheckVatAlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatAlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-br")]
-        public async Task<IActionResult> CheckVatBrAsync(Guid id, [FromBody] ResPartnerCheckVatBrRequestDto input)
+        [Route("check-vat-br")]
+        public async Task<IActionResult> CheckVatBrAsync(ResPartnerCheckVatBrRequestDto input)
         {
-            var result = await _appService.CheckVatBrAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatBrAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ch")]
-        public async Task<IActionResult> CheckVatChAsync(Guid id, [FromBody] ResPartnerCheckVatChRequestDto input)
+        [Route("check-vat-ch")]
+        public async Task<IActionResult> CheckVatChAsync(ResPartnerCheckVatChRequestDto input)
         {
-            var result = await _appService.CheckVatChAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatChAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-cr")]
-        public async Task<IActionResult> CheckVatCrAsync(Guid id, [FromBody] ResPartnerCheckVatCrRequestDto input)
+        [Route("check-vat-cr")]
+        public async Task<IActionResult> CheckVatCrAsync(ResPartnerCheckVatCrRequestDto input)
         {
-            var result = await _appService.CheckVatCrAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatCrAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-de")]
-        public async Task<IActionResult> CheckVatDeAsync(Guid id, [FromBody] ResPartnerCheckVatDeRequestDto input)
+        [Route("check-vat-de")]
+        public async Task<IActionResult> CheckVatDeAsync(ResPartnerCheckVatDeRequestDto input)
         {
-            var result = await _appService.CheckVatDeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatDeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-do")]
-        public async Task<IActionResult> CheckVatDoAsync(Guid id, [FromBody] ResPartnerCheckVatDoRequestDto input)
+        [Route("check-vat-do")]
+        public async Task<IActionResult> CheckVatDoAsync(ResPartnerCheckVatDoRequestDto input)
         {
-            var result = await _appService.CheckVatDoAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatDoAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ec")]
-        public async Task<IActionResult> CheckVatEcAsync(Guid id, [FromBody] ResPartnerCheckVatEcRequestDto input)
+        [Route("check-vat-ec")]
+        public async Task<IActionResult> CheckVatEcAsync(ResPartnerCheckVatEcRequestDto input)
         {
-            var result = await _appService.CheckVatEcAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatEcAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-gr")]
-        public async Task<IActionResult> CheckVatGrAsync(Guid id, [FromBody] ResPartnerCheckVatGrRequestDto input)
+        [Route("check-vat-gr")]
+        public async Task<IActionResult> CheckVatGrAsync(ResPartnerCheckVatGrRequestDto input)
         {
-            var result = await _appService.CheckVatGrAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatGrAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-gt")]
-        public async Task<IActionResult> CheckVatGtAsync(Guid id, [FromBody] ResPartnerCheckVatGtRequestDto input)
+        [Route("check-vat-gt")]
+        public async Task<IActionResult> CheckVatGtAsync(ResPartnerCheckVatGtRequestDto input)
         {
-            var result = await _appService.CheckVatGtAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatGtAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-hu")]
-        public async Task<IActionResult> CheckVatHuAsync(Guid id, [FromBody] ResPartnerCheckVatHuRequestDto input)
+        [Route("check-vat-hu")]
+        public async Task<IActionResult> CheckVatHuAsync(ResPartnerCheckVatHuRequestDto input)
         {
-            var result = await _appService.CheckVatHuAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatHuAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-id")]
-        public async Task<IActionResult> CheckVatIdAsync(Guid id, [FromBody] ResPartnerCheckVatIdRequestDto input)
+        [Route("check-vat-id")]
+        public async Task<IActionResult> CheckVatIdAsync(ResPartnerCheckVatIdRequestDto input)
         {
-            var result = await _appService.CheckVatIdAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatIdAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ie")]
-        public async Task<IActionResult> CheckVatIeAsync(Guid id, [FromBody] ResPartnerCheckVatIeRequestDto input)
+        [Route("check-vat-ie")]
+        public async Task<IActionResult> CheckVatIeAsync(ResPartnerCheckVatIeRequestDto input)
         {
-            var result = await _appService.CheckVatIeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatIeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-il")]
-        public async Task<IActionResult> CheckVatIlAsync(Guid id, [FromBody] ResPartnerCheckVatIlRequestDto input)
+        [Route("check-vat-il")]
+        public async Task<IActionResult> CheckVatIlAsync(ResPartnerCheckVatIlRequestDto input)
         {
-            var result = await _appService.CheckVatIlAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatIlAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-in")]
-        public async Task<IActionResult> CheckVatInAsync(Guid id, [FromBody] ResPartnerCheckVatInRequestDto input)
+        [Route("check-vat-in")]
+        public async Task<IActionResult> CheckVatInAsync(ResPartnerCheckVatInRequestDto input)
         {
-            var result = await _appService.CheckVatInAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatInAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-jp")]
-        public async Task<IActionResult> CheckVatJpAsync(Guid id, [FromBody] ResPartnerCheckVatJpRequestDto input)
+        [Route("check-vat-jp")]
+        public async Task<IActionResult> CheckVatJpAsync(ResPartnerCheckVatJpRequestDto input)
         {
-            var result = await _appService.CheckVatJpAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatJpAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ma")]
-        public async Task<IActionResult> CheckVatMaAsync(Guid id, [FromBody] ResPartnerCheckVatMaRequestDto input)
+        [Route("check-vat-ma")]
+        public async Task<IActionResult> CheckVatMaAsync(ResPartnerCheckVatMaRequestDto input)
         {
-            var result = await _appService.CheckVatMaAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatMaAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-mx")]
-        public async Task<IActionResult> CheckVatMxAsync(Guid id, [FromBody] ResPartnerCheckVatMxRequestDto input)
+        [Route("check-vat-mx")]
+        public async Task<IActionResult> CheckVatMxAsync(ResPartnerCheckVatMxRequestDto input)
         {
-            var result = await _appService.CheckVatMxAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatMxAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-no")]
-        public async Task<IActionResult> CheckVatNoAsync(Guid id, [FromBody] ResPartnerCheckVatNoRequestDto input)
+        [Route("check-vat-no")]
+        public async Task<IActionResult> CheckVatNoAsync(ResPartnerCheckVatNoRequestDto input)
         {
-            var result = await _appService.CheckVatNoAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatNoAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-pe")]
-        public async Task<IActionResult> CheckVatPeAsync(Guid id, [FromBody] ResPartnerCheckVatPeRequestDto input)
+        [Route("check-vat-pe")]
+        public async Task<IActionResult> CheckVatPeAsync(ResPartnerCheckVatPeRequestDto input)
         {
-            var result = await _appService.CheckVatPeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatPeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ph")]
-        public async Task<IActionResult> CheckVatPhAsync(Guid id, [FromBody] ResPartnerCheckVatPhRequestDto input)
+        [Route("check-vat-ph")]
+        public async Task<IActionResult> CheckVatPhAsync(ResPartnerCheckVatPhRequestDto input)
         {
-            var result = await _appService.CheckVatPhAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatPhAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ro")]
-        public async Task<IActionResult> CheckVatRoAsync(Guid id, [FromBody] ResPartnerCheckVatRoRequestDto input)
+        [Route("check-vat-ro")]
+        public async Task<IActionResult> CheckVatRoAsync(ResPartnerCheckVatRoRequestDto input)
         {
-            var result = await _appService.CheckVatRoAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatRoAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-rs")]
-        public async Task<IActionResult> CheckVatRsAsync(Guid id, [FromBody] ResPartnerCheckVatRsRequestDto input)
+        [Route("check-vat-rs")]
+        public async Task<IActionResult> CheckVatRsAsync(ResPartnerCheckVatRsRequestDto input)
         {
-            var result = await _appService.CheckVatRsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatRsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ru")]
-        public async Task<IActionResult> CheckVatRuAsync(Guid id, [FromBody] ResPartnerCheckVatRuRequestDto input)
+        [Route("check-vat-ru")]
+        public async Task<IActionResult> CheckVatRuAsync(ResPartnerCheckVatRuRequestDto input)
         {
-            var result = await _appService.CheckVatRuAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatRuAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-sa")]
-        public async Task<IActionResult> CheckVatSaAsync(Guid id, [FromBody] ResPartnerCheckVatSaRequestDto input)
+        [Route("check-vat-sa")]
+        public async Task<IActionResult> CheckVatSaAsync(ResPartnerCheckVatSaRequestDto input)
         {
-            var result = await _appService.CheckVatSaAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatSaAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-th")]
-        public async Task<IActionResult> CheckVatThAsync(Guid id, [FromBody] ResPartnerCheckVatThRequestDto input)
+        [Route("check-vat-th")]
+        public async Task<IActionResult> CheckVatThAsync(ResPartnerCheckVatThRequestDto input)
         {
-            var result = await _appService.CheckVatThAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatThAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-tr")]
-        public async Task<IActionResult> CheckVatTrAsync(Guid id, [FromBody] ResPartnerCheckVatTrRequestDto input)
+        [Route("check-vat-tr")]
+        public async Task<IActionResult> CheckVatTrAsync(ResPartnerCheckVatTrRequestDto input)
         {
-            var result = await _appService.CheckVatTrAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatTrAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-tw")]
-        public async Task<IActionResult> CheckVatTwAsync(Guid id, [FromBody] ResPartnerCheckVatTwRequestDto input)
+        [Route("check-vat-tw")]
+        public async Task<IActionResult> CheckVatTwAsync(ResPartnerCheckVatTwRequestDto input)
         {
-            var result = await _appService.CheckVatTwAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatTwAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ua")]
-        public async Task<IActionResult> CheckVatUaAsync(Guid id, [FromBody] ResPartnerCheckVatUaRequestDto input)
+        [Route("check-vat-ua")]
+        public async Task<IActionResult> CheckVatUaAsync(ResPartnerCheckVatUaRequestDto input)
         {
-            var result = await _appService.CheckVatUaAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatUaAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-uy")]
-        public async Task<IActionResult> CheckVatUyAsync(Guid id, [FromBody] ResPartnerCheckVatUyRequestDto input)
+        [Route("check-vat-uy")]
+        public async Task<IActionResult> CheckVatUyAsync(ResPartnerCheckVatUyRequestDto input)
         {
-            var result = await _appService.CheckVatUyAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatUyAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-ve")]
-        public async Task<IActionResult> CheckVatVeAsync(Guid id, [FromBody] ResPartnerCheckVatVeRequestDto input)
+        [Route("check-vat-ve")]
+        public async Task<IActionResult> CheckVatVeAsync(ResPartnerCheckVatVeRequestDto input)
         {
-            var result = await _appService.CheckVatVeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatVeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-vat-vn")]
-        public async Task<IActionResult> CheckVatVnAsync(Guid id, [FromBody] ResPartnerCheckVatVnRequestDto input)
+        [Route("check-vat-vn")]
+        public async Task<IActionResult> CheckVatVnAsync(ResPartnerCheckVatVnRequestDto input)
         {
-            var result = await _appService.CheckVatVnAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CheckVatVnAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResPartnerCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(ResPartnerCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-company")]
-        public async Task<IActionResult> CreateCompanyAsync(Guid id)
+        [Route("create-company")]
+        public async Task<IActionResult> CreateCompanyAsync(Guid[] ids)
         {
-            var result = await _appService.CreateCompanyAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateCompanyAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-button-print")]
-        public async Task<IActionResult> DoButtonPrintAsync(Guid id)
+        [Route("do-button-print")]
+        public async Task<IActionResult> DoButtonPrintAsync(Guid[] ids)
         {
-            var result = await _appService.DoButtonPrintAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoButtonPrintAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-partner-mail")]
-        public async Task<IActionResult> DoPartnerMailAsync(Guid id)
+        [Route("do-partner-mail")]
+        public async Task<IActionResult> DoPartnerMailAsync(Guid[] ids)
         {
-            var result = await _appService.DoPartnerMailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.DoPartnerMailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-partner-manual-action")]
-        public async Task<IActionResult> DoPartnerManualActionAsync(Guid id, [FromBody] ResPartnerDoPartnerManualActionRequestDto input)
+        [Route("do-partner-manual-action")]
+        public async Task<IActionResult> DoPartnerManualActionAsync(ResPartnerDoPartnerManualActionRequestDto input)
         {
-            var result = await _appService.DoPartnerManualActionAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DoPartnerManualActionAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-partner-manual-action-dermanord")]
-        public async Task<IActionResult> DoPartnerManualActionDermanordAsync(Guid id, [FromBody] ResPartnerDoPartnerManualDermanordRequestDto input)
+        [Route("do-partner-manual-action-dermanord")]
+        public async Task<IActionResult> DoPartnerManualActionDermanordAsync(ResPartnerDoPartnerManualDermanordRequestDto input)
         {
-            var result = await _appService.DoPartnerManualDermanordAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DoPartnerManualDermanordAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/do-partner-print")]
-        public async Task<IActionResult> DoPartnerPrintAsync(Guid id, [FromBody] ResPartnerDoPartnerPrintRequestDto input)
+        [Route("do-partner-print")]
+        public async Task<IActionResult> DoPartnerPrintAsync(ResPartnerDoPartnerPrintRequestDto input)
         {
-            var result = await _appService.DoPartnerPrintAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.DoPartnerPrintAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/enrich-by-domain")]
-        public async Task<IActionResult> EnrichByDomainAsync(Guid id, [FromBody] ResPartnerEnrichByDomainRequestDto input)
+        [Route("enrich-by-domain")]
+        public async Task<IActionResult> EnrichByDomainAsync(ResPartnerEnrichByDomainRequestDto input)
         {
-            var result = await _appService.EnrichByDomainAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.EnrichByDomainAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/enrich-by-duns")]
-        public async Task<IActionResult> EnrichByDunsAsync(Guid id, [FromBody] ResPartnerEnrichByDunsRequestDto input)
+        [Route("enrich-by-duns")]
+        public async Task<IActionResult> EnrichByDunsAsync(ResPartnerEnrichByDunsRequestDto input)
         {
-            var result = await _appService.EnrichByDunsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.EnrichByDunsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/enrich-by-gst")]
-        public async Task<IActionResult> EnrichByGstAsync(Guid id, [FromBody] ResPartnerEnrichByGstRequestDto input)
+        [Route("enrich-by-gst")]
+        public async Task<IActionResult> EnrichByGstAsync(ResPartnerEnrichByGstRequestDto input)
         {
-            var result = await _appService.EnrichByGstAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.EnrichByGstAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/fields-view-get")]
-        public async Task<IActionResult> FieldsViewGetAsync(Guid id, [FromBody] ResPartnerFieldsViewGetRequestDto input)
+        [Route("fields-view-get")]
+        public async Task<IActionResult> FieldsViewGetAsync(ResPartnerFieldsViewGetRequestDto input)
         {
-            var result = await _appService.FieldsViewGetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FieldsViewGetAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/find-or-create")]
-        public async Task<IActionResult> FindOrCreateAsync(Guid id, [FromBody] ResPartnerFindOrCreateRequestDto input)
+        [Route("find-or-create")]
+        public async Task<IActionResult> FindOrCreateAsync(ResPartnerFindOrCreateRequestDto input)
         {
-            var result = await _appService.FindOrCreateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FindOrCreateAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format-vat-ch")]
-        public async Task<IActionResult> FormatVatChAsync(Guid id, [FromBody] ResPartnerFormatVatChRequestDto input)
+        [Route("format-vat-ch")]
+        public async Task<IActionResult> FormatVatChAsync(ResPartnerFormatVatChRequestDto input)
         {
-            var result = await _appService.FormatVatChAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatVatChAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format-vat-cl")]
-        public async Task<IActionResult> FormatVatClAsync(Guid id, [FromBody] ResPartnerFormatVatClRequestDto input)
+        [Route("format-vat-cl")]
+        public async Task<IActionResult> FormatVatClAsync(ResPartnerFormatVatClRequestDto input)
         {
-            var result = await _appService.FormatVatClAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatVatClAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format-vat-co")]
-        public async Task<IActionResult> FormatVatCoAsync(Guid id, [FromBody] ResPartnerFormatVatCoRequestDto input)
+        [Route("format-vat-co")]
+        public async Task<IActionResult> FormatVatCoAsync(ResPartnerFormatVatCoRequestDto input)
         {
-            var result = await _appService.FormatVatCoAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatVatCoAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format-vat-eu")]
-        public async Task<IActionResult> FormatVatEuAsync(Guid id, [FromBody] ResPartnerFormatVatEuRequestDto input)
+        [Route("format-vat-eu")]
+        public async Task<IActionResult> FormatVatEuAsync(ResPartnerFormatVatEuRequestDto input)
         {
-            var result = await _appService.FormatVatEuAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatVatEuAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format-vat-hu")]
-        public async Task<IActionResult> FormatVatHuAsync(Guid id, [FromBody] ResPartnerFormatVatHuRequestDto input)
+        [Route("format-vat-hu")]
+        public async Task<IActionResult> FormatVatHuAsync(ResPartnerFormatVatHuRequestDto input)
         {
-            var result = await _appService.FormatVatHuAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatVatHuAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format-vat-sm")]
-        public async Task<IActionResult> FormatVatSmAsync(Guid id, [FromBody] ResPartnerFormatVatSmRequestDto input)
+        [Route("format-vat-sm")]
+        public async Task<IActionResult> FormatVatSmAsync(ResPartnerFormatVatSmRequestDto input)
         {
-            var result = await _appService.FormatVatSmAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatVatSmAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/format-vat-vn")]
-        public async Task<IActionResult> FormatVatVnAsync(Guid id, [FromBody] ResPartnerFormatVatVnRequestDto input)
+        [Route("format-vat-vn")]
+        public async Task<IActionResult> FormatVatVnAsync(ResPartnerFormatVatVnRequestDto input)
         {
-            var result = await _appService.FormatVatVnAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.FormatVatVnAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/geo-localize")]
-        public async Task<IActionResult> GeoLocalizeAsync(Guid id)
+        [Route("geo-localize")]
+        public async Task<IActionResult> GeoLocalizeAsync(Guid[] ids)
         {
-            var result = await _appService.GeoLocalizeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GeoLocalizeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-attendee-detail")]
-        public async Task<IActionResult> GetAttendeeDetailAsync(Guid id, [FromBody] ResPartnerGetAttendeeDetailRequestDto input)
+        [Route("get-attendee-detail")]
+        public async Task<IActionResult> GetAttendeeDetailAsync(ResPartnerGetAttendeeDetailRequestDto input)
         {
-            var result = await _appService.GetAttendeeDetailAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetAttendeeDetailAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-backend-menu-id")]
-        public async Task<IActionResult> GetBackendMenuIdAsync(Guid id)
+        [Route("get-backend-menu-id")]
+        public async Task<IActionResult> GetBackendMenuIdAsync(Guid[] ids)
         {
-            var result = await _appService.GetBackendMenuIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetBackendMenuIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-followup-table-html")]
-        public async Task<IActionResult> GetFollowupTableHtmlAsync(Guid id)
+        [Route("get-followup-table-html")]
+        public async Task<IActionResult> GetFollowupTableHtmlAsync(Guid[] ids)
         {
-            var result = await _appService.GetFollowupTableHtmlAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetFollowupTableHtmlAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-import-templates")]
-        public async Task<IActionResult> GetImportTemplatesAsync(Guid id)
+        [Route("get-import-templates")]
+        public async Task<IActionResult> GetImportTemplatesAsync(Guid[] ids)
         {
-            var result = await _appService.GetImportTemplatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetImportTemplatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-mention-suggestions")]
-        public async Task<IActionResult> GetMentionSuggestionsAsync(Guid id, [FromBody] ResPartnerGetMentionSuggestionsRequestDto input)
+        [Route("get-mention-suggestions")]
+        public async Task<IActionResult> GetMentionSuggestionsAsync(ResPartnerGetMentionSuggestionsRequestDto input)
         {
-            var result = await _appService.GetMentionSuggestionsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetMentionSuggestionsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-mention-suggestions-from-channel")]
-        public async Task<IActionResult> GetMentionSuggestionsFromChannelAsync(Guid id, [FromBody] ResPartnerGetMentionSuggestionsFromChannelRequestDto input)
+        [Route("get-mention-suggestions-from-channel")]
+        public async Task<IActionResult> GetMentionSuggestionsFromChannelAsync(ResPartnerGetMentionSuggestionsFromChannelRequestDto input)
         {
-            var result = await _appService.GetMentionSuggestionsFromChannelAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetMentionSuggestionsFromChannelAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-new-partner")]
-        public async Task<IActionResult> GetNewPartnerAsync(Guid id, [FromBody] ResPartnerGetNewPartnerRequestDto input)
+        [Route("get-new-partner")]
+        public async Task<IActionResult> GetNewPartnerAsync(ResPartnerGetNewPartnerRequestDto input)
         {
-            var result = await _appService.GetNewPartnerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetNewPartnerAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-partner-localisation-fields-required-to-invoice")]
-        public async Task<IActionResult> GetPartnerLocalisationFieldsRequiredToInvoiceAsync(Guid id, [FromBody] ResPartnerGetPartnerLocalisationFieldsRequiredToInvoiceRequestDto input)
+        [Route("get-partner-localisation-fields-required-to-invoice")]
+        public async Task<IActionResult> GetPartnerLocalisationFieldsRequiredToInvoiceAsync(ResPartnerGetPartnerLocalisationFieldsRequiredToInvoiceRequestDto input)
         {
-            var result = await _appService.GetPartnerLocalisationFieldsRequiredToInvoiceAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetPartnerLocalisationFieldsRequiredToInvoiceAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-working-hours-for-all-attendees")]
-        public async Task<IActionResult> GetWorkingHoursForAllAttendeesAsync(Guid id, [FromBody] ResPartnerGetWorkingHoursForAllAttendeesRequestDto input)
+        [Route("get-working-hours-for-all-attendees")]
+        public async Task<IActionResult> GetWorkingHoursForAllAttendeesAsync(ResPartnerGetWorkingHoursForAllAttendeesRequestDto input)
         {
-            var result = await _appService.GetWorkingHoursForAllAttendeesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetWorkingHoursForAllAttendeesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-worklocation")]
-        public async Task<IActionResult> GetWorklocationAsync(Guid id, [FromBody] ResPartnerGetWorklocationRequestDto input)
+        [Route("get-worklocation")]
+        public async Task<IActionResult> GetWorklocationAsync(ResPartnerGetWorklocationRequestDto input)
         {
-            var result = await _appService.GetWorklocationAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetWorklocationAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/google-map-img")]
-        public async Task<IActionResult> GoogleMapImgAsync(Guid id, [FromBody] ResPartnerGoogleMapImgRequestDto input)
+        [Route("google-map-img")]
+        public async Task<IActionResult> GoogleMapImgAsync(ResPartnerGoogleMapImgRequestDto input)
         {
-            var result = await _appService.GoogleMapImgAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GoogleMapImgAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/google-map-link")]
-        public async Task<IActionResult> GoogleMapLinkAsync(Guid id, [FromBody] ResPartnerGoogleMapLinkRequestDto input)
+        [Route("google-map-link")]
+        public async Task<IActionResult> GoogleMapLinkAsync(ResPartnerGoogleMapLinkRequestDto input)
         {
-            var result = await _appService.GoogleMapLinkAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GoogleMapLinkAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/iap-partner-autocomplete-get-tag-ids")]
-        public async Task<IActionResult> IapPartnerAutocompleteGetTagIdsAsync(Guid id, [FromBody] ResPartnerIapPartnerAutocompleteGetTagIdsRequestDto input)
+        [Route("iap-partner-autocomplete-get-tag-ids")]
+        public async Task<IActionResult> IapPartnerAutocompleteGetTagIdsAsync(ResPartnerIapPartnerAutocompleteGetTagIdsRequestDto input)
         {
-            var result = await _appService.IapPartnerAutocompleteGetTagIdsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.IapPartnerAutocompleteGetTagIdsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/is-valid-ruc-ec")]
-        public async Task<IActionResult> IsValidRucEcAsync(Guid id, [FromBody] ResPartnerIsValidRucEcRequestDto input)
+        [Route("is-valid-ruc-ec")]
+        public async Task<IActionResult> IsValidRucEcAsync(ResPartnerIsValidRucEcRequestDto input)
         {
-            var result = await _appService.IsValidRucEcAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.IsValidRucEcAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-company-type")]
-        public async Task<IActionResult> OnchangeCompanyTypeAsync(Guid id)
+        [Route("onchange-company-type")]
+        public async Task<IActionResult> OnchangeCompanyTypeAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeCompanyTypeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeCompanyTypeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-parent-id")]
-        public async Task<IActionResult> OnchangeParentIdAsync(Guid id)
+        [Route("onchange-parent-id")]
+        public async Task<IActionResult> OnchangeParentIdAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeParentIdAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeParentIdAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-commercial-entity")]
-        public async Task<IActionResult> OpenCommercialEntityAsync(Guid id)
+        [Route("open-commercial-entity")]
+        public async Task<IActionResult> OpenCommercialEntityAsync(Guid[] ids)
         {
-            var result = await _appService.OpenCommercialEntityAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenCommercialEntityAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/schedule-meeting")]
-        public async Task<IActionResult> ScheduleMeetingAsync(Guid id)
+        [Route("schedule-meeting")]
+        public async Task<IActionResult> ScheduleMeetingAsync(Guid[] ids)
         {
-            var result = await _appService.ScheduleMeetingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ScheduleMeetingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-for-channel-invite")]
-        public async Task<IActionResult> SearchForChannelInviteAsync(Guid id, [FromBody] ResPartnerSearchForChannelInviteRequestDto input)
+        [Route("search-for-channel-invite")]
+        public async Task<IActionResult> SearchForChannelInviteAsync(ResPartnerSearchForChannelInviteRequestDto input)
         {
-            var result = await _appService.SearchForChannelInviteAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchForChannelInviteAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/signup-cancel")]
-        public async Task<IActionResult> SignupCancelAsync(Guid id)
+        [Route("signup-cancel")]
+        public async Task<IActionResult> SignupCancelAsync(Guid[] ids)
         {
-            var result = await _appService.SignupCancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SignupCancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/signup-get-auth-param")]
-        public async Task<IActionResult> SignupGetAuthParamAsync(Guid id)
+        [Route("signup-get-auth-param")]
+        public async Task<IActionResult> SignupGetAuthParamAsync(Guid[] ids)
         {
-            var result = await _appService.SignupGetAuthParamAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SignupGetAuthParamAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/signup-prepare")]
-        public async Task<IActionResult> SignupPrepareAsync(Guid id, [FromBody] ResPartnerSignupPrepareRequestDto input)
+        [Route("signup-prepare")]
+        public async Task<IActionResult> SignupPrepareAsync(ResPartnerSignupPrepareRequestDto input)
         {
-            var result = await _appService.SignupPrepareAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SignupPrepareAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/view-header-get")]
-        public async Task<IActionResult> ViewHeaderGetAsync(Guid id, [FromBody] ResPartnerViewHeaderGetRequestDto input)
+        [Route("view-header-get")]
+        public async Task<IActionResult> ViewHeaderGetAsync(ResPartnerViewHeaderGetRequestDto input)
         {
-            var result = await _appService.ViewHeaderGetAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ViewHeaderGetAsync(input);
             return Ok(result);
         }
     }

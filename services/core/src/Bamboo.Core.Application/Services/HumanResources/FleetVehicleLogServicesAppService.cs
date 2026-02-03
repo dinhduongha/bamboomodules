@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Fleet", Category = "HumanResources", Depends = new[] { "base", "mail" })]
-    public partial class FleetVehicleLogServicesAppService : GenericApplicationService<FleetVehicleLogServices>, IFleetVehicleLogServicesAppService
+    public partial class FleetVehicleLogServicesAppService : GenericAppService<FleetVehicleLogServices>, IFleetVehicleLogServicesAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -106,7 +106,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicleLogServices> OpenAccountMoveAsync(Guid id)
+        public async Task<FleetVehicleLogServices> OpenAccountMoveAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_fleet, FILE: fleet_vehicle_log_services.py) ---
@@ -121,7 +121,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.account_move_line_id.move_id.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FleetVehicleLogServices> SetOdometerInternalAsync()

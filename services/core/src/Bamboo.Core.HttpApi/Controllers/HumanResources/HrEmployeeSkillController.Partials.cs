@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-save")]
-        public async Task<IActionResult> ActionSaveAsync(Guid id)
+        [Route("action-save")]
+        public async Task<IActionResult> ActionSaveAsync(Guid[] ids)
         {
-            var result = await _appService.SaveAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SaveAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-current-skills-by-employee")]
-        public async Task<IActionResult> GetCurrentSkillsByEmployeeAsync(Guid id)
+        [Route("get-current-skills-by-employee")]
+        public async Task<IActionResult> GetCurrentSkillsByEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.GetCurrentSkillsByEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetCurrentSkillsByEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/open-hr-employee-skill-modal")]
-        public async Task<IActionResult> OpenHrEmployeeSkillModalAsync(Guid id)
+        [Route("open-hr-employee-skill-modal")]
+        public async Task<IActionResult> OpenHrEmployeeSkillModalAsync(Guid[] ids)
         {
-            var result = await _appService.OpenHrEmployeeSkillModalAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenHrEmployeeSkillModalAsync(ids);
             return Ok(result);
         }
     }

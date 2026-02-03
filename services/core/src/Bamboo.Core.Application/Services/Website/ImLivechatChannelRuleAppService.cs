@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("ImLivechat", Category = "Website", Depends = new[] { "mail", "rating", "digest", "utm" })]
-    public partial class ImLivechatChannelRuleAppService : GenericApplicationService<ImLivechatChannelRule>, IImLivechatChannelRuleAppService
+    public partial class ImLivechatChannelRuleAppService : GenericAppService<ImLivechatChannelRule>, IImLivechatChannelRuleAppService
     {
 
         public ImLivechatChannelRuleAppService(IRepository<ImLivechatChannelRule, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -36,7 +36,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ImLivechatChannelRule> MatchRuleAsync(Guid id, ImLivechatChannelRuleMatchRuleRequestDto input)
+        public async Task<ImLivechatChannelRule> MatchRuleAsync(ImLivechatChannelRuleMatchRuleRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
@@ -77,7 +77,9 @@ namespace Bamboo.Core.Application.Services
             // domain = [('country_ids', '=', False), ('channel_id', '=', channel_id)]
             // return _match(self.search(domain))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ImLivechatChannelRule> ToStoreDefaultsInternalAsync(object target)

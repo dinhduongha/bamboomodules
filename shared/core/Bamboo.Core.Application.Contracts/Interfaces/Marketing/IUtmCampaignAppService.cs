@@ -10,10 +10,10 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IUtmCampaignAppService : IGenericApplicationService<UtmCampaign>
     {
-        Task<UtmCampaign> CreateMassSmsAsync(Guid id);
-        Task<UtmCampaign> RedirectToInvoicedAsync(Guid id);
-        Task<UtmCampaign> RedirectToLeadsOpportunitiesAsync(Guid id);
-        Task<UtmCampaign> RedirectToMailingSmsAsync(Guid id);
-        Task<UtmCampaign> RedirectToQuotationsAsync(Guid id);
+        Task<UtmCampaign> CreateMassSmsAsync(Guid[] ids);
+        Task<UtmCampaign> RedirectToInvoicedAsync(Guid[] ids);
+        Task<UtmCampaign> RedirectToLeadsOpportunitiesAsync(Guid[] ids);
+        Task<UtmCampaign> RedirectToMailingSmsAsync(Guid[] ids);
+        Task<UtmCampaign> RedirectToQuotationsAsync(Guid[] ids);
     }
 }

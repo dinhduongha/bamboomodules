@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("HrHolidays", Category = "HumanResources", Depends = new[] { "hr", "calendar", "resource" })]
-    public partial class HrLeaveAppService : GenericApplicationService<HrLeave>, IHrLeaveAppService
+    public partial class HrLeaveAppService : GenericAppService<HrLeave>, IHrLeaveAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadMainAttachmentAppService _mailThreadMainAttachmentAppService;
@@ -90,7 +90,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> ActivityUpdateAsync(Guid id)
+        public async Task<HrLeave> ActivityUpdateAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -150,10 +150,12 @@ namespace Bamboo.Core.Application.Services
             //     to_do.activity_feedback(['hr_holidays.mail_act_leave_approval', 'hr_holidays.mail_act_leave_second_approval'])
             // self.env['mail.activity'].with_context(short_name=False).create(activity_vals)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeave> AddFollowerAsync(Guid id, HrLeaveAddFollowerRequestDto input)
+        public async Task<HrLeave> AddFollowerAsync(HrLeaveAddFollowerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -162,10 +164,12 @@ namespace Bamboo.Core.Application.Services
             // if employee.user_id:
             //     self.message_subscribe(partner_ids=employee.user_id.partner_id.ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeave> ApproveAsync(Guid id, HrLeaveApproveRequestDto input)
+        public async Task<HrLeave> ApproveAsync(HrLeaveApproveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -191,10 +195,12 @@ namespace Bamboo.Core.Application.Services
             // self._check_overtime_deductible(self)
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeave> BackToApprovalAsync(Guid id)
+        public async Task<HrLeave> BackToApprovalAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -202,10 +208,12 @@ namespace Bamboo.Core.Application.Services
             // self.filtered(lambda l: l.can_back_to_approve)._move_validate_leave_to_confirm()
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrLeave> CancelAsync(Guid id)
+        public async Task<HrLeave> CancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -225,9 +233,12 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<HrLeave> CancelInvalidLeavesInternalAsync()
         {
             /*
@@ -1116,7 +1127,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> CopyDataAsync(Guid id, HrLeaveCopyDataRequestDto input)
+        public async Task<HrLeave> CopyDataAsync(HrLeaveCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1128,10 +1139,12 @@ namespace Bamboo.Core.Application.Services
             //     return vals_list
             // raise UserError(_('A time off cannot be duplicated.'))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<HrLeave> CreateAsync(HrLeave entity, List<string> fields)
+        public override async Task<HrLeave> CreateAsync(CreateRequestDto<HrLeave> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1193,7 +1206,7 @@ namespace Bamboo.Core.Application.Services
             // with self.env['hr.work.entry']._error_checking(start=start, stop=stop, employee_ids=employee_ids):
             //     return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
         protected async Task<HrLeave> CreateResourceLeaveInternalAsync()
@@ -1242,7 +1255,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> DocumentsAsync(Guid id)
+        public async Task<HrLeave> DocumentsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1257,7 +1270,9 @@ namespace Bamboo.Core.Application.Services
             //     'domain': domain
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeave> ForceCancelInternalAsync()
@@ -1383,6 +1398,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<HrLeave> GetDeductibleEmployeeOvertimeInternalAsync(object employees)
         {
             /*
@@ -1686,7 +1702,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> GetUnusualDaysAsync(Guid id, HrLeaveGetUnusualDaysRequestDto input)
+        [ApiModel]
+        public async Task<HrLeave> GetUnusualDaysAsync(HrLeaveGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1695,7 +1712,9 @@ namespace Bamboo.Core.Application.Services
             // employee = self.env['hr.employee'].browse(employee_id) if employee_id else self.env.user.employee_id
             // return employee.sudo(False)._get_unusual_days(date_from, date_to)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeave> InverseDescriptionInternalAsync()
@@ -1724,7 +1743,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> MessageSubscribeAsync(Guid id, HrLeaveMessageSubscribeRequestDto input)
+        public async Task<HrLeave> MessageSubscribeAsync(HrLeaveMessageSubscribeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1735,7 +1754,9 @@ namespace Bamboo.Core.Application.Services
             //     return super(HrLeave, self.sudo()).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
             // return super().message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeave> MoveValidateLeaveToConfirmInternalAsync()
@@ -1816,7 +1837,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> OpenPendingRequestsAsync(Guid id)
+        [ApiModel]
+        public async Task<HrLeave> OpenPendingRequestsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1840,7 +1862,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': context,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeave> PostLeaveCancelInternalAsync()
@@ -1924,7 +1948,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> RefuseAsync(Guid id)
+        public async Task<HrLeave> RefuseAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1971,7 +1995,9 @@ namespace Bamboo.Core.Application.Services
             // self._check_missing_global_leave_timesheets()
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeave> RegenWorkEntriesInternalAsync()
@@ -2013,7 +2039,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> ResetConfirmAsync(Guid id)
+        public async Task<HrLeave> ResetConfirmAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays_attendance, FILE: hr_leave.py) ---
@@ -2022,7 +2048,9 @@ namespace Bamboo.Core.Application.Services
             // res = super().action_reset_confirm()
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrLeave> SearchDescriptionInternalAsync(object @operator, object @value)
@@ -2252,7 +2280,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, HrLeave entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<HrLeave> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -2334,7 +2362,7 @@ namespace Bamboo.Core.Application.Services
             // self.env['account.analytic.line'].browse(set(timesheet_ids_to_remove)).sudo().unlink()
             // return res
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

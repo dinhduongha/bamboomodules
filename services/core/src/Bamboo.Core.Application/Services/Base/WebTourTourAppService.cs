@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebTour", Category = "Base", Depends = new[] { "web" })]
-    public partial class WebTourTourAppService : GenericApplicationService<WebTourTour>, IWebTourTourAppService
+    public partial class WebTourTourAppService : GenericAppService<WebTourTour>, IWebTourTourAppService
     {
 
         public WebTourTourAppService(IRepository<WebTourTour, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebTourTour> ConsumeAsync(Guid id, WebTourTourConsumeRequestDto input)
+        [ApiModel]
+        public async Task<WebTourTour> ConsumeAsync(WebTourTourConsumeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_tour, FILE: tour.py) ---
@@ -48,10 +49,12 @@ namespace Bamboo.Core.Application.Services
             //         tour_id.sudo().user_consumed_ids = [Command.link(self.env.user.id)]
             // return self.get_current_tour()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<WebTourTour> ExportJsFileAsync(Guid id)
+        public async Task<WebTourTour> ExportJsFileAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_tour, FILE: tour.py) ---
@@ -76,10 +79,13 @@ namespace Bamboo.Core.Application.Services
             //             "url": f"/web/content/{attachment_id.id}?download=true",
             //         }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<WebTourTour> GetCurrentTourAsync(Guid id)
+        [ApiModel]
+        public async Task<WebTourTour> GetCurrentTourAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_tour, FILE: tour.py) ---
@@ -88,10 +94,13 @@ namespace Bamboo.Core.Application.Services
             //     tours_to_run = self.search([("custom", "=", False), ("user_consumed_ids", "not in", self.env.user.id)])
             //     return bool(tours_to_run[:1]) and tours_to_run[:1]._get_tour_json()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<WebTourTour> GetTourJsonByNameAsync(Guid id, WebTourTourGetTourJsonByNameRequestDto input)
+        [ApiModel]
+        public async Task<WebTourTour> GetTourJsonByNameAsync(WebTourTourGetTourJsonByNameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_tour, FILE: tour.py) ---
@@ -99,7 +108,9 @@ namespace Bamboo.Core.Application.Services
             // tour_id = self.search([("name", "=", tour_name)])
             // return tour_id._get_tour_json()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<WebTourTour> GetTourJsonInternalAsync()

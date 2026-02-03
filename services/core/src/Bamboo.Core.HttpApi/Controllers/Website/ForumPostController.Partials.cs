@@ -11,82 +11,92 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/close")]
-        public async Task<IActionResult> CloseAsync(Guid id, [FromBody] ForumPostCloseRequestDto input)
+        [Route("close")]
+        public async Task<IActionResult> CloseAsync(ForumPostCloseRequestDto input)
         {
-            var result = await _appService.CloseAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CloseAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/convert-answer-to-comment")]
-        public async Task<IActionResult> ConvertAnswerToCommentAsync(Guid id)
+        [Route("convert-answer-to-comment")]
+        public async Task<IActionResult> ConvertAnswerToCommentAsync(Guid[] ids)
         {
-            var result = await _appService.ConvertAnswerToCommentAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ConvertAnswerToCommentAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/convert-comment-to-answer")]
-        public async Task<IActionResult> ConvertCommentToAnswerAsync(Guid id, [FromBody] ForumPostConvertCommentToAnswerRequestDto input)
+        [Route("convert-comment-to-answer")]
+        public async Task<IActionResult> ConvertCommentToAnswerAsync(ForumPostConvertCommentToAnswerRequestDto input)
         {
-            var result = await _appService.ConvertCommentToAnswerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConvertCommentToAnswerAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/go-to-website")]
-        public async Task<IActionResult> GoToWebsiteAsync(Guid id)
+        [Route("go-to-website")]
+        public async Task<IActionResult> GoToWebsiteAsync(Guid[] ids)
         {
-            var result = await _appService.GoToWebsiteAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GoToWebsiteAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/mark-as-offensive-batch")]
-        public async Task<IActionResult> MarkAsOffensiveBatchAsync(Guid id, [FromBody] ForumPostMarkAsOffensiveBatchRequestDto input)
+        [Route("mark-as-offensive-batch")]
+        public async Task<IActionResult> MarkAsOffensiveBatchAsync(ForumPostMarkAsOffensiveBatchRequestDto input)
         {
-            var result = await _appService.MarkAsOffensiveBatchAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.MarkAsOffensiveBatchAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/message-post")]
-        public async Task<IActionResult> MessagePostAsync(Guid id)
+        [Route("message-post")]
+        public async Task<IActionResult> MessagePostAsync(Guid[] ids)
         {
-            var result = await _appService.MessagePostAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.MessagePostAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/reopen")]
-        public async Task<IActionResult> ReopenAsync(Guid id)
+        [Route("reopen")]
+        public async Task<IActionResult> ReopenAsync(Guid[] ids)
         {
-            var result = await _appService.ReopenAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ReopenAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/unlink-comment")]
-        public async Task<IActionResult> UnlinkCommentAsync(Guid id, [FromBody] ForumPostUnlinkCommentRequestDto input)
+        [Route("unlink-comment")]
+        public async Task<IActionResult> UnlinkCommentAsync(ForumPostUnlinkCommentRequestDto input)
         {
-            var result = await _appService.UnlinkCommentAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.UnlinkCommentAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/validate")]
-        public async Task<IActionResult> ValidateAsync(Guid id)
+        [Route("validate")]
+        public async Task<IActionResult> ValidateAsync(Guid[] ids)
         {
-            var result = await _appService.ValidateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ValidateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/vote")]
-        public async Task<IActionResult> VoteAsync(Guid id, [FromBody] ForumPostVoteRequestDto input)
+        [Route("vote")]
+        public async Task<IActionResult> VoteAsync(ForumPostVoteRequestDto input)
         {
-            var result = await _appService.VoteAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.VoteAsync(input);
             return Ok(result);
         }
     }

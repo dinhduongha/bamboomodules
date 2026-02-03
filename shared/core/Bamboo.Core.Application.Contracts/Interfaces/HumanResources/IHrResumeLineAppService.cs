@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrResumeLineAppService : IGenericApplicationService<HrResumeLine>
     {
-        Task<HrResumeLine> CopyDataAsync(Guid id, HrResumeLineCopyDataRequestDto input);
+        Task<HrResumeLine> CopyDataAsync(HrResumeLineCopyDataRequestDto input);
     }
 }

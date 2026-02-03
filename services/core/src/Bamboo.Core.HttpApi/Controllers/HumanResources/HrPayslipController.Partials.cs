@@ -11,114 +11,128 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-payslip-cancel")]
-        public async Task<IActionResult> ActionPayslipCancelAsync(Guid id)
+        [Route("action-payslip-cancel")]
+        public async Task<IActionResult> ActionPayslipCancelAsync(Guid[] ids)
         {
-            var result = await _appService.PayslipCancelAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PayslipCancelAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-payslip-done")]
-        public async Task<IActionResult> ActionPayslipDoneAsync(Guid id)
+        [Route("action-payslip-done")]
+        public async Task<IActionResult> ActionPayslipDoneAsync(Guid[] ids)
         {
-            var result = await _appService.PayslipDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PayslipDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-payslip-draft")]
-        public async Task<IActionResult> ActionPayslipDraftAsync(Guid id)
+        [Route("action-payslip-draft")]
+        public async Task<IActionResult> ActionPayslipDraftAsync(Guid[] ids)
         {
-            var result = await _appService.PayslipDraftAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.PayslipDraftAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-email")]
-        public async Task<IActionResult> ActionSendEmailAsync(Guid id)
+        [Route("action-send-email")]
+        public async Task<IActionResult> ActionSendEmailAsync(Guid[] ids)
         {
-            var result = await _appService.SendEmailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendEmailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/check-done")]
-        public async Task<IActionResult> CheckDoneAsync(Guid id)
+        [Route("check-done")]
+        public async Task<IActionResult> CheckDoneAsync(Guid[] ids)
         {
-            var result = await _appService.CheckDoneAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CheckDoneAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/compute-sheet")]
-        public async Task<IActionResult> ComputeSheetAsync(Guid id)
+        [Route("compute-sheet")]
+        public async Task<IActionResult> ComputeSheetAsync(Guid[] ids)
         {
-            var result = await _appService.ComputeSheetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ComputeSheetAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-contract")]
-        public async Task<IActionResult> GetContractAsync(Guid id, [FromBody] HrPayslipGetContractRequestDto input)
+        [Route("get-contract")]
+        public async Task<IActionResult> GetContractAsync(HrPayslipGetContractRequestDto input)
         {
-            var result = await _appService.GetContractAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetContractAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-inputs")]
-        public async Task<IActionResult> GetInputsAsync(Guid id, [FromBody] HrPayslipGetInputsRequestDto input)
+        [Route("get-inputs")]
+        public async Task<IActionResult> GetInputsAsync(HrPayslipGetInputsRequestDto input)
         {
-            var result = await _appService.GetInputsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetInputsAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-salary-line-total")]
-        public async Task<IActionResult> GetSalaryLineTotalAsync(Guid id, [FromBody] HrPayslipGetSalaryLineTotalRequestDto input)
+        [Route("get-salary-line-total")]
+        public async Task<IActionResult> GetSalaryLineTotalAsync(HrPayslipGetSalaryLineTotalRequestDto input)
         {
-            var result = await _appService.GetSalaryLineTotalAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetSalaryLineTotalAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-worked-day-lines")]
-        public async Task<IActionResult> GetWorkedDayLinesAsync(Guid id, [FromBody] HrPayslipGetWorkedDayLinesRequestDto input)
+        [Route("get-worked-day-lines")]
+        public async Task<IActionResult> GetWorkedDayLinesAsync(HrPayslipGetWorkedDayLinesRequestDto input)
         {
-            var result = await _appService.GetWorkedDayLinesAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetWorkedDayLinesAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-contract")]
-        public async Task<IActionResult> OnchangeContractAsync(Guid id)
+        [Route("onchange-contract")]
+        public async Task<IActionResult> OnchangeContractAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeContractAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeContractAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-employee")]
-        public async Task<IActionResult> OnchangeEmployeeAsync(Guid id)
+        [Route("onchange-employee")]
+        public async Task<IActionResult> OnchangeEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.OnchangeEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OnchangeEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/onchange-employee-id")]
-        public async Task<IActionResult> OnchangeEmployeeIdAsync(Guid id, [FromBody] HrPayslipOnchangeEmployeeIdRequestDto input)
+        [Route("onchange-employee-id")]
+        public async Task<IActionResult> OnchangeEmployeeIdAsync(HrPayslipOnchangeEmployeeIdRequestDto input)
         {
-            var result = await _appService.OnchangeEmployeeIdAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.OnchangeEmployeeIdAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/refund-sheet")]
-        public async Task<IActionResult> RefundSheetAsync(Guid id)
+        [Route("refund-sheet")]
+        public async Task<IActionResult> RefundSheetAsync(Guid[] ids)
         {
-            var result = await _appService.RefundSheetAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.RefundSheetAsync(ids);
             return Ok(result);
         }
     }

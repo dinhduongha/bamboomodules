@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResUsersApikeysDescriptionAppService : GenericApplicationService<ResUsersApikeysDescription>, IResUsersApikeysDescriptionAppService
+    public partial class ResUsersApikeysDescriptionAppService : GenericAppService<ResUsersApikeysDescription>, IResUsersApikeysDescriptionAppService
     {
 
         public ResUsersApikeysDescriptionAppService(IRepository<ResUsersApikeysDescription, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -27,7 +27,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ResUsersApikeysDescription> CheckAccessMakeKeyAsync(Guid id)
+        public async Task<ResUsersApikeysDescription> CheckAccessMakeKeyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: portal, FILE: res_users_apikeys_description.py) ---
@@ -46,7 +46,9 @@ namespace Bamboo.Core.Application.Services
             // if not self.env.user._is_internal():
             //     raise AccessError(_("Only internal users can create API keys"))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsersApikeysDescription> ComputeExpirationDateInternalAsync()
@@ -66,7 +68,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersApikeysDescription> MakeKeyAsync(Guid id)
+        public async Task<ResUsersApikeysDescription> MakeKeyAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
@@ -89,7 +91,9 @@ namespace Bamboo.Core.Application.Services
             //     }
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsersApikeysDescription> OnchangeExpirationDateInternalAsync()

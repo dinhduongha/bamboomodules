@@ -11,26 +11,29 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/copy-data")]
-        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockRuleCopyDataRequestDto input)
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync(StockRuleCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.CopyDataAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/run")]
-        public async Task<IActionResult> RunAsync(Guid id, [FromBody] StockRuleRunRequestDto input)
+        [Route("run")]
+        public async Task<IActionResult> RunAsync(StockRuleRunRequestDto input)
         {
-            var result = await _appService.RunAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RunAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/run-scheduler")]
-        public async Task<IActionResult> RunSchedulerAsync(Guid id, [FromBody] StockRuleRunSchedulerRequestDto input)
+        [Route("run-scheduler")]
+        public async Task<IActionResult> RunSchedulerAsync(StockRuleRunSchedulerRequestDto input)
         {
-            var result = await _appService.RunSchedulerAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RunSchedulerAsync(input);
             return Ok(result);
         }
     }

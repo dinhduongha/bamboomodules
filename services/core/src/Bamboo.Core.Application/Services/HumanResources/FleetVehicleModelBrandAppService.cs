@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Fleet", Category = "HumanResources", Depends = new[] { "base", "mail" })]
-    public partial class FleetVehicleModelBrandAppService : GenericApplicationService<FleetVehicleModelBrand>, IFleetVehicleModelBrandAppService
+    public partial class FleetVehicleModelBrandAppService : GenericAppService<FleetVehicleModelBrand>, IFleetVehicleModelBrandAppService
     {
 
         public FleetVehicleModelBrandAppService(IRepository<FleetVehicleModelBrand, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<FleetVehicleModelBrand> BrandModelAsync(Guid id)
+        public async Task<FleetVehicleModelBrand> BrandModelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model_brand.py) ---
@@ -42,7 +42,9 @@ namespace Bamboo.Core.Application.Services
             // 
             // return view
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<FleetVehicleModelBrand> ComputeModelCountInternalAsync()
@@ -61,7 +63,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicleModelBrand> OpenBrandFormAsync(Guid id)
+        public async Task<FleetVehicleModelBrand> OpenBrandFormAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model_brand.py) ---
@@ -75,7 +77,9 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.id
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

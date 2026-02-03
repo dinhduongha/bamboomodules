@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResCountryAppService : GenericApplicationService<ResCountry>, IResCountryAppService
+    public partial class ResCountryAppService : GenericAppService<ResCountry>, IResCountryAppService
     {
         private readonly IPosLoadMixinAppService _posLoadMixinAppService;
         public ResCountryAppService(IRepository<ResCountry, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -108,7 +108,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCountry> GetAddressFieldsAsync(Guid id)
+        public async Task<ResCountry> GetAddressFieldsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_country.py) ---
@@ -116,9 +116,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return re.findall(r'\((.+?)\)', self.address_format)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResCountry> LoadPosDataFieldsInternalAsync(object config)
         {
             /*
@@ -129,6 +132,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCountry> LoadPosSelfDataFieldsInternalAsync(object config)
         {
             /*
@@ -140,6 +144,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResCountry> PhoneCodeForInternalAsync(object code)
         {
             /*

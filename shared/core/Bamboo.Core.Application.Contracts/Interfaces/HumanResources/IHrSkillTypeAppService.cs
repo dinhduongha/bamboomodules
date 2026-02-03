@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IHrSkillTypeAppService : IGenericApplicationService<HrSkillType>
     {
-        Task<HrSkillType> CopyDataAsync(Guid id, HrSkillTypeCopyDataRequestDto input);
+        Task<HrSkillType> CopyDataAsync(HrSkillTypeCopyDataRequestDto input);
     }
 }

@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrProfileAppService : IGenericApplicationService<IrProfile>
     {
-        Task<IrProfile> SetProfilingAsync(Guid id, IrProfileSetProfilingRequestDto input);
-        Task<IrProfile> ViewSpeedscopeAsync(Guid id);
+        Task<IrProfile> SetProfilingAsync(IrProfileSetProfilingRequestDto input);
+        Task<IrProfile> ViewSpeedscopeAsync(Guid[] ids);
     }
 }

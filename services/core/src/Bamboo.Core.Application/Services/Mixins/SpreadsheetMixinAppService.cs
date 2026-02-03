@@ -24,6 +24,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             _serviceProvider = serviceProvider;
         }
 
+        [ApiModel]
         public async Task<TEntity> ActionGetShareUrlAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
         {
             /*
@@ -266,6 +267,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> GetDisplayNamesForSpreadsheetAsync<TEntity>(IEnumerable<TEntity> entities, object args) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
         {
             /*

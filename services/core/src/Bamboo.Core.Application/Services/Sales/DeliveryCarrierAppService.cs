@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Delivery", Category = "Sales", Depends = new[] { "sale", "payment_custom" })]
-    public partial class DeliveryCarrierAppService : GenericApplicationService<DeliveryCarrier>, IDeliveryCarrierAppService
+    public partial class DeliveryCarrierAppService : GenericAppService<DeliveryCarrier>, IDeliveryCarrierAppService
     {
         private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
         public DeliveryCarrierAppService(IRepository<DeliveryCarrier, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -41,7 +41,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DeliveryCarrier> AvailableCarriersAsync(Guid id, DeliveryCarrierAvailableCarriersRequestDto input)
+        public async Task<DeliveryCarrier> AvailableCarriersAsync(DeliveryCarrierAvailableCarriersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -69,20 +69,24 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return available_delivery_methods.filtered(lambda m: m.delivery_type != 'gelato')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> BaseOnRuleCancelShipmentAsync(Guid id, DeliveryCarrierBaseOnRuleCancelShipmentRequestDto input)
+        public async Task<DeliveryCarrier> BaseOnRuleCancelShipmentAsync(DeliveryCarrierBaseOnRuleCancelShipmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
             // def base_on_rule_cancel_shipment(self, pickings):
             // raise NotImplementedError()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> BaseOnRuleGetTrackingLinkAsync(Guid id, DeliveryCarrierBaseOnRuleGetTrackingLinkRequestDto input)
+        public async Task<DeliveryCarrier> BaseOnRuleGetTrackingLinkAsync(DeliveryCarrierBaseOnRuleGetTrackingLinkRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery_mondialrelay, FILE: delivery_carrier.py) ---
@@ -100,10 +104,12 @@ namespace Bamboo.Core.Application.Services
             //     return self.tracking_url.replace("<shipmenttrackingnumber>", picking.carrier_tracking_ref)
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> BaseOnRuleRateShipmentAsync(Guid id, DeliveryCarrierBaseOnRuleRateShipmentRequestDto input)
+        public async Task<DeliveryCarrier> BaseOnRuleRateShipmentAsync(DeliveryCarrierBaseOnRuleRateShipmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -130,10 +136,12 @@ namespace Bamboo.Core.Application.Services
             //         'error_message': False,
             //         'warning_message': False}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> BaseOnRuleSendShippingAsync(Guid id, DeliveryCarrierBaseOnRuleSendShippingRequestDto input)
+        public async Task<DeliveryCarrier> BaseOnRuleSendShippingAsync(DeliveryCarrierBaseOnRuleSendShippingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
@@ -147,10 +155,12 @@ namespace Bamboo.Core.Application.Services
             //                   'tracking_number': False}]
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> CancelShipmentAsync(Guid id, DeliveryCarrierCancelShipmentRequestDto input)
+        public async Task<DeliveryCarrier> CancelShipmentAsync(DeliveryCarrierCancelShipmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
@@ -163,7 +173,9 @@ namespace Bamboo.Core.Application.Services
             // if hasattr(self, '%s_cancel_shipment' % self.delivery_type):
             //     return getattr(self, '%s_cancel_shipment' % self.delivery_type)(pickings)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DeliveryCarrier> CheckInStoreDmHasWarehousesWhenPublishedInternalAsync()
@@ -288,7 +300,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DeliveryCarrier> CopyDataAsync(Guid id, DeliveryCarrierCopyDataRequestDto input)
+        public async Task<DeliveryCarrier> CopyDataAsync(DeliveryCarrierCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -296,10 +308,12 @@ namespace Bamboo.Core.Application.Services
             // vals_list = super().copy_data(default=default)
             // return [dict(vals, name=self.env._("%s (copy)", carrier.name)) for carrier, vals in zip(self, vals_list)]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<DeliveryCarrier> CreateAsync(DeliveryCarrier entity, List<string> fields)
+        public override async Task<DeliveryCarrier> CreateAsync(CreateRequestDto<DeliveryCarrier> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: delivery_carrier.py) ---
@@ -326,20 +340,22 @@ namespace Bamboo.Core.Application.Services
             //         })
             // return super().create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<DeliveryCarrier> FixedCancelShipmentAsync(Guid id, DeliveryCarrierFixedCancelShipmentRequestDto input)
+        public async Task<DeliveryCarrier> FixedCancelShipmentAsync(DeliveryCarrierFixedCancelShipmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
             // def fixed_cancel_shipment(self, pickings):
             // raise NotImplementedError()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> FixedGetTrackingLinkAsync(Guid id, DeliveryCarrierFixedGetTrackingLinkRequestDto input)
+        public async Task<DeliveryCarrier> FixedGetTrackingLinkAsync(DeliveryCarrierFixedGetTrackingLinkRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery_mondialrelay, FILE: delivery_carrier.py) ---
@@ -353,10 +369,12 @@ namespace Bamboo.Core.Application.Services
             //     return self.tracking_url.replace("<shipmenttrackingnumber>", picking.carrier_tracking_ref)
             // return False
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> FixedRateShipmentAsync(Guid id, DeliveryCarrierFixedRateShipmentRequestDto input)
+        public async Task<DeliveryCarrier> FixedRateShipmentAsync(DeliveryCarrierFixedRateShipmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -373,10 +391,12 @@ namespace Bamboo.Core.Application.Services
             //         'error_message': False,
             //         'warning_message': False}
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> FixedSendShippingAsync(Guid id, DeliveryCarrierFixedSendShippingRequestDto input)
+        public async Task<DeliveryCarrier> FixedSendShippingAsync(DeliveryCarrierFixedSendShippingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
@@ -387,10 +407,12 @@ namespace Bamboo.Core.Application.Services
             //                   'tracking_number': False}]
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> GelatoRateShipmentAsync(Guid id, DeliveryCarrierGelatoRateShipmentRequestDto input)
+        public async Task<DeliveryCarrier> GelatoRateShipmentAsync(DeliveryCarrierGelatoRateShipmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_gelato, FILE: delivery_carrier.py) ---
@@ -453,7 +475,9 @@ namespace Bamboo.Core.Application.Services
             //     'price': total_delivery_price,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DeliveryCarrier> GetCommoditiesFromOrderInternalAsync(object order)
@@ -762,7 +786,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DeliveryCarrier> GetReturnLabelAsync(Guid id, DeliveryCarrierGetReturnLabelRequestDto input)
+        public async Task<DeliveryCarrier> GetReturnLabelAsync(DeliveryCarrierGetReturnLabelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
@@ -776,20 +800,24 @@ namespace Bamboo.Core.Application.Services
             //         pickings.return_label_ids.generate_access_token()
             //     return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> GetReturnLabelPrefixAsync(Guid id)
+        public async Task<DeliveryCarrier> GetReturnLabelPrefixAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
             // def get_return_label_prefix(self):
             // return 'LabelReturn-%s' % self.delivery_type
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> GetTrackingLinkAsync(Guid id, DeliveryCarrierGetTrackingLinkRequestDto input)
+        public async Task<DeliveryCarrier> GetTrackingLinkAsync(DeliveryCarrierGetTrackingLinkRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
@@ -805,7 +833,9 @@ namespace Bamboo.Core.Application.Services
             //     return getattr(self, '%s_get_tracking_link' % self.delivery_type)(picking)
             // return None
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DeliveryCarrier> InStoreGetCloseLocationsInternalAsync(object partner_address, Guid product_id)
@@ -855,7 +885,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DeliveryCarrier> InStoreRateShipmentAsync(Guid id)
+        public async Task<DeliveryCarrier> InStoreRateShipmentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: delivery_carrier.py) ---
@@ -867,10 +897,12 @@ namespace Bamboo.Core.Application.Services
             //     'warning_message': False,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> InstallMoreProviderAsync(Guid id)
+        public async Task<DeliveryCarrier> InstallMoreProviderAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -891,7 +923,9 @@ namespace Bamboo.Core.Application.Services
             //         </p>'''),
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DeliveryCarrier> IsAvailableForOrderInternalAsync(object order)
@@ -926,7 +960,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DeliveryCarrier> LogXmlAsync(Guid id, DeliveryCarrierLogXmlRequestDto input)
+        public async Task<DeliveryCarrier> LogXmlAsync(DeliveryCarrierLogXmlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -954,7 +988,9 @@ namespace Bamboo.Core.Application.Services
             //     except psycopg2.Error:
             //         pass
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DeliveryCarrier> MatchAddressInternalAsync(object partner)
@@ -1133,7 +1169,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DeliveryCarrier> RateShipmentAsync(Guid id, DeliveryCarrierRateShipmentRequestDto input)
+        public async Task<DeliveryCarrier> RateShipmentAsync(DeliveryCarrierRateShipmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -1188,7 +1224,9 @@ namespace Bamboo.Core.Application.Services
             //         'warning_message': False,
             //     }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DeliveryCarrier> SearchIsMondialrelayInternalAsync(object @operator, object @value)
@@ -1203,7 +1241,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DeliveryCarrier> SendShippingAsync(Guid id, DeliveryCarrierSendShippingRequestDto input)
+        public async Task<DeliveryCarrier> SendShippingAsync(DeliveryCarrierSendShippingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_delivery, FILE: delivery_carrier.py) ---
@@ -1226,7 +1264,9 @@ namespace Bamboo.Core.Application.Services
             //     return getattr(self, '%s_send_shipping' % self.delivery_type)(pickings)
             // return None
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<DeliveryCarrier> SetProductFixedPriceInternalAsync()
@@ -1240,7 +1280,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DeliveryCarrier> ToggleDebugAsync(Guid id)
+        public async Task<DeliveryCarrier> ToggleDebugAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -1248,10 +1288,12 @@ namespace Bamboo.Core.Application.Services
             // for c in self:
             //     c.debug_logging = not c.debug_logging
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<DeliveryCarrier> ToggleProdEnvironmentAsync(Guid id)
+        public async Task<DeliveryCarrier> ToggleProdEnvironmentAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: delivery_carrier.py) ---
@@ -1259,10 +1301,12 @@ namespace Bamboo.Core.Application.Services
             // for c in self:
             //     c.prod_environment = not c.prod_environment
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, DeliveryCarrier entity, List<string> fields)
+        public override async Task<List<object>> WriteAsync(UpdateRequestDto<DeliveryCarrier> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_collect, FILE: delivery_carrier.py) ---
@@ -1272,7 +1316,7 @@ namespace Bamboo.Core.Application.Services
             //     vals['allow_cash_on_delivery'] = False
             // return super().write(vals)
             */
-            return await base.WriteAsync(ids, entity, fields);
+            return await base.WriteAsync(input);
         }
     }
 }

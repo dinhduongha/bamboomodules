@@ -11,58 +11,65 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-view-statistics")]
-        public async Task<IActionResult> ActionViewStatisticsAsync(Guid id)
+        [Route("action-view-statistics")]
+        public async Task<IActionResult> ActionViewStatisticsAsync(Guid[] ids)
         {
-            var result = await _appService.ViewStatisticsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.ViewStatisticsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-visit-page")]
-        public async Task<IActionResult> ActionVisitPageAsync(Guid id)
+        [Route("action-visit-page")]
+        public async Task<IActionResult> ActionVisitPageAsync(Guid[] ids)
         {
-            var result = await _appService.VisitPageAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.VisitPageAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-visit-page-statistics")]
-        public async Task<IActionResult> ActionVisitPageStatisticsAsync(Guid id)
+        [Route("action-visit-page-statistics")]
+        public async Task<IActionResult> ActionVisitPageStatisticsAsync(Guid[] ids)
         {
-            var result = await _appService.VisitPageStatisticsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.VisitPageStatisticsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/convert-links")]
-        public async Task<IActionResult> ConvertLinksAsync(Guid id, [FromBody] LinkTrackerConvertLinksRequestDto input)
+        [Route("convert-links")]
+        public async Task<IActionResult> ConvertLinksAsync(LinkTrackerConvertLinksRequestDto input)
         {
-            var result = await _appService.ConvertLinksAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.ConvertLinksAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/get-url-from-code")]
-        public async Task<IActionResult> GetUrlFromCodeAsync(Guid id, [FromBody] LinkTrackerGetUrlFromCodeRequestDto input)
+        [Route("get-url-from-code")]
+        public async Task<IActionResult> GetUrlFromCodeAsync(LinkTrackerGetUrlFromCodeRequestDto input)
         {
-            var result = await _appService.GetUrlFromCodeAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetUrlFromCodeAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/recent-links")]
-        public async Task<IActionResult> RecentLinksAsync(Guid id, [FromBody] LinkTrackerRecentLinksRequestDto input)
+        [Route("recent-links")]
+        public async Task<IActionResult> RecentLinksAsync(LinkTrackerRecentLinksRequestDto input)
         {
-            var result = await _appService.RecentLinksAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.RecentLinksAsync(input);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/search-or-create")]
-        public async Task<IActionResult> SearchOrCreateAsync(Guid id, [FromBody] LinkTrackerSearchOrCreateRequestDto input)
+        [Route("search-or-create")]
+        public async Task<IActionResult> SearchOrCreateAsync(LinkTrackerSearchOrCreateRequestDto input)
         {
-            var result = await _appService.SearchOrCreateAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.SearchOrCreateAsync(input);
             return Ok(result);
         }
     }

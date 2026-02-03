@@ -11,74 +11,83 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-create-application")]
-        public async Task<IActionResult> ActionCreateApplicationAsync(Guid id)
+        [Route("action-create-application")]
+        public async Task<IActionResult> ActionCreateApplicationAsync(Guid[] ids)
         {
-            var result = await _appService.CreateApplicationAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateApplicationAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-create-meeting")]
-        public async Task<IActionResult> ActionCreateMeetingAsync(Guid id)
+        [Route("action-create-meeting")]
+        public async Task<IActionResult> ActionCreateMeetingAsync(Guid[] ids)
         {
-            var result = await _appService.CreateMeetingAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateMeetingAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-applications")]
-        public async Task<IActionResult> ActionOpenApplicationsAsync(Guid id)
+        [Route("action-open-applications")]
+        public async Task<IActionResult> ActionOpenApplicationsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenApplicationsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenApplicationsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-attachments")]
-        public async Task<IActionResult> ActionOpenAttachmentsAsync(Guid id)
+        [Route("action-open-attachments")]
+        public async Task<IActionResult> ActionOpenAttachmentsAsync(Guid[] ids)
         {
-            var result = await _appService.OpenAttachmentsAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenAttachmentsAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-employee")]
-        public async Task<IActionResult> ActionOpenEmployeeAsync(Guid id)
+        [Route("action-open-employee")]
+        public async Task<IActionResult> ActionOpenEmployeeAsync(Guid[] ids)
         {
-            var result = await _appService.OpenEmployeeAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenEmployeeAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-open-similar-candidates")]
-        public async Task<IActionResult> ActionOpenSimilarCandidatesAsync(Guid id)
+        [Route("action-open-similar-candidates")]
+        public async Task<IActionResult> ActionOpenSimilarCandidatesAsync(Guid[] ids)
         {
-            var result = await _appService.OpenSimilarCandidatesAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.OpenSimilarCandidatesAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-send-email")]
-        public async Task<IActionResult> ActionSendEmailAsync(Guid id)
+        [Route("action-send-email")]
+        public async Task<IActionResult> ActionSendEmailAsync(Guid[] ids)
         {
-            var result = await _appService.SendEmailAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.SendEmailAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/create-employee-from-candidate")]
-        public async Task<IActionResult> CreateEmployeeFromCandidateAsync(Guid id)
+        [Route("create-employee-from-candidate")]
+        public async Task<IActionResult> CreateEmployeeFromCandidateAsync(Guid[] ids)
         {
-            var result = await _appService.CreateEmployeeFromCandidateAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.CreateEmployeeFromCandidateAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/init")]
-        public async Task<IActionResult> InitAsync(Guid id)
+        [Route("init")]
+        public async Task<IActionResult> InitAsync(Guid[] ids)
         {
-            var result = await _appService.InitAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.InitAsync(ids);
             return Ok(result);
         }
     }

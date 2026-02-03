@@ -10,13 +10,13 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IResLangAppService : IGenericApplicationService<ResLang>
     {
-        Task<ResLang> ActivateLangsAsync(Guid id);
-        Task<object> CACHEDFIELDSAsync(Guid id);
-        Task<ResLang> CopyDataAsync(Guid id, ResLangCopyDataRequestDto input);
-        Task<string> FormatAsync(Guid id, ResLangFormatRequestDto input);
-        Task<List<object>> GetInstalledAsync(Guid id);
-        Task<ResLang> GetLocalesForSpreadsheetAsync(Guid id);
-        Task<ResLang> InstallLangAsync(Guid id);
-        Task<ResLang> UnarchiveAsync(Guid id);
+        Task<ResLang> ActivateLangsAsync(Guid[] ids);
+        Task<object> CACHEDFIELDSAsync(Guid[] ids);
+        Task<ResLang> CopyDataAsync(ResLangCopyDataRequestDto input);
+        Task<string> FormatAsync(ResLangFormatRequestDto input);
+        Task<List<object>> GetInstalledAsync(Guid[] ids);
+        Task<ResLang> GetLocalesForSpreadsheetAsync(Guid[] ids);
+        Task<ResLang> InstallLangAsync(Guid[] ids);
+        Task<ResLang> UnarchiveAsync(Guid[] ids);
     }
 }

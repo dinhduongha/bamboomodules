@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrDemoFailureWizardAppService : GenericApplicationService<IrDemoFailureWizard>, IIrDemoFailureWizardAppService
+    public partial class IrDemoFailureWizardAppService : GenericAppService<IrDemoFailureWizard>, IIrDemoFailureWizardAppService
     {
 
         public IrDemoFailureWizardAppService(IRepository<IrDemoFailureWizard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrDemoFailureWizard> DoneAsync(Guid id)
+        public async Task<IrDemoFailureWizard> DoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_demo_failure.py) ---
@@ -45,7 +45,9 @@ namespace Bamboo.Core.Application.Services
             // # pylint: disable=next-method-called
             // return self.env['ir.module.module'].next()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

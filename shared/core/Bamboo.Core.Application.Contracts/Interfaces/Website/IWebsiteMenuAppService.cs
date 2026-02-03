@@ -10,7 +10,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IWebsiteMenuAppService : IGenericApplicationService<WebsiteMenu>
     {
-        Task<WebsiteMenu> GetTreeAsync(Guid id, WebsiteMenuGetTreeRequestDto input);
-        Task<WebsiteMenu> SaveAsync(Guid id, WebsiteMenuSaveRequestDto input);
+        Task<WebsiteMenu> GetTreeAsync(WebsiteMenuGetTreeRequestDto input);
+        Task<WebsiteMenu> SaveAsync(WebsiteMenuSaveRequestDto input);
     }
 }

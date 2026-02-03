@@ -11,18 +11,20 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/action-get-lead-tree-view")]
-        public async Task<IActionResult> ActionGetLeadTreeViewAsync(Guid id)
+        [Route("action-get-lead-tree-view")]
+        public async Task<IActionResult> ActionGetLeadTreeViewAsync(Guid[] ids)
         {
-            var result = await _appService.GetLeadTreeViewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetLeadTreeViewAsync(ids);
             return Ok(result);
         }
         
         [HttpPost]
-        [Route("{id}/action-get-opportunity-tree-view")]
-        public async Task<IActionResult> ActionGetOpportunityTreeViewAsync(Guid id)
+        [Route("action-get-opportunity-tree-view")]
+        public async Task<IActionResult> ActionGetOpportunityTreeViewAsync(Guid[] ids)
         {
-            var result = await _appService.GetOpportunityTreeViewAsync(id);
+            // content_action has_extra_params: False
+            var result = await _appService.GetOpportunityTreeViewAsync(ids);
             return Ok(result);
         }
     }

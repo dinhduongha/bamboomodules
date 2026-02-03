@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Category = "Productivity", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
-    public partial class MailScheduledMessageAppService : GenericApplicationService<MailScheduledMessage>, IMailScheduledMessageAppService
+    public partial class MailScheduledMessageAppService : GenericAppService<MailScheduledMessage>, IMailScheduledMessageAppService
     {
 
         public MailScheduledMessageAppService(IRepository<MailScheduledMessage, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,6 +26,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
+        [ApiModel]
         protected async Task<MailScheduledMessage> CheckInternalAsync(object values)
         {
             /*
@@ -86,6 +87,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailScheduledMessage> NotificationParametersWhitelistInternalAsync()
         {
             /*
@@ -111,7 +113,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailScheduledMessage> OpenEditFormAsync(Guid id)
+        public async Task<MailScheduledMessage> OpenEditFormAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_scheduled_message.py) ---
@@ -127,10 +129,12 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.id,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<MailScheduledMessage> PostMessageAsync(Guid id)
+        public async Task<MailScheduledMessage> PostMessageAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_scheduled_message.py) ---
@@ -141,7 +145,9 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     raise UserError(_("You are not allowed to send this scheduled message"))
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<MailScheduledMessage> PostMessageInternalAsync(object raise_exception)
@@ -207,6 +213,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailScheduledMessage> PostMessagesCronInternalAsync(object limit)
         {
             /*
@@ -226,6 +233,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<MailScheduledMessage> SearchInternalAsync(object domain, object offset, object limit, object order)
         {
             /*

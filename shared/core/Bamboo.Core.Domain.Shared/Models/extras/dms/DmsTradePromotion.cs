@@ -37,7 +37,7 @@ public partial class DmsTradePromotion : FullAuditedAggregateRoot<Guid>, IEntity
     public decimal ROI { get; set; }
 
     [Column("status")]
-    public string Status { get; set; } = "draft";
+    public string? Status { get; set; } = "draft";
 
     [Column("posm_required")]
     public bool POSMRequired { get; set; } = false;

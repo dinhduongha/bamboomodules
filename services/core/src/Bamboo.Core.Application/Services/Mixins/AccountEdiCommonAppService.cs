@@ -1157,6 +1157,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RetrieveChargeAllowanceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree, object xpath_dict, object quantity) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*
@@ -1417,6 +1418,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        [ApiModel]
         public async Task<TEntity> RetrieveRebateValInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree, object xpath_dict, object quantity) where TEntity : IEntity<Guid>, IAccountEdiCommonable
         {
             /*

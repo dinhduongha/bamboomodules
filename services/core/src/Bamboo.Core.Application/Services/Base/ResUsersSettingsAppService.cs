@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class ResUsersSettingsAppService : GenericApplicationService<ResUsersSettings>, IResUsersSettingsAppService
+    public partial class ResUsersSettingsAppService : GenericAppService<ResUsersSettings>, IResUsersSettingsAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
         public ResUsersSettingsAppService(IRepository<ResUsersSettings, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IBusListenerMixinAppService busListenerMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,6 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsersSettings> FindOrCreateForUserInternalAsync(object user)
         {
             /*
@@ -77,7 +78,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersSettings> GetEmbeddedActionsSettingsAsync(Guid id)
+        public async Task<ResUsersSettings> GetEmbeddedActionsSettingsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: res_users_settings.py) ---
@@ -116,9 +117,12 @@ namespace Bamboo.Core.Application.Services
             // self.ensure_one()
             // return self.embedded_actions_config_ids._embedded_action_settings_format()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<ResUsersSettings> GetFieldsBlacklistInternalAsync()
         {
             /*
@@ -223,7 +227,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersSettings> SetEmbeddedActionsSettingAsync(Guid id, ResUsersSettingsSetEmbeddedActionsSettingRequestDto input)
+        public async Task<ResUsersSettings> SetEmbeddedActionsSettingAsync(ResUsersSettingsSetEmbeddedActionsSettingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: res_users_settings.py) ---
@@ -248,7 +252,9 @@ namespace Bamboo.Core.Application.Services
             //         'res_id': res_id,
             //     })
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<ResUsersSettings> SetGoogleAuthTokensInternalAsync(object access_token, object refresh_token, object ttl)
@@ -265,7 +271,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersSettings> SetResUsersSettingsAsync(Guid id, ResUsersSettingsSetResUsersSettingsRequestDto input)
+        public async Task<ResUsersSettings> SetResUsersSettingsAsync(ResUsersSettingsSetResUsersSettingsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings.py) ---
@@ -284,10 +290,12 @@ namespace Bamboo.Core.Application.Services
             // formated = self._res_users_settings_format([*changed_settings.keys(), 'id'])
             // return formated
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<ResUsersSettings> SetVolumeSettingAsync(Guid id, ResUsersSettingsSetVolumeSettingRequestDto input)
+        public async Task<ResUsersSettings> SetVolumeSettingAsync(ResUsersSettingsSetVolumeSettingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings.py) ---
@@ -316,7 +324,9 @@ namespace Bamboo.Core.Application.Services
             //     "res.users.settings.volumes", volume_setting._discuss_users_settings_volume_format()
             // )
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

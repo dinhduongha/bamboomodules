@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IIrAssetAppService : IGenericApplicationService<IrAsset>
     {
-        Task<IrAsset> FilterDuplicateAsync(Guid id, IrAssetFilterDuplicateRequestDto input);
+        Task<IrAsset> FilterDuplicateAsync(IrAssetFilterDuplicateRequestDto input);
     }
 }

@@ -32,7 +32,7 @@ public static partial class ModelBuilderExtensions
             entity.Property(e => e.CheckedQty).HasColumnName("checked_qty");
             entity.Property(e => e.SystemQty).HasColumnName("system_qty");
             entity.Property(e => e.VarianceQty).HasColumnName("variance_qty");
-            entity.Property(e => e.PhotosJson).HasColumnName("photos_json");
+            entity.Property(e => e.Photos);
 
             entity.Property(e => e.CreationTime)
                 .HasDefaultValueSql("now()")

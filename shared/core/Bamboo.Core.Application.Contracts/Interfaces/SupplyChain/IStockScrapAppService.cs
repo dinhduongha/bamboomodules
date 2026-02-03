@@ -10,11 +10,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IStockScrapAppService : IGenericApplicationService<StockScrap>
     {
-        Task<StockScrap> CheckAvailableQtyAsync(Guid id);
-        Task<StockScrap> DoReplenishAsync(Guid id, StockScrapDoReplenishRequestDto input);
-        Task<StockScrap> DoScrapAsync(Guid id);
-        Task<StockScrap> GetStockMoveLinesAsync(Guid id);
-        Task<StockScrap> GetStockPickingAsync(Guid id);
-        Task<StockScrap> ValidateAsync(Guid id);
+        Task<StockScrap> CheckAvailableQtyAsync(Guid[] ids);
+        Task<StockScrap> DoReplenishAsync(StockScrapDoReplenishRequestDto input);
+        Task<StockScrap> DoScrapAsync(Guid[] ids);
+        Task<StockScrap> GetStockMoveLinesAsync(Guid[] ids);
+        Task<StockScrap> GetStockPickingAsync(Guid[] ids);
+        Task<StockScrap> ValidateAsync(Guid[] ids);
     }
 }

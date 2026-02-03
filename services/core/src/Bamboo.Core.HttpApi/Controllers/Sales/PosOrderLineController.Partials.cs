@@ -11,10 +11,11 @@ namespace Bamboo.Core.HttpApi.Controllers
     {
         
         [HttpPost]
-        [Route("{id}/get-existing-lots")]
-        public async Task<IActionResult> GetExistingLotsAsync(Guid id, [FromBody] PosOrderLineGetExistingLotsRequestDto input)
+        [Route("get-existing-lots")]
+        public async Task<IActionResult> GetExistingLotsAsync(PosOrderLineGetExistingLotsRequestDto input)
         {
-            var result = await _appService.GetExistingLotsAsync(id, input);
+            // content_action has_extra_params: True
+            var result = await _appService.GetExistingLotsAsync(input);
             return Ok(result);
         }
     }

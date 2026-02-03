@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
-    public interface IDmsRouteTemplateAppService : IGenericApplicationService<DmsRouteTemplate>
+    public interface IDmsRouteTemplateAppService : IGenericAppService<DmsRouteTemplate>
     {
         Task CreateTemplateAsync(string code, string name, string frequency, int? dayOfWeek, int? weekOfMonth);
         Task AddLineToTemplateAsync(Guid templateId, Guid outletId, int sequence, int? estimatedTimeMinutes);
@@ -23,7 +23,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 namespace Bamboo.Core.Application.Services
 {
     [Module("Dms", Category = "SupplyChain")]
-    public class DmsRouteTemplateAppService : GenericApplicationService<DmsRouteTemplate>, IDmsRouteTemplateAppService
+    public class DmsRouteTemplateAppService : GenericAppService<DmsRouteTemplate>, IDmsRouteTemplateAppService
     {
         public DmsRouteTemplateAppService(
             IRepository<DmsRouteTemplate, Guid> repository,

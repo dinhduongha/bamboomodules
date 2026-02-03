@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public partial class AccountBankStatementLineAppService : GenericApplicationService<AccountBankStatementLine>, IAccountBankStatementLineAppService
+    public partial class AccountBankStatementLineAppService : GenericAppService<AccountBankStatementLine>, IAccountBankStatementLineAppService
     {
 
         public AccountBankStatementLineAppService(IRepository<AccountBankStatementLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -288,7 +288,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(Guid id, AccountBankStatementLineFormattedReadGroupRequestDto input)
+        [ApiModel]
+        public async Task<List<Dictionary<string, object>>> FormattedReadGroupAsync(AccountBankStatementLineFormattedReadGroupRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_bank_statement_line.py) ---
@@ -308,7 +309,9 @@ namespace Bamboo.Core.Application.Services
             //         group_line['running_balance'] = self.search(group_line['__extra_domain'] + domain, limit=1).running_balance or 0.0
             // return result
             */
-            var entity = await Repository.GetAsync(id); return default;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountBankStatementLine> GetAccountingAmountsAndCurrenciesInternalAsync()
@@ -382,6 +385,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountBankStatementLine> GetDefaultJournalInternalAsync()
         {
             /*
@@ -396,6 +400,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
+        [ApiModel]
         protected async Task<AccountBankStatementLine> GetDefaultStatementInternalAsync(Guid journal_id, object date)
         {
             /*
@@ -414,14 +419,17 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountBankStatementLine> NewAsync(Guid id, AccountBankStatementLineNewRequestDto input)
+        [ApiModel]
+        public async Task<AccountBankStatementLine> NewAsync(AccountBankStatementLineNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_bank_statement_line.py) ---
             // def new(self, values=None, origin=None, ref=None):
             // return super(AccountBankStatementLine, self.with_context(is_statement_line=True)).new(values, origin, ref)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<AccountBankStatementLine> PrepareCounterpartAmountsUsingStLineRateInternalAsync(object currency, object balance, object amount_currency)
@@ -713,7 +721,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountBankStatementLine> UndoReconciliationAsync(Guid id)
+        public async Task<AccountBankStatementLine> UndoReconciliationAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_bank_statement_line.py) ---
@@ -731,7 +739,9 @@ namespace Bamboo.Core.Application.Services
             //             Command.create(line_vals) for line_vals in st_line._prepare_move_line_default_vals()],
             //     })
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

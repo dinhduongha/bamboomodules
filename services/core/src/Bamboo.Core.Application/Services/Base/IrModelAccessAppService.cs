@@ -18,7 +18,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public partial class IrModelAccessAppService : GenericApplicationService<IrModelAccess>, IIrModelAccessAppService
+    public partial class IrModelAccessAppService : GenericAppService<IrModelAccess>, IIrModelAccessAppService
     {
 
         public IrModelAccessAppService(IRepository<IrModelAccess, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -26,7 +26,8 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<IrModelAccess> CallCacheClearingMethodsAsync(Guid id)
+        [ApiModel]
+        public async Task<IrModelAccess> CallCacheClearingMethodsAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -34,10 +35,13 @@ namespace Bamboo.Core.Application.Services
             // self.env.invalidate_all()
             // self.env.registry.clear_cache('stable')
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<IrModelAccess> CheckAsync(Guid id, IrModelAccessCheckRequestDto input)
+        [ApiModel]
+        public async Task<IrModelAccess> CheckAsync(IrModelAccessCheckRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -56,9 +60,12 @@ namespace Bamboo.Core.Application.Services
             //     raise self._make_access_error(model, mode) from None
             // return has_access
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<IrModelAccess> GetAccessGroupsInternalAsync(object model_name, object access_mode)
         {
             /*
@@ -110,7 +117,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelAccess> GroupNamesWithAccessAsync(Guid id, IrModelAccessGroupNamesWithAccessRequestDto input)
+        [ApiModel]
+        public async Task<IrModelAccess> GroupNamesWithAccessAsync(IrModelAccessGroupNamesWithAccessRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -135,7 +143,9 @@ namespace Bamboo.Core.Application.Services
             // """, [lang, lang, model_name])
             // return [('%s/%s' % x) if x[0] else x[1] for x in self.env.cr.fetchall()]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<IrModelAccess> MakeAccessErrorInternalAsync(string model, string mode)

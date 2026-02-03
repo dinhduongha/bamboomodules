@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("WebsiteCustomer", Category = "Website", Depends = new[] { "website_crm_partner_assign", "website_partner", "website_google_map" })]
-    public partial class ResPartnerTagAppService : GenericApplicationService<ResPartnerTag>, IResPartnerTagAppService
+    public partial class ResPartnerTagAppService : GenericAppService<ResPartnerTag>, IResPartnerTagAppService
     {
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
         public ResPartnerTagAppService(IRepository<ResPartnerTag, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
@@ -37,7 +37,8 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartnerTag> GetSelectionClassAsync(Guid id)
+        [ApiModel]
+        public async Task<ResPartnerTag> GetSelectionClassAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_customer, FILE: res_partner.py) ---
@@ -45,7 +46,9 @@ namespace Bamboo.Core.Application.Services
             // classname = ['info', 'primary', 'success', 'warning', 'danger']
             // return [(x, str.title(x)) for x in classname]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -19,7 +19,7 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmHrPayroll", Category = "HumanResources", Depends = new[] { "mail", "hr_contract", "hr_holidays" })]
-    public partial class HrPayslipAppService : GenericApplicationService<HrPayslip>, IHrPayslipAppService
+    public partial class HrPayslipAppService : GenericAppService<HrPayslip>, IHrPayslipAppService
     {
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
@@ -40,14 +40,16 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrPayslip> CheckDoneAsync(Guid id)
+        public async Task<HrPayslip> CheckDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
             // def check_done(self):
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
         protected async Task<HrPayslip> ComputeDetailsBySalaryRuleCategoryInternalAsync()
@@ -72,7 +74,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrPayslip> ComputeSheetAsync(Guid id)
+        public async Task<HrPayslip> ComputeSheetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -91,10 +93,12 @@ namespace Bamboo.Core.Application.Services
             //     payslip.write({'line_ids': lines, 'number': number})
             // return True
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public override async Task<HrPayslip> CreateAsync(HrPayslip entity, List<string> fields)
+        public override async Task<HrPayslip> CreateAsync(CreateRequestDto<HrPayslip> input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll_account, FILE: hr_payroll_account.py) ---
@@ -104,10 +108,11 @@ namespace Bamboo.Core.Application.Services
             //         vals['journal_id'] = self.env.context.get('journal_id')
             // return super(HrPayslip, self).create(vals_list)
             */
-            return await base.CreateAsync(entity, fields);
+            return await base.CreateAsync(input);
         }
 
-        public async Task<HrPayslip> GetContractAsync(Guid id, HrPayslipGetContractRequestDto input)
+        [ApiModel]
+        public async Task<HrPayslip> GetContractAsync(HrPayslipGetContractRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -127,10 +132,13 @@ namespace Bamboo.Core.Application.Services
             // clause_final = [('employee_id', '=', employee.id), ('state', '=', 'open'), '|', '|'] + clause_1 + clause_2 + clause_3
             // return self.env['hr.contract'].search(clause_final).ids
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> GetInputsAsync(Guid id, HrPayslipGetInputsRequestDto input)
+        [ApiModel]
+        public async Task<HrPayslip> GetInputsAsync(HrPayslipGetInputsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -152,9 +160,12 @@ namespace Bamboo.Core.Application.Services
             //         res += [input_data]
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
+        [ApiModel]
         protected async Task<HrPayslip> GetPayslipLinesInternalAsync(List<Guid> contract_ids, Guid payslip_id)
         {
             /*
@@ -308,7 +319,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrPayslip> GetSalaryLineTotalAsync(Guid id, HrPayslipGetSalaryLineTotalRequestDto input)
+        public async Task<HrPayslip> GetSalaryLineTotalAsync(HrPayslipGetSalaryLineTotalRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -320,10 +331,13 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     return 0.0
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> GetWorkedDayLinesAsync(Guid id, HrPayslipGetWorkedDayLinesRequestDto input)
+        [ApiModel]
+        public async Task<HrPayslip> GetWorkedDayLinesAsync(HrPayslipGetWorkedDayLinesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -382,10 +396,12 @@ namespace Bamboo.Core.Application.Services
             //     res.extend(leaves.values())
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> OnchangeContractAsync(Guid id)
+        public async Task<HrPayslip> OnchangeContractAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -399,10 +415,12 @@ namespace Bamboo.Core.Application.Services
             // super(HrPayslip, self).onchange_contract()
             // self.journal_id = self.contract_id.journal_id.id or (not self.contract_id and self.default_get(['journal_id'])['journal_id'])
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> OnchangeEmployeeAsync(Guid id)
+        public async Task<HrPayslip> OnchangeEmployeeAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -446,10 +464,12 @@ namespace Bamboo.Core.Application.Services
             //     self.input_line_ids = input_lines
             //     return
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> OnchangeEmployeeIdAsync(Guid id, HrPayslipOnchangeEmployeeIdRequestDto input)
+        public async Task<HrPayslip> OnchangeEmployeeIdAsync(HrPayslipOnchangeEmployeeIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -511,10 +531,12 @@ namespace Bamboo.Core.Application.Services
             // })
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(input.Ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> PayslipCancelAsync(Guid id)
+        public async Task<HrPayslip> PayslipCancelAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -529,10 +551,12 @@ namespace Bamboo.Core.Application.Services
             // moves.unlink()
             // return super(HrPayslip, self).action_payslip_cancel()
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> PayslipDoneAsync(Guid id)
+        public async Task<HrPayslip> PayslipDoneAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -634,20 +658,24 @@ namespace Bamboo.Core.Application.Services
             //     move.action_post()
             // return res
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> PayslipDraftAsync(Guid id)
+        public async Task<HrPayslip> PayslipDraftAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
             // def action_payslip_draft(self):
             // return self.write({'state': 'draft'})
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> RefundSheetAsync(Guid id)
+        public async Task<HrPayslip> RefundSheetAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -671,10 +699,12 @@ namespace Bamboo.Core.Application.Services
             //     'context': {}
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
 
-        public async Task<HrPayslip> SendEmailAsync(Guid id)
+        public async Task<HrPayslip> SendEmailAsync(Guid[] ids)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
@@ -708,7 +738,9 @@ namespace Bamboo.Core.Application.Services
             //     'context': ctx,
             // }
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(ids[0]);
+            await Task.CompletedTask;
+            return default;
         }
     }
 }

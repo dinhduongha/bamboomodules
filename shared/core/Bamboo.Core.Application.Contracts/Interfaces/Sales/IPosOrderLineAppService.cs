@@ -10,6 +10,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IPosOrderLineAppService : IGenericApplicationService<PosOrderLine>
     {
-        Task<PosOrderLine> GetExistingLotsAsync(Guid id, PosOrderLineGetExistingLotsRequestDto input);
+        Task<PosOrderLine> GetExistingLotsAsync(PosOrderLineGetExistingLotsRequestDto input);
     }
 }
