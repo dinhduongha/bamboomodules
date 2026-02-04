@@ -190,7 +190,7 @@ namespace Bamboo.Core.Application
                     var model = modelGroup.Key;
                     var records = modelGroup.Value;
 
-                    var entityType = _modelTypeRegistry.GetType(model);
+                    var entityType = _modelTypeRegistry.GetEntityType(model);
                     if (entityType == null)
                     {
                         Logger.LogWarning($"Entity type for model {model} not found in IModelTypeRegistry.");
@@ -477,7 +477,7 @@ namespace Bamboo.Core.Application
                 {
                     recorIdx++;
                     var model = relation.Model;
-                    var entityType = _modelTypeRegistry.GetType(model);
+                    var entityType = _modelTypeRegistry.GetEntityType(model);
                     if (entityType == null)
                     {
                         Logger.LogWarning($"Entity type for model {model} not found in IModelTypeRegistry.");
@@ -638,7 +638,7 @@ namespace Bamboo.Core.Application
                 var model = modelGroup.Key;
                 var relations = modelGroup.Value;
 
-                var entityType = _modelTypeRegistry.GetType(model);
+                var entityType = _modelTypeRegistry.GetEntityType(model);
                 if (entityType == null)
                 {
                     Logger.LogWarning($"Entity type for model {model} not found in IModelTypeRegistry.");
@@ -800,7 +800,7 @@ namespace Bamboo.Core.Application
                 return null;
             }
 
-            var entityType = _modelTypeRegistry.GetType(ConvertModelToPascalCase(model));
+            var entityType = _modelTypeRegistry.GetEntityType(ConvertModelToPascalCase(model));
             if (entityType == null)
             {
                 Logger.LogWarning($"Entity type for model {model} not found in IModelTypeRegistry.");

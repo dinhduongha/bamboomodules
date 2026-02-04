@@ -20,11 +20,12 @@ namespace Bamboo.Core.Application;
 
 public class RpcDispatcherAppService : IRpcDispatcherAppService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IModelTypeRegistry _modelTypeRegistry;
-    private readonly ConcurrentDictionary<(string model, string method), (Type ServiceType, MethodInfo Method)> _methodCache = new();
 
-    private readonly ILogger<RpcDispatcherAppService> _logger;
+    protected readonly IServiceProvider _serviceProvider;
+    protected readonly ILogger<RpcDispatcherAppService> _logger;
+    protected readonly IModelTypeRegistry _modelTypeRegistry;
+    protected readonly IAuthorizationService _authorizationService;
+    //private readonly ConcurrentDictionary<(string model, string method), (Type ServiceType, MethodInfo Method)> _methodCache = new();
 
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -34,14 +35,21 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
         WriteIndented = false
     };
 
+    protected static string[] _commonMethods = [
+            "read", "search", "search_read", "search_count", "create", "write", "update_json", "unlink", "copy",
+            "default_get", "fields_get", "name_get", "name_search", "name_create", "onchange",
+            "web_read", "web_save", "web_search_read", "web_read_group"];
+
     public RpcDispatcherAppService(
         IServiceProvider serviceProvider,
         ILogger<RpcDispatcherAppService> logger,
+        IAuthorizationService authorizationService,
         IModelTypeRegistry modelTypeRegistry)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
         _modelTypeRegistry = modelTypeRegistry;
+        _authorizationService = authorizationService;
     }
 
 
@@ -74,7 +82,7 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     public async Task<object> SearchCountAsync(string modelName, SearchCountRequestDto input)
     {
         var service = GetGenericService(modelName);
-        var results = await CallServiceMethodAsync<List<object>>(service, "SearchCountAsync", input);
+        var results = await CallServiceMethodAsync<object>(service, "SearchCountAsync", input);
         return results;
         // List<JsonElement> jsonElementList = results
         //     .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
@@ -85,7 +93,7 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     public async Task<JsonElement> CreateAsync(string modelName, CreateRequestDto input)
     {
         var service = GetGenericService(modelName);
-        var entityType = _modelTypeRegistry.GetType(modelName);
+        var entityType = _modelTypeRegistry.GetEntityType(modelName);
         var typedDtoType = typeof(CreateRequestDto<>).MakeGenericType(entityType);
 
         var typedDto = Activator.CreateInstance(typedDtoType)!;
@@ -115,7 +123,7 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     public async Task<List<JsonElement>> WriteAsync(string modelName, UpdateRequestDto input)
     {
         var service = GetGenericService(modelName);
-        var entityType = _modelTypeRegistry.GetType(modelName);
+        var entityType = _modelTypeRegistry.GetEntityType(modelName);
         var typedDtoType = typeof(UpdateRequestDto<>).MakeGenericType(entityType);
 
         var typedDto = Activator.CreateInstance(typedDtoType)!;
@@ -151,7 +159,7 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     public async Task<List<JsonElement>> UpdateJsonAsync(string modelName, UpdateJsonRequestDto input)
     {
         var service = GetGenericService(modelName);
-        var entityType = _modelTypeRegistry.GetType(modelName);
+        var entityType = _modelTypeRegistry.GetEntityType(modelName);
         var results = await CallServiceMethodAsync<List<object>>(service, "UpdateJsonAsync", input);
         List<JsonElement> jsonElementList = results
             .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
@@ -159,7 +167,6 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
         return jsonElementList;
 
     }
-
 
     public async Task DeleteAsync(string modelName, List<Guid> ids)
     {
@@ -170,7 +177,7 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     public async Task<JsonElement> CopyAsync(string modelName, CopyRequestDto input)
     {
         var service = GetGenericService(modelName);
-        var entityType = _modelTypeRegistry.GetType(modelName);
+        var entityType = _modelTypeRegistry.GetEntityType(modelName);
         var typedDtoType = typeof(CopyRequestDto<>).MakeGenericType(entityType);
 
         var typedDto = Activator.CreateInstance(typedDtoType)!;
@@ -209,7 +216,7 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     public async Task<JsonElement> OnChangeAsync(string modelName, OnChangeRequestDto input)
     {
         var service = GetGenericService(modelName);
-        var entityType = _modelTypeRegistry.GetType(modelName);
+        var entityType = _modelTypeRegistry.GetEntityType(modelName);
         //var typedValues = Convert.ChangeType(values, entityType);
         return await CallServiceMethodAsync<JsonElement>(service, "OnChangeAsync", input);
     }
@@ -240,6 +247,34 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
         return await CallServiceMethodAsync<Dictionary<string, Dictionary<string, object>>>(service, "FieldsGetAsync", input);
     }
 
+    public async Task<JsonElement> WebReadAsync(string modelName, WebReadRequestDto input)
+    {
+        var service = GetGenericService(modelName);
+        var result = await CallServiceMethodAsync<object>(service, "WebReadAsync", modelName, input);
+        return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+    }
+
+    public async Task<JsonElement> WebSearchReadAsync(string modelName, WebSearchReadRequestDto input)
+    {
+        var service = GetGenericService(modelName);
+        var result = await CallServiceMethodAsync<object>(service, "WebSearchReadAsync", modelName, input);
+        return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+    }
+
+    public async Task<JsonElement> WebReadGroupAsync(string modelName, WebReadGroupRequestDto input)
+    {
+        var service = GetGenericService(modelName);
+        var result = await CallServiceMethodAsync<object>(service, "WebReadGroupAsync", modelName, input);
+        return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+    }
+
+    public async Task<JsonElement> WebSaveAsync(string modelName, WebSaveRequestDto input)
+    {
+        var service = GetGenericService(modelName);
+        var result = await CallServiceMethodAsync<object>(service, "WebSaveAsync", modelName, input);
+        return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+    }
+
     public async Task<object> CallServiceAsync(string modelName, string methodName, params object[] args)
     {
         var service = GetGenericService(modelName);
@@ -248,24 +283,27 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
 
     private object GetGenericService(string modelName)
     {
-        var entityType = _modelTypeRegistry.GetType(modelName);
-        var serviceType = _modelTypeRegistry.GetServiceInterfaceType(modelName);
+        var entityType = _modelTypeRegistry.GetEntityType(modelName);
+        var serviceType = _modelTypeRegistry.GetAppServiceType(modelName);
         if (serviceType == null)
         {
             serviceType = typeof(IGenericAppService<>).MakeGenericType(entityType);
         }
         return _serviceProvider.GetService(serviceType)
-            ?? throw new UserFriendlyException($"AppService for {modelName} not found");
+            ?? throw new UserFriendlyException($"{modelName}AppService not found");
     }
 
     private async Task<TResult> CallServiceMethodAsync<TResult>(object service, string methodName, params object[] args)
     {
         var method = service.GetType().GetMethod(methodName);
         if (method == null)
-            throw new UserFriendlyException($"Method {methodName} not found");
+            throw new UserFriendlyException($"Method {service.GetType().Name}.{methodName} not found");
 
         if (!method.IsPublic)
-            throw new UserFriendlyException($"Method {methodName} is not public");
+            throw new UserFriendlyException($"Method {service.GetType().Name}.{methodName} is not public");
+
+        //if (method.GetCustomAttribute<JsonRpcMethodAttribute>() == null)
+        //    throw new UserFriendlyException($"Method {service.GetType().Name}.{methodName} is not public");
 
         var result = method.Invoke(service, args);
         if (result is Task<TResult> task)
@@ -312,13 +350,24 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
         string model = rpcParams.Model;
         string rpcMethod = rpcParams.Method;
 
+        // var modelName = request.Params?.Model ?? throw new UserFriendlyException("Model is required");
+        // var method = request.Params?.Method ?? throw new UserFriendlyException("Method is required");
+        var args = rpcParams?.Args ?? new List<object>();
+        // var kwargs = request.Params?.Kwargs ?? new Dictionary<string, object>();
+
         // Dùng thẳng, không xử lý gì thêm
-        var positional = rpcParams.Args?.ToArray() ?? Array.Empty<object?>();
-        var kwargs = rpcParams.Kwargs;
+        var positional = rpcParams?.Args?.ToArray() ?? Array.Empty<object?>();
+        var kwargs = rpcParams?.Kwargs ?? new Dictionary<string, object>();
 
         // Optional: log để debug format client gửi
         _logger?.LogDebug("Legacy RPC call: model={Model}, method={Method}, positional count={PosCount}, has kwargs={HasKwargs}",
             model, rpcMethod, positional.Length, kwargs != null && kwargs.Count > 0);
+
+        if (_commonMethods.Contains(rpcMethod))
+        {
+            var result = await ProcessCommonMethodAsync(model, rpcMethod, args, kwargs);
+            return JsonSerializer.SerializeToElement(result, new JsonSerializerOptions { WriteIndented = false });
+        }
 
         // Resolve service và method
         var (serviceType, methodInfo) = GetCachedMethod(model, rpcMethod);
@@ -339,69 +388,72 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     // ──────────────────────────────────────────────
     private (Type ServiceType, MethodInfo? Method) GetCachedMethod(string model, string rpcMethod)
     {
-        var key = (model, rpcMethod);
-        return _methodCache.GetOrAdd(key, k =>
-        {
-            //var serviceType = ModelToServiceMapper.Resolve(k.model);
-            var serviceType = GetGenericService(k.model).GetType();
-            if (serviceType == null)
-                return (null!, null!);
+        var serviceType = _modelTypeRegistry.GetAppServiceType(model);
+        var method = _modelTypeRegistry.GetMethodInfo(model, rpcMethod);
+        return (serviceType, method);
+        //var key = (model, rpcMethod);
+        // return _methodCache.GetOrAdd(key, k =>
+        // {
+        //     //var serviceType = ModelToServiceMapper.Resolve(k.model);
+        //     var serviceType = GetGenericService(k.model).GetType();
+        //     if (serviceType == null)
+        //         return (null!, null!);
 
-            string normalized = NormalizeRpcMethodName(k.method);
+        //     string normalized = NormalizeRpcMethodName(k.method);
 
-            var methods = serviceType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+        //     var methods = serviceType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
 
-            // 1. Ưu tiên [JsonRpcMethod] attribute
-            foreach (var m in methods)
-            {
-                var attr = m.GetCustomAttribute<JsonRpcMethodAttribute>();
-                if (attr != null &&
-                    string.Equals(k.method, attr.RpcName ?? m.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return (serviceType, m);
-                }
-            }
+        //     // 1. Ưu tiên [JsonRpcMethod] attribute
+        //     foreach (var m in methods)
+        //     {
+        //         var attr = m.GetCustomAttribute<JsonRpcMethodAttribute>();
+        //         if (attr != null &&
+        //             string.Equals(k.method, attr.RpcName ?? m.Name, StringComparison.OrdinalIgnoreCase))
+        //         {
+        //             return (serviceType, m);
+        //         }
+        //     }
 
-            // 2. Fallback: tìm theo tên normalized
-            var method = serviceType.GetMethod(normalized,
-                BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+        //     // 2. Fallback: tìm theo tên normalized
+        //     var method = serviceType.GetMethod(normalized,
+        //         BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
-            if (method == null && normalized.EndsWith("Async"))
-            {
-                var fallback = normalized[..^5];
-                method = serviceType.GetMethod(fallback,
-                    BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-            }
+        //     if (method == null && normalized.EndsWith("Async"))
+        //     {
+        //         var fallback = normalized[..^5];
+        //         method = serviceType.GetMethod(fallback,
+        //             BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+        //     }
 
-            return (serviceType, method);
-        });
+        //     return (serviceType, method);
+        // });
     }
 
-    private static string NormalizeRpcMethodName(string rpcMethod)
-    {
-        if (string.IsNullOrEmpty(rpcMethod)) return rpcMethod;
+    // private static string NormalizeRpcMethodName(string rpcMethod)
+    // {
+    //     if (string.IsNullOrEmpty(rpcMethod)) return rpcMethod;
 
-        if (rpcMethod.EndsWith("Async", StringComparison.Ordinal) && char.IsUpper(rpcMethod[0]))
-            return rpcMethod;
+    //     if (rpcMethod.EndsWith("Async", StringComparison.Ordinal) && char.IsUpper(rpcMethod[0]))
+    //         return rpcMethod;
 
-        if (rpcMethod.Contains('_'))
-        {
-            var parts = rpcMethod.Split('_', StringSplitOptions.RemoveEmptyEntries);
-            var sb = new StringBuilder();
-            foreach (var part in parts)
-            {
-                if (part.Length == 0) continue;
-                sb.Append(char.ToUpperInvariant(part[0]));
-                sb.Append(part.AsSpan(1));
-            }
-            return sb.ToString() + "Async";
-        }
+    //     if (rpcMethod.Contains('_'))
+    //     {
+    //         var parts = rpcMethod.Split('_', StringSplitOptions.RemoveEmptyEntries);
+    //         var sb = new StringBuilder();
+    //         foreach (var part in parts)
+    //         {
+    //             if (part.Length == 0) continue;
+    //             sb.Append(char.ToUpperInvariant(part[0]));
+    //             sb.Append(part.AsSpan(1));
+    //         }
+    //         return sb.ToString() + "Async";
+    //     }
 
-        if (char.IsUpper(rpcMethod[0]))
-            return rpcMethod + "Async";
+    //     if (char.IsUpper(rpcMethod[0]))
+    //         return rpcMethod + "Async";
 
-        return rpcMethod + "Async";
-    }
+    //     return rpcMethod + "Async";
+    // }
 
     // ──────────────────────────────────────────────
     // Binding cho JSON-2 (named params + ids + context)
@@ -636,12 +688,8 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
         }
     }
 
-    public async Task<object> ProcessRequestAsync(string modelName, string method, List<object>? args, Dictionary<string, object>? kwargs, JsonElement? body)
+    protected async Task<object> ProcessCommonMethodAsync(string modelName, string method, List<object> args, Dictionary<string, object>? kwargs)
     {
-        // var modelName = request.Params?.Model ?? throw new UserFriendlyException("Model is required");
-        // var method = request.Params?.Method ?? throw new UserFriendlyException("Method is required");
-        // var args = request.Params?.Args ?? new List<object>();
-        // var kwargs = request.Params?.Kwargs ?? new Dictionary<string, object>();
 
         var jsonOptions = new JsonSerializerOptions
         {

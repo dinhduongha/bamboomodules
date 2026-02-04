@@ -12,6 +12,7 @@ using Volo.Abp.Json.SystemTextJson;
 using Bamboo.Core.Application;
 using Bamboo.Core.Application.Dtos;
 using Bamboo.Core.Application.Contracts.DTOs;
+using Volo.Abp.Application.Dtos;
 namespace Bamboo.Core.HttpApi
 {
     [Route("api/v1/generic")]
@@ -32,6 +33,63 @@ namespace Bamboo.Core.HttpApi
         {
             _rpcDispatcher = rpcDispatcher;
             //_jsonSerializerOptions = jsonSerializerOptions.Value;
+        }
+
+        [HttpGet("{model}")]
+        public async Task<JsonElement> CrudGetListAsync(string model, PagedAndSortedResultRequestDto input)
+        {
+            SearchReadRequestDto request = new SearchReadRequestDto()
+            {
+                Offset = input.SkipCount,
+                Limit = input.MaxResultCount,
+                Order = input.Sorting,
+                //Ids = [id],
+                //Fields = fields,
+            };
+            var results = await _rpcDispatcher.SearchReadAsync(model, request);
+            JsonElement jsonElement = results
+            .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions).ToCamelCase())
+            .FirstOrDefault();
+            return jsonElement;
+        }
+
+        [HttpPost("{model}")]
+        public async Task<JsonElement> CrudCreateAsync(string model, CreateRequestDto input)
+        {
+            var results = await _rpcDispatcher.CreateAsync(model, input);
+            return results;
+        }
+
+        [HttpGet("{model}/{id}")]
+        public async Task<JsonElement> CrudReadByIdAsync(string model, Guid id)
+        {
+            ReadRequestDto request = new ReadRequestDto()
+            {
+                Ids = [id],
+            };
+            var results = await _rpcDispatcher.ReadAsync(model, request);
+            JsonElement jsonElement = results
+                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions).ToCamelCase())
+                .FirstOrDefault();
+            return jsonElement;
+        }
+
+        [HttpPut("{model}/{id}")]
+        public async Task<JsonElement> CrudUpdateByIdAsync(string model, Guid id, UpdateRequestDto input)
+        {
+            input.Ids = [id];
+
+            var results = await _rpcDispatcher.WriteAsync(model, input);
+            JsonElement jsonElement = results
+                .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions).ToCamelCase())
+                .FirstOrDefault();
+            return jsonElement;
+        }
+
+        [HttpDelete("{model}/{id}")]
+        public async Task CrudDeleteByIdAsync(string model, Guid id)
+        {
+            await _rpcDispatcher.DeleteAsync(model, [id]);
         }
 
         [HttpGet("{model}/read/{id}")]
@@ -123,6 +181,19 @@ namespace Bamboo.Core.HttpApi
             return await _rpcDispatcher.UpdateJsonAsync(model, request);
         }
 
+        [HttpPost("{model}/copy/{id}")]
+        public async Task<JsonElement> CopyAsync(string model, [FromBody] CopyRequestDto request)
+        {
+            var result = await _rpcDispatcher.CopyAsync(model, request);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
+        [HttpPost("{model}/default_get")]
+        public async Task<JsonElement> DefaultAsync(string model, DefaultGetRequestDto request)
+        {
+            var result = await _rpcDispatcher.DefaultGetAsync(model, request);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
+
         [HttpPost("{model}/fields_get")]
         public async Task<JsonElement> FieldsGetAsync(string model, FieldsGetRequestDto input)
         {
@@ -142,18 +213,10 @@ namespace Bamboo.Core.HttpApi
             return await _rpcDispatcher.NameSearchAsync(model, request);
         }
 
-        [HttpPost("{model}/copy/{id}")]
-        public async Task<JsonElement> CopyAsync(string model, [FromBody] CopyRequestDto request)
+        [HttpPost("{model}/name_create")]
+        public async Task<JsonElement> NameCreateAsync(string model, [FromBody] NameCreateRequestDto request)
         {
-            var result = await _rpcDispatcher.CopyAsync(model, request);
-            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
-        }
-
-        [HttpPost("{model}/default")]
-        public async Task<JsonElement> DefaultAsync(string model, DefaultGetRequestDto request)
-        {
-            var result = await _rpcDispatcher.DefaultGetAsync(model, request);
-            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+            return await _rpcDispatcher.NameCreateAsync(model, request);
         }
 
         [HttpPost("{model}/call/{method}")]

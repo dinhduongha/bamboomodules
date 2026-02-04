@@ -12,6 +12,7 @@ using Bamboo.Core;
 using Bamboo.Core.Application;
 using Bamboo.Core.Application.Dtos;
 using Bamboo.Core.Application.Contracts.DTOs;
+using Volo.Abp.Guids;
 
 namespace Bamboo.Core.HttpApi
 {
@@ -27,18 +28,19 @@ namespace Bamboo.Core.HttpApi
 
         [HttpPost]
         [Route("/json/2/{model}/{method}")]
-        public async Task<object> HandleJsonRpcV2Async(string model, string method, [FromBody] JsonElement request)
+        public async Task<object> HandleJsonRpcV2Async(string model, string method, [FromBody] JsonElement body)
         {
 
             try
             {
-                var result = await ProcessV2RequestAsync(model, method, request);
-                return new JsonRpcResponse
-                {
-                    Jsonrpc = "2.0",
-                    //Id = request.Id,
-                    Result = result
-                };
+                return await _rpcDispatcher.DispatchJson2Async(model, method, body);
+
+                // return new JsonRpcResponse
+                // {
+                //     Jsonrpc = "2.0",
+                //     //Id = request.Id,
+                //     Result = result
+                // };
             }
             catch (UserFriendlyException ex)
             {
@@ -55,11 +57,11 @@ namespace Bamboo.Core.HttpApi
         public async Task<object> HandleJsonRpcAsync(string model, string method, [FromBody] JsonRpcRequest request)
         {
             if (request.Jsonrpc != "2.0" || request.Method != "call")
-                return CreateErrorResponse(request.Id, -32600, "Invalid JSON-RPC version or method. Expected 'call'.");
+                return CreateErrorResponse(request.Id ?? GuidGenerator.Create(), -32600, "Invalid JSON-RPC version or method. Expected 'call'.");
 
             try
             {
-                var result = await ProcessRequestAsync(request);
+                var result = await _rpcDispatcher.DispatchLegacyJsonRpcAsync(request.Params);
                 return new JsonRpcResponse
                 {
                     Jsonrpc = "2.0",
@@ -69,22 +71,23 @@ namespace Bamboo.Core.HttpApi
             }
             catch (UserFriendlyException ex)
             {
-                return CreateErrorResponse(request.Id, -32000, ex.Message);
+                return CreateErrorResponse(request.Id ?? GuidGenerator.Create(), -32000, ex.Message);
             }
             catch (Exception ex)
             {
-                return CreateErrorResponse(request.Id, -32603, "Internal error: " + ex.Message);
+                return CreateErrorResponse(request.Id ?? GuidGenerator.Create(), -32603, "Internal error: " + ex.Message);
             }
         }
+
         [HttpPost]
         public async Task<object> HandleJsonRpcModelAsync([FromBody] JsonRpcRequest request)
         {
             if (request.Jsonrpc != "2.0" || request.Method != "call")
-                return CreateErrorResponse(request.Id, -32600, "Invalid JSON-RPC version or method. Expected 'call'.");
+                return CreateErrorResponse(request.Id ?? GuidGenerator.Create(), -32600, "Invalid JSON-RPC version or method. Expected 'call'.");
 
             try
             {
-                var result = await ProcessRequestAsync(request);
+                var result = await _rpcDispatcher.DispatchLegacyJsonRpcAsync(request.Params);
                 return new JsonRpcResponse
                 {
                     Jsonrpc = "2.0",
@@ -94,31 +97,31 @@ namespace Bamboo.Core.HttpApi
             }
             catch (UserFriendlyException ex)
             {
-                return CreateErrorResponse(request.Id, -32000, ex.Message);
+                return CreateErrorResponse(request.Id ?? GuidGenerator.Create(), -32000, ex.Message);
             }
             catch (Exception ex)
             {
-                return CreateErrorResponse(request.Id, -32603, "Internal error: " + ex.Message);
+                return CreateErrorResponse(request.Id ?? GuidGenerator.Create(), -32603, "Internal error: " + ex.Message);
             }
         }
 
-        private async Task<object> ProcessRequestAsync(JsonRpcRequest request)
-        {
-            var model = request.Params?.Model ?? throw new UserFriendlyException("Model is required");
-            var method = request.Params?.Method ?? throw new UserFriendlyException("Method is required");
-            var args = request.Params?.Args ?? new List<object>();
-            var kwargs = request.Params?.Kwargs ?? new Dictionary<string, object>();
-            return await _rpcDispatcher.ProcessRequestAsync(model, method, args, kwargs, null);
-            //return await _rpcDispatcher.DispatchLegacyJsonRpcAsync(request.Params);
-        }
+        // private async Task<object> ProcessRequestAsync(JsonRpcRequest request)
+        // {
+        //     // var model = request.Params?.Model ?? throw new UserFriendlyException("Model is required");
+        //     // var method = request.Params?.Method ?? throw new UserFriendlyException("Method is required");
+        //     // var args = request.Params?.Args ?? new List<object>();
+        //     // var kwargs = request.Params?.Kwargs ?? new Dictionary<string, object>();
+        //     // return await _rpcDispatcher.ProcessRequestAsync(model, method, args, kwargs, null);
+        //     return await _rpcDispatcher.DispatchLegacyJsonRpcAsync(request.Params);
+        // }
 
-        private async Task<object> ProcessV2RequestAsync(string model, string method, JsonElement body)
-        {
-            //var args = request.Args ?? new List<object>();
-            //var kwargs = request.Kwargs ?? new Dictionary<string, object>();
-            //return await _rpcDispatcher.ProcessRequestAsync(modelName, method, args, kwargs, null);
-            return await _rpcDispatcher.DispatchJson2Async(model, method, body);
-        }
+        // private async Task<object> ProcessV2RequestAsync(string model, string method, JsonElement body)
+        // {
+        //     //var args = request.Args ?? new List<object>();
+        //     //var kwargs = request.Kwargs ?? new Dictionary<string, object>();
+        //     //return await _rpcDispatcher.ProcessRequestAsync(modelName, method, args, kwargs, null);
+        //     return await _rpcDispatcher.DispatchJson2Async(model, method, body);
+        // }
 
         private object CreateErrorResponse(object id, int code, string message)
         {

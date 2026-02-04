@@ -39,7 +39,7 @@ namespace Bamboo.Core.Application
 
 
     //public class GenericAppService<TEntity> : ApplicationService, IGenericApplicationService<TEntity>
-    public class GenericAppService<TEntity> : CrudAppService<TEntity, TEntity, Guid>, IGenericAppService<TEntity>
+    public class GenericAppService<TEntity> : CrudAppService<TEntity, TEntity, Guid>, IGenericAppService<TEntity>, IApplicationService
         where TEntity : class, IEntity<Guid>
     {
         //protected readonly IRepository<TEntity, Guid> Repository;
@@ -77,10 +77,10 @@ namespace Bamboo.Core.Application
             _cache = cache;
 
             _currentTenant = _serviceProvider.GetRequiredService<ICurrentTenant>();
-            // if (!_currentTenant.Id.HasValue)
-            // {
-            //     _dataFilter.Disable<IMultiTenant>();
-            // }
+            if (!_currentTenant.Id.HasValue)
+            {
+                _dataFilter.Disable<IMultiTenant>();
+            }
         }
 
         private async Task<List<string>> GetAllowedFieldsAsync(string modelName, string operation, List<string>? fields = null)
@@ -697,7 +697,6 @@ namespace Bamboo.Core.Application
 
         // object values, object field_names, object fields_spec
         public virtual async Task<object> OnChangeAsync(OnChangeRequestDto<TEntity> input)
-        //public virtual async Task<object> OnchangeAsync(object values, object field_names, object fields_spec)
         {
             var modelName = typeof(TEntity).Name;
             await _authorizationService.CheckAccessAsync(modelName, "read");
@@ -706,7 +705,7 @@ namespace Bamboo.Core.Application
             TEntity values = input.Values;
             Dictionary<string, object> fieldInfo = input.FieldInfos;
 
-            var result = new OnchangeResult
+            var result = new OnchangeResultDto
             {
                 Value = new Dictionary<string, object>(),
                 Warning = null
@@ -890,7 +889,7 @@ namespace Bamboo.Core.Application
 
         private object GetServiceForModel(string modelName)
         {
-            var entityType = _modelTypeRegistry.GetType(modelName);
+            var entityType = _modelTypeRegistry.GetEntityType(modelName);
             var serviceType = typeof(IGenericAppService<>).MakeGenericType(entityType);
             return _serviceProvider.GetService(serviceType)
                 ?? throw new UserFriendlyException($"Service for {modelName} not found");
@@ -908,6 +907,23 @@ namespace Bamboo.Core.Application
             return (TResult)result;
         }
 
+        public virtual async Task<object> WebSearchReadAsync(WebSearchReadRequestDto input)
+        {
+            throw new NotImplementedException();
+        }
+        public virtual async Task<object> WebReadAsync(WebReadRequestDto input)
+        {
+            throw new NotImplementedException();
+        }
+        public virtual async Task<object> WebReadGroupAsync(WebReadGroupRequestDto input)
+        {
+            throw new NotImplementedException();
+        }
+        public virtual async Task<object> WebSaveAsync(WebSaveRequestDto input)
+        {
+            throw new NotImplementedException();
+        }
+
         public override async Task<TEntity> GetAsync(Guid id)
         {
             return await base.GetAsync(id);
@@ -920,13 +936,17 @@ namespace Bamboo.Core.Application
 
         public override async Task<TEntity> CreateAsync(TEntity input)
         {
-            //return await base.CreateAsync(input);
-            throw new NotImplementedException();
+            return await base.CreateAsync(input);
+            //throw new NotImplementedException();
         }
 
         public override async Task<TEntity> UpdateAsync(Guid id, TEntity input)
         {
-            //return await base.UpdateAsync(id, input);
+            var entity = base.GetAsync(id);
+            if (entity != null)
+            {
+                //return await base.UpdateAsync(id, input);
+            }
             throw new NotImplementedException();
         }
 
