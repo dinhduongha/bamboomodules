@@ -161,7 +161,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
         if field_type == 'many2many': return 40
         return 99
 
-    def generate_property_string(field_name, field_info, pascal_field_name):
+    def generate_property_string(field_name, field_info, pascal_field_name, pascal_model):
         prop_content = ""
         field_type = field_info['type'].lower()
 
@@ -199,23 +199,43 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
 
         # --- [NEW] XỬ LÝ SELECTION RELATED ---
         # Chỉ xử lý riêng nếu là Selection VÀ có thuộc tính related
-        if field_type == 'selection' and field_info.get('related'):
-            related_path = field_info.get('related')
-            # Lấy thông tin model gốc nếu parse được từ trước, hoặc để trống
-            target_model = field_info.get('related_model', 'Unknown (Check related path)')
-            
-            # Odoo related mặc định store=False (Computed), nếu store=True thì là cột vật lý
-            is_stored = field_info.get('attributes', {}).get('Store', False)
-            mapping_attr = f'[Column("{field_name}")]' if is_stored else "[NotMapped]"
-            
-            # Note: Dùng string vì selection related lấy GIÁ TRỊ key (text/int), không phải ID (Guid)
-            return f"""
-            // Related Selection Info:
-            // - Related Path: {related_path}
-            // - Target Model: {target_model}
-            [OdooField(String = "{field_info['attributes'].get('String', pascal_field_name)}", IsRelated = true)]
-            {mapping_attr}
-            public string? {pascal_field_name} {{ get; set; }}
+        if field_type == 'selection': # and field_info.get('related'):
+            if field_info.get('related') and not field_info.get('selection_add'):
+                related_path = field_info.get('related')
+                # Lấy thông tin model gốc nếu parse được từ trước, hoặc để trống
+                target_model = field_info.get('related_model', 'Unknown (Check related path)')
+                
+                # related mặc định store=False (Computed), nếu store=True thì là cột vật lý
+                is_stored = field_info.get('attributes', {}).get('Store', False)
+                mapping_attr = f'[Column("{field_name}")]' if is_stored else "[NotMapped]"
+                
+                # Note: Dùng string vì selection related lấy GIÁ TRỊ key (text/int), không phải ID (Guid)
+                return f"""
+                // Related Selection Info:
+                // - Related Path: {related_path}
+                // - Target Model: {target_model}
+                [BambooField(String = "{field_info['attributes'].get('String', pascal_field_name)}", IsRelated = true)]
+                {mapping_attr}
+                public string? {pascal_field_name} {{ get; set; }}
+                """
+            else:
+                # Quy tắc đặt tên Enum: PascalModel + PascalField
+                # Ví dụ: Model="SaleOrder", Field="Interval" -> Enum="SaleOrderInterval"
+                enum_type_name = f"{pascal_model}{pascal_field_name}Enum"
+                
+                is_required = field_info.get('is_required', False)
+                # Enum nên để nullable (?) để tránh lỗi default value 0 nếu DB null
+                csharp_type = f"{enum_type_name}" if is_required else f"{enum_type_name}?"
+                
+                # Metadata cho ghi chú
+                selection_source = field_info.get('selection')
+                source_note = "Dynamic/Variable" if not isinstance(selection_source, (list, tuple)) else "Static List"
+                
+                return f"""
+            // [Enum Declaration]
+            // Maps to C# Enum: {enum_type_name} ({source_note})
+            [Column("{field_name}")]
+            public {csharp_type} {pascal_field_name} {{ get; set; }}
             """
         # -------------------------------------
 
@@ -223,7 +243,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
             nav_prop_name = to_pascal_case(field_name.removesuffix('_id'))
             if field_type == 'many2one':
                 return f"""
-                // TODO: Odoo C# Code Generator could not resolve the related model for '{field_name}' ({field_type}).
+                // TODO: C# Code Generator could not resolve the related model for '{field_name}' ({field_type}).
                 // Please complete the following navigation property manually.
                 [Column("{field_name}")]
                 public Guid? {pascal_field_name} {{ get; set; }}
@@ -237,7 +257,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
                 attribute_name = "One2many" if field_type == 'one2many' else "Many2many"
                 inverse_field_guess = to_pascal_case(model_name.replace('.', '_') if attribute_name == 'Many2many' else field_name.removesuffix('_ids') + "_id")
                 return f"""
-                // TODO: Odoo C# Code Generator could not resolve the related model for '{field_name}' ({field_type}).
+                // TODO: C# Code Generator could not resolve the related model for '{field_name}' ({field_type}).
                 // Please uncomment and complete the following collection navigation property manually.
                 /*
                 [{attribute_name}(RelatedModel = "your.model.name", InverseField = "{inverse_field_guess}")]
@@ -318,7 +338,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
             if field_info['type'].lower() in ['one2many', 'many2many'] and field_name.endswith('_ids'):
                 prop_name = to_pascal_case(field_name[:-4]) + 's'
             
-            prop_code = generate_property_string(field_name, field_info, prop_name)
+            prop_code = generate_property_string(field_name, field_info, prop_name, pascal_model)
             if prop_code:
                 properties_to_generate[prop_name] = (f'\n            {prop_code}\n', sort_group)
 
@@ -387,6 +407,7 @@ def create_enum_content2(project_base_name, module_grouping_name, model_name, fi
     sb.append(f"// Source: Module: '{source_module}', File: '{source_file_name}', Field: {field_name} = fields.Selection")
     sb.append("using System;")
     sb.append("using System.ComponentModel;")
+    sb.append("using System.Runtime.Serialization;")
     sb.append("")
     sb.append(f"namespace {namespace}")
     sb.append("{")
@@ -420,6 +441,7 @@ def create_enum_content2(project_base_name, module_grouping_name, model_name, fi
     
     # --- GENERATE MEMBERS ---
     if final_items:
+        seen_keys = set()
         for item in final_items:
             key, label = None, None
             
@@ -431,13 +453,25 @@ def create_enum_content2(project_base_name, module_grouping_name, model_name, fi
 
             if key is None: continue
 
+            # Tránh duplicate key do merge selection_add
+            str_key = str(key)
+            if str_key in seen_keys: continue
+            seen_keys.add(str_key)
+
             csharp_key = to_pascal_case(key)
             if not csharp_key or csharp_key[0].isdigit(): csharp_key = f"Item{csharp_key}"
             if not csharp_key: csharp_key = "None"
             
             safe_label = str(label).replace('"', '\\"')
+            safe_value = str_key.replace('"', '\\"')
+
+            # --- 1. Attribute Label (UI) ---
             sb.append(f'        [Description("{safe_label}")]')
-            
+
+            # --- 2. Attribute Value (DB/Key) ---
+            # Đây là cách để giữ lại giá trị "draft", "done"
+            sb.append(f'        [EnumMember(Value = "{safe_value}")]')
+
             if isinstance(key, int) and str(key).isdigit():
                  sb.append(f'        {csharp_key} = {key},')
             else:
@@ -446,6 +480,7 @@ def create_enum_content2(project_base_name, module_grouping_name, model_name, fi
     # Fallback nếu không có item nào (và ko phải related placeholder)
     if not final_items and not related_info:
         sb.append(f"        // TODO: Could not parse selection values.")
+        sb.append(f'        [EnumMember(Value = "option1")]')
         sb.append(f"        Option1,")
 
     sb.append("    }")
@@ -459,7 +494,7 @@ def create_partial_model_content(project_base_name, module_name, model_name, com
     
     namespace = f"{project_base_name}.Models" if flat_model_ns else f"{project_base_name}.Domain.Entities.{pascal_module}"
     content = f"""
-    // Auto-generated by Odoo C# Code Generator
+    // Auto-generated by C# Code Generator
     using System;
     using System.ComponentModel.DataAnnotations.Schema;
     using {project_base_name}.Domain.Shared.Attributes;
@@ -481,11 +516,12 @@ def create_partial_model_content(project_base_name, module_name, model_name, com
             source_module = last_impl.get('module', 'N/A')
             full_path = last_impl.get('source_file')
             source_file_info = Path(full_path).name if full_path else 'N/A'
-            comment_header = f"--- ODOO COMPUTE METHOD SOURCE (MODULE: {source_module}, FILE: {source_file_info}) ---"
+            comment_header = f"--- COMPUTE METHOD SOURCE (MODULE: {source_module}, FILE: {source_file_info}) ---"
         else:
             compute_source = f"# Source for '{compute_method_name}' not found."
-            comment_header = "--- ODOO COMPUTE METHOD SOURCE ---"
-
+            comment_header = "--- COMPUTE METHOD SOURCE ---"
+        # License conflict: To enable source as comment-content, comment out line-below
+        compute_source = ""       
         content += f"""
             [NotMapped]
             public object {pascal_field} 
@@ -609,7 +645,7 @@ def create_service_interface_content(project_base_name, module_name, model_name,
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_service_implementation_content(project_base_name, module_name, model_name, model_data, methods, dependencies, flat_model_dir, flat_service_ns, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set, module_namespace_map, module_category=""):
+def create_service_implementation_content(project_base_name, module_name, model_name, model_data, methods, dependencies, flat_model_dir, flat_service_ns, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set, module_namespace_map, module_category="", split_partial=False):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     is_auto = model_data.get('is_auto', True)
@@ -618,6 +654,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
     module_attr_parts = [f'"{module_name}"']
     main_parts = []
     partial_parts = []
+    
     if module_category:
         # Xử lý escape ký tự nếu cần (đơn giản hóa là lấy raw string)
         module_attr_parts.append(f'Category = "{module_category}"')
@@ -826,8 +863,9 @@ def create_service_implementation_content(project_base_name, module_name, model_
         method_body = [f"\n{attribute_line}        {visibility} async {return_type} {service_method_name}{generic_part}({param_str}){generic_constraint}", "        {", f"            {comment_wrapper[0]}"]
         for impl in implementations:
             source_code, tag = impl['source'], "BASE" if len(implementations) > 1 and impl == implementations[0] else "INHERITS"
-            method_body.append(f"            --- ODOO METHOD SOURCE (MODULE: {impl['module']}, FILE: {Path(impl['source_file']).name}) ---")
-            for line in source_code.split('\n'): method_body.append(f"            // {line}")
+            method_body.append(f"            --- METHOD SOURCE (MODULE: {impl['module']}, FILE: {Path(impl['source_file']).name}, METHOD: {method_name}) ---")
+            # License conflict: Disable copy source code as comment
+            #for line in source_code.split('\n'): method_body.append(f"            // {line}")
         method_body.append(f"            {comment_wrapper[1]}")
         
         if is_common_method and 'override' in visibility and not is_mixin and base_call_params:
@@ -843,9 +881,31 @@ def create_service_implementation_content(project_base_name, module_name, model_
         else:
             method_body.append(f"            await Task.CompletedTask;")
         method_body.append("        }")
-        content_parts.extend(method_body)
+        if split_partial and "public" not in visibility:
+            partial_parts.extend(method_body)
+        else:
+            content_parts.extend(method_body)
+        #content_parts.extend(method_body)
     content_parts.extend(["    }", "}"])
-    return "\n".join(content_parts)
+    #return "\n".join(content_parts)
+    # Tạo nội dung file Partial (nếu có)
+    partial_content = None
+    if split_partial and partial_parts:
+        # namespace lấy từ tham số flat_service_ns, class name lấy từ model_name
+        partial_content = f"""using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace {service_namespace}
+{{
+    public partial class {to_pascal_case(model_name)}AppService
+    {{
+{chr(10).join(partial_parts)}
+    }}
+}}"""
+
+    # Trả về 2 giá trị: (MainContent, PartialContent)
+    return "\n".join(content_parts), partial_content
 
 def create_dtos_content(project_base_name, module_name, model_name, methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
@@ -886,7 +946,7 @@ def create_dtos_content(project_base_name, module_name, model_name, methods, fla
         return None
 
     content = f"""
-    // Auto-generated by Odoo C# Code Generator
+    // Auto-generated by C# Code Generator
     {'\n'.join(sorted(list(dict.fromkeys(using_statements)), reverse=True))}
 
     namespace {namespace}
@@ -957,7 +1017,7 @@ def create_dtos_content2(project_base_name, module_name, model_name, methods, fl
         return None
 
     content = f"""
-    // Auto-generated by Odoo C# Code Generator
+    // Auto-generated by C# Code Generator
     {'\n'.join(sorted(list(using_statements)))}
 
     namespace {namespace}
@@ -1116,12 +1176,12 @@ def create_marker_interface_content(project_name, mixin_name):
     namespace = f"{project_name}.Domain.Shared.Interfaces"
     
     content = f"""
-    // Auto-generated Marker Interface from Odoo Mixin {mixin_name}
+    // Auto-generated Marker Interface from Mixin {mixin_name}
     namespace {namespace}
     {{
         public interface {interface_name}
         {{
-            // This interface is used to mark entities that inherit from the '{mixin_name}' Odoo mixin.
+            // This interface is used to mark entities that inherit from the '{mixin_name}' mixin.
             // It can be used for generic constraints in services.
         }}
     }}
@@ -1150,7 +1210,7 @@ def create_mixin_data_interface_content(project_name, mixin_name, model_data, al
                     using_statements.add(f"using {entity_namespace};")
 
     content = f"""
-    // Auto-generated Data Interface from Odoo Mixin {mixin_name}
+    // Auto-generated Data Interface from Mixin {mixin_name}
     {'\n'.join(sorted(list(dict.fromkeys(using_statements)), reverse=True))}
 
     namespace {namespace}
@@ -1374,12 +1434,14 @@ def create_fluent_api_configuration_content(project_base_name, model_name, model
     return format_csharp_code(content)
 #</editor-fold>
 
-#<editor-fold desc="Odoo AST Visitor">
+#<editor-fold desc="AST Visitor">
 class OdooModelVisitor(ast.NodeVisitor):
     def __init__(self, source_code, source_filename):
         self.found_models = []
         self.full_source_text = source_code
         self.source_filename = source_filename
+        self.current_class_vars = {} # Biến trong Class
+        self.global_vars = {}        # Biến toàn cục (Module Level)
 
     def _get_type_hint_str(self, annotation_node):
         if not annotation_node: return None
@@ -1392,28 +1454,95 @@ class OdooModelVisitor(ast.NodeVisitor):
         return None
 
     # --- HÀM MỚI: Helper để trích xuất dữ liệu phức tạp (List, Dict, Ref...) ---
+    # def _eval_node(self, node):
+    #     if isinstance(node, ast.List):
+    #         return [self._eval_node(elt) for elt in node.elts]
+    #     elif isinstance(node, ast.Tuple):
+    #         return tuple(self._eval_node(elt) for elt in node.elts)
+    #     elif isinstance(node, ast.Dict):
+    #         # Hỗ trợ lấy ondelete={'key': 'value'}
+    #         return {self._eval_node(k): self._eval_node(v) for k, v in zip(node.keys, node.values)}
+    #     elif isinstance(node, ast.Constant): # Python 3.8+
+    #         return node.value
+    #     elif isinstance(node, ast.Str): return node.s
+    #     elif isinstance(node, ast.Num): return node.n
+    #     elif isinstance(node, ast.Name):
+    #         return f"ref:{node.id}" # Đánh dấu tham chiếu biến
+    #     elif isinstance(node, ast.Attribute):
+    #         # Đệ quy để lấy full path (vd: channel_id.channel_type)
+    #         val = self._eval_node(node.value)
+    #         prefix = val if val else ""
+    #         prefix = prefix.replace("ref:", "") if isinstance(prefix, str) else ""
+    #         return f"ref:{prefix}.{node.attr}" if prefix else f"ref:{node.attr}"
+    #     return None
+    # --------------------------------------------------------------------------
     def _eval_node(self, node):
+        """
+        Trình thông dịch AST mini: Hỗ trợ List, Dict, Tuple, Variable Lookup và hàm list()
+        """
         if isinstance(node, ast.List):
             return [self._eval_node(elt) for elt in node.elts]
         elif isinstance(node, ast.Tuple):
             return tuple(self._eval_node(elt) for elt in node.elts)
         elif isinstance(node, ast.Dict):
-            # Hỗ trợ lấy ondelete={'key': 'value'}
             return {self._eval_node(k): self._eval_node(v) for k, v in zip(node.keys, node.values)}
-        elif isinstance(node, ast.Constant): # Python 3.8+
+        elif isinstance(node, ast.Constant): 
             return node.value
-        elif isinstance(node, ast.Str): return node.s
-        elif isinstance(node, ast.Num): return node.n
+        elif isinstance(node, ast.Str): return node.s # Python < 3.8
+        elif isinstance(node, ast.Num): return node.n # Python < 3.8
+        
+        # --- 1. VARIABLE LOOKUP (Tìm biến trong scope class) ---
         elif isinstance(node, ast.Name):
-            return f"ref:{node.id}" # Đánh dấu tham chiếu biến
+            # Nếu tên biến có trong danh sách biến đã lưu của class -> Trả về giá trị thực
+            if node.id in self.current_class_vars:
+                return self.current_class_vars[node.id]
+            if node.id in self.global_vars:
+                return self.global_vars[node.id]
+            return f"ref:{node.id}" # Nếu không tìm thấy, trả về reference string
+        
+        # --- 2. HỖ TRỢ HÀM list() và .items() ---
+        elif isinstance(node, ast.Call):
+            # Case: list(...)
+            if isinstance(node.func, ast.Name) and node.func.id == 'list' and len(node.args) > 0:
+                arg0 = node.args[0]
+                # Check bên trong là .items() -> list(var.items())
+                if isinstance(arg0, ast.Call) and isinstance(arg0.func, ast.Attribute) and arg0.func.attr == 'items':
+                    # Lấy đối tượng (biến dict)
+                    target_dict_val = self._eval_node(arg0.func.value)
+                    
+                    # Nếu đối tượng lấy được là 1 dict thực sự -> Convert sang list of tuples
+                    if isinstance(target_dict_val, dict):
+                        return list(target_dict_val.items())
+            
+            return "function_call"
+
         elif isinstance(node, ast.Attribute):
-            # Đệ quy để lấy full path (vd: channel_id.channel_type)
+             # ... (Giữ nguyên logic attribute) ...
             val = self._eval_node(node.value)
             prefix = val if val else ""
             prefix = prefix.replace("ref:", "") if isinstance(prefix, str) else ""
             return f"ref:{prefix}.{node.attr}" if prefix else f"ref:{node.attr}"
         return None
-    # --------------------------------------------------------------------------
+
+    # --- [MỚI] PARSE GLOBAL VARIABLES ---
+    def visit_Module(self, node):
+        """Duyệt root của file để lấy các biến toàn cục trước khi vào Class"""
+        for item in node.body:
+            if isinstance(item, ast.Assign):
+                for target in item.targets:
+                    if isinstance(target, ast.Name):
+                        # Lưu giá trị biến toàn cục (ví dụ: STATES = [...])
+                        # Chỉ lưu nếu parse được ra dữ liệu cụ thể (List/Tuple/Dict/Const)
+                        # Tránh lưu các biến reference phức tạp để tiết kiệm bộ nhớ
+                        val = self._eval_node(item.value)
+                        
+                        # Chỉ chấp nhận lưu nếu giá trị là list/tuple/dict (dữ liệu tĩnh)
+                        if isinstance(val, (list, tuple, dict, str, int, float)):
+                             self.global_vars[target.id] = val
+        
+        # Sau khi quét xong biến toàn cục, tiếp tục duyệt vào các Class con
+        self.generic_visit(node)
+    # ------------------------------------
 
     def visit_ClassDef(self, node):
         current_class_info = {
@@ -1422,6 +1551,7 @@ class OdooModelVisitor(ast.NodeVisitor):
             'delegated_inherits': [], 'table_name': None, 'is_auto': True,
             'attributes': {}
         }
+        self.current_class_vars = {}
 
         for base in node.bases:
             if isinstance(base, ast.Attribute) and hasattr(base, "value") and hasattr(base.value, "id"):
@@ -1432,6 +1562,7 @@ class OdooModelVisitor(ast.NodeVisitor):
         
         for item in node.body:
             if isinstance(item, ast.Assign):
+                # 1. Parse các biến đặc biệt (_name, _inherit...)
                 for target in item.targets:
                     if isinstance(target, ast.Name) and target.id.startswith('_'):
                         if target.id == '_name' and isinstance(item.value, ast.Constant):
@@ -1453,7 +1584,21 @@ class OdooModelVisitor(ast.NodeVisitor):
                             for key_node, val_node in zip(item.value.keys, item.value.values):
                                 if isinstance(key_node, ast.Constant) and isinstance(val_node, ast.Constant):
                                     current_class_info['delegated_inherits'].append((key_node.value, val_node.value))
-        
+                # 2. [MỚI] LƯU TRỮ BIẾN CỤC BỘ (Để dùng cho Selection)
+                # Nếu gán biến dạng: _var = ... hoặc var = ...
+                for target in item.targets:
+                    if isinstance(target, ast.Name):
+                        var_name = target.id
+                        # Bỏ qua các biến cấu hình Odoo đã xử lý ở trên để tránh duplicate/confusion
+                        if var_name not in ['_name', '_inherit', '_description', '_table', '_auto', '_inherits']:
+                            # Evaluate giá trị và lưu vào bộ nhớ tạm
+                            val = self._eval_node(item.value)
+                            if val is not None and not isinstance(val, str): # Chỉ lưu nếu parse được ra dữ liệu (dict/list)
+                                self.current_class_vars[var_name] = val
+                            
+                            # Vẫn parse field như bình thường (lỡ biến đó là field)
+                            self._parse_field(item, current_class_info)
+
         if current_class_info['name'] or current_class_info['inherits']:
             for item in node.body:
                 if isinstance(item, ast.Assign):
@@ -1672,7 +1817,7 @@ def analyze_odoo_sources(args):
     global master_models
     master_models = {}
     
-    logging.info("Phase 1: Analyzing Odoo source directories...")
+    logging.info("Phase 1: Analyzing source directories...")
     module_infos = {}
     all_module_names = set()
     all_parsed_files = []
@@ -1814,6 +1959,53 @@ def analyze_odoo_sources(args):
         "final_exclude_set": final_exclude_set
     }
 
+def resolve_full_selection(model_name, field_name, master_models):
+    """
+    Đệ quy tìm kiếm Selection từ các model cha và gộp với selection_add của model hiện tại.
+    """
+    if model_name not in master_models:
+        return []
+
+    model_data = master_models[model_name]
+    field_data = model_data['fields'].get(field_name)
+
+    # 1. Lấy danh sách từ cha (Parent Selection)
+    parent_selection = []
+    # Ưu tiên lấy từ _inherit (thường là list các tên model cha)
+    inherits = model_data.get('inherits', [])
+    
+    # Nếu inherits là string đơn (do parser cũ), convert sang list
+    if isinstance(inherits, str): inherits = [inherits]
+    
+    for parent_name in inherits:
+        # Đệ quy gọi cha
+        p_sel = resolve_full_selection(parent_name, field_name, master_models)
+        if p_sel:
+            parent_selection = p_sel
+            break # Chỉ cần lấy từ cha trực tiếp đầu tiên tìm thấy field này
+
+    # 2. Lấy dữ liệu của chính mình (Current Selection)
+    current_selection = []
+    current_add = []
+    
+    if field_data:
+        current_selection = field_data.get('selection', [])
+        current_add = field_data.get('selection_add', [])
+
+    # 3. Logic Gộp:
+    # - Nếu model hiện tại khai báo 'selection' (overwrite) -> Dùng nó, bỏ qua cha.
+    # - Nếu model hiện tại chỉ có 'selection_add' -> Lấy Cha + Add.
+    
+    if current_selection and not current_add:
+        return current_selection # Overwrite hoàn toàn
+    
+    # Trường hợp có selection_add (hoặc không khai báo gì cả -> thừa kế nguyên xi)
+    # Lưu ý: Convert sang list để cộng được
+    base = list(parent_selection) if parent_selection else []
+    add = list(current_add) if current_add else []
+    
+    return base + add
+
 def generate_csharp_files(args, master_models, module_infos, all_module_names, final_exclude_set):
     output_path, project_base_name = Path(args.output_dir), args.project_name
     
@@ -1901,9 +2093,9 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
                 // Marker attribute to indicate this method should not be exposed via API Controller
             }
         """,
-        "OdooFieldAttribute.cs": """
+        "BambooFieldAttribute.cs": """
             [AttributeUsage(AttributeTargets.Property)]
-            public class OdooFieldAttribute : Attribute 
+            public class BambooFieldAttribute : Attribute 
             { 
                 public string? String { get; set; }
                 public string? Help { get; set; }
@@ -1953,8 +2145,8 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
     
     marker_interface_dir = output_path / f"src/{project_base_name}.Domain.Shared/Interfaces/Markers"
     data_interface_dir = output_path / f"src/{project_base_name}.Domain/MixinData"
-    mixin_contracts_dir = output_path / f"src/{project_base_name}.Application.Contracts/Interfaces/Mixins"
-    mixin_service_dir = output_path / f"src/{project_base_name}.Application/Services/Mixins"
+    mixin_contracts_dir = output_path / f"src/{project_base_name}.Application.Contracts/Mixins"
+    mixin_service_dir = output_path / f"src/{project_base_name}.Application/Mixins"
     for d in [marker_interface_dir, data_interface_dir, mixin_contracts_dir, mixin_service_dir]:
         d.mkdir(parents=True, exist_ok=True)
     
@@ -2032,7 +2224,8 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             if data.get('fields'):
                 (data_interface_dir / f"I{pascal_model}Data.cs").write_text(create_mixin_data_interface_content(project_base_name, model_name, data, all_csharp_entity_names, flat_model_dir, module_namespace_map), encoding='utf-8')
             (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, data, all_methods, flat_model_dir, True, all_csharp_entity_names, module_namespace_map, is_mixin=True), encoding='utf-8')
-            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, data, all_methods, dependencies, flat_model_dir, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr), encoding='utf-8')
+            content, partial_content = create_service_implementation_content(project_base_name, base_module, model_name, data, all_methods, dependencies, flat_model_dir, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr)
+            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(content, encoding='utf-8')
             continue
 
         logging.info(f"Generating ABP structure for model '{model_name}' (base module: {base_module})")
@@ -2083,6 +2276,8 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
                 selection_data = field_data.get('selection')
                 selection_add_data = field_data.get('selection_add')
                 related_info = field_data.get('related')
+                
+                full_selection_data = resolve_full_selection(model_name, field_name, master_models)
 
                 pascal_field = to_pascal_case(field_name)
                 enum_name = f"{pascal_model}{pascal_field}"
@@ -2094,12 +2289,14 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
                     module_grouping_name=grouping_key_pascal, # Dùng key đã xử lý (Category/SupplyChain/Base...)
                     model_name=model_name,
                     field_name=field_name,
-                    selection_data=selection_data,
+                    #selection_data=selection_data,
+                    selection_data=full_selection_data,
                     flat_model_ns=flat_model_dir, # Dùng cờ flat_model_dir (hoặc flat_model_ns tùy logic bạn muốn)
                     source_module=source_module,
                     source_file=source_file,
                     related_info=related_info,
-                    selection_add_data=selection_add_data
+                    #selection_add_data=selection_add_data
+                    selection_add_data=None
                 )
                 (enum_dir / f"{enum_name}Enum.cs").write_text(enum_content, encoding='utf-8')
 
@@ -2134,7 +2331,10 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         if should_generate_service:
             logging.info(f"  -> Generating AppService for '{model_name}'.")
             (interface_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, pascal_module_for_ns, model_name, data, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map), encoding='utf-8')
-            (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, pascal_module_for_ns, model_name, data, all_methods, dependencies, flat_model_ns, flat_service_ns, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr), encoding='utf-8')
+            content, partial_content = create_service_implementation_content(project_base_name, pascal_module_for_ns, model_name, data, all_methods, dependencies, flat_model_ns, flat_service_ns, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr, split_partial=True)
+            (service_dir / f"{pascal_model}AppService.cs").write_text(content, encoding='utf-8')
+            if partial_content:
+                (service_dir / f"{pascal_model}AppService.Partial.cs").write_text(partial_content, encoding='utf-8')
             
             # TẠO THƯ MỤC DTO
             dtos_dir.mkdir(parents=True, exist_ok=True)
@@ -2209,7 +2409,7 @@ def main(args):
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Odoo to C# ABP Framework Scaffolding Code Generator.",
+        description="C# ABP Framework Scaffolding Code Generator.",
         formatter_class=argparse.RawTextHelpFormatter
     )
     
