@@ -89,7 +89,7 @@ def map_python_type_to_csharp(py_type_str, all_csharp_entity_names, param_name="
     return "object"
 
 # --- C# Content Generation Functions ---
-def create_model_entity_content(project_name, module_name, model_name, model_data, dependencies, flat_model_dir, implemented_interfaces, property_order, module_namespace_map):
+def create_model_entity_content(project_name, module_name, model_name, model_data, dependencies, flat_model_ns, implemented_interfaces, property_order, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     is_auto = model_data.get('is_auto', True)
@@ -126,7 +126,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
             related_model_base_module = master_models[field_info['related_model']].get('base_module')
             if related_model_base_module:
                 pascal_related_module = module_namespace_map.get(related_model_base_module, to_pascal_case(related_model_base_module))
-                entity_namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_related_module}"
+                entity_namespace = f"{project_name}.Models" if flat_model_ns else f"{project_name}.Domain.Entities.{pascal_related_module}"
                 using_statements.add(f"using {entity_namespace};")
 
     table_name = model_data.get('table_name') or model_name.replace('.', '_')
@@ -139,7 +139,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
         model_attribute_props.append(f'Description = "{model_data["attributes"]["Description"]}"')
 
     attributes = [f'[Module("{module_name}"{(", " + depends_str) if depends_str else ""})]', f'[Model("{model_name}", {", ".join(model_attribute_props)})]', f'[Table("{table_name}")]']
-    namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_module}"
+    namespace = f"{project_name}.Models" if flat_model_ns else f"{project_name}.Domain.Entities.{pascal_module}"
     inheritance = f": {base_class}{', ' + ', '.join(final_interfaces) if final_interfaces else ''}"
     
     content = f"""
@@ -539,7 +539,7 @@ def create_partial_model_content(project_base_name, module_name, model_name, com
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_service_interface_content(project_base_name, module_name, model_name, model_data, methods, flat_model_dir, flat_service_ns, all_csharp_entity_names, module_namespace_map, is_mixin=False):
+def create_service_interface_content(project_base_name, module_name, model_name, model_data, methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map, is_mixin=False):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     is_auto = model_data.get('is_auto', True)
@@ -548,7 +548,7 @@ def create_service_interface_content(project_base_name, module_name, model_name,
     contracts_namespace = f"{project_base_name}.Application.Contracts.Interfaces"
     interface_namespace = contracts_namespace + (".Mixins" if is_mixin else (f".{pascal_module}" if not flat_service_ns else ""))
     dto_namespace = f"{project_base_name}.Application.Contracts.DTOs" + (f".{pascal_module}" if not flat_service_ns else "")
-    entity_namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
+    entity_namespace = f"{project_base_name}.Models" if flat_model_ns else f"{project_base_name}.Domain.Entities.{pascal_module}"
     
     using_statements = ["using System;", "using System.Collections.Generic;", "using System.Linq;", "using System.Threading.Tasks;", "using Volo.Abp.Application.Services;"]
     
@@ -645,7 +645,7 @@ def create_service_interface_content(project_base_name, module_name, model_name,
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_service_implementation_content(project_base_name, module_name, model_name, model_data, methods, dependencies, flat_model_dir, flat_service_ns, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set, module_namespace_map, module_category="", split_partial=False):
+def create_service_implementation_content(project_base_name, module_name, model_name, model_data, methods, dependencies, flat_model_ns, flat_service_ns, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set, module_namespace_map, module_category="", split_partial=False):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     is_auto = model_data.get('is_auto', True)
@@ -670,18 +670,19 @@ def create_service_implementation_content(project_base_name, module_name, model_
     
     using_statements = ["using System;", "using System.Collections.Generic;", "using System.Linq;", "using System.Threading.Tasks;", 
                          f"using Volo.Abp.Data;", f"using Volo.Abp.Domain.Repositories;", f"using Volo.Abp.ObjectMapping;",
-                        "using Volo.Abp.Domain.Entities;", "using Volo.Abp.Application.Services;", 
+                        "using Volo.Abp.Domain.Entities;", "using Volo.Abp.Application.Services;", "using Volo.Abp.MultiTenancy;",
                         f"using {project_base_name}.Domain.Shared.Attributes;", f"using {interface_namespace};",
                         f"using {dto_namespace};"]
     
     private_fields, constructor_assignments, constructor_params = [], [], []
-    entity_namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
+    entity_namespace = f"{project_base_name}.Models" if flat_model_ns else f"{project_base_name}.Domain.Entities.{pascal_module}"
 
     if is_mixin:
-        base_class, constructor_params, base_call = "ApplicationService", ["IServiceProvider serviceProvider"], ""
+        base_class, constructor_params, base_call = "ApplicationService", [""], ""
         using_statements.extend([f"using {entity_namespace};", f"using {project_base_name}.Domain.Shared.Interfaces;"])
-        private_fields.append(f"private readonly IServiceProvider _serviceProvider;")
-        constructor_assignments.append(f"_serviceProvider = serviceProvider;")
+        #IServiceProvider đã thừa kế từ ApplicationService
+        #private_fields.append(f"protected readonly IServiceProvider _serviceProvider;")
+        #constructor_assignments.append(f"_serviceProvider = serviceProvider;")
 
     # elif not is_auto:
     #     base_class, base_call = "ApplicationService", ""
@@ -689,13 +690,13 @@ def create_service_implementation_content(project_base_name, module_name, model_
     #     repo_var_name = f"_{repo_interface_name[1].lower()}{repo_interface_name[2:]}"
     #     repo_namespace = f"using {project_base_name}.Domain.Repositories;"
     #     using_statements.extend(["using Volo.Abp.Application.Services;", f"using {entity_namespace};", repo_namespace])
-    #     private_fields.append(f"private readonly {repo_interface_name} {repo_var_name};")
+    #     private_fields.append(f"protected readonly {repo_interface_name} {repo_var_name};")
     #     constructor_params.append(f"{repo_interface_name} {repo_var_name[1:]}")
     #     constructor_assignments.append(f"{repo_var_name} = {repo_var_name[1:]};")
     else:
         base_class = f"GenericAppService<{pascal_model}>"
-        base_constructor_params_str = "repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry"
-        constructor_params = [f"IRepository<{pascal_model}, Guid> repository", "IServiceProvider serviceProvider", "IDataFilter dataFilter", "IObjectMapper objectMapper", "IDistributedCache cache", "IAuthorizationService authorizationService", "IDomainParser domainParser", "IModelTypeRegistry modelTypeRegistry"]
+        base_constructor_params_str = "repository, currentTenant, cache, domainParser, modelTypeRegistry"
+        constructor_params = [f"IRepository<{pascal_model}, Guid> repository", "ICurrentTenant currentTenant", "IDistributedCache cache", "IDomainParser domainParser", "IModelTypeRegistry modelTypeRegistry"]
         base_call = f": base({base_constructor_params_str})"
         using_statements.extend([
             f"using Microsoft.Extensions.Caching.Memory;", 
@@ -712,7 +713,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
                 mixin_interface = f"I{pascal_mixin}AppService"
                 mixin_var_name_camel = to_pascal_case(mixin_name.replace('.', '_'))
                 mixin_var_name_camel = mixin_var_name_camel[0].lower() + mixin_var_name_camel[1:] + "AppService"
-                private_fields.append(f"private readonly {mixin_interface} _{mixin_var_name_camel};")
+                private_fields.append(f"protected readonly {mixin_interface} _{mixin_var_name_camel};")
                 constructor_params.append(f"{mixin_interface} {mixin_var_name_camel}")
                 constructor_assignments.append(f"_{mixin_var_name_camel} = {mixin_var_name_camel};")
     
@@ -892,10 +893,13 @@ def create_service_implementation_content(project_base_name, module_name, model_
     partial_content = None
     if split_partial and partial_parts:
         # namespace lấy từ tham số flat_service_ns, class name lấy từ model_name
+#using {project_base_name}.Models;
+#using {project_base_name}.Domain.Shared.Attributes;
+
         partial_content = f"""using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
+{'\n'.join(sorted(list(dict.fromkeys(using_statements)), reverse=True))}
 namespace {service_namespace}
 {{
     public partial class {to_pascal_case(model_name)}AppService
@@ -1027,7 +1031,7 @@ def create_dtos_content2(project_base_name, module_name, model_name, methods, fl
     """
     return format_csharp_code(content)
 
-def create_controller_content(project_base_name, module_name, module_category, model_name, model_data, methods, flat_model_ns, flat_service_ns, flat_controller_ns, add_common_actions, all_csharp_entity_names, group_by_category, module_namespace_map):
+def create_controller_content(project_base_name, module_name, module_category, model_name, model_data, methods, flat_model_ns, flat_service_ns, flat_controller_ns, add_common_actions, all_csharp_entity_names, group_by_category, module_namespace_map, split_partial=False): # <--- Thêm split_partial default False
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     is_auto = model_data.get('is_auto', True)
@@ -1040,130 +1044,114 @@ def create_controller_content(project_base_name, module_name, module_category, m
     controller_namespace = f"{project_base_name}.HttpApi.Controllers" + (f".{pascal_module}" if not flat_controller_ns else "")
     dto_namespace = f"{project_base_name}.Application.Contracts.DTOs" + (f".{pascal_module}" if not flat_service_ns else "")
 
+    # Logic Route
     route_parts = ["api", "v1"]
     if group_by_category and module_category:
         clean_category = module_category.split('/')[0].strip().lower().replace(' ', '-')
-        if clean_category == 'hidden':
-            clean_category = module_name.replace('_','-')
+        if clean_category == 'hidden': clean_category = module_name.replace('_','-')
         if clean_category: route_parts.append(clean_category)
-    #route_parts.append(module_name.replace('_','-'))
-    #route_parts.append(model_name.replace('_','-'))
     route_parts.append(pascal_model)
-    route = f'[Route("{'/'.join(route_parts)}")]'
+    route = f'[Route("{"/".join(route_parts)}")]'
     
-    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", "using Microsoft.AspNetCore.Authorization;", f"using {interface_namespace};", f"using {entity_namespace};"]
+    # Using statements cơ bản
+    using_statements = {
+        "using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", 
+        "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", 
+        "using Microsoft.AspNetCore.Authorization;", 
+        f"using {interface_namespace};", f"using {entity_namespace};",
+        f"using {dto_namespace};" # Luôn add DTO namespace cho chắc
+    }
     
+    constructor_body = ""
+    base_class = ""
     if add_common_actions and is_auto:
         base_class = f"GenericController<{pascal_model}, {interface_name}>"
-        using_statements.extend([{f"using {project_base_name}.HttpApi.Controllers.Commons;"}])
+        using_statements.add(f"using {project_base_name}.HttpApi.Controllers.Commons;")
         constructor_body = f"public {controller_name}({interface_name} service) : base(service) {{ }}"
+        service_accessor = "AppService"
     else:
         base_class = "AbpController"
-        constructor_body = f"private readonly {interface_name} _appService;\n        public {controller_name}({interface_name} appService) {{ _appService = appService; }}"
+        constructor_body = f"protected readonly {interface_name} _appService;\n        public {controller_name}({interface_name} appService) {{ _appService = appService; }}"
+        service_accessor = "_appService"
+
+    # --- GENERATE ACTIONS CONTENT ---
+    action_methods = []
+    specific_actions = {name: impl for name, impl in methods.items() if not name.startswith('_') and name.lower() not in ODOO_COMMON_API_METHODS}
     
-    #using_statements.update(["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", f"using {interface_namespace};", f"using {entity_namespace};"])
-    
-    #{'\n'.join(sorted(list(using_statements)))}
-    main_content = f"""
-    {'\n'.join(sorted(list(dict.fromkeys(using_statements)), reverse=True))}
-    namespace {controller_namespace}
-    {{
-        // Category: {module_category}, Module: {module_name}
-        // Interface only, not yet implemented service layer
-        [NonController]
-        [Authorize]
-        {route}
-        public partial class {controller_name} : {base_class}
+    sorted_actions = []
+    for method_name, implementations in specific_actions.items():
+        sorted_actions.append({
+            'csharp_name': to_pascal_case(method_name), 
+            'python_name': to_pascal_case(method_name.replace("action_", "")), 
+            'implementations': implementations
+        })
+    sorted_actions.sort(key=lambda x: x['csharp_name'])
+
+    for item in sorted_actions:
+        action_name, method_name, implementations = item['csharp_name'], item['python_name'], item['implementations']
+        last_impl = implementations[-1]
+        params = last_impl.get('params', [])
+        
+        # Determine Return Type
+        return_type_py = last_impl.get('return_type', pascal_model)
+        csharp_return_type = map_python_type_to_csharp(return_type_py, all_csharp_entity_names)
+        
+        # Determine Route & Params
+        route_action = ''.join(['-' + c.lower() if c.isupper() else c for c in action_name]).strip('-')
+        service_method_name = f"{method_name}Async"
+        
+        has_extra_params = any(p[0] not in ('id', 'ids') for p in params)
+        
+        action_params = ""
+        service_call_params = ""
+
+        if has_extra_params:
+            # Case DTO: Input chứa Ids và các params khác
+            dto_name = f"{pascal_model}{method_name}RequestDto"
+            action_params = f"[FromBody] {dto_name} input"
+            service_call_params = "input"
+        else:
+            # Case Only Ids
+            action_params = "[FromBody] Guid[] ids"
+            service_call_params = "ids"
+
+        action_methods.append(f"""
+        [HttpPost]
+        [Route("{route_action}")]
+        public async Task<IActionResult> {method_name}Async({action_params})
         {{
-            {constructor_body}
-        }}
+            var result = await {service_accessor}.{service_method_name}({service_call_params});
+            return Ok(result);
+        }}""")
+
+    # --- ASSEMBLE CONTENT ---
+    # Class declaration
+    class_def = f"""
+    [NonController]
+    [Authorize]
+    {route}
+    public partial class {controller_name} : {base_class}
+    {{
+        {constructor_body}
+        
+        {chr(10).join(action_methods) if not split_partial else ""}
     }}
     """
     
-    partial_content = ""
-    specific_actions = {name: impl for name, impl in methods.items() if not name.startswith('_') and name.lower() not in ODOO_COMMON_API_METHODS}
-    
-    if specific_actions:
-        partial_using = { "using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Microsoft.AspNetCore.Authorization;", f"using {entity_namespace};", f"using {dto_namespace};" }
-        partial_content_action_result = f"""
-        {'\n'.join(sorted(list(partial_using), reverse=True))}
-        namespace {controller_namespace}
-        {{
-            public partial class {controller_name}
-            {{
-        """
-        partial_content_entity_result = f"""
-        {'\n'.join(sorted(list(partial_using), reverse=True))}
-        namespace {controller_namespace}
-        {{
-            public partial class {controller_name}
-            {{
-        """
-        service_accessor = "AppService" if add_common_actions else "_appService"
-        
-        sorted_actions = []
-        for method_name, implementations in specific_actions.items():
-            #action_name = to_pascal_case(method_name.replace("action_", ""))
-            action_name = to_pascal_case(method_name)
-            #sorted_actions.append({'csharp_name': action_name, 'implementations': implementations})
-            sorted_actions.append({'csharp_name': action_name, 'python_name': to_pascal_case(method_name.replace("action_", "")), 'implementations': implementations})
-        
-        sorted_actions.sort(key=lambda x: x['csharp_name'])
+    final_using = '\n'.join(sorted(list(using_statements), reverse=True))
+    main_content = f"""{final_using}\nnamespace {controller_namespace}\n{{{class_def}\n}}"""
 
-        for item in sorted_actions:
-            action_name, method_name, implementations = item['csharp_name'], item['python_name'], item['implementations']
-            last_impl = implementations[-1]
-            params = last_impl.get('params', [])
-            has_extra_params = any(p[0] != 'id' for p in params)
-            #has_extra_params = any(p[0] not in ('id', 'ids') for p in params)
+    # --- HANDLE PARTIAL SPLIT ---
+    partial_content = None
+    if split_partial and action_methods:
+        partial_content = f"""{final_using}\nnamespace {controller_namespace}\n{{
+    public partial class {controller_name}
+    {{
+        {chr(10).join(action_methods)}
+    }}
+}}"""
+        # Nếu split, main class không chứa methods (đã xử lý ở logic class_def trên)
 
-            # Xác định kiểu trả về
-            return_type_py = last_impl.get('return_type', pascal_model)
-            csharp_return_type = map_python_type_to_csharp(return_type_py, all_csharp_entity_names)
-            final_return_type = f"Task<{csharp_return_type}>"
-
-            route_action = ''.join(['-' + c.lower() if c.isupper() else c for c in action_name]).strip('-')
-            #dto_name, action_params, service_call_params = f"{action_name}RequestDto", "Guid id", "id"
-            action_params, service_call_params = "Guid[] ids", "ids"
-            if params:
-                dto_name = f"{pascal_model}{method_name}RequestDto"
-                #action_params += f", [FromBody] {dto_name} input"
-                action_params = f"{dto_name} input"
-                service_call_params = f"input"
-                #service_call_params = f"id, input" # Thay đổi ở đây
-                #service_call_params += ", " + ", ".join(f"input.{to_pascal_case(p_name)}" for p_name, _ in params)
-            service_method_name = f"{method_name}Async"
-            #service_method_name = f"{action_name}Async"
-            if has_extra_params:
-                content_id = f"input.Id = id;"
-            else:
-                content_id = ""
-            
-            partial_content_entity_result += f"""
-                [HttpPost]
-                [Route(\"{route_action}\")]
-                public async {final_return_type} {action_name}Async({action_params})
-                {{
-                    // content_entity has_extra_params: {has_extra_params} 
-                    var result = await {service_accessor}.{service_method_name}({service_call_params});
-                    return result;
-                }}
-            """            
-            partial_content_entity_result += "            }\n}"
-
-            partial_content_action_result += f"""
-                [HttpPost]
-                [Route(\"{route_action}\")]
-                public async Task<IActionResult> {action_name}Async({action_params})
-                {{
-                    // content_action has_extra_params: {has_extra_params}
-                    var result = await {service_accessor}.{service_method_name}({service_call_params});
-                    return Ok(result);
-                }}
-            """
-        partial_content_action_result += "            }\n}"
-        partial_content = partial_content_action_result
-        #partial_content = partial_content_entity_result
     return format_csharp_code(main_content), format_csharp_code(partial_content) if partial_content else None
 
 def create_marker_interface_content(project_name, mixin_name):
@@ -1188,7 +1176,7 @@ def create_marker_interface_content(project_name, mixin_name):
     """
     return format_csharp_code(content)
 
-def create_mixin_data_interface_content(project_name, mixin_name, model_data, all_csharp_entity_names, flat_model_dir, module_namespace_map):
+def create_mixin_data_interface_content(project_name, mixin_name, model_data, all_csharp_entity_names, flat_model_ns, module_namespace_map):
     pascal_mixin = to_pascal_case(mixin_name)
     interface_name = f"I{pascal_mixin}Data"
     namespace = f"{project_name}.MixinData"
@@ -1206,7 +1194,7 @@ def create_mixin_data_interface_content(project_name, mixin_name, model_data, al
                 related_model_base_module = master_models[related_model_name].get('base_module')
                 if related_model_base_module:
                     pascal_related_module = module_namespace_map.get(related_model_base_module, to_pascal_case(related_model_base_module))
-                    entity_namespace = f"{project_name}.Models" if flat_model_dir else f"{project_name}.Domain.Entities.{pascal_related_module}"
+                    entity_namespace = f"{project_name}.Models" if flat_model_ns else f"{project_name}.Domain.Entities.{pascal_related_module}"
                     using_statements.add(f"using {entity_namespace};")
 
     content = f"""
@@ -1253,14 +1241,14 @@ def create_mixin_data_interface_content(project_name, mixin_name, model_data, al
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_readonly_repository_interface_content(project_base_name, model_name, flat_model_dir, module_namespace_map):
+def create_readonly_repository_interface_content(project_base_name, model_name, flat_model_ns, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     interface_name = f"I{pascal_model}Repository"
     
     # Namespace cho entity (view)
     base_module = master_models[model_name].get('base_module', 'base')
     pascal_module = module_namespace_map.get(base_module, to_pascal_case(base_module))
-    entity_namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
+    entity_namespace = f"{project_base_name}.Models" if flat_model_ns else f"{project_base_name}.Domain.Entities.{pascal_module}"
 
     namespace = f"{project_base_name}.Domain.Repositories" # Namespace cố định cho repo interface
 
@@ -1282,14 +1270,14 @@ def create_readonly_repository_interface_content(project_base_name, model_name, 
     """
     return format_csharp_code(content)
 
-def create_readonly_repository_implementation_content(project_base_name, model_name, flat_model_dir, module_namespace_map):
+def create_readonly_repository_implementation_content(project_base_name, model_name, flat_model_ns, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     interface_name = f"I{pascal_model}Repository"
     implementation_name = f"EfCore{pascal_model}Repository"
     
     base_module = master_models[model_name].get('base_module', 'base')
     pascal_module = module_namespace_map.get(base_module, to_pascal_case(base_module))
-    entity_namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
+    entity_namespace = f"{project_base_name}.Models" if flat_model_ns else f"{project_base_name}.Domain.Entities.{pascal_module}"
     
     interface_namespace = f"{project_base_name}.Domain.Repositories"
     implementation_namespace = f"{project_base_name}.EntityFrameworkCore.Repositories"
@@ -1333,13 +1321,13 @@ def create_readonly_repository_implementation_content(project_base_name, model_n
     """
     return format_csharp_code(content)
 
-def create_fluent_api_configuration_content(project_base_name, model_name, model_data, flat_model_dir, module_namespace_map):
+def create_fluent_api_configuration_content(project_base_name, model_name, model_data, flat_model_ns, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     base_module = model_data.get('base_module', 'unknown')
     pascal_module = module_namespace_map.get(base_module, to_pascal_case(base_module))
     
     table_name = model_data.get('table_name') or model_name.replace('.', '_')
-    entity_namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
+    entity_namespace = f"{project_base_name}.Models" if flat_model_ns else f"{project_base_name}.Domain.Entities.{pascal_module}"
     
     is_auto = model_data.get('is_auto', True)
     if not is_auto:
@@ -1589,7 +1577,7 @@ class OdooModelVisitor(ast.NodeVisitor):
                 for target in item.targets:
                     if isinstance(target, ast.Name):
                         var_name = target.id
-                        # Bỏ qua các biến cấu hình Odoo đã xử lý ở trên để tránh duplicate/confusion
+                        # Bỏ qua các biến cấu hình đã xử lý ở trên để tránh duplicate/confusion
                         if var_name not in ['_name', '_inherit', '_description', '_table', '_auto', '_inherits']:
                             # Evaluate giá trị và lưu vào bộ nhớ tạm
                             val = self._eval_node(item.value)
@@ -1813,7 +1801,7 @@ def _resolve_base_modules(master_models, module_infos, all_parsed_files, all_mod
 
     return master_models
 
-def analyze_odoo_sources(args):
+def analyze_sources(args):
     global master_models
     master_models = {}
     
@@ -1911,9 +1899,9 @@ def analyze_odoo_sources(args):
     auto_detected_mixins = set()
     for parsed_file in all_parsed_files:
         for info in parsed_file['models']:
-            model_odoo_name = info.get('name')
-            if model_odoo_name and (info.get('is_abstract') or model_odoo_name.endswith('.mixin')):
-                auto_detected_mixins.add(model_odoo_name)
+            model_origin_name = info.get('name')
+            if model_origin_name and (info.get('is_abstract') or model_origin_name.endswith('.mixin')):
+                auto_detected_mixins.add(model_origin_name)
     manual_excluded_models = set(args.exclude_models or [])
     final_exclude_set = auto_detected_mixins.union(manual_excluded_models)
 
@@ -2222,9 +2210,9 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             all_methods = data.get('all_methods', {})
             (marker_interface_dir / f"I{pascal_model}able.cs").write_text(create_marker_interface_content(project_base_name, model_name), encoding='utf-8')
             if data.get('fields'):
-                (data_interface_dir / f"I{pascal_model}Data.cs").write_text(create_mixin_data_interface_content(project_base_name, model_name, data, all_csharp_entity_names, flat_model_dir, module_namespace_map), encoding='utf-8')
-            (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, data, all_methods, flat_model_dir, True, all_csharp_entity_names, module_namespace_map, is_mixin=True), encoding='utf-8')
-            content, partial_content = create_service_implementation_content(project_base_name, base_module, model_name, data, all_methods, dependencies, flat_model_dir, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr)
+                (data_interface_dir / f"I{pascal_model}Data.cs").write_text(create_mixin_data_interface_content(project_base_name, model_name, data, all_csharp_entity_names, flat_model_ns, module_namespace_map), encoding='utf-8')
+            (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, data, all_methods, flat_model_ns, True, all_csharp_entity_names, module_namespace_map, is_mixin=True), encoding='utf-8')
+            content, partial_content = create_service_implementation_content(project_base_name, base_module, model_name, data, all_methods, dependencies, flat_model_ns, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr)
             (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(content, encoding='utf-8')
             continue
 
@@ -2291,7 +2279,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
                     field_name=field_name,
                     #selection_data=selection_data,
                     selection_data=full_selection_data,
-                    flat_model_ns=flat_model_dir, # Dùng cờ flat_model_dir (hoặc flat_model_ns tùy logic bạn muốn)
+                    flat_model_ns=flat_model_ns, # Dùng cờ flat_model_dir (hoặc flat_model_ns tùy logic bạn muốn)
                     source_module=source_module,
                     source_file=source_file,
                     related_info=related_info,
@@ -2402,7 +2390,7 @@ def main(args):
     manual_excluded_models = set(args.exclude_models or [])
     
     # Phần 1: Đọc file, tổng hợp và phân tích dữ liệu
-    analysis_result = analyze_odoo_sources(args)
+    analysis_result = analyze_sources(args)
     
     # Phần 2: Tạo các content
     generate_csharp_files(args, **analysis_result)
