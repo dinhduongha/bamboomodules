@@ -19,7 +19,7 @@ public class TenantMemberDto : FullAuditedEntityDto<Guid>
     public string? Description { get; set; }
     public List<string>? Roles { get; set; } = [];
     public TenantMemberStatus Status { get; set; }
-    public InvitationStatus InviteStatus { get; protected set; } = InvitationStatus.Pending;
+    public InvitationStatus InviteStatus { get; set; } = InvitationStatus.Pending;
     public bool? IsActive { get; set; }
     // public bool? IsAccepted { get; set; }
     // public bool? IsRejected { get; set; }

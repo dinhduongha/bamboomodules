@@ -68,7 +68,7 @@ public class TenantMemberAppService :
         //     throw new UserFriendlyException("This action can only be performed within a tenant context.");
         // }
 
-        var tenantId = _currentTenant.Id.HasValue ? _currentTenant.Id.Value : (input.TenantId.HasValue ? input.TenantId.Value : Guid.Empty);
+        Guid? tenantId = _currentTenant.Id.HasValue ? _currentTenant.Id.Value : (input.TenantId.HasValue ? input.TenantId.Value : Guid.Empty);
         if (tenantId == Guid.Empty)
         {
             throw new UserFriendlyException("This action can only be performed within a tenant context.");
@@ -80,7 +80,7 @@ public class TenantMemberAppService :
             throw new UserFriendlyException("User is already a member of this tenant.");
         }
 
-        var tenantMember = new TenantMember(GuidGenerator.Create(), tenantId, input.UserId);
+        var tenantMember = new TenantMember(GuidGenerator.Create(), (Guid)tenantId, input.UserId);
         if (input.Role != null)
             tenantMember.Role = input.Role;
         if (input.Status != null)
@@ -111,42 +111,119 @@ public class TenantMemberAppService :
         return await MapToGetOutputDtoAsync(tenantMember);
     }
 
+    public override async Task<TenantMemberDto> GetAsync(Guid id)
+    {
+        return await base.GetAsync(id);
+    }
+
     public override async Task<PagedResultDto<TenantMemberDto>> GetListAsync(GetTenantMembersInput input)
     {
         // Chỉ lấy danh sách member của tenant hiện tại
-        var tenantId = _currentTenant.Id.HasValue ? _currentTenant.Id.Value : (input.TenantId.HasValue ? input.TenantId.Value : Guid.Empty);
+        Guid? tenantId = _currentTenant.Id.HasValue ? _currentTenant.Id.Value : (input.TenantId.HasValue ? input.TenantId.Value : Guid.Empty);
         if (tenantId == Guid.Empty)
         {
             return new PagedResultDto<TenantMemberDto>();
         }
 
-        //var tenantId = _currentTenant.Id.Value;
-        var userRepository = await _userRepository.GetQueryableAsync();
-
-        var query = from tenantMember in await Repository.GetQueryableAsync()
-                    join user in userRepository on tenantMember.UserId equals user.Id
-                    where tenantMember.TenantId == tenantId
-                    // Lọc theo tên user nếu có
-                    where input.Filter.IsNullOrWhiteSpace() || user.UserName.Contains(input.Filter)
-                    select new { tenantMember, user };
-
-        var totalCount = await AsyncExecuter.CountAsync(query);
-
-        var sortedQuery = query
-            .OrderBy(NormalizeSorting(input.Sorting))
-            .Skip(input.SkipCount)
-            .Take(input.MaxResultCount);
-
-        var queryResult = await AsyncExecuter.ToListAsync(sortedQuery);
-
-        var dtos = queryResult.Select(x =>
+        if (CurrentTenant.Id.HasValue)
         {
-            var dto = _mapper.Map<TenantMember, TenantMemberDto>(x.tenantMember);
-            dto.UserName = x.user.UserName;
-            return dto;
-        }).ToList();
+            tenantId = CurrentTenant.Id.Value;
+        }
+        PagedResultDto<TenantMemberDto> Members;
 
-        return new PagedResultDto<TenantMemberDto>(totalCount, dtos);
+        using (_dataFilter.Disable<IMultiTenant>())
+        {
+            var memberQueryable = await Repository.WithDetailsAsync(x => x.Roles);
+            var userQueryable = await _userRepository.GetQueryableAsync();
+            var tenantQueryable = await _tenantRepository.GetQueryableAsync();
+            var roleQueryable = await _roleRepository.GetQueryableAsync();
+            if (_currentTenant.IsAvailable)
+            {
+                memberQueryable = memberQueryable.Where(x => x.TenantId == _currentTenant.Id);
+                tenantQueryable = tenantQueryable.Where(x => x.Id == _currentTenant.Id);
+                roleQueryable = roleQueryable.Where(x => x.TenantId == _currentTenant.Id);
+            }
+
+
+            var query = from member in memberQueryable
+                        join user in userQueryable on member.UserId equals user.Id
+                        join tenant in tenantQueryable on member.TenantId equals tenant.Id
+                        where !tenantId.HasValue || member.TenantId == tenantId.Value
+                        select new { Member = member, User = user, Tenant = tenant };
+
+            if (!input.Filter.IsNullOrWhiteSpace())
+            {
+                query = query.Where(x => x.Tenant.Name.Contains(input.Filter) || x.User.UserName.Contains(input.Filter) || x.User.Email.Contains(input.Filter));
+            }
+
+            var totalCount = await AsyncExecuter.CountAsync(query);
+
+            var pagedQuery = query.OrderByDescending(x => x.Member.CreationTime)
+                                    .PageBy(input.SkipCount, input.MaxResultCount);
+
+            var queryResult = await AsyncExecuter.ToListAsync(pagedQuery);
+
+            var memberDtos = queryResult.Select(x =>
+            {
+                // Lấy danh sách vai trò cho từng thành viên
+                // Cần thực hiện trong vòng lặp vì navigation property 'Roles' của TenantMember không được tải sẵn
+                var roles = (from memberRole in x.Member.Roles
+                             join role in roleQueryable on memberRole.RoleId equals role.Id
+                             select role.Name).ToList();
+
+                return new TenantMemberDto
+                {
+                    Id = x.Member.Id,
+                    UserId = x.User.Id,
+                    TenantId = x.Member.TenantId,
+                    UserName = x.User.UserName,
+                    //Email = x.User.Email,
+                    Status = x.Member.Status,
+                    InviteStatus = x.Member.InviteStatus,
+                    TenantName = x.Tenant.Name,
+                    IsOwner = x.Member.IsOwner,
+                    IsActive = x.Member.IsActive,
+                    CreationTime = x.Member.CreationTime,
+                    CreatorId = x.Member.CreatorId,
+                    LastModificationTime = x.Member.LastModificationTime,
+                    LastModifierId = x.Member.LastModifierId,
+                    //Role = x.Member.Role,
+                    //JoinedDate = x.Member.AcceptedAt ?? x.Member.CreationTime,
+                    Roles = roles
+                };
+            }).ToList();
+
+            Members = new PagedResultDto<TenantMemberDto>(totalCount, memberDtos);
+            return Members;
+        }
+
+        //var tenantId = _currentTenant.Id.Value;
+        // var userRepository = await _userRepository.GetQueryableAsync();
+
+        // var query = from tenantMember in await Repository.GetQueryableAsync()
+        //             join user in userRepository on tenantMember.UserId equals user.Id
+        //             where tenantMember.TenantId == tenantId
+        //             // Lọc theo tên user nếu có
+        //             where input.Filter.IsNullOrWhiteSpace() || user.UserName.Contains(input.Filter)
+        //             select new { tenantMember, user };
+
+        // var totalCount = await AsyncExecuter.CountAsync(query);
+
+        // var sortedQuery = query
+        //     .OrderBy(NormalizeSorting(input.Sorting))
+        //     .Skip(input.SkipCount)
+        //     .Take(input.MaxResultCount);
+
+        // var queryResult = await AsyncExecuter.ToListAsync(sortedQuery);
+
+        // var dtos = queryResult.Select(x =>
+        // {
+        //     var dto = _mapper.Map<TenantMember, TenantMemberDto>(x.tenantMember);
+        //     dto.UserName = x.user.UserName;
+        //     return dto;
+        // }).ToList();
+
+        // return new PagedResultDto<TenantMemberDto>(totalCount, dtos);
     }
 
     private static string NormalizeSorting(string sorting)
