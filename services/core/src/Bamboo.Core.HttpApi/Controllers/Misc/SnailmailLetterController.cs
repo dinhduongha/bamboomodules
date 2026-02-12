@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Hidden/Tools, Module: snailmail
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/snailmail/SnailmailLetter")]
     public partial class SnailmailLetterController : AbpController
     {
-        private readonly ISnailmailLetterAppService _appService;
+        protected readonly ISnailmailLetterAppService _appService;
         public SnailmailLetterController(ISnailmailLetterAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("cancel")]
+        public async Task<IActionResult> CancelAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.CancelAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("snailmail-print")]
+        public async Task<IActionResult> SnailmailPrintAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.SnailmailPrintAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

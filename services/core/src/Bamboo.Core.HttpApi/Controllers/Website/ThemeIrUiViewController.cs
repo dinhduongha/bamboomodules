@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Website/Website, Module: website
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/website/ThemeIrUiView")]
     public partial class ThemeIrUiViewController : AbpController
     {
-        private readonly IThemeIrUiViewAppService _appService;
+        protected readonly IThemeIrUiViewAppService _appService;
         public ThemeIrUiViewController(IThemeIrUiViewAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("compute-arch-fs")]
+        public async Task<IActionResult> ComputeArchFsAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ComputeArchFsAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

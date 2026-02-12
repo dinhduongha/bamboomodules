@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
     public partial class ResUsersApikeysDescriptionAppService : GenericAppService<ResUsersApikeysDescription>, IResUsersApikeysDescriptionAppService
     {
 
-        public ResUsersApikeysDescriptionAppService(IRepository<ResUsersApikeysDescription, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public ResUsersApikeysDescriptionAppService(IRepository<ResUsersApikeysDescription, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -30,113 +31,21 @@ namespace Bamboo.Core.Application.Services
         public async Task<ResUsersApikeysDescription> CheckAccessMakeKeyAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: portal, FILE: res_users_apikeys_description.py) ---
-            // def check_access_make_key(self):
-            // try:
-            //     return super().check_access_make_key()
-            // except AccessError:
-            //     if self.env['ir.config_parameter'].sudo().get_param('portal.allow_api_keys'):
-            //         if self.env.user._is_portal():
-            //             return
-            //         else:
-            //             raise AccessError(_("Only internal and portal users can create API keys"))
-            //     raise
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def check_access_make_key(self):
-            // if not self.env.user._is_internal():
-            //     raise AccessError(_("Only internal users can create API keys"))
+            --- METHOD SOURCE (MODULE: portal, FILE: res_users_apikeys_description.py, METHOD: check_access_make_key) ---
+            --- METHOD SOURCE (MODULE: base, FILE: res_users.py, METHOD: check_access_make_key) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<ResUsersApikeysDescription> ComputeExpirationDateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _compute_expiration_date(self):
-            // for record in self:
-            //     duration = int(record.duration)
-            //     if duration >= 0:
-            //         record.expiration_date = (
-            //             fields.Date.today() + datetime.timedelta(days=duration)
-            //             if int(record.duration)
-            //             else None
-            //         )
-            */
             return default;
         }
 
         public async Task<ResUsersApikeysDescription> MakeKeyAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def make_key(self):
-            // # only create keys for users who can delete their keys
-            // self.check_access_make_key()
-            // 
-            // description = self.sudo()
-            // k = self.env['res.users.apikeys']._generate(None, description.name, self.expiration_date)
-            // description.unlink()
-            // 
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'res.users.apikeys.show',
-            //     'name': _('API Key Ready'),
-            //     'views': [(False, 'form')],
-            //     'target': 'new',
-            //     'context': {
-            //         'default_key': k,
-            //     }
-            // }
+            --- METHOD SOURCE (MODULE: base, FILE: res_users.py, METHOD: make_key) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<ResUsersApikeysDescription> OnchangeExpirationDateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _onchange_expiration_date(self):
-            // try:
-            //     self.env['res.users.apikeys']._check_expiration_date(self.expiration_date)
-            // except UserError as error:
-            //     warning = {
-            //         'type': 'notification',
-            //         'title': _('The API key duration is not correct.'),
-            //         'message': error.args[0]
-            //     }
-            //     return {'warning': warning}
-            */
-            return default;
-        }
-
-        protected async Task<ResUsersApikeysDescription> SelectionDurationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _selection_duration(self):
-            // # duration value is a string representing the number of days.
-            // durations = [
-            //     ('1', '1 Day'),
-            //     ('7', '1 Week'),
-            //     ('30', '1 Month'),
-            //     ('90', '3 Months'),
-            //     ('180', '6 Months'),
-            //     ('365', '1 Year'),
-            // ]
-            // persistent_duration = ('0', 'Persistent Key')  # Magic value to detect an infinite duration
-            // custom_duration = ('-1', 'Custom Date')  # Will force the user to enter a date manually
-            // if self.env.is_system():
-            //     return durations + [persistent_duration, custom_duration]
-            // max_duration = max(group.api_key_duration for group in self.env.user.all_group_ids) or 1.0
-            // return list(filter(
-            //     lambda duration: int(duration[0]) <= max_duration, durations
-            // )) + [custom_duration]
-            */
             return default;
         }
     }

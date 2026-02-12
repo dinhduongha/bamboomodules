@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class ChangePasswordOwnAppService : GenericAppService<ChangePasswordOwn>, IChangePasswordOwnAppService
     {
 
-        public ChangePasswordOwnAppService(IRepository<ChangePasswordOwn, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public ChangePasswordOwnAppService(IRepository<ChangePasswordOwn, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,27 +30,10 @@ namespace Bamboo.Core.Application.Services
         public async Task<ChangePasswordOwn> ChangePasswordAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def change_password(self):
-            // self.env.user._change_password(self.new_password)
-            // self.unlink()
-            // # reload to avoid a session expired error
-            // # would be great to update the session id in-place, but it seems dicey
-            // return {'type': 'ir.actions.client', 'tag': 'reload'}
+            --- METHOD SOURCE (MODULE: base, FILE: res_users.py, METHOD: change_password) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<ChangePasswordOwn> CheckPasswordConfirmationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _check_password_confirmation(self):
-            // if self.confirm_password != self.new_password:
-            //     raise ValidationError(_("The new password and its confirmation must be identical."))
-            */
             return default;
         }
     }

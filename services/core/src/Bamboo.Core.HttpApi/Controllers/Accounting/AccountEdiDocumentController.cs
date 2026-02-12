@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Accounting/Accounting, Module: account_edi
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/accounting/AccountEdiDocument")]
     public partial class AccountEdiDocumentController : AbpController
     {
-        private readonly IAccountEdiDocumentAppService _appService;
+        protected readonly IAccountEdiDocumentAppService _appService;
         public AccountEdiDocumentController(IAccountEdiDocumentAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-export-xml")]
+        public async Task<IActionResult> ExportXmlAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ExportXmlAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

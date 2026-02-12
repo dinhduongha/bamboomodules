@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Technical Settings, Module: cloud_storage_migration
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/technical-settings/CloudStorageMigrationReport")]
     public partial class CloudStorageMigrationReportController : AbpController
     {
-        private readonly ICloudStorageMigrationReportAppService _appService;
+        protected readonly ICloudStorageMigrationReportAppService _appService;
         public CloudStorageMigrationReportController(ICloudStorageMigrationReportAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("get-progress")]
+        public async Task<IActionResult> GetProgressAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.GetProgressAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("init")]
+        public async Task<IActionResult> InitAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.InitAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

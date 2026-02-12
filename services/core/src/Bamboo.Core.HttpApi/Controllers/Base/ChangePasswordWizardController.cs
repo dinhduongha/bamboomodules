@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Hidden, Module: base
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/base/ChangePasswordWizard")]
     public partial class ChangePasswordWizardController : AbpController
     {
-        private readonly IChangePasswordWizardAppService _appService;
+        protected readonly IChangePasswordWizardAppService _appService;
         public ChangePasswordWizardController(IChangePasswordWizardAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("change-password-button")]
+        public async Task<IActionResult> ChangePasswordButtonAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ChangePasswordButtonAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

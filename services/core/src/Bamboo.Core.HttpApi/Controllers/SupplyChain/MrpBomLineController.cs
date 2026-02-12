@@ -6,16 +6,41 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Supply Chain/Manufacturing, Module: mrp
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/supply-chain/MrpBomLine")]
     public partial class MrpBomLineController : AbpController
     {
-        private readonly IMrpBomLineAppService _appService;
+        protected readonly IMrpBomLineAppService _appService;
         public MrpBomLineController(IMrpBomLineAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-add-from-catalog")]
+        public async Task<IActionResult> AddFromCatalogAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.AddFromCatalogAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("action-see-attachments")]
+        public async Task<IActionResult> SeeAttachmentsAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.SeeAttachmentsAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("onchange-product-id")]
+        public async Task<IActionResult> OnchangeProductIdAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.OnchangeProductIdAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

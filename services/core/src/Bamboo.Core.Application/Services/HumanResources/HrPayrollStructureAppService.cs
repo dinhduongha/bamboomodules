@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,61 +22,18 @@ namespace Bamboo.Core.Application.Services
     public partial class HrPayrollStructureAppService : GenericAppService<HrPayrollStructure>, IHrPayrollStructureAppService
     {
 
-        public HrPayrollStructureAppService(IRepository<HrPayrollStructure, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public HrPayrollStructureAppService(IRepository<HrPayrollStructure, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<HrPayrollStructure> CheckParentIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_salary_rule.py) ---
-            // def _check_parent_id(self):
-            // if not self._check_recursion():
-            //     raise ValidationError(_('You cannot create a recursive salary structure.'))
-            */
-            return default;
         }
 
         public async Task<HrPayrollStructure> GetAllRulesAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_salary_rule.py) ---
-            // def get_all_rules(self):
-            // """
-            // @return: returns a list of tuple (id, sequence) of rules that are maybe to apply
-            // """
-            // all_rules = []
-            // for struct in self:
-            //     all_rules += struct.rule_ids._recursive_search_of_rules()
-            // return all_rules
+            --- METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_salary_rule.py, METHOD: get_all_rules) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<HrPayrollStructure> GetParentInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_salary_rule.py) ---
-            // def _get_parent(self):
-            // return self.env.ref('om_om_hr_payroll.structure_base', False)
-            */
-            return default;
-        }
-
-        protected async Task<HrPayrollStructure> GetParentStructureInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_salary_rule.py) ---
-            // def _get_parent_structure(self):
-            // parent = self.mapped('parent_id')
-            // if parent:
-            //     parent = parent._get_parent_structure()
-            // return parent + self
-            */
             return default;
         }
     }

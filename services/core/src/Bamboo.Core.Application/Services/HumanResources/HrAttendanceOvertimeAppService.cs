@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,31 +22,15 @@ namespace Bamboo.Core.Application.Services
     public partial class HrAttendanceOvertimeAppService : GenericAppService<HrAttendanceOvertime>, IHrAttendanceOvertimeAppService
     {
 
-        public HrAttendanceOvertimeAppService(IRepository<HrAttendanceOvertime, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public HrAttendanceOvertimeAppService(IRepository<HrAttendanceOvertime, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<HrAttendanceOvertime> DefaultEmployeeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime.py) ---
-            // def _default_employee(self):
-            // return self.env.user.employee_id
-            */
-            return default;
         }
 
         public async Task<HrAttendanceOvertime> InitAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime.py) ---
-            // def init(self):
-            // # Allows only 1 overtime record per employee per day unless it's an adjustment
-            // self.env.cr.execute("""
-            //     CREATE UNIQUE INDEX IF NOT EXISTS hr_attendance_overtime_unique_employee_per_day
-            //     ON %s (employee_id, date)
-            //     WHERE adjustment is false""" % (self._table))
+            --- METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime.py, METHOD: init) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

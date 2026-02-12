@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Accounting/Accounting, Module: account
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/accounting/AccountPaymentMethodLine")]
     public partial class AccountPaymentMethodLineController : AbpController
     {
-        private readonly IAccountPaymentMethodLineAppService _appService;
+        protected readonly IAccountPaymentMethodLineAppService _appService;
         public AccountPaymentMethodLineController(IAccountPaymentMethodLineAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-open-provider-form")]
+        public async Task<IActionResult> OpenProviderFormAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.OpenProviderFormAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

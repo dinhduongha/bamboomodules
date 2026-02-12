@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Hidden/Tools, Module: partner_autocomplete
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/partner-autocomplete/ResPartnerAutocompleteSync")]
     public partial class ResPartnerAutocompleteSyncController : AbpController
     {
-        private readonly IResPartnerAutocompleteSyncAppService _appService;
+        protected readonly IResPartnerAutocompleteSyncAppService _appService;
         public ResPartnerAutocompleteSyncController(IResPartnerAutocompleteSyncAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("add-to-queue")]
+        public async Task<IActionResult> AddToQueueAsync([FromBody] ResPartnerAutocompleteSyncAddToQueueRequestDto input)
+        {
+            var result = await _appService.AddToQueueAsync(input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("start-sync")]
+        public async Task<IActionResult> StartSyncAsync([FromBody] ResPartnerAutocompleteSyncStartSyncRequestDto input)
+        {
+            var result = await _appService.StartSyncAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

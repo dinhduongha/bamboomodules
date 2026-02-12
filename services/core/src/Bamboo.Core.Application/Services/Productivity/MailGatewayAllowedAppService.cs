@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,44 +22,16 @@ namespace Bamboo.Core.Application.Services
     public partial class MailGatewayAllowedAppService : GenericAppService<MailGatewayAllowed>, IMailGatewayAllowedAppService
     {
 
-        public MailGatewayAllowedAppService(IRepository<MailGatewayAllowed, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public MailGatewayAllowedAppService(IRepository<MailGatewayAllowed, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<MailGatewayAllowed> ComputeEmailNormalizedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_gateway_allowed.py) ---
-            // def _compute_email_normalized(self):
-            // for record in self:
-            //     record.email_normalized = tools.email_normalize(record.email)
-            */
-            return default;
         }
 
         [ApiModel]
         public async Task<MailGatewayAllowed> GetEmptyListHelpAsync(MailGatewayAllowedGetEmptyListHelpRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_gateway_allowed.py) ---
-            // def get_empty_list_help(self, help_message):
-            // get_param = self.env['ir.config_parameter'].sudo().get_param
-            // LOOP_MINUTES = int(get_param('mail.gateway.loop.minutes', 120))
-            // LOOP_THRESHOLD = int(get_param('mail.gateway.loop.threshold', 20))
-            // 
-            // return Markup(_('''
-            //     <p class="o_view_nocontent_smiling_face">
-            //         Add addresses to the Allowed List
-            //     </p><p>
-            //         To protect you from spam and reply loops, Odoo automatically blocks emails
-            //         coming to your gateway past a threshold of <b>%(threshold)i</b> emails every <b>%(minutes)i</b>
-            //         minutes. If there are some addresses from which you need to receive very frequent
-            //         updates, you can however add them below and Odoo will let them go through.
-            //     </p>''')) % {
-            //     'threshold': LOOP_THRESHOLD,
-            //     'minutes': LOOP_MINUTES,
-            // }
+            --- METHOD SOURCE (MODULE: mail, FILE: mail_gateway_allowed.py, METHOD: get_empty_list_help) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;

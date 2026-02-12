@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class OnboardingProgressStepAppService : GenericAppService<OnboardingProgressStep>, IOnboardingProgressStepAppService
     {
 
-        public OnboardingProgressStepAppService(IRepository<OnboardingProgressStep, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public OnboardingProgressStepAppService(IRepository<OnboardingProgressStep, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,11 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<OnboardingProgressStep> ConsolidateJustDoneAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress_step.py) ---
-            // def action_consolidate_just_done(self):
-            // was_just_done = self.filtered(lambda progress: progress.step_state == 'just_done')
-            // was_just_done.step_state = 'done'
-            // return was_just_done
+            --- METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress_step.py, METHOD: action_consolidate_just_done) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -43,11 +40,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<OnboardingProgressStep> SetJustDoneAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress_step.py) ---
-            // def action_set_just_done(self):
-            // not_done = self.filtered_domain([('step_state', '=', 'not_done')])
-            // not_done.step_state = 'just_done'
-            // return not_done
+            --- METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress_step.py, METHOD: action_set_just_done) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

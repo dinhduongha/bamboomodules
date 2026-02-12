@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,93 +22,18 @@ namespace Bamboo.Core.Application.Services
     public partial class HrSkillTypeAppService : GenericAppService<HrSkillType>, IHrSkillTypeAppService
     {
 
-        public HrSkillTypeAppService(IRepository<HrSkillType, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public HrSkillTypeAppService(IRepository<HrSkillType, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<HrSkillType> CheckNoNullSkillOrSkillLevelInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py) ---
-            // def _check_no_null_skill_or_skill_level(self):
-            // incorrect_skill_type = self.env['hr.skill.type']
-            // for skill_type in self:
-            //     if not skill_type.skill_ids or not skill_type.skill_level_ids:
-            //         incorrect_skill_type |= skill_type
-            // if incorrect_skill_type:
-            //     raise ValidationError(
-            //         _("The following skills type must contain at least one skill and one level: %s",
-            //           "\n".join(skill_type.name for skill_type in incorrect_skill_type)))
-            */
-            return default;
-        }
-
-        protected async Task<HrSkillType> ComputeDisplayNameInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py) ---
-            // def _compute_display_name(self):
-            // for skill_type in self:
-            //     if skill_type.is_certification:
-            //         skill_type.display_name = skill_type.name + "\U0001F396"  # Military Medal's unicode
-            //     else:
-            //         skill_type.display_name = skill_type.name
-            */
-            return default;
-        }
-
-        protected async Task<HrSkillType> ComputeLevelsCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py) ---
-            // def _compute_levels_count(self):
-            // level_count_by_skill_type = dict(self.env['hr.skill.level']._read_group(
-            //     domain=[('skill_type_id', 'in', self.ids)],
-            //     groupby=['skill_type_id'],
-            //     aggregates=['__count']
-            // ))
-            // for skill_type in self:
-            //     skill_type.levels_count = level_count_by_skill_type.get(skill_type, 0)
-            */
-            return default;
         }
 
         public async Task<HrSkillType> CopyDataAsync(HrSkillTypeCopyDataRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py) ---
-            // def copy_data(self, default=None):
-            // vals_list = super().copy_data(default=default)
-            // return [dict(vals, name=self.env._("%s (copy)", skill_type.name), color=0) for skill_type, vals in zip(self, vals_list)]
+            --- METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py, METHOD: copy_data) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<HrSkillType> GetDefaultColorInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py) ---
-            // def _get_default_color(self):
-            // return randint(1, 11)
-            */
-            return default;
-        }
-
-        protected async Task<HrSkillType> OnchangeSkillLevelIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py) ---
-            // def _onchange_skill_level_ids(self):
-            // for level in self.skill_level_ids:
-            //     if level.technical_is_new_default:
-            //         (self.skill_level_ids - level).write({'default_level': False})
-            //         # This value need to be set to False, to reset it for the frontend.
-            //         level.technical_is_new_default = False
-            //         break
-            */
             return default;
         }
     }

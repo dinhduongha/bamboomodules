@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Website/Website, Module: website
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/website/WebsiteMenu")]
     public partial class WebsiteMenuController : AbpController
     {
-        private readonly IWebsiteMenuAppService _appService;
+        protected readonly IWebsiteMenuAppService _appService;
         public WebsiteMenuController(IWebsiteMenuAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("get-tree")]
+        public async Task<IActionResult> GetTreeAsync([FromBody] WebsiteMenuGetTreeRequestDto input)
+        {
+            var result = await _appService.GetTreeAsync(input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("save")]
+        public async Task<IActionResult> SaveAsync([FromBody] WebsiteMenuSaveRequestDto input)
+        {
+            var result = await _appService.SaveAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

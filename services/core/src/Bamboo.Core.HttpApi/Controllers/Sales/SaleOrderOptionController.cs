@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Sales/Sales, Module: sale_management
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/sales/SaleOrderOption")]
     public partial class SaleOrderOptionController : AbpController
     {
-        private readonly ISaleOrderOptionAppService _appService;
+        protected readonly ISaleOrderOptionAppService _appService;
         public SaleOrderOptionController(ISaleOrderOptionAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("add-option-to-order")]
+        public async Task<IActionResult> AddOptionToOrderAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.AddOptionToOrderAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("button-add-to-order")]
+        public async Task<IActionResult> ButtonAddToOrderAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ButtonAddToOrderAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

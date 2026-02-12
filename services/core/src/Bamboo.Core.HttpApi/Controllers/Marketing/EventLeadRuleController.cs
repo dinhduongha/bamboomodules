@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Marketing/Events, Module: event_crm
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/marketing/EventLeadRule")]
     public partial class EventLeadRuleController : AbpController
     {
-        private readonly IEventLeadRuleAppService _appService;
+        protected readonly IEventLeadRuleAppService _appService;
         public EventLeadRuleController(IEventLeadRuleAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-execute-rule")]
+        public async Task<IActionResult> ExecuteRuleAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ExecuteRuleAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

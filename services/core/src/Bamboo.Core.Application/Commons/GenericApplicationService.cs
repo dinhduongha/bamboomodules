@@ -43,43 +43,49 @@ namespace Bamboo.Core.Application
         where TEntity : class, IEntity<Guid>
     {
         //protected readonly IRepository<TEntity, Guid> Repository;
-        //protected readonly IRepository<TEntity, Guid> Repository;
-        protected readonly IAuthorizationService _authorizationService;
+
+
+        // From ApplicationService
+        //protected readonly IAuthorizationService AuthorizationService;
+        //protected readonly IServiceProvider _serviceProvider;
+        //protected readonly IDataFilter _dataFilter;
+        //protected readonly IObjectMapper ObjectMapper;
+
+        protected IBambooAuthorizationService BambooAuthorizationService => LazyServiceProvider.LazyGetRequiredService<IBambooAuthorizationService>();
+
         protected readonly IDomainParser _domainParser;
-        protected readonly IServiceProvider _serviceProvider;
         protected readonly IModelTypeRegistry _modelTypeRegistry;
-        protected readonly IDataFilter _dataFilter;
-        protected readonly IObjectMapper _objectMapper;
         protected readonly IDistributedCache _cache;
         private readonly bool _filterFieldAccess = false;
-        protected readonly ICurrentTenant _currentTenant;
 
         protected static readonly bool IsMultiTenant = typeof(IMultiTenant).IsAssignableFrom(typeof(TEntity));
         public GenericAppService(
             IRepository<TEntity, Guid> repository,
-            IServiceProvider serviceProvider,
-            IDataFilter dataFilter,
-            IObjectMapper objectMapper,
+            ICurrentTenant currentTenant,
             IDistributedCache cache,
-            IAuthorizationService authorizationService,
+            //IServiceProvider serviceProvider,
+            //IDataFilter dataFilter,
+            //IObjectMapper objectMapper,
+            //IBambooAuthorizationService authorizationService,
             IDomainParser domainParser,
             IModelTypeRegistry modelTypeRegistry)
             : base(repository)
         {
             //Repository = repository;
             //Repository = repository;
-            _serviceProvider = serviceProvider;
-            _authorizationService = authorizationService;
+            //_serviceProvider = serviceProvider;
+            //BambooAuthorizationService = authorizationService;
             _domainParser = domainParser;
             _modelTypeRegistry = modelTypeRegistry;
-            _dataFilter = dataFilter;
-            _objectMapper = objectMapper;
+            //_dataFilter = dataFilter;
+            //ObjectMapper = objectMapper;
             _cache = cache;
 
-            _currentTenant = _serviceProvider.GetRequiredService<ICurrentTenant>();
-            if (!_currentTenant.Id.HasValue)
+            //ICurrentTenant _currentTenant = _serviceProvider.GetRequiredService<ICurrentTenant>();
+            //ICurrentTenant _currentTenant = LazyServiceProvider.LazyGetRequiredService.GetRequiredService<ICurrentTenant>();
+            if (!currentTenant.Id.HasValue)
             {
-                _dataFilter.Disable<IMultiTenant>();
+                DataFilter.Disable<IMultiTenant>();
             }
         }
 
@@ -98,13 +104,13 @@ namespace Bamboo.Core.Application
             Dictionary<string, bool>? fieldPermissions;
             // if (!_cache.TryGetValue(cacheKey, out Dictionary<string, bool> fieldPermissions))
             // {
-            //     fieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, operation);
+            //     fieldPermissions = await BambooAuthorizationService.GetFieldAccessAsync(modelName, operation);
             //     _cache.Set(cacheKey, fieldPermissions, TimeSpan.FromMinutes(10));
             // }
             var cachedValue = await _cache.GetStringAsync(cacheKey);
             if (cachedValue == null)
             {
-                fieldPermissions = await _authorizationService
+                fieldPermissions = await BambooAuthorizationService
                     .GetFieldAccessAsync(modelName, operation);
 
                 await _cache.SetStringAsync(
@@ -152,14 +158,14 @@ namespace Bamboo.Core.Application
         public virtual async Task<List<Guid>> SearchAsync(SearchRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
             JsonElement? domain = input.Domain;
             long offset = input.Offset;
             var limit = input.Limit;
             var order = input.Order;
 
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             query = await _domainParser.ApplyDomain(query, domain);
             return query.Select(x => x.Id).Skip((int)offset).Take(limit).ToList();
         }
@@ -169,12 +175,12 @@ namespace Bamboo.Core.Application
             List<Guid> ids = input.Ids;
             List<string> fields = input.Fields;
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "read", fields);
             var relationFields = GetRelationFields();
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             query = query.Where(e => ids.Contains(e.Id));
             return query.Cast<object>().ToList();
 
@@ -200,7 +206,7 @@ namespace Bamboo.Core.Application
             var result = query.Select($"new {{ {string.Join(", ", dynamicSelect)} }}", dynamicParameters.ToArray()).ToDynamicList();
             return result.Select(r =>
             {
-                var dict = _objectMapper.Map<object, Dictionary<string, object>>(r);
+                var dict = ObjectMapper.Map<object, Dictionary<string, object>>(r);
                 foreach (var field in allowedFields.Where(f => relationFields.ContainsKey(f)))
                 {
                     if (dict[field] is Dictionary<string, object> fieldDict && fieldDict["Id"] is Guid id && id != Guid.Empty)
@@ -216,7 +222,7 @@ namespace Bamboo.Core.Application
         public virtual async Task<List<object>> SearchReadAsync(SearchReadRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
             JsonElement? domain = input.Domain;
             long offset = input.Offset;
             var limit = input.Limit;
@@ -226,7 +232,7 @@ namespace Bamboo.Core.Application
             var allowedFields = await GetAllowedFieldsAsync(modelName, "read", fields);
             var relationFields = GetRelationFields();
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             query = await _domainParser.ApplyDomain(query, domain);
             var queryResult = query.Cast<object>().Skip((int)offset).Take((int)limit).ToList();
             Logger.LogInformation($"Result {modelName} SearchReadAsync");
@@ -254,7 +260,7 @@ namespace Bamboo.Core.Application
             var result = query.Select($"new {{ {string.Join(", ", dynamicSelect)} }}", dynamicParameters.ToArray()).ToDynamicList();
             return result.Select(r =>
             {
-                var dict = _objectMapper.Map<object, Dictionary<string, object>>(r);
+                var dict = ObjectMapper.Map<object, Dictionary<string, object>>(r);
                 foreach (var field in allowedFields.Where(f => relationFields.ContainsKey(f)))
                 {
                     if (dict[field] is Dictionary<string, object> fieldDict && fieldDict["Id"] is Guid id && id != Guid.Empty)
@@ -270,7 +276,7 @@ namespace Bamboo.Core.Application
         public virtual async Task<long> SearchCountAsync(SearchCountRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
             JsonElement? domain = input.Domain;
             long offset = input.Offset;
             var limit = input.Limit;
@@ -280,7 +286,7 @@ namespace Bamboo.Core.Application
             var allowedFields = await GetAllowedFieldsAsync(modelName, "read", fields);
             var relationFields = GetRelationFields();
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             query = await _domainParser.ApplyDomain(query, domain);
             return query.LongCount();
             //return query.Cast<object>().Skip((int)offset).Take((int)limit).ToList();
@@ -307,7 +313,7 @@ namespace Bamboo.Core.Application
             // var result = query.Select($"new {{ {string.Join(", ", dynamicSelect)} }}", dynamicParameters.ToArray()).ToDynamicList();
             // return result.Select(r =>
             // {
-            //     var dict = _objectMapper.Map<object, Dictionary<string, object>>(r);
+            //     var dict = ObjectMapper.Map<object, Dictionary<string, object>>(r);
             //     foreach (var field in allowedFields.Where(f => relationFields.ContainsKey(f)))
             //     {
             //         if (dict[field] is Dictionary<string, object> fieldDict && fieldDict["Id"] is Guid id && id != Guid.Empty)
@@ -324,7 +330,7 @@ namespace Bamboo.Core.Application
         public virtual async Task<TEntity> CreateAsync(CreateRequestDto<TEntity> input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "create");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "create");
             List<string> fields = input.Fields;
             var entity = input.Entity;
 
@@ -351,7 +357,7 @@ namespace Bamboo.Core.Application
             }
 
             return await Repository.InsertAsync(newEntity);
-            var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
+            var readFieldPermissions = await BambooAuthorizationService.GetFieldAccessAsync(modelName, "read");
             var returnFields = readFieldPermissions == null ? allowedFields : allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
             var dynamicSelect = new List<string>();
             var dynamicParameters = new List<object>();
@@ -376,7 +382,7 @@ namespace Bamboo.Core.Application
             var result = query.Select($"new {{ {string.Join(", ", dynamicSelect)} }}", dynamicParameters.ToArray())
                 .ToDynamicList()
                 .FirstOrDefault();
-            var dict = _objectMapper.Map<object, Dictionary<string, object>>(result);
+            var dict = ObjectMapper.Map<object, Dictionary<string, object>>(result);
             foreach (var field in returnFields.Where(f => relationFields.ContainsKey(f)))
             {
                 if (dict[field] is Dictionary<string, object> fieldDict && fieldDict["Id"] is Guid id && id != Guid.Empty)
@@ -391,7 +397,7 @@ namespace Bamboo.Core.Application
         public virtual async Task<List<object>> WriteAsync(UpdateRequestDto<TEntity> input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "write");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "write");
             List<Guid> ids = input.Ids;
             TEntity? entity = input.Entity;
             List<string> fields = input.Fields;
@@ -399,7 +405,7 @@ namespace Bamboo.Core.Application
             var allowedFields = await GetAllowedFieldsAsync(modelName, "write", fields);
             var relationFields = GetRelationFields();
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             var entities = query.Where(e => ids.Contains(e.Id)).ToList();
             if (entities.Count != ids.Count)
                 throw new UserFriendlyException("Some entities not found or access denied");
@@ -426,7 +432,7 @@ namespace Bamboo.Core.Application
                 await Repository.UpdateAsync(existingEntity);
             }
 
-            var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
+            var readFieldPermissions = await BambooAuthorizationService.GetFieldAccessAsync(modelName, "read");
             var returnFields = readFieldPermissions == null ? allowedFields : allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
             var dynamicSelect = new List<string>();
             var dynamicParameters = new List<object>();
@@ -452,8 +458,8 @@ namespace Bamboo.Core.Application
                 .ToDynamicList();
             return result.Select(r =>
             {
-                //var dict = _objectMapper.Map<object, Dictionary<string, object>>(r);
-                var dict = _objectMapper.Map<object, Dictionary<string, object>>(r);
+                //var dict = ObjectMapper.Map<object, Dictionary<string, object>>(r);
+                var dict = ObjectMapper.Map<object, Dictionary<string, object>>(r);
                 foreach (var field in returnFields.Where(f => relationFields.ContainsKey(f)))
                 {
                     if (dict[field] is Dictionary<string, object> fieldDict && fieldDict["Id"] is Guid id && id != Guid.Empty)
@@ -469,7 +475,7 @@ namespace Bamboo.Core.Application
         public async Task<object> UpdateJsonAsync(UpdateJsonRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "write");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "write");
             //if (!await _accessControlService.CheckAccess(_modelName, "write"))
             //    throw new AbpAuthorizationException($"No write permission on {_modelName}");
 
@@ -528,10 +534,10 @@ namespace Bamboo.Core.Application
         public virtual async Task DeleteAsync(List<Guid> ids)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "unlink");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "unlink");
 
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             var entity = query.Where(e => ids.Contains(e.Id)).FirstOrDefault();
             if (entity == null)
                 throw new UserFriendlyException("Entity not found or access denied");
@@ -541,10 +547,10 @@ namespace Bamboo.Core.Application
         public virtual async Task<object> UnlinkAsync(List<Guid> ids)
         {
             // var modelName = typeof(TEntity).Name;
-            // await _authorizationService.CheckAccessAsync(modelName, "unlink");
+            // await BambooAuthorizationService.CheckAccessAsync(modelName, "unlink");
 
             // var query = await Repository.GetQueryableAsync();
-            // query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            // query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             // var entity = query.Where(e => ids.Contains(e.Id)).FirstOrDefault();
             // if (entity == null)
             //     throw new UserFriendlyException("Entity not found or access denied");
@@ -555,13 +561,13 @@ namespace Bamboo.Core.Application
         public virtual async Task<TEntity> CopyAsync(CopyRequestDto<TEntity> input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "create");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "create");
             Guid id = input.Ids[0];
             List<string> fields = input.Fields;
             TEntity defaultValues = input.DefaultValues;
 
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             var entity = query.Where(e => e.Id == id).FirstOrDefault();
             if (entity == null)
                 throw new UserFriendlyException("Entity not found or access denied");
@@ -595,7 +601,7 @@ namespace Bamboo.Core.Application
             }
 
             await Repository.InsertAsync(newEntity);
-            var readFieldPermissions = await _authorizationService.GetFieldAccessAsync(modelName, "read");
+            var readFieldPermissions = await BambooAuthorizationService.GetFieldAccessAsync(modelName, "read");
             var returnFields = readFieldPermissions == null ? allowedFields : allowedFields.Where(f => readFieldPermissions.ContainsKey(f) && readFieldPermissions[f]).ToList();
             var dynamicSelect = new List<string>();
             var dynamicParameters = new List<object>();
@@ -621,7 +627,7 @@ namespace Bamboo.Core.Application
                 .Select($"new {{ {string.Join(", ", dynamicSelect)} }}", dynamicParameters.ToArray())
                 .ToDynamicList()
                 .FirstOrDefault();
-            var dict = _objectMapper.Map<object, Dictionary<string, object>>(result);
+            var dict = ObjectMapper.Map<object, Dictionary<string, object>>(result);
             foreach (var field in returnFields.Where(f => relationFields.ContainsKey(f)))
             {
                 if (dict[field] is Dictionary<string, object> fieldDict && fieldDict["Id"] is Guid idTmp && idTmp != Guid.Empty)
@@ -636,7 +642,7 @@ namespace Bamboo.Core.Application
         public virtual async Task<TEntity> NameCreateAsync(NameCreateRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
             string name = input.Name;
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "write", null);
@@ -661,11 +667,11 @@ namespace Bamboo.Core.Application
         public virtual async Task<List<(Guid Id, string Name)>> NameGetAsync(NameGetRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
             List<Guid> ids = input.Ids;
 
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             query = query.Where(e => ids.Contains(e.Id));
 
             var result = query.Select(e => new { e.Id, Name = e.ToString() }).ToList();
@@ -675,14 +681,14 @@ namespace Bamboo.Core.Application
         public virtual async Task<List<(Guid Id, string Name)>> NameSearchAsync(NameSearchRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
             string name = input.Name;
             JsonElement? domain = input.Domain;
             string @operator = "ilike";
             int limit = input.Limit ?? 100;
 
             var query = await Repository.GetQueryableAsync();
-            query = await _authorizationService.ApplyRulesAsync(query, modelName);
+            query = await BambooAuthorizationService.ApplyRulesAsync(query, modelName);
             query = await _domainParser.ApplyDomain(query, domain);
 
             if (!string.IsNullOrEmpty(name))
@@ -699,7 +705,7 @@ namespace Bamboo.Core.Application
         public virtual async Task<object> OnChangeAsync(OnChangeRequestDto<TEntity> input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
 
             List<string> changedFields = input.ChangedFields;
             TEntity values = input.Values;
@@ -771,7 +777,7 @@ namespace Bamboo.Core.Application
         public virtual async Task<TEntity> DefaultGetAsync(DefaultGetRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "create");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "create");
             List<string> fields = input.Fields;
 
             var allowedFields = await GetAllowedFieldsAsync(modelName, "write", fields);
@@ -803,7 +809,7 @@ namespace Bamboo.Core.Application
         public virtual async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(FieldsGetRequestDto input)
         {
             var modelName = typeof(TEntity).Name;
-            await _authorizationService.CheckAccessAsync(modelName, "read");
+            await BambooAuthorizationService.CheckAccessAsync(modelName, "read");
             List<string> fields = input.Fields;
             Dictionary<string, List<string>> attributes = input.Attributes;
 
@@ -891,7 +897,7 @@ namespace Bamboo.Core.Application
         {
             var entityType = _modelTypeRegistry.GetEntityType(modelName);
             var serviceType = typeof(IGenericAppService<>).MakeGenericType(entityType);
-            return _serviceProvider.GetService(serviceType)
+            return ServiceProvider.GetService(serviceType)
                 ?? throw new UserFriendlyException($"Service for {modelName} not found");
         }
 

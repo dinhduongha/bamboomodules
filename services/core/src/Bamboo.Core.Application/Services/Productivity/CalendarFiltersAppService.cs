@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class CalendarFiltersAppService : GenericAppService<CalendarFilters>, ICalendarFiltersAppService
     {
 
-        public CalendarFiltersAppService(IRepository<CalendarFilters, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public CalendarFiltersAppService(IRepository<CalendarFilters, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -30,9 +31,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<CalendarFilters> UnlinkFromPartnerIdAsync(CalendarFiltersUnlinkFromPartnerIdRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_filter.py) ---
-            // def unlink_from_partner_id(self, partner_id):
-            // return self.search([('partner_id', '=', partner_id)]).unlink()
+            --- METHOD SOURCE (MODULE: calendar, FILE: calendar_filter.py, METHOD: unlink_from_partner_id) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;

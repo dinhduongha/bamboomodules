@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class ChangePasswordWizardAppService : GenericAppService<ChangePasswordWizard>, IChangePasswordWizardAppService
     {
 
-        public ChangePasswordWizardAppService(IRepository<ChangePasswordWizard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public ChangePasswordWizardAppService(IRepository<ChangePasswordWizard, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,30 +30,10 @@ namespace Bamboo.Core.Application.Services
         public async Task<ChangePasswordWizard> ChangePasswordButtonAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def change_password_button(self):
-            // self.ensure_one()
-            // self.user_ids.change_password_button()
-            // if self.env.user in self.user_ids.user_id:
-            //     return {'type': 'ir.actions.client', 'tag': 'reload'}
-            // return {'type': 'ir.actions.act_window_close'}
+            --- METHOD SOURCE (MODULE: base, FILE: res_users.py, METHOD: change_password_button) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<ChangePasswordWizard> DefaultUserIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def _default_user_ids(self):
-            // user_ids = self.env.context.get('active_model') == 'res.users' and self.env.context.get('active_ids') or []
-            // return [
-            //     Command.create({'user_id': user.id, 'user_login': user.login})
-            //     for user in self.env['res.users'].browse(user_ids)
-            // ]
-            */
             return default;
         }
     }

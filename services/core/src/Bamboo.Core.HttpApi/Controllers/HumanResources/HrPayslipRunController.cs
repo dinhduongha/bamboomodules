@@ -6,16 +6,41 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Generic Modules/Human Resources, Module: om_hr_payroll
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/generic-modules/HrPayslipRun")]
     public partial class HrPayslipRunController : AbpController
     {
-        private readonly IHrPayslipRunAppService _appService;
+        protected readonly IHrPayslipRunAppService _appService;
         public HrPayslipRunController(IHrPayslipRunAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("close-payslip-run")]
+        public async Task<IActionResult> ClosePayslipRunAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ClosePayslipRunAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("done-payslip-run")]
+        public async Task<IActionResult> DonePayslipRunAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.DonePayslipRunAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("draft-payslip-run")]
+        public async Task<IActionResult> DraftPayslipRunAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.DraftPayslipRunAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -22,58 +23,15 @@ namespace Bamboo.Core.Application.Services
     public partial class MrpWorkorderAppService : GenericAppService<MrpWorkorder>, IMrpWorkorderAppService
     {
 
-        public MrpWorkorderAppService(IRepository<MrpWorkorder, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public MrpWorkorderAppService(IRepository<MrpWorkorder, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<MrpWorkorder> ActionConfirmInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _action_confirm(self):
-            // for production in self.mapped("production_id"):
-            //     production._link_workorders_and_moves()
-            */
-            return default;
         }
 
         public async Task<MrpWorkorder> ButtonFinishAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def button_finish(self):
-            // date_finished = fields.Datetime.now()
-            // all_vals_dict = defaultdict(lambda: self.env['mrp.workorder'])
-            // workorders_to_end = self.filtered(lambda workorder: workorder.state not in ('done', 'cancel'))
-            // operations = workorders_to_end.operation_id
-            // moves_to_pick = workorders_to_end.move_raw_ids.filtered(lambda move: not move.picked)
-            // moves_to_pick += workorders_to_end.production_id.move_byproduct_ids.filtered(lambda move: not move.picked and move.operation_id in operations)
-            // 
-            // for move in moves_to_pick:
-            //     production_id = move.raw_material_production_id or move.production_id
-            //     if production_id.product_uom_id.is_zero(production_id.qty_producing):
-            //         qty_available = production_id.product_qty
-            //     else:
-            //         qty_available = production_id.qty_producing
-            //     new_qty = move.product_uom.round(qty_available * move.unit_factor)
-            //     move._set_quantity_done(new_qty)
-            // 
-            // moves_to_pick.picked = True
-            // workorders_to_end.end_all()
-            // for workorder in workorders_to_end:
-            //     vals = {
-            //         'qty_produced': workorder.qty_produced or workorder.qty_producing or workorder.qty_production,
-            //         'state': 'done',
-            //         'date_finished': date_finished,
-            //         'costs_hour': workorder.workcenter_id.costs_hour
-            //     }
-            //     if not workorder.date_start or date_finished < workorder.date_start:
-            //         vals['date_start'] = date_finished
-            //     all_vals_dict[frozenset(vals.items())] |= workorder
-            // for frozen_vals, workorders in all_vals_dict.items():
-            //     workorders.with_context(bypass_duration_calculation=True).write(dict(frozen_vals))
-            // return True
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: button_finish) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -83,9 +41,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<MrpWorkorder> ButtonPendingAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def button_pending(self):
-            // self.end_previous()
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: button_pending) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -95,21 +51,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<MrpWorkorder> ButtonScrapAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def button_scrap(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _('Scrap Products'),
-            //     'view_mode': 'form',
-            //     'res_model': 'stock.scrap',
-            //     'views': [(self.env.ref('stock.stock_scrap_form_view2').id, 'form')],
-            //     'type': 'ir.actions.act_window',
-            //     'context': {'default_company_id': self.production_id.company_id.id,
-            //                 'default_workorder_id': self.id,
-            //                 'default_production_id': self.production_id.id,
-            //                 'product_ids': (self.production_id.move_raw_ids.filtered(lambda x: x.state not in ('done', 'cancel')) | self.production_id.move_finished_ids.filtered(lambda x: x.state == 'done')).mapped('product_id').ids},
-            //     'target': 'new',
-            // }
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: button_scrap) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -119,55 +61,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<MrpWorkorder> ButtonStartAsync(MrpWorkorderButtonStartRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def button_start(self, raise_on_invalid_state=False):
-            // if any(wo.working_state == 'blocked' for wo in self):
-            //     raise UserError(_('Please unblock the work center to start the work order.'))
-            // for wo in self:
-            //     if any(not time.date_end for time in wo.time_ids.filtered(lambda t: t.user_id.id == self.env.user.id)):
-            //         continue
-            //     if wo.state in ('done', 'cancel'):
-            //         if raise_on_invalid_state:
-            //             continue
-            //         raise UserError(_('You cannot start a work order that is already done or cancelled'))
-            // 
-            //     if wo.qty_producing == 0:
-            //         wo.qty_producing = wo.qty_remaining
-            // 
-            //     if wo._should_start_timer():
-            //         self.env['mrp.workcenter.productivity'].create(
-            //             wo._prepare_timeline_vals(wo.duration, fields.Datetime.now())
-            //         )
-            // 
-            //     if wo.production_id.state != 'progress':
-            //         wo.production_id.write({
-            //             'date_start': fields.Datetime.now()
-            //         })
-            //     if wo.state == 'progress':
-            //         continue
-            //     date_start = fields.Datetime.now()
-            //     vals = {
-            //         'state': 'progress',
-            //         'date_start': date_start,
-            //     }
-            //     if not wo.leave_id:
-            //         leave = self.env['resource.calendar.leaves'].create({
-            //             'name': wo.display_name,
-            //             'calendar_id': wo.workcenter_id.resource_calendar_id.id,
-            //             'date_from': date_start,
-            //             'date_to': date_start + relativedelta(minutes=wo.duration_expected),
-            //             'resource_id': wo.workcenter_id.resource_id.id,
-            //             'time_type': 'other'
-            //         })
-            //         vals['date_finished'] = leave.date_to
-            //         vals['leave_id'] = leave.id
-            //         wo.write(vals)
-            //     else:
-            //         if not wo.date_start or wo.date_start > date_start:
-            //             vals['date_finished'] = wo._calculate_date_finished(date_start)
-            //         if wo.date_finished and wo.date_finished < date_start:
-            //             vals['date_finished'] = date_start
-            //         wo.with_context(bypass_duration_calculation=True).write(vals)
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: button_start) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
@@ -177,443 +71,28 @@ namespace Bamboo.Core.Application.Services
         public async Task<MrpWorkorder> ButtonUnblockAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def button_unblock(self):
-            // for order in self:
-            //     order.workcenter_id.unblock()
-            // return True
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: button_unblock) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> CalCostInternalAsync(object date)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _cal_cost(self, date=False):
-            // """Returns total cost of time spent on workorder.
-            // 
-            // :param datetime date: Only calculate for time_ids that ended before this date
-            // """
-            // total = 0
-            // for workorder in self:
-            //     if workorder._should_estimate_cost():
-            //         duration = workorder.duration_expected / 60
-            //     else:
-            //         intervals = Intervals([
-            //             [t.date_start, t.date_end, t]
-            //             for t in workorder.time_ids if t.date_end and (not date or t.date_end < date)
-            //         ])
-            //         duration = sum_intervals(intervals)
-            //     total += duration * (workorder.costs_hour or workorder.workcenter_id.costs_hour)
-            // return total
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> CalculateDateFinishedInternalAsync(object date_start, object new_workcenter)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _calculate_date_finished(self, date_start=False, new_workcenter=False):
-            // workcenter = new_workcenter or self.workcenter_id
-            // if not workcenter.resource_calendar_id:
-            //     duration_in_seconds = self.duration_expected * 60
-            //     return (date_start or self.date_start) + timedelta(seconds=duration_in_seconds)
-            // return workcenter.resource_calendar_id.plan_hours(
-            //     self.duration_expected / 60.0, date_start or self.date_start,
-            //     compute_leaves=True, domain=[('time_type', 'in', ['leave', 'other'])]
-            // )
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> CalculateDurationExpectedInternalAsync(object date_start, object date_finished)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _calculate_duration_expected(self, date_start=False, date_finished=False):
-            // if not self.workcenter_id.resource_calendar_id:
-            //     return ((date_finished or self.date_finished) - (date_start or self.date_start)).total_seconds() / 60
-            // interval = self.workcenter_id.resource_calendar_id.get_work_duration_data(
-            //     date_start or self.date_start, date_finished or self.date_finished,
-            //     domain=[('time_type', 'in', ['leave', 'other'])]
-            // )
-            // return interval['hours'] * 60
-            */
             return default;
         }
 
         public async Task<MrpWorkorder> CancelAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def action_cancel(self):
-            // self.leave_id.unlink()
-            // self.end_all()
-            // return self.filtered(lambda wo: wo.state != 'cancel').write({'state': 'cancel'})
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py) ---
-            // def action_cancel(self):
-            // (self.mo_analytic_account_line_ids | self.wc_analytic_account_line_ids).unlink()
-            // return super().action_cancel()
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: action_cancel) ---
+            --- METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py, METHOD: action_cancel) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<MrpWorkorder> CheckNoCyclicDependenciesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _check_no_cyclic_dependencies(self):
-            // if self._has_cycle('blocked_by_workorder_ids'):
-            //     raise ValidationError(_("You cannot create cyclic dependency."))
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeBarcodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_barcode(self):
-            // for wo in self:
-            //     wo.barcode = f"{wo.production_id.name}/{wo.id}"
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeCurrentOperationCostInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_current_operation_cost(self):
-            // return (self.get_duration() / 60.0) * (self.costs_hour or self.workcenter_id.costs_hour)
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeDatesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_dates(self):
-            // for workorder in self:
-            //     workorder.date_start = workorder.leave_id.date_from
-            //     workorder.date_finished = workorder.leave_id.date_to
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeDisplayNameInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_display_name(self):
-            // for wo in self:
-            //     wo.display_name = f"{wo.production_id.name} - {wo.name}"
-            //     if self.env.context.get('prefix_product'):
-            //         wo.display_name = f"{wo.product_id.name} - {wo.production_id.name} - {wo.name}"
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeDurationExpectedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_duration_expected(self):
-            // for workorder in self:
-            //     # Recompute the duration expected if the qty_producing has been changed:
-            //     # compare with the origin record if it happens during an onchange
-            //     if workorder.state not in ['done', 'cancel'] and (workorder.qty_producing != workorder.qty_production
-            //         or (workorder._origin != workorder and workorder._origin.qty_producing and workorder.qty_producing != workorder._origin.qty_producing)):
-            //         workorder.duration_expected = workorder._get_duration_expected()
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeDurationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_duration(self):
-            // for order in self:
-            //     order.duration = order.get_duration()
-            //     order.duration_unit = round(order.duration / max(order.qty_produced, 1), 2)  # rounding 2 because it is a time
-            //     if order.duration_expected:
-            //         order.duration_percent = max(-2147483648, min(2147483647, 100 * (order.duration_expected - order.duration) / order.duration_expected))
-            //     else:
-            //         order.duration_percent = 0
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py) ---
-            // def _compute_duration(self):
-            // res = super()._compute_duration()
-            // self._create_or_update_analytic_entry()
-            // return res
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeExpectedOperationCostInternalAsync(object without_employee_cost)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_expected_operation_cost(self, without_employee_cost=False):
-            // return (self.duration_expected / 60.0) * (self.costs_hour or self.workcenter_id.costs_hour)
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeIsProducedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_is_produced(self):
-            // self.is_produced = False
-            // for order in self.filtered(lambda p: p.production_id and p.production_id.product_uom_id):
-            //     order.is_produced = order.production_id.product_uom_id.compare(order.qty_produced, order.qty_production) >= 0
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeJsonPopoverInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_json_popover(self):
-            // if self.ids:
-            //     conflicted_dict = self._get_conflicted_workorder_ids()
-            // for wo in self:
-            //     infos = []
-            //     if not wo.date_start or not wo.date_finished or not wo.ids:
-            //         wo.show_json_popover = False
-            //         wo.json_popover = False
-            //         continue
-            //     if wo.state in ('blocked', 'ready'):
-            //         previous_wos = wo.blocked_by_workorder_ids
-            //         previous_starts = previous_wos.filtered('date_start').mapped('date_start')
-            //         previous_finished = previous_wos.filtered('date_finished').mapped('date_finished')
-            //         prev_start = min(previous_starts) if previous_starts else False
-            //         prev_finished = max(previous_finished) if previous_finished else False
-            //         if wo.state == 'blocked' and prev_start and not (prev_start > wo.date_start):
-            //             infos.append({
-            //                 'color': 'text-primary',
-            //                 'msg': _("Waiting the previous work order, planned from %(start)s to %(end)s",
-            //                     start=format_datetime(self.env, prev_start, dt_format=False),
-            //                     end=format_datetime(self.env, prev_finished, dt_format=False))
-            //             })
-            //         if wo.date_finished < fields.Datetime.now():
-            //             infos.append({
-            //                 'color': 'text-warning',
-            //                 'msg': _("The work order should have already been processed.")
-            //             })
-            //         if prev_start and prev_start > wo.date_start:
-            //             infos.append({
-            //                 'color': 'text-danger',
-            //                 'msg': _("Scheduled before the previous work order, planned from %(start)s to %(end)s",
-            //                     start=format_datetime(self.env, prev_start, dt_format=False),
-            //                     end=format_datetime(self.env, prev_finished, dt_format=False))
-            //             })
-            //         if conflicted_dict.get(wo.id):
-            //             infos.append({
-            //                 'color': 'text-danger',
-            //                 'msg': _("Planned at the same time as other workorder(s) at %s", wo.workcenter_id.display_name)
-            //             })
-            //     color_icon = infos and infos[-1]['color'] or False
-            //     wo.show_json_popover = bool(color_icon)
-            //     wo.json_popover = json.dumps({
-            //         'popoverTemplate': 'mrp.workorderPopover',
-            //         'infos': infos,
-            //         'color': color_icon,
-            //         'icon': 'fa-exclamation-triangle' if color_icon in ['text-warning', 'text-danger'] else 'fa-info-circle',
-            //         'replan': color_icon not in [False, 'text-primary']
-            //     })
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeProductionDateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_production_date(self):
-            // for workorder in self:
-            //     workorder.production_date = workorder.date_start or workorder.production_id.date_start
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeProgressInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_progress(self):
-            // for order in self:
-            //     if order.state == 'done':
-            //         order.progress = 100
-            //     elif order.duration_expected:
-            //         order.progress = order.duration * 100 / order.duration_expected
-            //     else:
-            //         order.progress = 0
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeQtyProducingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_qty_producing(self):
-            // for workorder in self:
-            //     workorder.qty_producing = workorder.production_id.qty_producing
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeQtyReadyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_qty_ready(self):
-            // for workorder in self:
-            //     if workorder.state in ('cancel', 'done'):
-            //         workorder.qty_ready = 0
-            //         continue
-            //     if not workorder.blocked_by_workorder_ids or all(wo.state == 'cancel' for wo in workorder.blocked_by_workorder_ids):
-            //         workorder.qty_ready = workorder.qty_remaining
-            //         continue
-            //     workorder_qty_ready = workorder.qty_remaining + workorder.qty_produced
-            //     for wo in workorder.blocked_by_workorder_ids:
-            //         if wo.state != 'cancel':
-            //             workorder_qty_ready = min(workorder_qty_ready, wo.qty_produced + wo.qty_reported_from_previous_wo)
-            //     workorder.qty_ready = workorder_qty_ready - workorder.qty_produced - workorder.qty_reported_from_previous_wo
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeQtyRemainingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_qty_remaining(self):
-            // for wo in self:
-            //     if wo.production_id.product_uom_id:
-            //         wo.qty_remaining = max(wo.production_id.product_uom_id.round(wo.qty_production - wo.qty_reported_from_previous_wo - wo.qty_produced), 0)
-            //     else:
-            //         wo.qty_remaining = 0
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeScrapMoveCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_scrap_move_count(self):
-            // data = self.env['stock.scrap']._read_group([('workorder_id', 'in', self.ids)], ['workorder_id'], ['__count'])
-            // count_data = {workorder.id: count for workorder, count in data}
-            // for workorder in self:
-            //     workorder.scrap_count = count_data.get(workorder.id, 0)
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeStateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_state(self):
-            // for workorder in self:
-            //     if not workorder.product_uom_id or workorder.state not in ('blocked', 'ready'):
-            //         continue
-            //     has_qty_ready = workorder.product_uom_id.compare(workorder.qty_ready, 0) > 0
-            //     if has_qty_ready:
-            //         workorder.write({'state': 'ready'})
-            //     else:
-            //         workorder.write({'state': 'blocked'})
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ComputeWorkingUsersInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _compute_working_users(self):
-            // """ Checks whether the current user is working, all the users currently working and the last user that worked. """
-            // for order in self:
-            //     no_date_end_times = order.time_ids.filtered(lambda time: not time.date_end).sorted('date_start')
-            //     order.working_user_ids = [Command.link(user.id) for user in no_date_end_times.user_id]
-            //     if order.working_user_ids:
-            //         order.last_working_user_id = order.working_user_ids[-1]
-            //     elif order.time_ids:
-            //         times_with_date_end = order.time_ids.filtered('date_end').sorted('date_end')
-            //         order.last_working_user_id = times_with_date_end[-1].user_id if times_with_date_end else order.time_ids[-1].user_id
-            //     else:
-            //         order.last_working_user_id = False
-            //     if no_date_end_times.filtered(lambda x: (x.user_id.id == self.env.user.id) and (x.loss_type in ('productive', 'performance'))):
-            //         order.is_user_working = True
-            //     else:
-            //         order.is_user_working = False
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> CreateOrUpdateAnalyticEntryForRecordInternalAsync(object @value, object hours)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py) ---
-            // def _create_or_update_analytic_entry_for_record(self, value, hours):
-            // self.ensure_one()
-            // if self.workcenter_id.analytic_distribution or self.wc_analytic_account_line_ids or self.mo_analytic_account_line_ids:
-            //     wc_analytic_line_vals = self.env['account.analytic.account']._perform_analytic_distribution(self.workcenter_id.analytic_distribution, value, hours, self.wc_analytic_account_line_ids, self)
-            //     if wc_analytic_line_vals:
-            //         self.wc_analytic_account_line_ids += self.env['account.analytic.line'].sudo().create(wc_analytic_line_vals)
-            --- ODOO METHOD SOURCE (MODULE: project_mrp_account, FILE: mrp_workorder.py) ---
-            // def _create_or_update_analytic_entry_for_record(self, value, hours):
-            // super()._create_or_update_analytic_entry_for_record(value, hours)
-            // project = self.production_id.project_id
-            // mo_analytic_line_vals = self.env['account.analytic.account']._perform_analytic_distribution(project._get_analytic_distribution(), value, hours, self.mo_analytic_account_line_ids, self)
-            // if mo_analytic_line_vals:
-            //     self.sudo().mo_analytic_account_line_ids = [Command.create(line_val) for line_val in mo_analytic_line_vals]
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> CreateOrUpdateAnalyticEntryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py) ---
-            // def _create_or_update_analytic_entry(self):
-            // for wo in self:
-            //     if not wo.id:
-            //         continue
-            //     hours = wo.duration / 60.0
-            //     value = -hours * wo.workcenter_id.costs_hour
-            //     wo._create_or_update_analytic_entry_for_record(value, hours)
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> DefaultSequenceInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _default_sequence(self):
-            // return self.operation_id.sequence or 100
-            */
-            return default;
-        }
-
         public async Task<MrpWorkorder> EndAllAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def end_all(self):
-            // return self.end_previous(doall=True)
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: end_all) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -623,155 +102,27 @@ namespace Bamboo.Core.Application.Services
         public async Task<MrpWorkorder> EndPreviousAsync(MrpWorkorderEndPreviousRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def end_previous(self, doall=False):
-            // """
-            // @param: doall:  This will close all open time lines on the open work orders when doall = True, otherwise
-            // only the one of the current user
-            // """
-            // # TDE CLEANME
-            // domain = [('workorder_id', 'in', self.ids), ('date_end', '=', False)]
-            // if not doall:
-            //     domain.append(('user_id', '=', self.env.user.id))
-            // self.env['mrp.workcenter.productivity'].search(domain, limit=None if doall else 1)._close()
-            // return True
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: end_previous) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<MrpWorkorder> GetByproductMoveToUpdateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _get_byproduct_move_to_update(self):
-            // return self.production_id.move_finished_ids.filtered(lambda x: (x.product_id.id != self.production_id.product_id.id) and (x.state not in ('done', 'cancel')))
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> GetConflictedWorkorderIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _get_conflicted_workorder_ids(self):
-            // """Get conlicted workorder(s) with self.
-            // 
-            // Conflict means having two workorders in the same time in the same workcenter.
-            // 
-            // :return: defaultdict with key as workorder id of self and value as related conflicted workorder
-            // """
-            // self.flush_model(['state', 'date_start', 'date_finished', 'workcenter_id'])
-            // sql = """
-            //     SELECT wo1.id, wo2.id
-            //     FROM mrp_workorder wo1, mrp_workorder wo2
-            //     WHERE
-            //         wo1.id IN %s
-            //         AND wo1.state IN ('blocked', 'ready')
-            //         AND wo2.state IN ('blocked', 'ready')
-            //         AND wo1.id != wo2.id
-            //         AND wo1.workcenter_id = wo2.workcenter_id
-            //         AND (DATE_TRUNC('second', wo2.date_start), DATE_TRUNC('second', wo2.date_finished))
-            //             OVERLAPS (DATE_TRUNC('second', wo1.date_start), DATE_TRUNC('second', wo1.date_finished))
-            // """
-            // self.env.cr.execute(sql, [tuple(self.ids)])
-            // res = defaultdict(list)
-            // for wo1, wo2 in self.env.cr.fetchall():
-            //     res[wo1].append(wo2)
-            // return res
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> GetCurrentTheoricalOperationCostInternalAsync(object without_employee_cost)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _get_current_theorical_operation_cost(self, without_employee_cost=False):
-            // return (self.get_duration() / 60.0) * (self.costs_hour or self.workcenter_id.costs_hour)
-            */
-            return default;
-        }
-
         public async Task<MrpWorkorder> GetDurationAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def get_duration(self):
-            // self.ensure_one()
-            // return sum(self.time_ids.mapped('duration')) + self.get_working_duration()
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: get_duration) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<MrpWorkorder> GetDurationExpectedInternalAsync(object alternative_workcenter, object ratio)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _get_duration_expected(self, alternative_workcenter=False, ratio=1):
-            // self.ensure_one()
-            // if not self.workcenter_id:
-            //     return self.duration_expected
-            // capacity, setup, cleanup = self.workcenter_id._get_capacity(self.product_id, self.product_uom_id, self.production_bom_id.product_qty or 1)
-            // if not self.operation_id:
-            //     duration_expected_working = (self.duration_expected - setup - cleanup) * self.workcenter_id.time_efficiency / 100.0
-            //     if duration_expected_working < 0:
-            //         duration_expected_working = 0
-            //     if self.qty_producing not in (0, self.qty_production, self._origin.qty_producing):
-            //         qty_ratio = self.qty_producing / (self._origin.qty_producing or self.qty_production)
-            //     else:
-            //         qty_ratio = 1
-            //     return setup + cleanup + duration_expected_working * qty_ratio * ratio * 100.0 / self.workcenter_id.time_efficiency
-            // qty_production = self.qty_producing or self.qty_production
-            // cycle_number = float_round(qty_production / capacity, precision_digits=0, rounding_method='UP')
-            // if alternative_workcenter:
-            //     # TODO : find a better alternative : the settings of workcenter can change
-            //     duration_expected_working = (self.duration_expected - setup - cleanup) * self.workcenter_id.time_efficiency / (100.0 * cycle_number)
-            //     if duration_expected_working < 0:
-            //         duration_expected_working = 0
-            //     capacity, setup, cleanup = alternative_workcenter._get_capacity(self.product_id, self.product_uom_id, self.production_bom_id.product_qty or 1)
-            //     cycle_number = float_round(qty_production / capacity, precision_digits=0, rounding_method='UP')
-            //     return setup + cleanup + cycle_number * duration_expected_working * 100.0 / alternative_workcenter.time_efficiency
-            // time_cycle = self.operation_id.time_cycle
-            // return setup + cleanup + cycle_number * time_cycle * 100.0 / self.workcenter_id.time_efficiency
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> GetOperationValuesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _get_operation_values(self):
-            // self.ensure_one()
-            // ratio = 1 / self.qty_production
-            // if self.operation_id.bom_id:
-            //     ratio = self.production_id._get_ratio_between_mo_and_bom_quantities(self.operation_id.bom_id)
-            // return {
-            //     'company_id': self.company_id.id,
-            //     'name': self.name,
-            //     'time_cycle_manual': self.duration_expected * ratio,
-            //     'workcenter_id': self.workcenter_id.id,
-            // }
-            */
-            return default;
-        }
-
         public async Task<MrpWorkorder> GetWorkingDurationAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def get_working_duration(self):
-            // """Get the additional duration for 'open times' i.e. productivity lines with no date_end."""
-            // self.ensure_one()
-            // duration = 0
-            // now = self.env.cr.now()
-            // for time in self.time_ids.filtered(lambda time: not time.date_end):
-            //     duration += (now - time.date_start).total_seconds() / 60
-            // return duration
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: get_working_duration) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -781,226 +132,27 @@ namespace Bamboo.Core.Application.Services
         public async Task<MrpWorkorder> MarkAsDoneAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def action_mark_as_done(self):
-            // for wo in self:
-            //     if wo.working_state == 'blocked':
-            //         raise UserError(_('Please unblock the work center to validate the work order'))
-            //     wo.button_finish()
-            //     if wo.duration == 0.0:
-            //         wo.duration = wo.duration_expected
-            //         wo.duration_percent = 100
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: action_mark_as_done) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> OnchangeDateFinishedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _onchange_date_finished(self):
-            // if self.date_start and self.date_finished and self.workcenter_id:
-            //     self.duration_expected = self._calculate_duration_expected()
-            // if not self.date_finished and self.date_start:
-            //     raise UserError(_("It is not possible to unplan one single Work Order. "
-            //                       "You should unplan the Manufacturing Order instead in order to unplan all the linked operations."))
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> OnchangeDateStartInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _onchange_date_start(self):
-            // if self.date_start and self.workcenter_id:
-            //     self.date_finished = self._calculate_date_finished()
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> OnchangeFinishedLotIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _onchange_finished_lot_ids(self):
-            // if self.production_id:
-            //     res = self.production_id._can_produce_serial_numbers(sns=self.finished_lot_ids)
-            //     if res is not True:
-            //         return res
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> OnchangeOperationIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _onchange_operation_id(self):
-            // if self.operation_id:
-            //     self.name = self.operation_id.name
-            //     self.workcenter_id = self.operation_id.workcenter_id.id
-            */
             return default;
         }
 
         public async Task<MrpWorkorder> OpenWizardAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def action_open_wizard(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_workorder_mrp_production_form")
-            // action['res_id'] = self.id
-            // return action
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: action_open_wizard) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<MrpWorkorder> PlanWorkorderInternalAsync(object replan)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _plan_workorder(self, replan=False):
-            // self.ensure_one()
-            // # Plan workorder after its predecessors
-            // date_start = max(self.production_id.date_start, datetime.now())
-            // for workorder in self.blocked_by_workorder_ids:
-            //     workorder._plan_workorder(replan)
-            //     if workorder.date_finished and workorder.date_finished > date_start:
-            //         date_start = workorder.date_finished
-            // # Plan only suitable workorders
-            // if self.state not in ['blocked', 'ready']:
-            //     return
-            // if self.leave_id:
-            //     if replan:
-            //         self.leave_id.unlink()
-            //     else:
-            //         return
-            // # Consider workcenter and alternatives
-            // workcenters = self.workcenter_id | self.workcenter_id.alternative_workcenter_ids
-            // best_date_finished = datetime.max
-            // vals = {}
-            // for workcenter in workcenters:
-            //     if not workcenter.resource_calendar_id:
-            //         raise UserError(_('There is no defined calendar on workcenter %s.', workcenter.name))
-            //     # Compute theoretical duration
-            //     if self.workcenter_id == workcenter:
-            //         duration_expected = self.duration_expected
-            //     else:
-            //         duration_expected = self._get_duration_expected(alternative_workcenter=workcenter)
-            //     from_date, to_date = workcenter._get_first_available_slot(date_start, duration_expected)
-            //     # If the workcenter is unavailable, try planning on the next one
-            //     if not from_date:
-            //         continue
-            //     # Check if this workcenter is better than the previous ones
-            //     if to_date and to_date < best_date_finished:
-            //         best_date_start = from_date
-            //         best_date_finished = to_date
-            //         best_workcenter = workcenter
-            //         vals = {
-            //             'workcenter_id': workcenter.id,
-            //             'duration_expected': duration_expected,
-            //         }
-            // # If none of the workcenter are available, raise
-            // if best_date_finished == datetime.max:
-            //     raise UserError(_('Impossible to plan the workorder. Please check the workcenter availabilities.'))
-            // # Create leave on chosen workcenter calendar
-            // leave = self.env['resource.calendar.leaves'].create({
-            //     'name': self.display_name,
-            //     'calendar_id': best_workcenter.resource_calendar_id.id,
-            //     'date_from': best_date_start,
-            //     'date_to': best_date_finished,
-            //     'resource_id': best_workcenter.resource_id.id,
-            //     'time_type': 'other'
-            // })
-            // vals['leave_id'] = leave.id
-            // self.write(vals)
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> PrepareAnalyticLineValuesInternalAsync(object account_field_values, object amount, object unit_amount)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py) ---
-            // def _prepare_analytic_line_values(self, account_field_values, amount, unit_amount):
-            // self.ensure_one()
-            // return {
-            //     'name': _("[WC] %s", self.display_name),
-            //     'amount': amount,
-            //     **account_field_values,
-            //     'unit_amount': unit_amount,
-            //     'product_id': self.product_id.id,
-            //     'product_uom_id': self.env.ref('uom.product_uom_hour').id,
-            //     'company_id': self.company_id.id,
-            //     'ref': self.production_id.name,
-            //     'category': 'manufacturing_order',
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> PrepareTimelineValsInternalAsync(object duration, object date_start, object date_end)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _prepare_timeline_vals(self, duration, date_start, date_end=False):
-            // # Need a loss in case of the real time exceeding the expected
-            // if not self.duration_expected or duration <= self.duration_expected:
-            //     loss_id = self.env['mrp.workcenter.productivity.loss'].search([('loss_type', '=', 'productive')], limit=1)
-            //     if not len(loss_id):
-            //         raise UserError(_("You need to define at least one productivity loss in the category 'Productivity'. Create one from the Manufacturing app, menu: Configuration / Productivity Losses."))
-            // else:
-            //     loss_id = self.env['mrp.workcenter.productivity.loss'].search([('loss_type', '=', 'performance')], limit=1)
-            //     if not len(loss_id):
-            //         raise UserError(_("You need to define at least one productivity loss in the category 'Performance'. Create one from the Manufacturing app, menu: Configuration / Productivity Losses."))
-            // return {
-            //     'workorder_id': self.id,
-            //     'workcenter_id': self.workcenter_id.id,
-            //     'description': _('Time Tracking: %(user)s', user=self.env.user.name),
-            //     'loss_id': loss_id[0].id,
-            //     'date_start': date_start.replace(microsecond=0),
-            //     'date_end': date_end.replace(microsecond=0) if date_end else date_end,
-            //     'user_id': self.env.user.id,  # FIXME sle: can be inconsistent with company_id
-            //     'company_id': self.company_id.id,
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ReadGroupWorkcenterIdInternalAsync(object workcenters, object domain)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _read_group_workcenter_id(self, workcenters, domain):
-            // workcenter_ids = self.env.context.get('default_workcenter_id')
-            // if not workcenter_ids:
-            //     # bypass ir.model.access checks, but search with ir.rules
-            //     search_domain = self.env['ir.rule']._compute_domain(workcenters._name)
-            //     workcenter_ids = workcenters.sudo()._search(search_domain, order=workcenters._order)
-            // return workcenters.browse(workcenter_ids)
-            */
-            return default;
-        }
-
         public async Task<MrpWorkorder> ReplanAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def action_replan(self):
-            // """Replan a work order.
-            // 
-            // It actually replans every  "ready" or "blocked"
-            // work orders of the linked manufacturing orders.
-            // """
-            // for production in self.production_id:
-            //     production._plan_workorders(replan=True)
-            // return True
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: action_replan) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -1010,217 +162,30 @@ namespace Bamboo.Core.Application.Services
         public async Task<MrpWorkorder> SeeMoveScrapAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def action_see_move_scrap(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("stock.action_stock_scrap")
-            // action['domain'] = [('workorder_id', '=', self.id)]
-            // return action
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: action_see_move_scrap) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<MrpWorkorder> SetCostModeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _set_cost_mode(self):
-            // """ This should only be called once when the MO is confirmed. """
-            // for workorder in self:
-            //     workorder.cost_mode = workorder.operation_id.cost_mode or 'actual'
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> SetDatesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _set_dates(self):
-            // for wo in self.sudo():
-            //     if wo.leave_id:
-            //         if (not wo.date_start or not wo.date_finished):
-            //             raise UserError(_("It is not possible to unplan one single Work Order. "
-            //                       "You should unplan the Manufacturing Order instead in order to unplan all the linked operations."))
-            //         wo.leave_id.write({
-            //             'date_from': wo.date_start,
-            //             'date_to': wo.date_finished,
-            //         })
-            //     elif wo.date_start:
-            //         if not wo.date_finished:
-            //             wo.date_finished = wo._calculate_date_finished()
-            //         wo.leave_id = wo.env['resource.calendar.leaves'].create({
-            //             'name': wo.display_name,
-            //             'calendar_id': wo.workcenter_id.resource_calendar_id.id,
-            //             'date_from': wo.date_start,
-            //             'date_to': wo.date_finished,
-            //             'resource_id': wo.workcenter_id.resource_id.id,
-            //             'time_type': 'other',
-            //         })
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> SetDurationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _set_duration(self):
-            // 
-            // def _float_duration_to_second(duration):
-            //     minutes = duration // 1
-            //     seconds = (duration % 1) * 60
-            //     return minutes * 60 + seconds
-            // 
-            // for order in self:
-            //     old_order_duration = order.get_duration()
-            //     new_order_duration = order.duration
-            //     if new_order_duration == old_order_duration:
-            //         continue
-            // 
-            //     delta_duration = new_order_duration - old_order_duration
-            // 
-            //     if delta_duration > 0:
-            //         if order.state not in ('progress', 'done', 'cancel'):
-            //             order.state = 'progress'
-            //         enddate = fields.Datetime.now()
-            //         date_start = enddate - timedelta(seconds=_float_duration_to_second(delta_duration))
-            //         if order.duration_expected >= new_order_duration or old_order_duration >= order.duration_expected:
-            //             # either only productive or only performance (i.e. reduced speed) time respectively
-            //             self.env['mrp.workcenter.productivity'].create(
-            //                 order._prepare_timeline_vals(new_order_duration, date_start, enddate)
-            //             )
-            //         else:
-            //             # split between productive and performance (i.e. reduced speed) times
-            //             maxdate = fields.Datetime.from_string(enddate) - relativedelta(minutes=new_order_duration - order.duration_expected)
-            //             self.env['mrp.workcenter.productivity'].create([
-            //                 order._prepare_timeline_vals(order.duration_expected, date_start, maxdate),
-            //                 order._prepare_timeline_vals(new_order_duration, maxdate, enddate)
-            //             ])
-            //     else:
-            //         duration_to_remove = abs(delta_duration)
-            //         timelines_to_unlink = self.env['mrp.workcenter.productivity']
-            //         for timeline in order.time_ids.sorted():
-            //             if duration_to_remove <= 0.0:
-            //                 break
-            //             if timeline.duration <= duration_to_remove:
-            //                 duration_to_remove -= timeline.duration
-            //                 timelines_to_unlink |= timeline
-            //             else:
-            //                 new_time_line_duration = timeline.duration - duration_to_remove
-            //                 timeline.date_start = timeline.date_end - timedelta(seconds=_float_duration_to_second(new_time_line_duration))
-            //                 break
-            //         timelines_to_unlink.unlink()
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py) ---
-            // def _set_duration(self):
-            // res = super()._set_duration()
-            // self._create_or_update_analytic_entry()
-            // return res
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> SetQtyProducingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _set_qty_producing(self):
-            // for workorder in self:
-            //     if workorder.qty_producing != 0 and workorder.production_id.qty_producing != workorder.qty_producing:
-            //         workorder.production_id.qty_producing = workorder.qty_producing
-            //         workorder.production_id._set_qty_producing(False)
-            */
-            return default;
-        }
-
         public async Task<MrpWorkorder> SetStateAsync(MrpWorkorderSetStateRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def set_state(self, state):
-            // ids_to_update = []
-            // for wo in self:
-            //     if wo.state == state or 'done' in (wo.state, wo.production_state):
-            //         continue
-            //     if wo.state == 'progress':
-            //         wo.button_pending()
-            //     elif wo.state in ('done', 'cancel') and state == 'progress':
-            //         wo.write({'state': 'ready'})  # Middle step to solve further conflict
-            //     ids_to_update.append(wo.id)
-            // 
-            // wo_to_update = self.browse(ids_to_update)
-            // if state == 'cancel':
-            //     wo_to_update.action_cancel()
-            // elif state == 'done':
-            //     wo_to_update.action_mark_as_done()
-            // elif state == 'progress':
-            //     wo_to_update.button_start()
-            // else:
-            //     wo_to_update.write({'state': state})
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: set_state) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<MrpWorkorder> ShouldEstimateCostInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _should_estimate_cost(self):
-            // self.ensure_one()
-            // return self.state in ('progress', 'done') and self.duration_expected and self.cost_mode == 'estimated'
-            */
-            return default;
-        }
-
-        protected async Task<MrpWorkorder> ShouldStartTimerInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _should_start_timer(self):
-            // return True
-            */
-            return default;
-        }
-
         public override async Task<object> UnlinkAsync(List<Guid> ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def unlink(self):
-            // # Removes references to workorder to avoid Validation Error
-            // (self.mapped('move_raw_ids') | self.mapped('move_finished_ids')).write({'workorder_id': False})
-            // self.mapped('leave_id').unlink()
-            // mo_dirty = self.production_id.filtered(lambda mo: mo.state in ("confirmed", "progress", "to_close"))
-            // 
-            // for workorder in self:
-            //     workorder.blocked_by_workorder_ids.needed_by_workorder_ids = workorder.needed_by_workorder_ids
-            // res = super().unlink()
-            // # We need to go through `_action_confirm` for all workorders of the current productions to
-            // # make sure the links between them are correct (`next_work_order_id` could be obsolete now).
-            // mo_dirty.workorder_ids._action_confirm()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py) ---
-            // def unlink(self):
-            // (self.mo_analytic_account_line_ids | self.wc_analytic_account_line_ids).unlink()
-            // return super().unlink()
+            --- METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py, METHOD: unlink) ---
+            --- METHOD SOURCE (MODULE: mrp_account, FILE: mrp_workorder.py, METHOD: unlink) ---
             */
             return await base.UnlinkAsync(ids);
-        }
-
-        protected async Task<MrpWorkorder> UpdateQtyProducingInternalAsync(object quantity)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
-            // def _update_qty_producing(self, quantity):
-            // self.ensure_one()
-            // if self.qty_producing:
-            //     self.qty_producing = quantity
-            */
-            return default;
         }
     }
 }

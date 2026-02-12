@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Productivity/Calendar, Module: calendar
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/productivity/CalendarFilters")]
     public partial class CalendarFiltersController : AbpController
     {
-        private readonly ICalendarFiltersAppService _appService;
+        protected readonly ICalendarFiltersAppService _appService;
         public CalendarFiltersController(ICalendarFiltersAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("unlink-from-partner-id")]
+        public async Task<IActionResult> UnlinkFromPartnerIdAsync([FromBody] CalendarFiltersUnlinkFromPartnerIdRequestDto input)
+        {
+            var result = await _appService.UnlinkFromPartnerIdAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

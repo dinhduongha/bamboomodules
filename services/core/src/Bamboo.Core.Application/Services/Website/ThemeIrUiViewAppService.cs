@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class ThemeIrUiViewAppService : GenericAppService<ThemeIrUiView>, IThemeIrUiViewAppService
     {
 
-        public ThemeIrUiViewAppService(IRepository<ThemeIrUiView, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public ThemeIrUiViewAppService(IRepository<ThemeIrUiView, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,59 +30,10 @@ namespace Bamboo.Core.Application.Services
         public async Task<ThemeIrUiView> ComputeArchFsAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: theme_models.py) ---
-            // def compute_arch_fs(self):
-            // if 'install_filename' not in self.env.context:
-            //     return ''
-            // path_info = get_resource_from_path(self.env.context['install_filename'])
-            // if path_info:
-            //     return '/'.join(path_info[0:2])
+            --- METHOD SOURCE (MODULE: website, FILE: theme_models.py, METHOD: compute_arch_fs) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<ThemeIrUiView> ConvertToBaseModelInternalAsync(object website)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: theme_models.py) ---
-            // def _convert_to_base_model(self, website, **kwargs):
-            // self.ensure_one()
-            // inherit = self.inherit_id
-            // if self.inherit_id and self.inherit_id._name == 'theme.ir.ui.view':
-            //     inherit = self.inherit_id.with_context(active_test=False).copy_ids.filtered(lambda x: x.website_id == website)
-            //     if not inherit:
-            //         # inherit_id not yet created, add to the queue
-            //         return False
-            // 
-            // if inherit and inherit.website_id != website:
-            //     website_specific_inherit = self.env['ir.ui.view'].with_context(active_test=False).search([
-            //         ('key', '=', inherit.key),
-            //         ('website_id', '=', website.id)
-            //     ], limit=1)
-            //     if website_specific_inherit:
-            //         inherit = website_specific_inherit
-            // 
-            // new_view = {
-            //     'type': self.type or 'qweb',
-            //     'name': self.name,
-            //     'arch': self.arch,
-            //     'key': self.key,
-            //     'inherit_id': inherit and inherit.id,
-            //     'arch_fs': self.arch_fs,
-            //     'priority': self.priority,
-            //     'active': self.active,
-            //     'theme_template_id': self.id,
-            //     'website_id': website.id,
-            //     'customize_show': self.customize_show,
-            // }
-            // 
-            // if self.mode:  # if not provided, it will be computed automatically (if inherit_id or not)
-            //     new_view['mode'] = self.mode
-            // 
-            // return new_view
-            */
             return default;
         }
     }

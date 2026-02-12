@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Hidden, Module: base
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/base/ServerActionHistoryWizard")]
     public partial class ServerActionHistoryWizardController : AbpController
     {
-        private readonly IServerActionHistoryWizardAppService _appService;
+        protected readonly IServerActionHistoryWizardAppService _appService;
         public ServerActionHistoryWizardController(IServerActionHistoryWizardAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("restore-revision")]
+        public async Task<IActionResult> RestoreRevisionAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.RestoreRevisionAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

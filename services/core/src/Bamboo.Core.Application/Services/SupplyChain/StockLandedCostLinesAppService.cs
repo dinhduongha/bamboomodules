@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class StockLandedCostLinesAppService : GenericAppService<StockLandedCostLines>, IStockLandedCostLinesAppService
     {
 
-        public StockLandedCostLinesAppService(IRepository<StockLandedCostLines, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public StockLandedCostLinesAppService(IRepository<StockLandedCostLines, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,13 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<StockLandedCostLines> OnchangeProductIdAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def onchange_product_id(self):
-            // self.name = self.product_id.name or ''
-            // self.split_method = self.product_id.product_tmpl_id.split_method_landed_cost or self.split_method or 'equal'
-            // self.price_unit = self.product_id.standard_price or 0.0
-            // accounts_data = self.product_id.product_tmpl_id.get_product_accounts()
-            // self.account_id = accounts_data['expense']
+            --- METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py, METHOD: onchange_product_id) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

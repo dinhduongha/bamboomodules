@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class RecurringPaymentLineAppService : GenericAppService<RecurringPaymentLine>, IRecurringPaymentLineAppService
     {
 
-        public RecurringPaymentLineAppService(IRepository<RecurringPaymentLine, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public RecurringPaymentLineAppService(IRepository<RecurringPaymentLine, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,23 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<RecurringPaymentLine> CreatePaymentAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---
-            // def action_create_payment(self):
-            // vals = {
-            //     'payment_type': self.recurring_payment_id.payment_type,
-            //     'amount': self.amount,
-            //     'currency_id': self.currency_id.id,
-            //     'journal_id': self.journal_id.id,
-            //     'company_id': self.company_id.id,
-            //     'date': self.date,
-            //     'memo': self.recurring_payment_id.name,
-            //     'partner_id': self.partner_id.id,
-            // }
-            // payment = self.env['account.payment'].create(vals)
-            // if payment:
-            //     if self.recurring_payment_id.journal_state == 'posted':
-            //         payment.action_post()
-            //     self.write({'state': 'done', 'payment_id': payment.id})
+            --- METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py, METHOD: action_create_payment) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

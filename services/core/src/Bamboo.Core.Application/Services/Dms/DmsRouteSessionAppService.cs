@@ -8,6 +8,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Core.Application.Contracts.Interfaces
 {
@@ -26,14 +27,11 @@ namespace Bamboo.Core.Application.Services
     {
         public DmsRouteSessionAppService(
             IRepository<DmsRouteSession, Guid> repository,
-            IServiceProvider serviceProvider,
-            IDataFilter dataFilter,
-            IObjectMapper objectMapper,
+            ICurrentTenant currentTenant,
             IDistributedCache cache,
-            IAuthorizationService authorizationService,
             IDomainParser domainParser,
             IModelTypeRegistry modelTypeRegistry)
-            : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+            : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
         }
 

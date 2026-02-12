@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,8 +22,8 @@ namespace Bamboo.Core.Application.Services
     [Module("HrSkills", Category = "HumanResources", Depends = new[] { "hr" })]
     public partial class HrEmployeeSkillAppService : GenericAppService<HrEmployeeSkill>, IHrEmployeeSkillAppService
     {
-        private readonly IHrIndividualSkillMixinAppService _hrIndividualSkillMixinAppService;
-        public HrEmployeeSkillAppService(IRepository<HrEmployeeSkill, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IHrIndividualSkillMixinAppService hrIndividualSkillMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IHrIndividualSkillMixinAppService _hrIndividualSkillMixinAppService;
+        public HrEmployeeSkillAppService(IRepository<HrEmployeeSkill, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IHrIndividualSkillMixinAppService hrIndividualSkillMixinAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _hrIndividualSkillMixinAppService = hrIndividualSkillMixinAppService;
         }
@@ -30,54 +31,17 @@ namespace Bamboo.Core.Application.Services
         public async Task<HrEmployeeSkill> GetCurrentSkillsByEmployeeAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py) ---
-            // def get_current_skills_by_employee(self):
-            // emp_skill_grouped = dict(self.grouped(lambda emp_skill: (emp_skill.employee_id, emp_skill.skill_id)))
-            // result_dict = defaultdict(lambda: self.env['hr.employee.skill'])
-            // for (employee, skill), emp_skills in emp_skill_grouped.items():
-            //     filtered_emp_skill = emp_skills.filtered(
-            //         lambda employee_skill: not employee_skill.valid_to or employee_skill.valid_to >= fields.Date.today()
-            //     )
-            //     if skill.skill_type_id.is_certification and not filtered_emp_skill:
-            //         expired_skills = (emp_skills - filtered_emp_skill)
-            //         expired_skills_group_by_valid_to = expired_skills.grouped('valid_to')
-            //         max_valid_to = max(expired_skills.mapped('valid_to'))
-            //         result_dict[employee.id] += expired_skills_group_by_valid_to[max_valid_to]
-            //         continue
-            //     result_dict[employee.id] += filtered_emp_skill
-            // return result_dict
+            --- METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py, METHOD: get_current_skills_by_employee) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<HrEmployeeSkill> LinkedFieldNameInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py) ---
-            // def _linked_field_name(self):
-            // return 'employee_id'
-            */
-            return default;
-        }
-
         public async Task<HrEmployeeSkill> OpenHrEmployeeSkillModalAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py) ---
-            // def open_hr_employee_skill_modal(self):
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.employee.skill',
-            //     'res_id': self.id if self else False,
-            //     'target': 'new',
-            //     'context': {
-            //         'show_employee': True,
-            //         'default_skill_type_id': self.env['hr.skill.type'].search([('is_certification', '=', True)], limit=1).id
-            //     },
-            //     'views': [(self.env.ref('hr_skills.employee_skill_view_inherit_certificate_form').id, 'form')],
-            // }
+            --- METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py, METHOD: open_hr_employee_skill_modal) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -87,9 +51,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<HrEmployeeSkill> SaveAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py) ---
-            // def action_save(self):
-            // return {'type': 'ir.actions.act_window_close'}
+            --- METHOD SOURCE (MODULE: hr_skills, FILE: hr_employee_skill.py, METHOD: action_save) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

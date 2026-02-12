@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class WebTourTourStepAppService : GenericAppService<WebTourTourStep>, IWebTourTourStepAppService
     {
 
-        public WebTourTourStepAppService(IRepository<WebTourTourStep, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public WebTourTourStepAppService(IRepository<WebTourTourStep, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,20 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<WebTourTourStep> GetStepsJsonAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: web_tour, FILE: tour.py) ---
-            // def get_steps_json(self):
-            // steps = []
-            // 
-            // for step in self.read(fields=["trigger", "content", "run", "tooltip_position"]):
-            //     del step["id"]
-            //     step["tooltipPosition"] = step["tooltip_position"]
-            //     del step["tooltip_position"]
-            // 
-            //     if not step["content"]:
-            //         del step["content"]
-            //     steps.append(step)
-            // 
-            // return steps
+            --- METHOD SOURCE (MODULE: web_tour, FILE: tour.py, METHOD: get_steps_json) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

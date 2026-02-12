@@ -6,16 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Productivity/Discuss, Module: mail
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/productivity/DiscussChannelMember")]
     public partial class DiscussChannelMemberController : AbpController
     {
-        private readonly IDiscussChannelMemberAppService _appService;
+        protected readonly IDiscussChannelMemberAppService _appService;
         public DiscussChannelMemberController(IDiscussChannelMemberAppService appService) { _appService = appService; }
+        
+        
     }
+    
 }

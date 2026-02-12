@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -24,14 +25,11 @@ namespace Bamboo.Core.Application.Services
     {
         public DmsVoiceNoteAppService(
             IRepository<DmsVoiceNote, Guid> repository,
-            IServiceProvider serviceProvider,
-            IDataFilter dataFilter,
-            IObjectMapper objectMapper,
+            ICurrentTenant currentTenant,
             IDistributedCache cache,
-            IAuthorizationService authorizationService,
             IDomainParser domainParser,
             IModelTypeRegistry modelTypeRegistry)
-            : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+            : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
         }
 

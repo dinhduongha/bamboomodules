@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,30 +22,15 @@ namespace Bamboo.Core.Application.Services
     public partial class BaseEnableProfilingWizardAppService : GenericAppService<BaseEnableProfilingWizard>, IBaseEnableProfilingWizardAppService
     {
 
-        public BaseEnableProfilingWizardAppService(IRepository<BaseEnableProfilingWizard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public BaseEnableProfilingWizardAppService(IRepository<BaseEnableProfilingWizard, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<BaseEnableProfilingWizard> ComputeExpirationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_profile.py) ---
-            // def _compute_expiration(self):
-            // for record in self:
-            //     unit, quantity = (record.duration or 'days_0').split('_')
-            //     record.expiration = fields.Datetime.now() + relativedelta(**{unit: int(quantity)})
-            */
-            return default;
         }
 
         public async Task<BaseEnableProfilingWizard> SubmitAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_profile.py) ---
-            // def submit(self):
-            // self.env['ir.config_parameter'].set_param('base.profiling_enabled_until', self.expiration)
-            // return False
+            --- METHOD SOURCE (MODULE: base, FILE: ir_profile.py, METHOD: submit) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

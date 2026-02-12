@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Website/Live Chat, Module: im_livechat
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/website/ImLivechatChannelRule")]
     public partial class ImLivechatChannelRuleController : AbpController
     {
-        private readonly IImLivechatChannelRuleAppService _appService;
+        protected readonly IImLivechatChannelRuleAppService _appService;
         public ImLivechatChannelRuleController(IImLivechatChannelRuleAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("match-rule")]
+        public async Task<IActionResult> MatchRuleAsync([FromBody] ImLivechatChannelRuleMatchRuleRequestDto input)
+        {
+            var result = await _appService.MatchRuleAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

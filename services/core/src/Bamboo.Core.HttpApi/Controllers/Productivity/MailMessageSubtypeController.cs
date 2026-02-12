@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Productivity/Discuss, Module: mail
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/productivity/MailMessageSubtype")]
     public partial class MailMessageSubtypeController : AbpController
     {
-        private readonly IMailMessageSubtypeAppService _appService;
+        protected readonly IMailMessageSubtypeAppService _appService;
         public MailMessageSubtypeController(IMailMessageSubtypeAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("default-subtypes")]
+        public async Task<IActionResult> DefaultSubtypesAsync([FromBody] MailMessageSubtypeDefaultSubtypesRequestDto input)
+        {
+            var result = await _appService.DefaultSubtypesAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

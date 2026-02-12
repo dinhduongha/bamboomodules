@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Supply Chain/Inventory, Module: stock_landed_costs
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/supply-chain/StockLandedCostLines")]
     public partial class StockLandedCostLinesController : AbpController
     {
-        private readonly IStockLandedCostLinesAppService _appService;
+        protected readonly IStockLandedCostLinesAppService _appService;
         public StockLandedCostLinesController(IStockLandedCostLinesAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("onchange-product-id")]
+        public async Task<IActionResult> OnchangeProductIdAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.OnchangeProductIdAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

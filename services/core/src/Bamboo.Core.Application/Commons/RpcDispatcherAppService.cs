@@ -24,8 +24,7 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     protected readonly IServiceProvider _serviceProvider;
     protected readonly ILogger<RpcDispatcherAppService> _logger;
     protected readonly IModelTypeRegistry _modelTypeRegistry;
-    protected readonly IAuthorizationService _authorizationService;
-    //private readonly ConcurrentDictionary<(string model, string method), (Type ServiceType, MethodInfo Method)> _methodCache = new();
+    protected readonly IBambooAuthorizationService _authorizationService;
 
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -43,7 +42,7 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
     public RpcDispatcherAppService(
         IServiceProvider serviceProvider,
         ILogger<RpcDispatcherAppService> logger,
-        IAuthorizationService authorizationService,
+        IBambooAuthorizationService authorizationService,
         IModelTypeRegistry modelTypeRegistry)
     {
         _serviceProvider = serviceProvider;
@@ -79,10 +78,10 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
         return jsonElementList;
     }
 
-    public async Task<object> SearchCountAsync(string modelName, SearchCountRequestDto input)
+    public async Task<long> SearchCountAsync(string modelName, SearchCountRequestDto input)
     {
         var service = GetGenericService(modelName);
-        var results = await CallServiceMethodAsync<object>(service, "SearchCountAsync", input);
+        var results = await CallServiceMethodAsync<long>(service, "SearchCountAsync", input);
         return results;
         // List<JsonElement> jsonElementList = results
         //     .Select(item => JsonSerializer.SerializeToElement(item, _jsonSerializerOptions))
@@ -686,6 +685,34 @@ public class RpcDispatcherAppService : IRpcDispatcherAppService
         {
             throw new JsonRpcException(-32000, "Server error: " + ex.Message, ex);
         }
+    }
+
+    private T DeserializeArg<T>(object? arg, JsonSerializerOptions options)
+    {
+        if (arg == null) return default!;
+        if (arg is JsonElement je) return je.Deserialize<T>(options) ?? default!;
+        return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(arg, options), options) ?? default!;
+    }
+
+    private JsonElement? GetContext(Dictionary<string, object>? kwargs, List<object> args)
+    {
+        if (kwargs != null && kwargs.TryGetValue("context", out var ctxObj) && ctxObj != null)
+        {
+            return JsonSerializer.SerializeToElement(ctxObj, _jsonSerializerOptions);
+        }
+
+        // Fallback: nếu args[0] là object/context (legacy positional)
+        if (args.Count > 0 && args[0] is JsonElement je && je.ValueKind == JsonValueKind.Object)
+        {
+            return je;
+        }
+
+        if (args.Count > 0 && args[0] != null)
+        {
+            return JsonSerializer.SerializeToElement(args[0], _jsonSerializerOptions);
+        }
+
+        return null;
     }
 
     protected async Task<object> ProcessCommonMethodAsync(string modelName, string method, List<object> args, Dictionary<string, object>? kwargs)

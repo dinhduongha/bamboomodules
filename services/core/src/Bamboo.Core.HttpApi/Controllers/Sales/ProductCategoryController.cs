@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Sales/Sales, Module: product
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/sales/ProductCategory")]
     public partial class ProductCategoryController : AbpController
     {
-        private readonly IProductCategoryAppService _appService;
+        protected readonly IProductCategoryAppService _appService;
         public ProductCategoryController(IProductCategoryAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync([FromBody] ProductCategoryCopyDataRequestDto input)
+        {
+            var result = await _appService.CopyDataAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

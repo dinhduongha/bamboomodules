@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Supply Chain/Inventory, Module: stock
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/supply-chain/StockPackageType")]
     public partial class StockPackageTypeController : AbpController
     {
-        private readonly IStockPackageTypeAppService _appService;
+        protected readonly IStockPackageTypeAppService _appService;
         public StockPackageTypeController(IStockPackageTypeAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync([FromBody] StockPackageTypeCopyDataRequestDto input)
+        {
+            var result = await _appService.CopyDataAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

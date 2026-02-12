@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class BaseImportModuleAppService : GenericAppService<BaseImportModule>, IBaseImportModuleAppService
     {
 
-        public BaseImportModuleAppService(IRepository<BaseImportModule, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public BaseImportModuleAppService(IRepository<BaseImportModule, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,10 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<BaseImportModule> GetDependenciesToInstallNamesAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py) ---
-            // def get_dependencies_to_install_names(self):
-            // module_ids, _not_found = self.env['ir.module.module']._get_missing_dependencies_modules(base64.decodebytes(self.module_file))
-            // return module_ids.mapped('name')
+            --- METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py, METHOD: get_dependencies_to_install_names) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -42,19 +40,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<BaseImportModule> ImportModuleAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py) ---
-            // def import_module(self):
-            // self.ensure_one()
-            // IrModule = self.env['ir.module.module']
-            // zip_data = base64.decodebytes(self.module_file)
-            // fp = BytesIO()
-            // fp.write(zip_data)
-            // res = IrModule._import_zipfile(fp, force=self.force, with_demo=self.with_demo)
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'target': 'self',
-            //     'url': '/odoo',
-            // }
+            --- METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py, METHOD: import_module) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -64,17 +50,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<BaseImportModule> ModuleOpenAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py) ---
-            // def action_module_open(self):
-            // self.ensure_one()
-            // return {
-            //     'domain': [('name', 'in', self.env.context.get('module_name', []))],
-            //     'name': 'Modules',
-            //     'view_mode': 'list,form',
-            //     'res_model': 'ir.module.module',
-            //     'view_id': False,
-            //     'type': 'ir.actions.act_window',
-            // }
+            --- METHOD SOURCE (MODULE: base_import_module, FILE: base_import_module.py, METHOD: action_module_open) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

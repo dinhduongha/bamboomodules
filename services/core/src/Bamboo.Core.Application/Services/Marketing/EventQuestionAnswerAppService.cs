@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,8 +22,8 @@ namespace Bamboo.Core.Application.Services
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
     public partial class EventQuestionAnswerAppService : GenericAppService<EventQuestionAnswer>, IEventQuestionAnswerAppService
     {
-        private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public EventQuestionAnswerAppService(IRepository<EventQuestionAnswer, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IPosLoadMixinAppService _posLoadMixinAppService;
+        public EventQuestionAnswerAppService(IRepository<EventQuestionAnswer, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _posLoadMixinAppService = posLoadMixinAppService;
         }
@@ -30,57 +31,10 @@ namespace Bamboo.Core.Application.Services
         public async Task<EventQuestionAnswer> AddRuleButtonAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_question_answer.py) ---
-            // def action_add_rule_button(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.actions']._for_xml_id('event_crm.event_lead_rule_answer_action')
-            // action['context'] = {
-            //     'default_name': self.name,
-            //     'default_lead_user_id': self.env.user.id,
-            //     'default_event_registration_filter': [
-            //         '&',
-            //         ('registration_answer_ids.question_id', 'in', self.question_id.ids),
-            //         ('registration_answer_choice_ids.value_answer_id', 'in', self.ids)
-            //     ]
-            // }
-            // action['target'] = 'new'
-            // return action
+            --- METHOD SOURCE (MODULE: event_crm, FILE: event_question_answer.py, METHOD: action_add_rule_button) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<EventQuestionAnswer> LoadPosDataDomainInternalAsync(object data, object config)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_question_answer.py) ---
-            // def _load_pos_data_domain(self, data, config):
-            // return [('question_id', 'in', [quest['id'] for quest in data['event.question']])]
-            */
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<EventQuestionAnswer> LoadPosDataFieldsInternalAsync(object config)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: event_question_answer.py) ---
-            // def _load_pos_data_fields(self, config):
-            // return ['question_id', 'name', 'sequence']
-            */
-            return default;
-        }
-
-        protected async Task<EventQuestionAnswer> UnlinkExceptSelectedAnswerInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_question_answer.py) ---
-            // def _unlink_except_selected_answer(self):
-            // if self.env['event.registration.answer'].search_count([('value_answer_id', 'in', self.ids)]):
-            //     raise UserError(_('You cannot delete an answer that has already been selected by attendees.'))
-            */
             return default;
         }
     }

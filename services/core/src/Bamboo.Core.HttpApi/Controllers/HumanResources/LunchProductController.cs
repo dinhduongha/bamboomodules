@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Human Resources/Lunch, Module: lunch
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/human-resources/LunchProduct")]
     public partial class LunchProductController : AbpController
     {
-        private readonly ILunchProductAppService _appService;
+        protected readonly ILunchProductAppService _appService;
         public LunchProductController(ILunchProductAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("toggle-active")]
+        public async Task<IActionResult> ToggleActiveAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ToggleActiveAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

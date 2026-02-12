@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class AuthTotpRateLimitLogAppService : GenericAppService<AuthTotpRateLimitLog>, IAuthTotpRateLimitLogAppService
     {
 
-        public AuthTotpRateLimitLogAppService(IRepository<AuthTotpRateLimitLog, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public AuthTotpRateLimitLogAppService(IRepository<AuthTotpRateLimitLog, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,12 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<AuthTotpRateLimitLog> InitAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: auth_totp_rate_limit_log.py) ---
-            // def init(self):
-            // self.env.cr.execute("""
-            //     CREATE INDEX IF NOT EXISTS auth_totp_rate_limit_log_user_id_limit_type_create_date_idx
-            //     ON auth_totp_rate_limit_log(user_id, limit_type, create_date);
-            // """)
+            --- METHOD SOURCE (MODULE: auth_totp_mail_enforce, FILE: auth_totp_rate_limit_log.py, METHOD: init) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

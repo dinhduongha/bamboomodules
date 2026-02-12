@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Sales/Sales, Module: product
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/sales/ProductTemplateAttributeLine")]
     public partial class ProductTemplateAttributeLineController : AbpController
     {
-        private readonly IProductTemplateAttributeLineAppService _appService;
+        protected readonly IProductTemplateAttributeLineAppService _appService;
         public ProductTemplateAttributeLineController(IProductTemplateAttributeLineAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-open-attribute-values")]
+        public async Task<IActionResult> OpenAttributeValuesAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.OpenAttributeValuesAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

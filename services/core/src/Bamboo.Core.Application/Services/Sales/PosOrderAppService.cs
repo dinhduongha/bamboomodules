@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,11 +22,11 @@ namespace Bamboo.Core.Application.Services
     [Module("PointOfSale", Category = "Sales", Depends = new[] { "resource", "stock_account", "barcodes", "html_editor", "digest", "phone_validation", "partner_autocomplete", "iot_base", "google_address_autocomplete" })]
     public partial class PosOrderAppService : GenericAppService<PosOrder>, IPosOrderAppService
     {
-        private readonly IMailThreadAppService _mailThreadAppService;
-        private readonly IPortalMixinAppService _portalMixinAppService;
-        private readonly IPosBusMixinAppService _posBusMixinAppService;
-        private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public PosOrderAppService(IRepository<PosOrder, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService, IPortalMixinAppService portalMixinAppService, IPosBusMixinAppService posBusMixinAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IMailThreadAppService _mailThreadAppService;
+        protected readonly IPortalMixinAppService _portalMixinAppService;
+        protected readonly IPosBusMixinAppService _posBusMixinAppService;
+        protected readonly IPosLoadMixinAppService _posLoadMixinAppService;
+        public PosOrderAppService(IRepository<PosOrder, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService, IPortalMixinAppService portalMixinAppService, IPosBusMixinAppService posBusMixinAppService, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _mailThreadAppService = mailThreadAppService;
             _portalMixinAppService = portalMixinAppService;
@@ -36,888 +37,56 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> AddLoyaltyHistoryLinesAsync(PosOrderAddLoyaltyHistoryLinesRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
-            // def add_loyalty_history_lines(self, coupon_data, coupon_updates):
-            // id_mapping = {item['old_id']: int(item['id']) for item in coupon_updates}
-            // history_lines_create_vals = []
-            // for coupon in coupon_data:
-            //     card_id = id_mapping.get(int(coupon['card_id']), False) or int(coupon['card_id'])
-            //     if not self.env['loyalty.card'].browse(card_id).exists():
-            //         continue
-            //     issued = coupon['won']
-            //     cost = coupon['spent']
-            //     if (issued or cost) and card_id > 0:
-            //         history_lines_create_vals.append({
-            //             'card_id': card_id,
-            //             'order_model': self._name,
-            //             'order_id': self.id,
-            //             'description': _('Onsite %s', self.display_name),
-            //             'used': cost,
-            //             'issued': issued,
-            //         })
-            // self.env['loyalty.history'].create(history_lines_create_vals)
+            --- METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py, METHOD: add_loyalty_history_lines) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<PosOrder> AddMailAttachmentInternalAsync(object name, object ticket, object basic_receipt)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
-            // def _add_mail_attachment(self, name, ticket, basic_receipt):
-            // attachment = super()._add_mail_attachment(name, ticket, basic_receipt)
-            // gift_card_programs = self.config_id._get_program_ids().filtered(lambda p: p.program_type == 'gift_card' and
-            //                                                                           p.pos_report_print_id)
-            // if gift_card_programs:
-            //     gift_cards = self.env['loyalty.card'].search([('source_pos_order_id', '=', self.id),
-            //                                                   ('program_id', 'in', gift_card_programs.ids)])
-            //     if gift_cards:
-            //         for program in gift_card_programs:
-            //             filtered_gift_cards = gift_cards.filtered(lambda gc: gc.program_id == program)
-            //             if filtered_gift_cards:
-            //                 action_report = program.pos_report_print_id
-            //                 report = action_report._render_qweb_pdf(action_report.report_name, filtered_gift_cards.ids)
-            //                 filename = name + '.pdf'
-            //                 gift_card_pdf = self.env['ir.attachment'].create({
-            //                     'name': filename,
-            //                     'type': 'binary',
-            //                     'datas': base64.b64encode(report[0]),
-            //                     'store_fname': filename,
-            //                     'res_model': 'pos.order',
-            //                     'res_id': self.ids[0],
-            //                     'mimetype': 'application/x-pdf'
-            //                 })
-            //                 attachment += [(4, gift_card_pdf.id)]
-            // 
-            // return attachment
-            */
             return default;
         }
 
         public async Task<PosOrder> AddPaymentAsync(PosOrderAddPaymentRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def add_payment(self, data):
-            // """Create a new payment for the order"""
-            // self.ensure_one()
-            // self.env['pos.payment'].create(data)
-            // self.amount_paid = self._compute_amount_paid()
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: add_payment) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<PosOrder> CheckExistingLoyaltyCardsInternalAsync(object coupon_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
-            // def _check_existing_loyalty_cards(self, coupon_data):
-            // coupon_key_to_modify = []
-            // for coupon_id, coupon_vals in coupon_data.items():
-            //     partner_id = coupon_vals.get('partner_id', False)
-            //     if partner_id:
-            //         existing_coupon_for_program = self.env['loyalty.card'].search(
-            //             [('partner_id', '=', partner_id), ('program_type', 'in', ['loyalty', 'ewallet']), ('program_id', '=', coupon_vals['program_id'])])
-            //         if existing_coupon_for_program:
-            //             coupon_vals['coupon_id'] = existing_coupon_for_program[0].id
-            //             coupon_key_to_modify.append([coupon_id, existing_coupon_for_program[0].id])
-            // for old_key, new_key in coupon_key_to_modify:
-            //     coupon_data[new_key] = coupon_data.pop(old_key)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> CheckNextOnlinePaymentAmountInternalAsync(object amount)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py) ---
-            // def _check_next_online_payment_amount(self, amount):
-            // self.ensure_one()
-            // return tools.float_compare(amount, 0.0, precision_rounding=self.currency_id.rounding) >= 0 and tools.float_compare(amount, self.get_amount_unpaid(), precision_rounding=self.currency_id.rounding) <= 0
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> CleanPaymentLinesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _clean_payment_lines(self):
-            // self.ensure_one()
-            // self.payment_ids.unlink()
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py) ---
-            // def _clean_payment_lines(self):
-            // self.ensure_one()
-            // order_payments = self.env['pos.payment'].search(['&', ('pos_order_id', '=', self.id), ('online_account_payment_id', '=', False)])
-            // order_payments.unlink()
-            */
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<PosOrder> CompleteValuesFromSessionInternalAsync(object session, object values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _complete_values_from_session(self, session, values):
-            // values.setdefault('pricelist_id', session.config_id.pricelist_id.id)
-            // values.setdefault('fiscal_position_id', session.config_id.default_fiscal_position_id.id)
-            // values.setdefault('company_id', session.config_id.company_id.id)
-            // 
-            // if not values.get('pos_reference'):
-            //     reference, tracking_number = session.config_id._get_next_order_refs()
-            //     values['pos_reference'] = reference
-            //     values['tracking_number'] = tracking_number
-            // 
-            // if not values.get('sequence_number'):
-            //     self._update_sequence_number(session, values)
-            // 
-            // return values
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def _complete_values_from_session(self, session, values):
-            // values = super(PosOrder, self)._complete_values_from_session(session, values)
-            // values['crm_team_id'] = values['crm_team_id'] if values.get('crm_team_id') else session.config_id.crm_team_id.id
-            // return values
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeAmountPaidInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_amount_paid(self):
-            // return sum(self.payment_ids.mapped('amount'))
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeAttendeeCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py) ---
-            // def _compute_attendee_count(self):
-            // for order in self:
-            //     order.attendee_count = len(order.lines.mapped('event_registration_ids'))
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeCashierInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: pos_order.py) ---
-            // def _compute_cashier(self):
-            // for order in self:
-            //     if order.employee_id:
-            //         order.cashier = order.employee_id.name
-            //     else:
-            //         order.cashier = order.user_id.name
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeContactDetailsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_contact_details(self):
-            // for order in self:
-            //     order.email = order.partner_id.email or ""
-            //     order.mobile = order._phone_format(number=order.partner_id.phone or "",
-            //                 country=order.partner_id.country_id)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeCurrencyRateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_currency_rate(self):
-            // for order in self:
-            //     order.currency_rate = self.env['res.currency']._get_conversion_rate(order.company_id.currency_id, order.currency_id, order.company_id, order.date_order.date())
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def _compute_currency_rate(self):
-            // for order in self:
-            //     date_order = order.date_order or fields.Datetime.now()
-            //     order.currency_rate = self.env['res.currency']._get_conversion_rate(order.company_id.currency_id, order.currency_id, order.company_id, date_order.date())
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeHasRefundableLinesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_has_refundable_lines(self):
-            // digits = self.env['decimal.precision'].precision_get('Product Unit')
-            // for order in self:
-            //     order.has_refundable_lines = any([float_compare(line.qty, line.refunded_qty, digits) > 0 for line in order.lines])
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeInvoiceStatusInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_invoice_status(self):
-            // for order in self:
-            //     order.invoice_status = 'invoiced' if len(order.account_move) else 'to_invoice'
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeIsEditedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_is_edited(self):
-            // for order in self:
-            //     order.is_edited = any(order.lines.mapped('is_edited')) or order.has_deleted_line
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeIsInvoicedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_is_invoiced(self):
-            // for order in self:
-            //     order.is_invoiced = bool(order.account_move)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeIsTotalCostComputedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_is_total_cost_computed(self):
-            // for order in self:
-            //     order.is_total_cost_computed = not False in order.lines.mapped('is_total_cost_computed')
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeMarginInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_margin(self):
-            // for order in self:
-            //     sign = -1 if order.is_refund else 1
-            //     if order.is_total_cost_computed:
-            //         order.margin = sum(order.lines.mapped('margin'))
-            //         amount_untaxed = order.currency_id.round(sum(line.price_subtotal for line in order.lines)) * sign
-            //         order.margin_percent = not float_is_zero(amount_untaxed, precision_rounding=order.currency_id.rounding) \
-            //                                 and order.margin / amount_untaxed \
-            //                                 or 0
-            //     else:
-            //         order.margin = 0
-            //         order.margin_percent = 0
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeOnlinePaymentMethodIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py) ---
-            // def _compute_online_payment_method_id(self):
-            // for order in self:
-            //     order.online_payment_method_id = order.config_id._get_cashier_online_payment_method()
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
-            // def _compute_online_payment_method_id(self):
-            // for order in self:
-            //     if order.use_self_order_online_payment:
-            //         # It is expected to use the self order online payment method.
-            //         # If for any reason it is not defined, then the online payment
-            //         # of the order is set to null to make the problem noticeable.
-            //         order.online_payment_method_id = order.config_id.self_order_online_payment_method_id
-            //     else:
-            //         super(PosOrder, order)._compute_online_payment_method_id()
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeOrderConfigIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_order_config_id(self):
-            // for order in self:
-            //     if order.session_id:
-            //         order.config_id = order.session_id.config_id
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeOrderNameInternalAsync(object session)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_order_name(self, session=None):
-            // session = session or self.session_id
-            // if self.refunded_order_id.exists():
-            //     return _('%(refunded_order)s REFUND', refunded_order=self.refunded_order_id.name)
-            // else:
-            //     last_reference_part = self.get_reference_last_part()
-            //     return f"{session.config_id.name} - {last_reference_part}"
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputePickingCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_picking_count(self):
-            // for order in self:
-            //     order.picking_count = len(order.picking_ids)
-            //     order.failed_pickings = bool(order.picking_ids.filtered(lambda p: p.state != 'done'))
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputePricesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_prices(self):
-            // AccountTax = self.env['account.tax']
-            // for order in self:
-            //     if not order.currency_id:
-            //         raise UserError(_("You can't: create a pos order from the backend interface, or unset the pricelist, or create a pos.order in a python test with Form tool, or edit the form view in studio if no PoS order exist"))
-            //     order.amount_paid = sum(payment.amount for payment in order.payment_ids)
-            //     order.amount_return = -sum(payment.amount < 0 and payment.amount or 0 for payment in order.payment_ids)
-            // 
-            //     base_lines = order.lines._prepare_tax_base_line_values()
-            //     AccountTax._add_tax_details_in_base_lines(base_lines, order.company_id)
-            //     AccountTax._round_base_lines_tax_details(base_lines, order.company_id)
-            // 
-            //     cash_rounding = None
-            //     if (
-            //         order.config_id.cash_rounding
-            //         and not order.config_id.only_round_cash_method
-            //         and order.config_id.rounding_method
-            //     ):
-            //         cash_rounding = order.config_id.rounding_method
-            // 
-            //     tax_totals = AccountTax._get_tax_totals_summary(
-            //         base_lines=base_lines,
-            //         currency=order.currency_id,
-            //         company=order.company_id,
-            //         cash_rounding=cash_rounding,
-            //     )
-            //     refund_factor = -1 if (order.amount_total < 0.0) else 1
-            //     order.amount_tax = refund_factor * tax_totals['tax_amount_currency']
-            //     order.amount_total = refund_factor * tax_totals['total_amount_currency']
-            //     order.amount_difference = order.amount_paid - order.amount_total
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeRefundRelatedFieldsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_refund_related_fields(self):
-            // for order in self:
-            //     order.refund_orders_count = len(order.mapped('lines.refund_orderline_ids.order_id'))
-            //     order.refunded_order_id = next(iter(order.lines.refunded_orderline_id.order_id), False)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeTotalCostAtSessionClosingInternalAsync(object stock_moves)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_total_cost_at_session_closing(self, stock_moves):
-            // """
-            // Compute the margin at the end of the session. This method should be called to compute the remaining lines margin
-            // containing a storable product with a fifo/avco cost method and then compute the order margin
-            // """
-            // for order in self:
-            //     storable_fifo_avco_lines = order.lines.filtered(lambda l: l._is_product_storable_fifo_avco())
-            //     storable_fifo_avco_lines._compute_total_cost(stock_moves)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeTotalCostInRealTimeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _compute_total_cost_in_real_time(self):
-            // """
-            // Compute the total cost of the order when it's processed by the server. It will compute the total cost of all the lines
-            // if it's possible. If a margin of one of the order's lines cannot be computed (because of session_id.update_stock_at_closing),
-            // then the margin of said order is not computed (it will be computed when closing the session).
-            // """
-            // for order in self:
-            //     lines = order.lines
-            //     if not order._should_create_picking_real_time():
-            //         storable_fifo_avco_lines = lines.filtered(lambda l: l._is_product_storable_fifo_avco())
-            //         lines -= storable_fifo_avco_lines
-            //     stock_moves = order.picking_ids.move_ids
-            //     lines._compute_total_cost(stock_moves)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ComputeUseSelfOrderOnlinePaymentInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
-            // def _compute_use_self_order_online_payment(self):
-            // for order in self:
-            //     order.use_self_order_online_payment = bool(order.config_id.self_order_online_payment_method_id)
-            */
             return default;
         }
 
         public async Task<PosOrder> ConfirmCouponProgramsAsync(PosOrderConfirmCouponProgramsRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
-            // def confirm_coupon_programs(self, coupon_data):
-            // """
-            // This is called after the order is created.
-            // 
-            // This will create all necessary coupons and link them to their line orders etc..
-            // 
-            // It will also return the points of all concerned coupons to be updated in the cache.
-            // """
-            // get_partner_id = lambda partner_id: partner_id and self.env['res.partner'].browse(partner_id).exists() and partner_id or False
-            // # Keys are stringified when using rpc
-            // coupon_data = {int(k): v for k, v in coupon_data.items()}
-            // 
-            // self._check_existing_loyalty_cards(coupon_data)
-            // self._remove_duplicate_coupon_data(coupon_data)
-            // updated_gift_cards = self._process_existing_gift_cards(coupon_data)
-            // 
-            // # Map negative id to newly created ids.
-            // coupon_new_id_map = {k: k for k in coupon_data.keys() if k > 0}
-            // 
-            // # Create the coupons that were awarded by the order.
-            // coupons_to_create = {k: v for k, v in coupon_data.items() if k < 0}
-            // coupon_create_vals = [{
-            //     'program_id': p['program_id'],
-            //     'partner_id': get_partner_id(p.get('partner_id', self.partner_id.id)),
-            //     'code': p.get('code') or p.get('barcode') or self.env['loyalty.card']._generate_code(),
-            //     'points': 0,
-            //     'expiration_date': p.get('date_to', False),
-            //     'source_pos_order_id': self.id,
-            //     'expiration_date': p.get('expiration_date')
-            // } for p in coupons_to_create.values()]
-            // 
-            // # Pos users don't have the create permission
-            // new_coupons = self.env['loyalty.card'].with_context(action_no_send_mail=True).sudo().create(coupon_create_vals)
-            // 
-            // # Map the newly created coupons
-            // for old_id, new_id in zip(coupons_to_create.keys(), new_coupons):
-            //     coupon_new_id_map[new_id.id] = old_id
-            // 
-            // # We need a sudo here because this can trigger `_compute_order_count` that require access to `sale.order.line`
-            // all_coupons = self.env['loyalty.card'].sudo().browse(coupon_new_id_map.keys()).exists()
-            // lines_per_reward_code = defaultdict(lambda: self.env['pos.order.line'])
-            // for line in self.lines:
-            //     if not line.reward_identifier_code:
-            //         continue
-            //     lines_per_reward_code[line.reward_identifier_code] |= line
-            // for coupon in all_coupons:
-            //     if coupon.id in coupon_new_id_map:
-            //         # Coupon existed previously, update amount of points.
-            //         coupon.points += coupon_data[coupon_new_id_map[coupon.id]]['points']
-            //     for reward_code in coupon_data[coupon_new_id_map[coupon.id]].get('line_codes', []):
-            //         lines_per_reward_code[reward_code].coupon_id = coupon
-            // # Send creation email
-            // new_coupons.with_context(action_no_send_mail=False)._send_creation_communication()
-            // # Reports per program
-            // report_per_program = {}
-            // coupon_per_report = defaultdict(list)
-            // # Important to include the updated gift cards so that it can be printed. Check coupon_report.
-            // for coupon in new_coupons | updated_gift_cards:
-            //     if coupon.program_id not in report_per_program:
-            //         report_per_program[coupon.program_id] = coupon.program_id.communication_plan_ids.\
-            //             filtered(lambda c: c.trigger == 'create').pos_report_print_id
-            //     for report in report_per_program[coupon.program_id]:
-            //         coupon_per_report[report.id].append(coupon.id)
-            // 
-            // # Adding loyalty history lines
-            // loyalty_points = [
-            //     {
-            //         'order_id': self.id,
-            //         'card_id': coupon_id,
-            //         'spent': -coupon_vals['points'] if coupon_vals['points'] < 0 else 0,
-            //         'won': coupon_vals['points'] if coupon_vals['points'] > 0 else 0,
-            //     }
-            //     for coupon_id, coupon_vals in coupon_data.items()
-            // ]
-            // coupon_updates = [
-            //     {
-            //         'id': coupon.id,
-            //         'old_id': coupon_new_id_map[coupon.id],
-            //     }
-            //     for coupon in all_coupons
-            // ]
-            // self.add_loyalty_history_lines(loyalty_points, coupon_updates)
-            // 
-            // return {
-            //     'coupon_updates': [{
-            //         'old_id': coupon_new_id_map[coupon.id],
-            //         'id': coupon.id,
-            //         'points': coupon.points,
-            //         'code': coupon.code,
-            //         'program_id': coupon.program_id.id,
-            //         'partner_id': coupon.partner_id.id,
-            //     } for coupon in all_coupons if coupon.program_id.is_nominative],
-            //     'program_updates': [{
-            //         'program_id': program.id,
-            //         'usages': program.sudo().total_order_count,
-            //     } for program in all_coupons.program_id],
-            //     'new_coupon_info': [{
-            //         'program_name': coupon.program_id.name,
-            //         'expiration_date': coupon.expiration_date,
-            //         'code': coupon.code,
-            //     } for coupon in new_coupons if (
-            //         coupon.program_id.applies_on == 'future'
-            //         # Don't send the coupon code for the gift card and ewallet programs.
-            //         # It should not be printed in the ticket.
-            //         and coupon.program_id.sudo().program_type not in ['gift_card', 'ewallet']
-            //     )],
-            //     'coupon_report': coupon_per_report,
-            // }
+            --- METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py, METHOD: confirm_coupon_programs) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> CountSaleOrderInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def _count_sale_order(self):
-            // for order in self:
-            //     order.sale_order_count = len(order.lines.mapped('sale_order_origin_id'))
-            */
-            return default;
-        }
-
         public override async Task<PosOrder> CreateAsync(CreateRequestDto<PosOrder> input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def create(self, vals_list):
-            // for vals in vals_list:
-            //     session = self.env['pos.session'].browse(vals['session_id'])
-            //     vals = self._complete_values_from_session(session, vals)
-            // return super().create(vals_list)
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
-            // def create(self, vals_list):
-            // for vals in vals_list:
-            //     if 'use_self_order_online_payment' not in vals or vals['use_self_order_online_payment']:
-            //         session = self.env['pos.session'].browse(vals['session_id'])
-            //         config = session.config_id
-            //         vals['use_self_order_online_payment'] = bool(config.self_order_online_payment_method_id)
-            // return super().create(vals_list)
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: create) ---
+            --- METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py, METHOD: create) ---
             */
             return await base.CreateAsync(input);
-        }
-
-        protected async Task<PosOrder> CreateInvoiceInternalAsync(object move_vals)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _create_invoice(self, move_vals):
-            // AccountMove = self.env['account.move']
-            // 
-            // invoice = AccountMove.sudo()\
-            //     .with_company(self.company_id)\
-            //     .with_context(default_move_type=move_vals['move_type'], linked_to_pos=True)\
-            //     .create(move_vals)
-            // currency = self.currency_id
-            // amount_total = sum(order.amount_total for order in self)
-            // payment_total = sum(order.amount_paid for order in self)
-            // 
-            // if self.config_id.cash_rounding:
-            //     line_ids_commands = []
-            //     rate = invoice.invoice_currency_rate
-            //     sign = invoice.direction_sign
-            //     amount_paid = (-1 if amount_total < 0.0 else 1) * payment_total
-            //     difference_currency = sign * (amount_paid - invoice.amount_total)
-            //     difference_balance = invoice.company_currency_id.round(difference_currency / rate) if rate else 0.0
-            //     if not currency.is_zero(difference_currency):
-            //         rounding_line = invoice.line_ids.filtered(lambda line: line.display_type == 'rounding' and not line.tax_line_id)
-            //         if rounding_line:
-            //             line_ids_commands.append(Command.update(rounding_line.id, {
-            //                 'amount_currency': rounding_line.amount_currency + difference_currency,
-            //                 'balance': rounding_line.balance + difference_balance,
-            //             }))
-            //         else:
-            //             if difference_currency > 0.0:
-            //                 account = invoice.invoice_cash_rounding_id.loss_account_id
-            //             else:
-            //                 account = invoice.invoice_cash_rounding_id.profit_account_id
-            //             line_ids_commands.append(Command.create({
-            //                 'name': invoice.invoice_cash_rounding_id.name,
-            //                 'amount_currency': difference_currency,
-            //                 'balance': difference_balance,
-            //                 'currency_id': invoice.currency_id.id,
-            //                 'display_type': 'rounding',
-            //                 'account_id': account.id,
-            //             }))
-            //         existing_terms_line = invoice.line_ids\
-            //             .filtered(lambda line: line.display_type == 'payment_term')\
-            //             .sorted(lambda line: -abs(line.amount_currency))[:1]
-            //         line_ids_commands.append(Command.update(existing_terms_line.id, {
-            //             'amount_currency': existing_terms_line.amount_currency - difference_currency,
-            //             'balance': existing_terms_line.balance - difference_balance,
-            //         }))
-            //         with AccountMove._check_balanced({'records': invoice}):
-            //             invoice.with_context(skip_invoice_sync=True).line_ids = line_ids_commands
-            // body = _("This invoice has been created from the point of sale session:%s",
-            //             Markup().join(Markup("%s ") % order._get_html_link() for order in self)
-            //         )
-            // invoice.message_post(body=body)
-            // return invoice
-            */
-            return default;
         }
 
         public async Task<PosOrder> CreateInvoicesAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_create_invoices(self):
-            // return {
-            //     'name': _('Create Invoice(s)'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('point_of_sale.view_pos_make_invoice').id,
-            //     'res_model': 'pos.make.invoice',
-            //     'target': 'new',
-            //     'type': 'ir.actions.act_window',
-            //     'context': {'dialog_size': 'medium'}
-            // }
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_create_invoices) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> CreateMiscReversalMoveInternalAsync(object payment_moves)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _create_misc_reversal_move(self, payment_moves):
-            // """ Create a misc move to reverse POS orders and "remove" it from the POS closing entry.
-            // This is done by taking data from the orders and using it to somewhat replicate the resulting entry in orders to
-            // reverse partially the movements done in the POS closing entry.
-            // """
-            // self.ensure_one()
-            // aml_values_list_per_nature = self._prepare_aml_values_list_per_nature()
-            // move_lines = []
-            // for aml_values_list in aml_values_list_per_nature.values():
-            //     for aml_values in aml_values_list:
-            //         aml_values['balance'] = -aml_values['balance']
-            //         aml_values['amount_currency'] = -aml_values['amount_currency']
-            //         move_lines.append(aml_values)
-            // 
-            // # Make a move with all the lines.
-            // reversal_entry = self.env['account.move'].with_context(
-            //     default_journal_id=self.config_id.journal_id.id,
-            //     skip_invoice_sync=True,
-            //     skip_invoice_line_sync=True,
-            // ).create({
-            //     'journal_id': self.config_id.journal_id.id,
-            //     'date': fields.Date.context_today(self),
-            //     'ref': _('Reversal of POS closing entry %(entry)s for order %(order)s from session %(session)s', entry=self.session_move_id.name, order=self.name, session=self.session_id.name),
-            //     'line_ids': [(0, 0, aml_value) for aml_value in move_lines],
-            //     'reversed_pos_order_id': self.id
-            // })
-            // reversal_entry.action_post()
-            // 
-            // pos_account_receivable = self.company_id.account_default_pos_receivable_account_id
-            // account_receivable = self.payment_ids.payment_method_id.receivable_account_id
-            // reversal_entry_receivable = reversal_entry.line_ids.filtered(lambda l: l.account_id in (pos_account_receivable + account_receivable))
-            // payment_receivable = payment_moves.line_ids.filtered(lambda l: l.account_id in (pos_account_receivable + account_receivable))
-            // lines_to_reconcile = defaultdict(lambda: self.env['account.move.line'])
-            // for line in (reversal_entry_receivable | payment_receivable):
-            //     lines_to_reconcile[line.account_id] |= line
-            // for line in lines_to_reconcile.values():
-            //     line.filtered(lambda l: not l.reconciled).reconcile()
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> CreateOrderPickingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _create_order_picking(self):
-            // self.ensure_one()
-            // if self.shipping_date:
-            //     self.sudo().lines._launch_stock_rule_from_pos_order_lines()
-            // else:
-            //     if self._should_create_picking_real_time():
-            //         picking_type = self.config_id.picking_type_id
-            //         if self.partner_id.property_stock_customer:
-            //             destination_id = self.partner_id.property_stock_customer.id
-            //         elif not picking_type or not picking_type.default_location_dest_id:
-            //             destination_id = self.env['stock.warehouse']._get_partner_locations()[0].id
-            //         else:
-            //             destination_id = picking_type.default_location_dest_id.id
-            // 
-            //         pickings = self.env['stock.picking']._create_picking_from_pos_order_lines(destination_id, self.lines, picking_type, self.partner_id)
-            //         pickings.write({'pos_session_id': self.session_id.id, 'pos_order_id': self.id, 'origin': self.name})
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> CreatePmChangeLogInternalAsync(object vals)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _create_pm_change_log(self, vals):
-            // if not vals.get('payment_ids'):
-            //     return []
-            // 
-            // message_list = []
-            // new_pms = vals.get('payment_ids', [])
-            // for new_pm in new_pms:
-            //     orm_command = new_pm[0]
-            // 
-            //     if orm_command == 0:
-            //         payment_method_id = self.env['pos.payment.method'].browse(new_pm[2].get('payment_method_id'))
-            //         amount = formatLang(self.env, new_pm[2].get('amount'), currency_obj=self.currency_id)
-            //         message_list.append(_("Added %(payment_method)s with %(amount)s",
-            //             payment_method=payment_method_id.name,
-            //             amount=amount))
-            //     elif orm_command == 1:
-            //         pm_id = self.env['pos.payment'].browse(new_pm[1])
-            //         old_pm = pm_id.payment_method_id.name
-            //         old_amount = formatLang(self.env, pm_id.amount, currency_obj=pm_id.currency_id)
-            //         new_amount = False
-            //         new_payment_method = False
-            // 
-            //         if new_pm[2].get('payment_method_id'):
-            //             new_payment_method = self.env['pos.payment.method'].browse(new_pm[2].get('payment_method_id'))
-            //         if new_pm[2].get('amount'):
-            //             new_amount = formatLang(self.env, new_pm[2].get('amount'), currency_obj=pm_id.currency_id)
-            // 
-            //         if new_payment_method and new_amount:
-            //             message_list.append(_("%(old_pm)s changed to %(new_pm)s and from %(old_amount)s to %(new_amount)s",
-            //                 old_pm=old_pm,
-            //                 new_pm=new_payment_method.name,
-            //                 old_amount=old_amount,
-            //                 new_amount=new_amount))
-            //         elif new_payment_method:
-            //             message_list.append(_("%(old_pm)s changed to %(new_pm)s for %(old_amount)s",
-            //                 old_pm=old_pm,
-            //                 new_pm=new_payment_method.name,
-            //                 old_amount=old_amount))
-            //         elif new_amount:
-            //             message_list.append(_("Amount for %(old_pm)s changed from %(old_amount)s to %(new_amount)s",
-            //                 old_amount=old_amount,
-            //                 new_amount=new_amount,
-            //                 old_pm=old_pm))
-            //     elif orm_command == 2:
-            //         pm_id = self.env['pos.payment'].browse(new_pm[1])
-            //         amount = formatLang(self.env, pm_id.amount, currency_obj=pm_id.currency_id)
-            //         message_list.append(_("Removed %(payment_method)s with %(amount)s",
-            //             payment_method=pm_id.payment_method_id.name,
-            //             amount=amount))
-            // 
-            // return message_list
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> EnsureToKeepLastPreparationChangeInternalAsync(object vals)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _ensure_to_keep_last_preparation_change(self, vals):
-            // for record in self:
-            //     if record.last_order_preparation_change:
-            //         change = json.loads(record.last_order_preparation_change)
-            //         if not change.get('metadata'):
-            //             return
-            // 
-            //         local_change = json.loads(vals.get('last_order_preparation_change', '{}'))
-            //         if not local_change.get('metadata'):
-            //             vals['last_order_preparation_change'] = record.last_order_preparation_change
-            //             return
-            // 
-            //         server_date = fields.Datetime.from_string(change['metadata'].get('serverDate'))
-            //         local_date = fields.Datetime.from_string(local_change['metadata'].get('serverDate'))
-            // 
-            //         if server_date > local_date:
-            //             _logger.warning("Preparation changes were outdated, probably linked to a synching issue.")
-            //             vals['last_order_preparation_change'] = record.last_order_preparation_change
-            //         else:
-            //             local_change['metadata']['serverDate'] = fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            //             vals['last_order_preparation_change'] = json.dumps(local_change)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GeneratePosOrderInvoiceInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _generate_pos_order_invoice(self):
-            // if not self.env['res.company']._with_locked_records(self, allow_raising=False):
-            //     raise UserError(_("Some orders are already being invoiced. Please try again later."))
-            // self.state = 'done'
-            // 
-            // company = self.company_id
-            // invoice_vals = self._prepare_invoice_vals()
-            // invoice = self._create_invoice(invoice_vals)
-            // invoice.sudo().with_company(company).with_context(**self._get_invoice_post_context())._post()
-            // 
-            // # invoice payments
-            // payment_moves_from_closed_sessions = {}
-            // all_payment_moves = self.env['account.move']
-            // for session, orders in self.grouped('session_id').items():
-            //     is_session_closed = session.state == 'closed'
-            //     for order in orders:
-            //         order_payments = order.payment_ids.sudo().with_company(company)
-            //         payment_moves = order_payments._create_payment_moves(is_session_closed)
-            //         all_payment_moves |= payment_moves
-            //         if is_session_closed:
-            //             payment_moves_from_closed_sessions[order] = payment_moves
-            // 
-            // self._reconcile_invoice_payments(invoice, all_payment_moves)
-            // 
-            // # reverse payment moves from closed sessions
-            // for order, payment_moves in payment_moves_from_closed_sessions.items():
-            //     order._create_misc_reversal_move(payment_moves)
-            // 
-            // if self.env.context.get('generate_pdf', True):
-            //     invoice.with_context(skip_invoice_sync=True)._generate_and_send()
-            // 
-            // return invoice
-            */
-            return default;
-        }
-
         public async Task<PosOrder> GetAmountUnpaidAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py) ---
-            // def get_amount_unpaid(self):
-            // self.ensure_one()
-            // return self.currency_id.round(self._get_rounded_amount(self.amount_total) - self.amount_paid)
+            --- METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py, METHOD: get_amount_unpaid) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -927,295 +96,28 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> GetAndSetOnlinePaymentsDataAsync(PosOrderGetAndSetOnlinePaymentsDataRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py) ---
-            // def get_and_set_online_payments_data(self, next_online_payment_amount=False):
-            // """ Allows to update the amount to pay for the next online payment and
-            //     get online payments already made and how much remains to be paid.
-            //     If next_online_payment_amount is different than False, updates the
-            //     next online payment amount, otherwise, the next online payment amount
-            //     is unchanged.
-            //     If next_online_payment_amount is 0 and the order has no successful
-            //     online payment, is in draft state, is not a restaurant order and the
-            //     pos.config has no trusted config, then the order is deleted from the
-            //     database, because it was probably added for the online payment flow.
-            // """
-            // self.ensure_one()
-            // is_paid = self.state in ('paid', 'done')
-            // if is_paid:
-            //     return {
-            //         'id': self.id,
-            //         'paid_order': self.read([], load=False)
-            //     }
-            // 
-            // online_payments = self.sudo().env['pos.payment'].search_read(domain=['&', ('pos_order_id', '=', self.id), ('online_account_payment_id', '!=', False)], fields=['payment_method_id', 'amount'], load=False)
-            // return_data = {
-            //     'id': self.id,
-            //     'online_payments': online_payments,
-            //     'amount_unpaid': self.get_amount_unpaid(),
-            // }
-            // if not isinstance(next_online_payment_amount, bool):
-            //     if tools.float_is_zero(next_online_payment_amount, precision_rounding=self.currency_id.rounding) and len(online_payments) == 0 and self.state == 'draft' and not self.config_id.module_pos_restaurant and len(self.config_id.trusted_config_ids) == 0:
-            //         self.sudo()._clean_payment_lines() # Needed to delete the order
-            //         return_data['deleted'] = True
-            //     elif self._check_next_online_payment_amount(next_online_payment_amount):
-            //         self.next_online_payment_amount = next_online_payment_amount
-            // 
-            // return return_data
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
-            // def get_and_set_online_payments_data(self, next_online_payment_amount=False):
-            // res = super().get_and_set_online_payments_data(next_online_payment_amount)
-            // if 'paid_order' not in res and not res.get('deleted', False) and not isinstance(next_online_payment_amount, bool):
-            //     # This method is only called in the POS frontend flow, not self order.
-            //     # If the next online payment is 0, then the online payment of the frontend
-            //     # flow is cancelled, and the default flow is self order if it is configured.
-            //     self.use_self_order_online_payment = tools.float_is_zero(next_online_payment_amount, precision_rounding=self.currency_id.rounding) and self.config_id.self_order_online_payment_method_id
-            // return res
+            --- METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py, METHOD: get_and_set_online_payments_data) ---
+            --- METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py, METHOD: get_and_set_online_payments_data) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> GetCheckedNextOnlinePaymentAmountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py) ---
-            // def _get_checked_next_online_payment_amount(self):
-            // self.ensure_one()
-            // amount = self.next_online_payment_amount
-            // return amount if self._check_next_online_payment_amount(amount) else False
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetFieldsForOrderLineInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
-            // def _get_fields_for_order_line(self):
-            // fields = super(PosOrder, self)._get_fields_for_order_line()
-            // fields.extend(['is_reward_line', 'reward_id', 'coupon_id', 'reward_identifier_code', 'points_cost'])
-            // return fields
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def _get_fields_for_order_line(self):
-            // fields = super(PosOrder, self)._get_fields_for_order_line()
-            // fields.extend([
-            //     'sale_order_origin_id',
-            //     'down_payment_details',
-            //     'sale_order_line_id',
-            // ])
-            // return fields
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetInvoiceLinesValuesInternalAsync(object line_values, object pos_line, object move_type)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_invoice_lines_values(self, line_values, pos_line, move_type):
-            // # correct quantity sign based on move type and if line is refund.
-            // is_refund_order = pos_line.order_id.is_refund
-            // qty_sign = -1 if (
-            //     (move_type == 'out_invoice' and is_refund_order)
-            //     or (move_type == 'out_refund' and not is_refund_order)
-            // ) else 1
-            // 
-            // if line_values['product_id'].type == 'combo':
-            //     quantity = int(line_values['quantity']) if line_values['quantity'] == int(
-            //         line_values['quantity']) else line_values['quantity']
-            //     return {
-            //         'display_type': 'line_section',
-            //         'name': f"{line_values['product_id'].name} x {quantity}",
-            //         'quantity': qty_sign * line_values['quantity'],
-            //         'product_uom_id': line_values['uom_id'].id,
-            //     }
-            // 
-            // return {
-            //     'product_id': line_values['product_id'].id,
-            //     'quantity': qty_sign * line_values['quantity'],
-            //     'discount': line_values['discount'],
-            //     'price_unit': line_values['price_unit'],
-            //     'name': line_values['name'],
-            //     'tax_ids': [(6, 0, line_values['tax_ids'].ids)],
-            //     'product_uom_id': line_values['uom_id'].id,
-            //     'extra_tax_data': self.env['account.tax']._export_base_line_extra_tax_data(line_values),
-            // }
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def _get_invoice_lines_values(self, line_values, pos_line, move_type):
-            // inv_line_vals = super()._get_invoice_lines_values(line_values, pos_line, move_type)
-            // 
-            // if pos_line.sale_order_origin_id:
-            //     origin_line = pos_line.sale_order_line_id
-            //     inv_line_vals["name"] = origin_line.name
-            //     origin_line._set_analytic_distribution(inv_line_vals)
-            // 
-            // return inv_line_vals
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetInvoicePostContextInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_invoice_post_context(self):
-            // return {"skip_invoice_sync": True}
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetMailAttachmentsInternalAsync(object name, object ticket, object basic_ticket)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_mail_attachments(self, name, ticket, basic_ticket):
-            // attachments = []
-            // receipt = self.env['ir.attachment'].create({
-            //     'name': 'Receipt-' + name + '.jpg',
-            //     'type': 'binary',
-            //     'datas': ticket,
-            //     'res_model': 'pos.order',
-            //     'res_id': self.ids[0],
-            //     'mimetype': 'image/jpeg',
-            // })
-            // attachments += [(4, receipt.id)]
-            // 
-            // if basic_ticket:
-            //     basic_receipt = self.env['ir.attachment'].create({
-            //         'name': 'Receipt-' + name + '-1' + '.jpg',
-            //         'type': 'binary',
-            //         'datas': basic_ticket,
-            //         'res_model': 'pos.order',
-            //         'res_id': self.ids[0],
-            //         'mimetype': 'image/jpeg',
-            //     })
-            //     attachments += [(4, basic_receipt.id)]
-            // 
-            // if self.mapped('account_move'):
-            //     report = self.env['ir.actions.report']._render_qweb_pdf("account.account_invoices", self.account_move.ids[0])
-            //     invoice = self.env['ir.attachment'].create({
-            //         'name': name + '.pdf',
-            //         'type': 'binary',
-            //         'datas': base64.b64encode(report[0]),
-            //         'res_model': 'pos.order',
-            //         'res_id': self.ids[0],
-            //         'mimetype': 'application/pdf'
-            //     })
-            //     attachments += [(4, invoice.id)]
-            // 
-            // return attachments
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetOpenOrderInternalAsync(object order)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_open_order(self, order):
-            // return self.env["pos.order"].search([('uuid', '=', order.get('uuid'))], limit=1, order='id desc')
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py) ---
-            // def _get_open_order(self, order):
-            // config_id = self.env['pos.session'].browse(order.get('session_id')).config_id
-            // if not config_id.module_pos_restaurant:
-            //     return super()._get_open_order(order)
-            // 
-            // domain = []
-            // if order.get('table_id', False) and order.get('state') == 'draft':
-            //     domain += ['|', ('uuid', '=', order.get('uuid')), '&', ('table_id', '=', order.get('table_id')), ('state', '=', 'draft')]
-            // else:
-            //     domain += [('uuid', '=', order.get('uuid'))]
-            // return self.env["pos.order"].search(domain, limit=1, order='id desc')
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetOrderLogRepresentationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_order_log_representation(order):
-            // return dict((k, order.get(k)) for k in ("name", "uuid"))
-            */
-            return default;
-        }
-
         public async Task<PosOrder> GetOrderToPrintAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
-            // def get_order_to_print(self):
-            // self.ensure_one()
-            // 
-            // # Lock the line
-            // self.env.cr.execute("SELECT id FROM pos_order WHERE id = %s FOR UPDATE NOWAIT", (self.id,))
-            // 
-            // if self.nb_print > 0:
-            //     raise ValueError("This order has already been printed automatically.")
-            // 
-            // self.nb_print += 1
-            // return self.read_pos_data([], self.config_id.id)
+            --- METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py, METHOD: get_order_to_print) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> GetPartnerBankIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_partner_bank_id(self):
-            // bank_partner_id = False
-            // amount_total = sum(order.amount_total for order in self)
-            // if amount_total <= 0 and self.partner_id.bank_ids:
-            //     bank_partner_id = self.partner_id.bank_ids[0].id
-            // elif amount_total >= 0 and self.payment_ids and self.payment_ids[0].payment_method_id.journal_id.bank_account_id:
-            //     bank_partner_id = self.payment_ids[0].payment_method_id.journal_id.bank_account_id.id
-            // elif amount_total >= 0 and self.company_id.partner_id.bank_ids:
-            //     bank_partner_id = self.company_id.partner_id.bank_ids[0].id
-            // return bank_partner_id
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetPosAngloSaxonPriceUnitInternalAsync(object product, Guid partner_id, object quantity)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_pos_anglo_saxon_price_unit(self, product, partner_id, quantity):
-            // moves = self.filtered(lambda o: o.partner_id.id == partner_id)\
-            //     .mapped('picking_ids.move_ids')\
-            //     .filtered(lambda m: m.is_valued and m.product_id.valuation == 'real_time' and m.product_id.id == product.id)\
-            //     .sorted(lambda x: x.date)
-            // return moves._get_price_unit()
-            --- ODOO METHOD SOURCE (MODULE: pos_mrp, FILE: pos_order.py) ---
-            // def _get_pos_anglo_saxon_price_unit(self, product, partner_id, quantity):
-            // bom = product.env['mrp.bom']._bom_find(product, company_id=self.mapped('picking_ids.move_line_ids').company_id.id, bom_type='phantom')[product]
-            // if not bom:
-            //     return super()._get_pos_anglo_saxon_price_unit(product, partner_id, quantity)
-            // _dummy, components = bom.explode(product, quantity)
-            // total_price_unit = 0
-            // for comp in components:
-            //     price_unit = super()._get_pos_anglo_saxon_price_unit(comp[0].product_id, partner_id, comp[1]['qty'])
-            //     price_unit = comp[0].product_id.uom_id._compute_price(price_unit, comp[0].product_uom_id)
-            //     qty_per_kit = comp[1]['qty'] / bom.product_qty / (quantity or 1)
-            //     total_price_unit += price_unit * qty_per_kit
-            // return total_price_unit
-            */
-            return default;
-        }
-
         public async Task<PosOrder> GetPreparationChangeAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def get_preparation_change(self):
-            // self.ensure_one()
-            // return {
-            //     'last_order_preparation_change': self.last_order_preparation_change,
-            // }
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: get_preparation_change) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -1225,189 +127,18 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> GetReferenceLastPartAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def get_reference_last_part(self):
-            // return self.pos_reference.split('-')[-1]
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: get_reference_last_part) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        [ApiModel]
-        protected async Task<PosOrder> GetRefundedOrdersInternalAsync(object order)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_refunded_orders(self, order):
-            // refunded_orderline_ids = [line[2]['refunded_orderline_id'] for line in order['lines'] if line[0] in [0, 1] and line[2].get('refunded_orderline_id')]
-            // return self.env['pos.order.line'].browse(refunded_orderline_ids).mapped('order_id')
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetRoundedAmountInternalAsync(object amount, object force_round)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_rounded_amount(self, amount, force_round=False):
-            // # TODO: add support for mix of cash and non-cash payments when both cash_rounding and only_round_cash_method are True
-            // if self.config_id.cash_rounding \
-            //    and (force_round or (not self.config_id.only_round_cash_method \
-            //    or any(p.payment_method_id.is_cash_count for p in self.payment_ids))):
-            //     amount = float_round(amount, precision_rounding=self.config_id.rounding_method.rounding, rounding_method=self.config_id.rounding_method.rounding_method)
-            // currency = self.currency_id
-            // return currency.round(amount) if currency else amount
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> GetValidSessionInternalAsync(object order)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _get_valid_session(self, order):
-            // PosSession = self.env['pos.session']
-            // closed_session = PosSession.browse(order['session_id'])
-            // 
-            // _logger.warning('Session %s (ID: %s) was closed but received order %s (total: %s) belonging to it',
-            //                 closed_session.name,
-            //                 closed_session.id,
-            //                 order['uuid'],
-            //                 order['amount_total'])
-            // 
-            // open_session = PosSession.search([
-            //     ('state', 'not in', ('closed', 'closing_control')),
-            //     ('config_id', '=', closed_session.config_id.id)
-            // ], limit=1)
-            // 
-            // if open_session:
-            //     _logger.warning('Using open session %s for uuid number %s', open_session.name, order['uuid'])
-            //     return open_session
-            // 
-            // raise UserError(_('No open session available. Please open a new session to capture the order.'))
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> IsPosOrderPaidInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _is_pos_order_paid(self):
-            // amount_total = self.amount_total
-            // # If we are checking if a refund was paid and if it was a total refund, we take into account the amount paid on
-            // # the original order. For a pertial refund, we take into account the value of the items returned.
-            // if float_is_zero(self.refunded_order_id.amount_total + amount_total, precision_rounding=self.currency_id.rounding):
-            //     amount_total = -self.refunded_order_id.amount_paid
-            // return float_is_zero(self._get_rounded_amount(amount_total) - self.amount_paid, precision_rounding=self.currency_id.rounding)
-            */
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<PosOrder> LoadPosDataDomainInternalAsync(object data, object config)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _load_pos_data_domain(self, data, config):
-            // return [('state', '=', 'draft'), ('config_id', '=', config.id)]
-            */
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<PosOrder> LoadPosSelfDataDomainInternalAsync(object data, object config)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def _load_pos_self_data_domain(self, data, config):
-            // return [('id', '=', False)]
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> LoadPosSelfDataFieldsInternalAsync(object config)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
-            // def _load_pos_self_data_fields(self, config):
-            // result = super()._load_pos_self_data_fields(config)
-            // return result + ['online_payment_method_id', 'next_online_payment_amount']
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def _load_pos_self_data_fields(self, config):
-            // return ['id', 'uuid', 'name', 'display_name', 'access_token', 'last_order_preparation_change', 'date_order', 'amount_total', 'amount_paid', 'amount_return', 'user_id', 'amount_tax', 'lines', 'pricelist_id', 'company_id', 'country_code', 'sequence_number', 'session_id',
-            //         'config_id', 'currency_id', 'currency_rate', 'is_refund', 'has_refundable_lines', 'state', 'account_move', 'preset_id', 'floating_order_name', 'general_customer_note', 'internal_note', 'nb_print', 'pos_reference', 'fiscal_position_id', 'payment_ids', 'to_invoice',
-            //         'shipping_date', 'preset_time', 'is_invoiced', 'is_tipped', 'tip_amount', 'ticket_code', 'tracking_number', 'email', 'mobile', 'table_id', 'course_ids',
-            //         'table_stand_number', 'self_ordering_table_id', 'create_date', 'write_date', 'source', 'partner_id', 'customer_count']
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> MarkupListMessageInternalAsync(object message)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _markup_list_message(self, message):
-            // body = Markup("<ul>")
-            // for line in message:
-            //     body += Markup("<li>")
-            //     body += line
-            //     body += Markup("</li>")
-            // body += Markup("</ul>")
-            // return body
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> OnchangeAmountAllInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _onchange_amount_all(self):
-            // self._compute_prices()
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> OnchangePartnerIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _onchange_partner_id(self):
-            // if self.partner_id:
-            //     self.pricelist_id = self.partner_id.property_product_pricelist.id
-            */
-            return default;
-        }
-
         public async Task<PosOrder> PosOrderCancelAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_cancel(self):
-            // if self.env.context.get('active_ids'):
-            //     orders = self.browse(self.env.context.get('active_ids'))
-            //     order_is_in_futur = any(order.preset_time and order.preset_time.date() > fields.Date.today() for order in orders)
-            //     if order_is_in_futur:
-            //         raise UserError(_('The order delivery / pickup date is in the future. You cannot cancel it.'))
-            // 
-            // today_orders = self.filtered(lambda order: order.state == 'draft' and (not order.preset_time or order.preset_time.date() <= fields.Date.today()))
-            // next_days_orders = self.filtered(lambda order: order.preset_time and order.preset_time.date() > fields.Date.today() and order.state == 'draft')
-            // next_days_orders.session_id = False
-            // today_orders.write({'state': 'cancel'})
-            // for config in today_orders.config_id:
-            //     config.notify_synchronisation(config.current_session_id.id, self.env.context.get('login_number', 0))
-            // return {
-            //     'pos.order': self._load_pos_data_read(today_orders, self.config_id)
-            // }
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def action_pos_order_cancel(self):
-            // orders = super().action_pos_order_cancel()
-            // success_orders_ids = [o['id'] for o in orders['pos.order'] if o['state'] == 'cancel']
-            // orders_ids = self.browse(success_orders_ids)
-            // self._send_notification(orders_ids)
-            // return orders
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_pos_order_cancel) ---
+            --- METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py, METHOD: action_pos_order_cancel) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -1417,24 +148,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> PosOrderInvoiceAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_invoice(self):
-            // self.ensure_one()
-            // if not (move := self.account_move):
-            //     self.write({'to_invoice': True})
-            //     if self.company_id.anglo_saxon_accounting and self.session_id.update_stock_at_closing and self.session_id.state != 'closed':
-            //         self._create_order_picking()
-            //     move = self._generate_pos_order_invoice()
-            // return {
-            //     'name': _('Customer Invoice'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('account.view_move_form').id,
-            //     'res_model': 'account.move',
-            //     'context': "{'move_type':'out_invoice'}",
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'current',
-            //     'res_id': move.id,
-            // }
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_pos_order_invoice) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -1444,435 +158,18 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> PosOrderPaidAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_paid(self):
-            // self.ensure_one()
-            // 
-            // # TODO: add support for mix of cash and non-cash payments when both cash_rounding and only_round_cash_method are True
-            // if not self.config_id.cash_rounding \
-            //    or self.config_id.only_round_cash_method \
-            //    and not any(p.payment_method_id.is_cash_count for p in self.payment_ids):
-            //     total = self.amount_total
-            // else:
-            //     total = float_round(self.amount_total, precision_rounding=self.config_id.rounding_method.rounding, rounding_method=self.config_id.rounding_method.rounding_method)
-            // 
-            // isPaid = float_is_zero(total - self.amount_paid, precision_rounding=self.currency_id.rounding)
-            // 
-            // if not isPaid and not self.config_id.cash_rounding:
-            //     raise UserError(_("Order %s is not fully paid.", self.name))
-            // elif not isPaid and self.config_id.cash_rounding:
-            //     currency = self.currency_id
-            //     if self.config_id.rounding_method.rounding_method == "HALF-UP":
-            //         maxDiff = currency.round(self.config_id.rounding_method.rounding / 2)
-            //     else:
-            //         maxDiff = currency.round(self.config_id.rounding_method.rounding)
-            // 
-            //     diff = currency.round(self.amount_total - self.amount_paid)
-            //     if not abs(diff) <= maxDiff:
-            //         raise UserError(_("Order %s is not fully paid.", self.name))
-            // 
-            // self.write({'state': 'paid'})
-            // 
-            // return True
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant_adyen, FILE: pos_order.py) ---
-            // def action_pos_order_paid(self):
-            // res = super(PosOrder, self).action_pos_order_paid()
-            // if not self.config_id.set_tip_after_payment:
-            //     payment_lines = self.payment_ids.filtered(lambda line: line.payment_method_id.use_payment_terminal == 'adyen')
-            //     for payment_line in payment_lines:
-            //         payment_line._adyen_capture()
-            // return res
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_pos_order_paid) ---
+            --- METHOD SOURCE (MODULE: pos_restaurant_adyen, FILE: pos_order.py, METHOD: action_pos_order_paid) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> PrepareAmlValuesListPerNatureInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_aml_values_list_per_nature(self):
-            // AccountTax = self.env['account.tax']
-            // sign = 1 if self.amount_total < 0 else -1
-            // commercial_partner = self.partner_id.commercial_partner_id
-            // company_currency = self.company_id.currency_id
-            // rate = self.currency_id._get_conversion_rate(self.currency_id, company_currency, self.company_id, self.date_order)
-            // 
-            // # Concert each order line to a dictionary containing business values. Also, prepare for taxes computation.
-            // base_lines = self._prepare_tax_base_line_values()
-            // AccountTax._add_tax_details_in_base_lines(base_lines, self.company_id)
-            // AccountTax._round_base_lines_tax_details(base_lines, self.company_id)
-            // AccountTax._add_accounting_data_in_base_lines_tax_details(base_lines, self.company_id)
-            // tax_results = AccountTax._prepare_tax_lines(base_lines, self.company_id)
-            // 
-            // total_balance = 0.0
-            // total_amount_currency = 0.0
-            // aml_vals_list_per_nature = defaultdict(list)
-            // 
-            // # Create the tax lines
-            // for tax_line in tax_results['tax_lines_to_add']:
-            //     aml_vals_list_per_nature['tax'].append({
-            //         **tax_line,
-            //         'display_type': 'tax',
-            //     })
-            //     total_amount_currency += tax_line['amount_currency']
-            //     total_balance += tax_line['balance']
-            // 
-            // # Create the aml values for order lines.
-            // for base_line_vals, update_base_line_vals in tax_results['base_lines_to_update']:
-            //     product_dict = self._prepare_product_aml_dict(base_line_vals, update_base_line_vals, rate, sign)
-            //     aml_vals_list_per_nature['product'].append(product_dict)
-            //     total_amount_currency += product_dict['amount_currency']
-            //     total_balance += product_dict['balance']
-            // 
-            // # Cash rounding.
-            // cash_rounding = self.config_id.rounding_method
-            // if self.config_id.cash_rounding and cash_rounding and (not self.config_id.only_round_cash_method or any(p.payment_method_id.is_cash_count for p in self.payment_ids)):
-            //     if self.config_id.only_round_cash_method and any(not p.payment_method_id.is_cash_count for p in self.payment_ids):
-            //         # If only_round_cash_method is True, and there are non-cash payments, cash rounding must be computed
-            //         # based on the total amount of the order, and total payment amount.
-            //         total_payment_amount = self.currency_id.round(sum(p.amount for p in self.payment_ids))
-            //         amount_currency = sign * self.currency_id.round(self.currency_id.round(total_amount_currency) + total_payment_amount)
-            //     else:
-            //         amount_currency = cash_rounding.compute_difference(self.currency_id, total_amount_currency)
-            //     if not self.currency_id.is_zero(amount_currency):
-            //         balance = company_currency.round(amount_currency * rate)
-            // 
-            //         if cash_rounding.strategy == 'biggest_tax':
-            //             biggest_tax_aml_vals = None
-            //             for aml_vals in aml_vals_list_per_nature['tax']:
-            //                 if not biggest_tax_aml_vals or float_compare(-sign * aml_vals['amount_currency'], -sign * biggest_tax_aml_vals['amount_currency'], precision_rounding=self.currency_id.rounding) > 0:
-            //                     biggest_tax_aml_vals = aml_vals
-            //             if biggest_tax_aml_vals:
-            //                 biggest_tax_aml_vals['amount_currency'] += amount_currency
-            //                 biggest_tax_aml_vals['balance'] += balance
-            //         elif cash_rounding.strategy == 'add_invoice_line':
-            //             if -sign * amount_currency > 0.0 and cash_rounding.loss_account_id:
-            //                 account_id = cash_rounding.loss_account_id.id
-            //             else:
-            //                 account_id = cash_rounding.profit_account_id.id
-            //             aml_vals_list_per_nature['cash_rounding'].append({
-            //                 'name': cash_rounding.name,
-            //                 'account_id': account_id,
-            //                 'partner_id': commercial_partner.id,
-            //                 'currency_id': self.currency_id.id,
-            //                 'amount_currency': amount_currency,
-            //                 'balance': balance,
-            //                 'display_type': 'rounding',
-            //             })
-            // # Stock.
-            // if self.company_id.inventory_valuation == 'real_time' and self.picking_ids.ids:
-            //     stock_moves = self.env['stock.move'].sudo().search([
-            //         ('picking_id', 'in', self.picking_ids.ids),
-            //         ('product_id.valuation', '=', 'real_time'),
-            //     ])
-            //     for stock_move in stock_moves:
-            //         product_accounts = stock_move.product_id._get_product_accounts()
-            //         expense_account = product_accounts['expense']
-            //         stock_account = product_accounts['stock_valuation']
-            //         balance = -sum(stock_move.mapped('value'))
-            //         aml_vals_list_per_nature['stock'].append({
-            //             'name': _("Stock variation for %s", stock_move.product_id.name),
-            //             'account_id': expense_account.id,
-            //             'partner_id': commercial_partner.id,
-            //             'currency_id': self.company_id.currency_id.id,
-            //             'amount_currency': balance,
-            //             'balance': balance,
-            //         })
-            //         aml_vals_list_per_nature['stock'].append({
-            //             'name': _("Stock variation for %s", stock_move.product_id.name),
-            //             'account_id': stock_account.id,
-            //             'partner_id': commercial_partner.id,
-            //             'currency_id': self.company_id.currency_id.id,
-            //             'amount_currency': -balance,
-            //             'balance': -balance,
-            //         })
-            // 
-            // # sort self.payment_ids by is_split_transaction:
-            // for payment_id in self.payment_ids:
-            //     is_split_transaction = payment_id.payment_method_id.split_transactions
-            //     if is_split_transaction:
-            //         reversed_move_receivable_account_id = self.partner_id.property_account_receivable_id
-            //     else:
-            //         reversed_move_receivable_account_id = payment_id.payment_method_id.receivable_account_id or self.company_id.account_default_pos_receivable_account_id
-            // 
-            //     aml_vals_entry_found = [aml_entry for aml_entry in aml_vals_list_per_nature['payment_terms']
-            //                             if aml_entry['account_id'] == reversed_move_receivable_account_id.id
-            //                             and not aml_entry['partner_id']]
-            // 
-            //     if aml_vals_entry_found and not is_split_transaction:
-            //         aml_vals_entry_found[0]['amount_currency'] += self.session_id._amount_converter(payment_id.amount, self.date_order, False)
-            //         aml_vals_entry_found[0]['balance'] += payment_id.amount
-            //     else:
-            //         aml_vals_list_per_nature['payment_terms'].append({
-            //             'partner_id': commercial_partner.id if is_split_transaction else False,
-            //             'name': f"{reversed_move_receivable_account_id.code} {reversed_move_receivable_account_id.code}",
-            //             'account_id': reversed_move_receivable_account_id.id,
-            //             'currency_id': self.currency_id.id,
-            //             'amount_currency': payment_id.amount,
-            //             'balance': self.session_id._amount_converter(payment_id.amount, self.date_order, False),
-            //             'display_type': 'payment_term',
-            //         })
-            // 
-            // return aml_vals_list_per_nature
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PrepareInvoiceLinesInternalAsync(object move_type)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_invoice_lines(self, move_type):
-            // """ Prepare a list of orm commands containing the dictionaries to fill the
-            // 'invoice_line_ids' field when creating an invoice.
-            // 
-            // :return: A list of Command.create to fill 'invoice_line_ids' when calling account.move.create.
-            // """
-            // invoice_lines = []
-            // for order in self:
-            //     line_values_list = order.with_context(invoicing=True)._prepare_tax_base_line_values()
-            //     for line_values in line_values_list:
-            //         line = line_values['record']
-            //         invoice_lines_values = order._get_invoice_lines_values(line_values, line, move_type)
-            //         invoice_lines.append((0, None, invoice_lines_values))
-            // 
-            //         is_percentage = order.pricelist_id and any(
-            //             order.pricelist_id.item_ids.filtered(
-            //                 lambda rule: rule.compute_price == "percentage")
-            //         )
-            //         if is_percentage and float_compare(line.price_unit, line.product_id.lst_price, precision_rounding=order.currency_id.rounding) < 0:
-            //             invoice_lines.append((0, None, {
-            //                 'name': _('Price discount from %(original_price)s to %(discounted_price)s',
-            //                         original_price=float_repr(line.product_id.lst_price, order.currency_id.decimal_places),
-            //                         discounted_price=float_repr(line.price_unit, order.currency_id.decimal_places)),
-            //                 'display_type': 'line_note',
-            //             }))
-            //         if line.customer_note:
-            //             invoice_lines.append((0, None, {
-            //                 'name': line.customer_note,
-            //                 'display_type': 'line_note',
-            //             }))
-            //     if order.general_customer_note:
-            //         invoice_lines.append((0, None, {
-            //             'name': order.general_customer_note,
-            //             'display_type': 'line_note',
-            //         }))
-            // return invoice_lines
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PrepareInvoiceValsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_invoice_vals(self):
-            // """We have orders filtered by company > config > partners > fiscal_positions so it won't make any issue
-            // when we access user, partner, bank or similar directly.
-            // """
-            // timezone = self.env.tz
-            // invoice_date = fields.Datetime.now()
-            // is_single_order = len(self) == 1
-            // 
-            // if is_single_order and self.session_id.state != 'closed':
-            //     invoice_date = self.date_order
-            // 
-            // pos_refunded_invoice_ids = []
-            // for orderline in self.lines:
-            //     if orderline.refunded_orderline_id and orderline.refunded_orderline_id.order_id.account_move:
-            //         pos_refunded_invoice_ids.append(orderline.refunded_orderline_id.order_id.account_move.id)
-            // 
-            // fiscal_position = self.fiscal_position_id
-            // pos_config = self.config_id
-            // rounding_method = pos_config.rounding_method
-            // move_type = 'out_invoice' if not any(order.is_refund for order in self) else 'out_refund'
-            // invoice_payment_term_id = (
-            //     self.partner_id.property_payment_term_id.id
-            //     if self.partner_id.property_payment_term_id and any(p.payment_method_id.type == 'pay_later' for p in self.payment_ids)
-            //     else False
-            // )
-            // 
-            // vals = {
-            //     'invoice_origin': ', '.join(ref or '' for ref in self.mapped('pos_reference')),
-            //     'pos_refunded_invoice_ids': pos_refunded_invoice_ids,
-            //     'pos_order_ids': self.ids,
-            //     'ref': self.name if is_single_order else False,
-            //     'journal_id': self.config_id.invoice_journal_id.id,
-            //     'move_type': move_type,
-            //     'partner_id': self.partner_id.address_get(['invoice'])['invoice'],
-            //     'partner_shipping_id': self.partner_id.address_get(['delivery'])['delivery'],
-            //     'partner_bank_id': self._get_partner_bank_id(),
-            //     'currency_id': self.currency_id.id,
-            //     'invoice_date': invoice_date.astimezone(timezone).date(),
-            //     'invoice_user_id': self.user_id.id,
-            //     'fiscal_position_id': fiscal_position.id,
-            //     'invoice_line_ids': self._prepare_invoice_lines(move_type),
-            //     'invoice_payment_term_id': invoice_payment_term_id,
-            //     'invoice_cash_rounding_id': rounding_method.id,
-            // }
-            // if is_single_order and self.refunded_order_id.account_move:
-            //     vals['ref'] = _('Reversal of: %s', self.refunded_order_id.account_move.name)
-            //     vals['reversed_entry_id'] = self.refunded_order_id.account_move.id
-            // 
-            // if any(order.floating_order_name for order in self):
-            //     vals.update({'narration': ', '.join(self.filtered('floating_order_name').mapped('floating_order_name'))})
-            // 
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def _prepare_invoice_vals(self):
-            // invoice_vals = super(PosOrder, self)._prepare_invoice_vals()
-            // invoice_vals['team_id'] = self.crm_team_id.id
-            // sale_orders = self.lines.mapped('sale_order_origin_id')
-            // if sale_orders:
-            //     if sale_orders[0].partner_invoice_id.id != sale_orders[0].partner_shipping_id.id:
-            //         invoice_vals['partner_shipping_id'] = sale_orders[0].partner_shipping_id.id
-            //     else:
-            //         addr = self.partner_id.address_get(['delivery'])
-            //         invoice_vals['partner_shipping_id'] = addr['delivery']
-            //     if sale_orders[0].payment_term_id and not sale_orders[0].payment_term_id.early_discount:
-            //         invoice_vals['invoice_payment_term_id'] = sale_orders[0].payment_term_id.id
-            //     else:
-            //         invoice_vals['invoice_payment_term_id'] = False
-            //     if sale_orders[0].partner_invoice_id != sale_orders[0].partner_id:
-            //         invoice_vals['partner_id'] = sale_orders[0].partner_invoice_id.id
-            // return invoice_vals
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PrepareMailValuesInternalAsync(object email, object ticket, object basic_ticket)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_mail_values(self, email, ticket, basic_ticket):
-            // message = Markup(
-            //     _("<p>Dear %(client_name)s,<br/>Here is your Receipt %(is_invoiced)sfor \
-            //     %(pos_name)s amounting in %(amount)s from %(company_name)s. </p>")
-            // ) % {
-            //     'client_name': self.partner_id.name or _('Customer'),
-            //     'pos_name': self.name,
-            //     'amount': self.currency_id.format(self.amount_total),
-            //     'company_name': self.company_id.name,
-            //     'is_invoiced': "and Invoice " if self.account_move else "",
-            // }
-            // 
-            // return {
-            //     'subject': _('Receipt %s', self.name),
-            //     'body_html': message,
-            //     'author_id': self.env.user.partner_id.id,
-            //     'email_from': self.env.company.email or self.env.user.email_formatted,
-            //     'email_to': email,
-            //     'attachment_ids': self._add_mail_attachment(self.name, ticket, basic_ticket),
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PrepareOrderLineInternalAsync(object order_line)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def _prepare_order_line(self, order_line):
-            // order_line = super()._prepare_order_line(order_line)
-            // if order_line.get('sale_order_origin_id'):
-            //     order_line['sale_order_origin_id'] = {
-            //         'id': order_line['sale_order_origin_id'][0],
-            //         'name': order_line['sale_order_origin_id'][1],
-            //     }
-            // if order_line.get('sale_order_line_id'):
-            //     order_line['sale_order_line_id'] = {
-            //         'id': order_line['sale_order_line_id'][0],
-            //     }
-            // return order_line
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PreparePosLogInternalAsync(object body)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_pos_log(self, body):
-            // return body
-            --- ODOO METHOD SOURCE (MODULE: pos_hr, FILE: pos_order.py) ---
-            // def _prepare_pos_log(self, body):
-            // return super()._prepare_pos_log(body) + Markup("<br/>") + _("Cashier %s", self.cashier)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PrepareProductAmlDictInternalAsync(object base_line_vals, object update_base_line_vals, object rate, object sign)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_product_aml_dict(self, base_line_vals, update_base_line_vals, rate, sign):
-            // amount_currency = update_base_line_vals['amount_currency']
-            // balance = self.company_id.currency_id.round(amount_currency * rate)
-            // order_line = base_line_vals['record']
-            // return {
-            //     'name': order_line.full_product_name,
-            //     'product_id': order_line.product_id.id,
-            //     'quantity': order_line.qty * sign,
-            //     'account_id': base_line_vals['account_id'].id,
-            //     'partner_id': base_line_vals['partner_id'].id,
-            //     'currency_id': base_line_vals['currency_id'].id,
-            //     'tax_ids': [(6, 0, base_line_vals['tax_ids'].ids)],
-            //     'tax_tag_ids': update_base_line_vals['tax_tag_ids'],
-            //     'amount_currency': amount_currency,
-            //     'balance': balance,
-            //     'no_followup': False,
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PrepareRefundValuesInternalAsync(object current_session)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_refund_values(self, current_session):
-            // self.ensure_one()
-            // pos_reference, tracking_number = current_session.config_id._get_next_order_refs()
-            // return {
-            //     'name': _('%(name)s REFUND', name=self.name),
-            //     'session_id': current_session.id,
-            //     'date_order': fields.Datetime.now(),
-            //     'pos_reference': pos_reference,
-            //     'lines': False,
-            //     'amount_paid': 0,
-            //     'is_total_cost_computed': False,
-            //     'is_refund': True,
-            //     'tracking_number': tracking_number,
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> PrepareTaxBaseLineValuesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _prepare_tax_base_line_values(self):
-            // """ Convert pos order lines into dictionaries that would be used to compute taxes later.
-            // 
-            // :return: A list of python dictionaries (see '_prepare_base_line_for_taxes_computation' in account.tax).
-            // """
-            // result = []
-            // for order in self:
-            //     result.extend(order.lines._prepare_tax_base_line_values() or [])
-            // return result
-            */
-            return default;
-        }
-
         public async Task<PosOrder> PrintEventBadgesAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py) ---
-            // def print_event_badges(self):
-            // return self.env.ref('event.action_report_event_registration_badge').report_action(self.lines.event_registration_ids)
+            --- METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py, METHOD: print_event_badges) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -1882,306 +179,19 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> PrintEventTicketsAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py) ---
-            // def print_event_tickets(self):
-            // return self.env.ref('event.action_report_event_registration_full_page_ticket').report_action(self.lines.event_registration_ids)
+            --- METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py, METHOD: print_event_tickets) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> ProcessExistingGiftCardsInternalAsync(object coupon_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
-            // def _process_existing_gift_cards(self, coupon_data):
-            // updated_gift_cards = self.env['loyalty.card']
-            // coupon_key_to_remove = []
-            // for coupon_id, coupon_vals in coupon_data.items():
-            //     program_id = self.env['loyalty.program'].browse(coupon_vals['program_id'])
-            //     if program_id.program_type == 'gift_card':
-            //         updated = False
-            //         gift_card = self.env['loyalty.card'].search([
-            //             ('|'),
-            //             ('code', '=', coupon_vals.get('code', '')),
-            //             ('id', '=', coupon_vals.get('coupon_id', False))
-            //         ])
-            //         if not gift_card.exists():
-            //             continue
-            // 
-            //         if not gift_card.partner_id and self.partner_id:
-            //             updated = True
-            //             gift_card.partner_id = self.partner_id
-            //             gift_card.history_ids.create({
-            //                 'card_id': gift_card.id,
-            //                 'description': _('Assigning partner %s', self.partner_id.name),
-            //                 'used': 0,
-            //                 'issued': gift_card.points,
-            //             })
-            // 
-            //         if len([id for id in gift_card.history_ids.mapped('order_id') if id != 0]) == 0:
-            //             updated = True
-            //             gift_card.source_pos_order_id = self.id
-            //             gift_card.history_ids.create({
-            //                 'card_id': gift_card.id,
-            //                 'order_model': self._name,
-            //                 'order_id': self.id,
-            //                 'description': _('Assigning order %s', self.display_name),
-            //                 'used': 0,
-            //                 'issued': gift_card.points,
-            //             })
-            // 
-            //         if coupon_vals.get('points') != gift_card.points:
-            //             # Coupon vals contains negative points
-            //             updated = True
-            //             new_value = gift_card.points + coupon_vals['points']
-            //             gift_card.points = new_value
-            //             gift_card.history_ids.create({
-            //                 'card_id': gift_card.id,
-            //                 'order_model': self._name,
-            //                 'order_id': self.id,
-            //                 'description': _('Onsite %s', self.display_name),
-            //                 'used': -coupon_vals['points'] if coupon_vals['points'] < 0 else 0,
-            //                 'issued': coupon_vals['points'] if coupon_vals['points'] > 0 else 0,
-            //             })
-            // 
-            //         if updated:
-            //             updated_gift_cards |= gift_card
-            // 
-            //         coupon_key_to_remove.append(coupon_id)
-            // 
-            // for key in coupon_key_to_remove:
-            //     coupon_data.pop(key, None)
-            // 
-            // return updated_gift_cards
-            */
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<PosOrder> ProcessOrderInternalAsync(object order, object existing_order)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _process_order(self, order, existing_order):
-            // """Create or update an pos.order from a given dictionary.
-            // 
-            // :param dict order: dictionary representing the order.
-            // :param existing_order: order to be updated or False.
-            // :type existing_order: pos.order.
-            // :returns: id of created/updated pos.order
-            // :rtype: int
-            // """
-            // draft = True if order.get('state') == 'draft' else False
-            // pos_session = self.env['pos.session'].browse(order['session_id'])
-            // if pos_session.state == 'closing_control' or pos_session.state == 'closed':
-            //     order['session_id'] = self._get_valid_session(order).id
-            // 
-            // if not order.get('source'):
-            //     order['source'] = 'pos'
-            // 
-            // if order.get('partner_id'):
-            //     partner_id = self.env['res.partner'].browse(order['partner_id'])
-            //     if not partner_id.exists():
-            //         order.update({
-            //             "partner_id": False,
-            //             "to_invoice": False,
-            //         })
-            // 
-            // pos_order = False
-            // record_uuid_mapping = order.pop('relations_uuid_mapping', {})
-            // 
-            // if not existing_order:
-            //     pos_order = self.create({
-            //         **{key: value for key, value in order.items() if key != 'name'},
-            //     })
-            //     pos_order = pos_order.with_company(pos_order.company_id)
-            // else:
-            //     pos_order = existing_order
-            // 
-            //     # If the order is belonging to another session, it must be moved to the current session first
-            //     if order.get('session_id') and order['session_id'] != pos_order.session_id.id:
-            //         pos_order.write({'session_id': order['session_id']})
-            // 
-            //     # Save lines and payments before to avoid exception if a line is deleted
-            //     # when vals change the state to 'paid'
-            //     for field in ['lines', 'payment_ids']:
-            //         if order.get(field):
-            //             existing_ids = set(pos_order[field].ids)
-            //             pos_order.write({field: order[field]})
-            //             added_ids = set(pos_order[field].ids) - existing_ids
-            //             if added_ids:
-            //                 _logger.info("Added %s %s to pos.order #%s", field, list(added_ids), pos_order.id)
-            //             order[field] = []
-            // 
-            //     del order['uuid']
-            //     del order['access_token']
-            //     if order.get('state') == 'paid':
-            //         # The "paid" state will be assigned later by `_process_saved_order`
-            //         order['state'] = pos_order.state
-            //     pos_order.write(order)
-            // 
-            // for model_name, mapping in record_uuid_mapping.items():
-            //     owner_records = self.env[model_name].search([('uuid', 'in', mapping.keys())])
-            //     for uuid, fields in mapping.items():
-            //         for name, uuids in fields.items():
-            //             params = self.env[model_name]._fields[name]
-            //             if params.type in ['one2many', 'many2many']:
-            //                 records = self.env[params.comodel_name].search([('uuid', 'in', uuids)])
-            //                 owner_records.filtered(lambda r: r.uuid == uuid).write({name: [Command.link(r.id) for r in records]})
-            //             else:
-            //                 record = self.env[params.comodel_name].search([('uuid', '=', uuids)])
-            //                 owner_records.filtered(lambda r: r.uuid == uuid).write({name: record.id})
-            // 
-            // self = self.with_company(pos_order.company_id)
-            // self._process_payment_lines(order, pos_order, pos_session, draft)
-            // return pos_order._process_saved_order(draft)
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py) ---
-            // def _process_order(self, order, existing_order):
-            // res = super()._process_order(order, existing_order)
-            // refunded_line_ids = [line[2].get('refunded_orderline_id') for line in order.get('lines') if line[0] in [0, 1] and line[2].get('refunded_orderline_id')]
-            // refunded_orderlines = self.env['pos.order.line'].browse(refunded_line_ids)
-            // event_to_cancel = []
-            // 
-            // for refunded_orderline in refunded_orderlines:
-            //     if refunded_orderline.event_registration_ids:
-            //         refund_qty = abs(sum(refunded_orderline.refund_orderline_ids.mapped('qty')))
-            //         already_cancelled_qty = len(refunded_orderline.event_registration_ids.filtered(lambda r: r.state == 'cancel'))
-            //         to_cancel_qty = refund_qty - already_cancelled_qty
-            //         if to_cancel_qty > 0:
-            //             event_to_cancel += refunded_orderline.event_registration_ids.filtered(lambda registration: registration.state != 'cancel').ids[:int(to_cancel_qty)]
-            // 
-            // if event_to_cancel:
-            //     self.env['event.registration'].browse(event_to_cancel).write({'state': 'cancel'})
-            // 
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment, FILE: pos_order.py) ---
-            // def _process_order(self, order, existing_order):
-            // draft = order.get('state') == 'draft'
-            // pos_session = self.env['pos.session'].browse(order['session_id'])
-            // online_payment_methods = pos_session.config_id.payment_method_ids.filtered('is_online_payment')
-            // if draft and online_payment_methods:
-            //     # online payment lines should not be created in draft orders
-            //     order['payment_ids'] = [payment for payment in order.get('payment_ids', []) if payment[0] not in [0, 1] or (payment[2].get('payment_method_id') not in online_payment_methods.ids)]
-            // return super()._process_order(order, existing_order)
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ProcessPaymentLinesInternalAsync(object pos_order, object order, object pos_session, object draft)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _process_payment_lines(self, pos_order, order, pos_session, draft):
-            // """Create account.bank.statement.lines from the dictionary given to the parent function.
-            // 
-            // If the payment_line is an updated version of an existing one, the existing payment_line will first be
-            // removed before making a new one.
-            // :param pos_order: dictionary representing the order.
-            // :type pos_order: dict.
-            // :param order: Order object the payment lines should belong to.
-            // :type order: pos.order
-            // :param pos_session: PoS session the order was created in.
-            // :type pos_session: pos.session
-            // :param draft: Indicate that the pos_order is not validated yet.
-            // :type draft: bool.
-            // """
-            // prec_acc = order.currency_id.decimal_places
-            // 
-            // # Recompute amount paid because we don't trust the client
-            // order.write({'amount_paid': order._compute_amount_paid()})
-            // 
-            // if not draft and not float_is_zero(pos_order['amount_return'], prec_acc):
-            //     cash_payment_method = pos_session.payment_method_ids.filtered('is_cash_count')[:1]
-            //     if not cash_payment_method:
-            //         raise UserError(_("No cash statement found for this session. Unable to record returned cash."))
-            //     return_payment_vals = {
-            //         'name': _('return'),
-            //         'pos_order_id': order.id,
-            //         'amount': pos_order['amount_return'],
-            //         'payment_date': fields.Datetime.now(),
-            //         'payment_method_id': cash_payment_method.id,
-            //         'is_change': True,
-            //     }
-            //     order.add_payment(return_payment_vals)
-            //     order._compute_prices()
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> ProcessSavedOrderInternalAsync(object draft)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _process_saved_order(self, draft):
-            // self.ensure_one()
-            // if not draft and self.state != 'cancel':
-            //     try:
-            //         self.action_pos_order_paid()
-            //     except psycopg2.DatabaseError:
-            //         # do not hide transactional errors, the order(s) won't be saved!
-            //         raise
-            //     except UserError as e:
-            //         _logger.warning('Could not fully process the POS Order: %s', tools.exception_to_unicode(e))
-            //     except Exception as e:
-            //         _logger.error('Could not fully process the POS Order: %s', tools.exception_to_unicode(e), exc_info=True)
-            //     self._create_order_picking()
-            //     self._compute_total_cost_in_real_time()
-            // 
-            // if self.to_invoice and self.state == 'paid' and self.config_id.invoice_journal_id:
-            //     self._generate_pos_order_invoice()
-            // elif not self.config_id.invoice_journal_id:
-            //     _logger.warning('Trying to create an invoice without any journal configured')
-            //     raise UserError(_('No invoice journal configured for this POS session.'))
-            // 
-            // return self.id
-            */
-            return default;
-        }
-
         public async Task<PosOrder> ReadPosDataAsync(PosOrderReadPosDataRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def read_pos_data(self, data, config):
-            // # If the previous session is closed, the order will get a new session_id due to _get_valid_session in _process_order
-            // account_moves = self.sudo().account_move | self.sudo().payment_ids.account_move_id
-            // return {
-            //     'pos.order': self._load_pos_data_read(self, config) if config else [],
-            //     'pos.session': [],
-            //     'pos.payment': self.env['pos.payment']._load_pos_data_read(self.payment_ids, config) if config else [],
-            //     'pos.order.line': self.env['pos.order.line']._load_pos_data_read(self.lines, config) if config else [],
-            //     'pos.pack.operation.lot': self.env['pos.pack.operation.lot']._load_pos_data_read(self.lines.pack_lot_ids, config) if config else [],
-            //     'product.attribute.custom.value': self.env['product.attribute.custom.value']._load_pos_data_read(self.lines.custom_attribute_value_ids, config) if config else [],
-            //     'account.move': self.env['account.move'].sudo()._load_pos_data_read(account_moves, config) if config else [],
-            // }
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py) ---
-            // def read_pos_data(self, data, config):
-            // results = super().read_pos_data(data, config)
-            // paid_orders = self.filtered_domain([('state', 'in', ['paid', 'done', 'invoiced'])])
-            // 
-            // if not paid_orders:
-            //     return results
-            // 
-            // lines_with_event = paid_orders.mapped('lines').filtered(lambda line: line.event_ticket_id)
-            // event_registration_ids = lines_with_event.event_registration_ids
-            // results['event.registration'] = self.env['event.registration']._load_pos_data_read(event_registration_ids, config)
-            // results['event.event'] = self.env['event.event']._load_pos_data_read(event_registration_ids.mapped('event_id'), config)
-            // results['event.event.ticket'] = self.env['event.event.ticket']._load_pos_data_read(event_registration_ids.mapped('event_ticket_id'), config)
-            // results['event.slot'] = self.env['event.slot']._load_pos_data_read(event_registration_ids.mapped('event_slot_id'), config)
-            // results['event.registration.answer'] = self.env['event.registration.answer']._load_pos_data_read(event_registration_ids.mapped('registration_answer_ids'), config)
-            // 
-            // for registration in event_registration_ids:
-            //     if registration.email:
-            //         registration.action_send_badge_email()
-            // 
-            // return results
-            --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py) ---
-            // def read_pos_data(self, data, config):
-            // result = super().read_pos_data(data, config)
-            // result['restaurant.order.course'] = self.env['restaurant.order.course']._load_pos_data_read(self.course_ids, config)
-            // return result
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: read_pos_data) ---
+            --- METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py, METHOD: read_pos_data) ---
+            --- METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_order.py, METHOD: read_pos_data) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
@@ -2192,9 +202,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> ReadPosDataUuidAsync(PosOrderReadPosDataUuidRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def read_pos_data_uuid(self, uuid):
-            // return self.read_pos_orders([('uuid', '=', uuid)])
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: read_pos_data_uuid) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
@@ -2205,105 +213,20 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> ReadPosOrdersAsync(PosOrderReadPosOrdersRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def read_pos_orders(self, domain=False):
-            // orders = self.search(domain)
-            // config_id = orders[0].config_id if orders else False
-            // return orders.read_pos_data([], config_id) if config_id else {'pos.order': []}
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: read_pos_orders) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> ReconcileInvoicePaymentsInternalAsync(object invoice, object payment_moves)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _reconcile_invoice_payments(self, invoice, payment_moves):
-            // receivable_account = self.env["res.partner"]._find_accounting_partner(invoice.partner_id).with_company(self.company_id).property_account_receivable_id
-            // if not receivable_account.reconcile:
-            //     return
-            // payment_receivable_lines = payment_moves.pos_payment_ids._get_receivable_lines_for_invoice_reconciliation(receivable_account)
-            // invoice_receivable_lines = invoice.line_ids.filtered(lambda line: line.account_id == receivable_account and not line.reconciled)
-            // (payment_receivable_lines | invoice_receivable_lines).sudo().with_company(invoice.company_id).reconcile()
-            */
-            return default;
-        }
-
         public async Task<PosOrder> RefundAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def refund(self):
-            // return {
-            //     'name': _('Return Products'),
-            //     'view_mode': 'form',
-            //     'res_model': 'pos.order',
-            //     'res_id': self._refund().ids[0],
-            //     'view_id': False,
-            //     'context': self.env.context,
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'current',
-            // }
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: refund) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<PosOrder> RefundInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _refund(self):
-            // """ Create a copy of order to refund them.
-            // 
-            // return The newly created refund orders.
-            // """
-            // refund_orders = self.env['pos.order']
-            // for order in self:
-            //     # When a refund is performed, we are creating it in a session having the same config as the original
-            //     # order. It can be the same session, or if it has been closed the new one that has been opened.
-            //     current_session = order.session_id.config_id.current_session_id
-            //     if not current_session:
-            //         raise UserError(_('To return product(s), you need to open a session in the POS %s', order.session_id.config_id.display_name))
-            //     refund_order = order.copy(
-            //         order._prepare_refund_values(current_session)
-            //     )
-            //     for line in order.lines.filtered(lambda l: l.refunded_qty < l.qty):
-            //         PosPackOperationLot = self.env['pos.pack.operation.lot']
-            //         for pack_lot in line.pack_lot_ids:
-            //             PosPackOperationLot += pack_lot.copy()
-            //         refund_line = line.copy(line._prepare_refund_data(refund_order, PosPackOperationLot))
-            //         refund_line._onchange_amount_line_all()
-            //     refund_order._compute_prices()
-            //     refund_orders |= refund_order
-            //     refund_order.config_id.notify_synchronisation(current_session.id, 0)
-            // refund_orders._compute_prices()
-            // return refund_orders
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> RemoveDuplicateCouponDataInternalAsync(object coupon_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
-            // def _remove_duplicate_coupon_data(self, coupon_data):
-            // # to prevent duplicates, it is necessary to check if the history line already exists
-            // items_to_remove = []
-            // for coupon_id, coupon_vals in coupon_data.items():
-            //     existing_history = self.env['loyalty.history'].search_count([
-            //         ('card_id.program_id', '=', coupon_vals['program_id']),
-            //         ('order_model', '=', self._name),
-            //         ('order_id', '=', self.id),
-            //     ])
-            //     if existing_history:
-            //         items_to_remove.append(coupon_id)
-            // for item in items_to_remove:
-            //     coupon_data.pop(item)
-            */
             return default;
         }
 
@@ -2311,27 +234,8 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> RemoveFromUiAsync(PosOrderRemoveFromUiRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def remove_from_ui(self, server_ids):
-            // """ Remove orders from the frontend PoS application
-            // 
-            // Remove orders from the server by id.
-            // :param server_ids: list of the id's of orders to remove from the server.
-            // :type server_ids: list.
-            // :returns: list -- list of db-ids for the removed orders.
-            // """
-            // orders = self.search([('id', 'in', server_ids), ('state', '=', 'draft')])
-            // orders.write({'state': 'cancel'})
-            // # TODO Looks like delete cascade is a better solution.
-            // orders.mapped('payment_ids').sudo().unlink()
-            // orders.sudo().unlink()
-            // return orders.ids
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def remove_from_ui(self, server_ids):
-            // order_ids = self.env['pos.order'].browse(server_ids)
-            // order_ids.state = 'cancel'
-            // self._send_notification(order_ids)
-            // return super().remove_from_ui(server_ids)
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: remove_from_ui) ---
+            --- METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py, METHOD: remove_from_ui) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
@@ -2342,32 +246,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> SearchPaidOrderIdsAsync(PosOrderSearchPaidOrderIdsRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def search_paid_order_ids(self, config_id, domain, limit, offset):
-            // """Search for 'paid' orders that satisfy the given domain, limit and offset."""
-            // pos_config = self.env['pos.config'].browse(config_id)
-            // default_domain = Domain('state', '!=', 'draft') & Domain('state', '!=', 'cancel') & Domain('config_id', 'in', [config_id] + pos_config.trusted_config_ids.ids)
-            // real_domain = Domain(domain) & default_domain
-            // orders = self.search(real_domain, limit=limit, offset=offset, order='create_date desc')
-            // # We clean here the orders that does not have the same currency.
-            // # As we cannot use currency_id in the domain (because it is not a stored field),
-            // # we must do it after the search.
-            // orders = orders.filtered(lambda order: order.currency_id == pos_config.currency_id)
-            // orderlines = self.env['pos.order.line'].search(['|', ('refunded_orderline_id.order_id', 'in', orders.ids), ('order_id', 'in', orders.ids)])
-            // 
-            // # We will return to the frontend the ids and the date of their last modification
-            // # so that it can compare to the last time it fetched the orders and can ask to fetch
-            // # orders that are not up-to-date.
-            // # The date of their last modification is either the last time one of its orderline has changed,
-            // # or the last time a refunded orderline related to it has changed.
-            // orders_info = defaultdict(lambda: datetime.min)
-            // for orderline in orderlines:
-            //     key_order = orderline.order_id.id if orderline.order_id in orders \
-            //                     else orderline.refunded_orderline_id.order_id.id
-            //     if orders_info[key_order] < orderline.write_date:
-            //         orders_info[key_order] = orderline.write_date
-            // totalCount = self.search_count(real_domain)
-            // return {'ordersInfo': list(orders_info.items())[::-1], 'totalCount': totalCount}
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: search_paid_order_ids) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
@@ -2377,99 +256,17 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> SendMailAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_send_mail(self):
-            // template = self.env['mail.template'].search([('model', '=', self._name)], limit=1)
-            // return {
-            //     'name': _('Send Email'),
-            //     'view_mode': 'form',
-            //     'res_model': 'mail.compose.message',
-            //     'type': 'ir.actions.act_window',
-            //     'context': {
-            //         'default_composition_mode': 'mass_mail',
-            //         'default_res_ids': self.ids,
-            //         'default_template_id': template.id,
-            //     },
-            //     'target': 'new'
-            // }
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_send_mail) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> SendNotificationInternalAsync(List<Guid> order_ids)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def _send_notification(self, order_ids):
-            // config_ids = order_ids.config_id
-            // for config in config_ids:
-            //     config.notify_synchronisation(config.current_session_id.id, self.env.context.get('device_identifier', 0))
-            //     config._notify('ORDER_STATE_CHANGED', {})
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> SendNotificationOnlinePaymentStatusInternalAsync(object status)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
-            // def _send_notification_online_payment_status(self, status):
-            // self.config_id._notify("ONLINE_PAYMENT_STATUS", {
-            //     'status': status,  # progress, success, fail
-            //     'data': {
-            //         'pos.order': self.read(self._load_pos_self_data_fields(self.config_id), load=False),
-            //         'pos.payment': self.payment_ids.read(self.payment_ids._load_pos_self_data_fields(self.config_id), load=False),
-            //     }
-            // })
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> SendOrderInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _send_order(self):
-            // # This function is made to be overriden by pos_self_order_preparation_display
-            // pass
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> SendPaymentResultInternalAsync(object payment_result)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def _send_payment_result(self, payment_result):
-            // self.ensure_one()
-            // self.config_id._notify('PAYMENT_STATUS', {
-            //     'payment_result': payment_result,
-            //     'data': {
-            //         'pos.order': self.read(self._load_pos_self_data_fields(self.config_id), load=False),
-            //         'pos.order.line': self.lines.read(self.lines._load_pos_self_data_fields(self.config_id), load=False),
-            //     }
-            // })
-            // if payment_result == 'Success':
-            //     self._send_order()
-            */
-            return default;
-        }
-
         public async Task<PosOrder> SendReceiptAsync(PosOrderSendReceiptRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_send_receipt(self, email, ticket_image, basic_image):
-            // self.ensure_one()
-            // self.email = email
-            // mail_template_id = 'point_of_sale.email_template_pos_receipt'
-            // mail_template = self.env.ref(mail_template_id, raise_if_not_found=False)
-            // if not mail_template:
-            //     raise UserError(_("The mail template with xmlid %s has been deleted.", mail_template_id))
-            // mail_template.send_mail(self.id, force_send=True, email_values={'email_to': email,
-            //                                                                 'attachment_ids': self._get_mail_attachments(self.name, ticket_image, basic_image)})
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_send_receipt) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
@@ -2479,83 +276,27 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> SendSelfOrderReceiptAsync(PosOrderSendSelfOrderReceiptRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def action_send_self_order_receipt(self, email, mail_template_id, ticket_image, basic_image):
-            // self.ensure_one()
-            // self.email = email
-            // mail_template = self.env['mail.template'].browse(mail_template_id)
-            // if not mail_template:
-            //     raise UserError(_("The mail template with xmlid %s has been deleted.", mail_template_id))
-            // email_values = {'email_to': email}
-            // if self.state == 'paid' and ticket_image:
-            //     email_values['attachment_ids'] = self._get_mail_attachments(self.name, ticket_image, basic_image)
-            // mail_template.send_mail(self.id, force_send=True, email_values=email_values)
+            --- METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py, METHOD: action_send_self_order_receipt) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<PosOrder> SendSelfOrderReceiptInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def _send_self_order_receipt(self):
-            // if self.email:
-            //     try:
-            //         self.action_send_self_order_receipt(self.email, self.preset_id.mail_template_id.id, False, False)
-            //     except UserError as e:
-            //         _logger.warning("Error while sending email: %s", e.args[0])
-            */
             return default;
         }
 
         public async Task<PosOrder> SentMessageOnSmsAsync(PosOrderSentMessageOnSmsRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sms, FILE: pos_order.py) ---
-            // def action_sent_message_on_sms(self, phone, _, basic_image=False):
-            // if not (self and self.config_id.module_pos_sms and self.config_id.sms_receipt_template_id and phone):
-            //     return
-            // self.ensure_one()
-            // sms_composer = self.env['sms.composer'].with_context(active_id=self.id).create(
-            //     {
-            //         'composition_mode': 'comment',
-            //         'numbers': phone,
-            //         'recipient_single_number_itf': phone,
-            //         'template_id': self.config_id.sms_receipt_template_id.id,
-            //         'res_model': 'pos.order'
-            //     }
-            // )
-            // self.mobile = phone
-            // sms_composer.action_send_sms()
+            --- METHOD SOURCE (MODULE: pos_sms, FILE: pos_order.py, METHOD: action_sent_message_on_sms) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> ShouldCreatePickingRealTimeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _should_create_picking_real_time(self):
-            // return not self.session_id.update_stock_at_closing or (self.company_id.anglo_saxon_accounting and self.to_invoice)
-            */
-            return default;
-        }
-
         public async Task<PosOrder> StockPickingAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_stock_picking(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('stock.action_picking_tree_ready')
-            // action['display_name'] = _('Pickings')
-            // action['context'] = {}
-            // action['domain'] = [('id', 'in', self.picking_ids.ids)]
-            // return action
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_stock_picking) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -2566,219 +307,19 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> SyncFromUiAsync(PosOrderSyncFromUiRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def sync_from_ui(self, orders):
-            // """ Create and update Orders from the frontend PoS application.
-            // 
-            // Create new orders and update orders that are in draft status. If an order already exists with a status
-            // different from 'draft' it will be discarded, otherwise it will be saved to the database. If saved with
-            // 'draft' status the order can be overwritten later by this function.
-            // 
-            // :param orders: dictionary with the orders to be created.
-            // :type orders: dict.
-            // :returns: list of db-ids for the created and updated orders.
-            // :rtype: list
-            // """
-            // sync_token = randrange(100_000_000)  # Use to differentiate 2 parallels calls to this function in the logs
-            // _logger.info("PoS synchronisation #%d started for PoS orders references: %s", sync_token, [self._get_order_log_representation(order) for order in orders])
-            // order_ids = []
-            // 
-            // for order in orders:
-            //     order_log_name = self._get_order_log_representation(order)
-            //     _logger.debug("PoS synchronisation #%d processing order %s order full data: %s", sync_token, order_log_name, pformat(order))
-            // 
-            //     refunded_orders = self._get_refunded_orders(order)
-            //     if len(refunded_orders) > 1:
-            //         raise ValidationError(_('You can only refund products from the same order.'))
-            //     elif len(refunded_orders) == 1:
-            //         order_ids.append(refunded_orders[0].id)
-            // 
-            //     existing_order = self._get_open_order(order)
-            //     if existing_order and existing_order.state == 'draft':
-            //         existing_order._ensure_to_keep_last_preparation_change(order)
-            //         order_ids.append(self._process_order(order, existing_order))
-            //         _logger.info("PoS synchronisation #%d order %s updated pos.order #%d", sync_token, order_log_name, order_ids[-1])
-            //     elif not existing_order:
-            //         order_ids.append(self._process_order(order, False))
-            //         _logger.info("PoS synchronisation #%d order %s created pos.order #%d", sync_token, order_log_name, order_ids[-1])
-            //     else:
-            //         # In theory, this situation is unintended
-            //         # In practice it can happen when "Tip later" option is used
-            //         existing_order._ensure_to_keep_last_preparation_change(order)
-            //         order_ids.append(existing_order.id)
-            //         _logger.info("PoS synchronisation #%d order %s sync ignored for existing PoS order %s (state: %s)", sync_token, order_log_name, existing_order, existing_order.state)
-            // 
-            // # Sometime pos_orders_ids can be empty.
-            // pos_order_ids = self.env['pos.order'].browse(order_ids)
-            // config = pos_order_ids.config_id[0] if pos_order_ids else False
-            // 
-            // for order in pos_order_ids:
-            //     order._ensure_access_token()
-            //     if not self.env.context.get('preparation'):
-            //         order.config_id.notify_synchronisation(order.config_id.current_session_id.id, self.env.context.get('device_identifier', 0))
-            // 
-            // _logger.info("PoS synchronisation #%d finished", sync_token)
-            // return pos_order_ids.read_pos_data(orders, config)
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def sync_from_ui(self, orders):
-            // data = super().sync_from_ui(orders)
-            // if len(orders) == 0:
-            //     return data
-            // 
-            // AccountTax = self.env['account.tax']
-            // pos_orders = self.browse([o['id'] for o in data["pos.order"]])
-            // for pos_order in pos_orders:
-            //     # TODO: the way to retrieve the sale order in not consistent... is it a bad code or intended?
-            //     used_pos_lines = pos_order.lines.sale_order_origin_id.order_line.pos_order_line_ids
-            //     downpayment_pos_order_lines = pos_order.lines.filtered(lambda line: (
-            //         line not in used_pos_lines
-            //         and line.product_id == pos_order.config_id.down_payment_product_id
-            //     ))
-            //     so_x_pos_order_lines = downpayment_pos_order_lines\
-            //         .grouped(lambda l: l.sale_order_origin_id or l.refunded_orderline_id.sale_order_origin_id)
-            //     sale_orders = self.env['sale.order']
-            //     for sale_order, pos_order_lines in so_x_pos_order_lines.items():
-            //         if not sale_order:
-            //             continue
-            // 
-            //         sale_orders += sale_order
-            //         down_payment_base_lines = pos_order_lines._prepare_tax_base_line_values()
-            //         AccountTax._add_tax_details_in_base_lines(down_payment_base_lines, sale_order.company_id)
-            //         AccountTax._round_base_lines_tax_details(down_payment_base_lines, sale_order.company_id)
-            // 
-            //         sale_order_sudo = sale_order.sudo()
-            //         sale_order_sudo._create_down_payment_section_line_if_needed()
-            //         sale_order_sudo._create_down_payment_lines_from_base_lines(down_payment_base_lines)
-            // 
-            //     # Confirm the unconfirmed sale orders that are linked to the sale order lines.
-            //     so_lines = pos_order.lines.mapped('sale_order_line_id')
-            //     sale_orders |= so_lines.mapped('order_id')
-            //     if pos_order.state != 'draft':
-            //         for sale_order in sale_orders.filtered(lambda so: so.state in ['draft', 'sent']):
-            //             sale_order.action_confirm()
-            // 
-            //     # update the demand qty in the stock moves related to the sale order line
-            //     # flush the qty_delivered to make sure the updated qty_delivered is used when
-            //     # updating the demand value
-            //     so_lines.flush_recordset(['qty_delivered'])
-            //     # track the waiting pickings
-            //     waiting_picking_ids = set()
-            //     for so_line in so_lines:
-            //         so_line_stock_move_ids = so_line.move_ids.reference_ids.move_ids
-            //         for stock_move in so_line.move_ids:
-            //             picking = stock_move.picking_id
-            //             if not picking.state in ['waiting', 'confirmed', 'assigned']:
-            //                 continue
-            // 
-            //             def get_expected_qty_to_ship_later():
-            //                 pos_pickings = so_line.pos_order_line_ids.order_id.picking_ids
-            //                 if pos_pickings and all(pos_picking.state in ['confirmed', 'assigned'] for pos_picking in pos_pickings):
-            //                     return sum((so_line._convert_qty(so_line, pos_line.qty, 'p2s') for pos_line in
-            //                                 so_line.pos_order_line_ids if so_line.product_id.type != 'service'), 0)
-            //                 return 0
-            // 
-            //             qty_delivered = max(so_line.qty_delivered, get_expected_qty_to_ship_later())
-            //             new_qty = so_line.product_uom_qty - qty_delivered
-            //             if stock_move.product_uom.compare(new_qty, 0) <= 0:
-            //                 new_qty = 0
-            //             stock_move.product_uom_qty = so_line.compute_uom_qty(new_qty, stock_move, False)
-            //             # If the product is delivered with more than one step, we need to update the quantity of the other steps
-            //             for move in so_line_stock_move_ids.filtered(lambda m: m.state in ['waiting', 'confirmed', 'assigned'] and m.product_id == stock_move.product_id):
-            //                 move.product_uom_qty = stock_move.product_uom_qty
-            //                 waiting_picking_ids.add(move.picking_id.id)
-            //             waiting_picking_ids.add(picking.id)
-            // 
-            //     def is_product_uom_qty_zero(move):
-            //         return move.product_uom.is_zero(move.product_uom_qty)
-            // 
-            //     # cancel the waiting pickings if each product_uom_qty of move is zero
-            //     for picking in self.env['stock.picking'].browse(waiting_picking_ids):
-            //         if all(is_product_uom_qty_zero(move) for move in picking.move_ids):
-            //             picking.action_cancel()
-            //         else:
-            //             # We make sure that the original picking still has the correct quantity reserved
-            //             picking.action_assign()
-            // 
-            // return data
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def sync_from_ui(self, orders):
-            // result = super().sync_from_ui(orders)
-            // order_ids = self.browse([order['id'] for order in result['pos.order'] if order.get('id')])
-            // self._send_notification(order_ids)
-            // return result
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: sync_from_ui) ---
+            --- METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py, METHOD: sync_from_ui) ---
+            --- METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py, METHOD: sync_from_ui) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<PosOrder> UnlinkExceptDraftOrCancelInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _unlink_except_draft_or_cancel(self):
-            // if any(pos_order.state not in ['draft', 'cancel'] for pos_order in self):
-            //     raise UserError(_('In order to delete a sale, it must be new or cancelled.'))
-            */
-            return default;
-        }
-
-        protected async Task<PosOrder> UpdateSequenceNumberInternalAsync(object session, object values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _update_sequence_number(self, session, values):
-            // values['sequence_number'] = session.config_id.order_seq_id._next()
-            */
-            return default;
-        }
-
         public async Task<PosOrder> ValidateCouponProgramsAsync(PosOrderValidateCouponProgramsRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py) ---
-            // def validate_coupon_programs(self, point_changes, new_codes):
-            // """
-            // This is called upon validating the order in the pos.
-            // 
-            // This will check the balance for any pre-existing coupon to make sure that the rewards are in fact all claimable.
-            // This will also check that any set code for coupons do not exist in the database.
-            // """
-            // point_changes = {int(k): v for k, v in point_changes.items()}
-            // coupon_ids_from_pos = set(point_changes.keys())
-            // coupons = self.env['loyalty.card'].browse(coupon_ids_from_pos).exists().filtered('program_id.active')
-            // coupon_difference = set(coupons.ids) ^ coupon_ids_from_pos
-            // if coupon_difference:
-            //     return {
-            //         'successful': False,
-            //         'payload': {
-            //             'message': _('Some coupons are invalid. The applied coupons have been updated. Please check the order.'),
-            //             'removed_coupons': list(coupon_difference),
-            //         }
-            //     }
-            // for coupon in coupons:
-            //     if float_compare(coupon.points, -point_changes[coupon.id], 2) == -1:
-            //         return {
-            //             'successful': False,
-            //             'payload': {
-            //                 'message': _('There are not enough points for the coupon: %s.', coupon.code),
-            //                 'updated_points': {c.id: c.points for c in coupons}
-            //             }
-            //         }
-            // # Check existing coupons
-            // coupons = self.env['loyalty.card'].search([('code', 'in', new_codes)])
-            // if coupons:
-            //     return {
-            //         'successful': False,
-            //         'payload': {
-            //             'message': _('The following codes already exist in the database, perhaps they were already sold?\n%s',
-            //                 ', '.join(coupons.mapped('code'))),
-            //         }
-            //     }
-            // return {
-            //     'successful': True,
-            //     'payload': {},
-            // }
+            --- METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_order.py, METHOD: validate_coupon_programs) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
@@ -2788,11 +329,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> ViewAttendeeListAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py) ---
-            // def action_view_attendee_list(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("event.event_registration_action_tree")
-            // action['domain'] = [('pos_order_id', 'in', self.ids)]
-            // return action
+            --- METHOD SOURCE (MODULE: pos_event, FILE: pos_order.py, METHOD: action_view_attendee_list) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -2802,27 +339,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> ViewInvoiceAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_invoice(self):
-            // invoices = self.account_move
-            // if (len(invoices) == 1):
-            //     return {
-            //         'name': _('Customer Invoice'),
-            //         'view_mode': 'form',
-            //         'view_id': self.env.ref('account.view_move_form').id,
-            //         'res_model': 'account.move',
-            //         'context': "{'move_type':'out_invoice'}",
-            //         'type': 'ir.actions.act_window',
-            //         'res_id': self.account_move.id,
-            //     }
-            // else:
-            //     return {
-            //         'name': _('Customer Invoices'),
-            //         'view_mode': 'list,form',
-            //         'res_model': 'account.move',
-            //         'type': 'ir.actions.act_window',
-            //         'domain': [('id', 'in', invoices.ids)],
-            //     }
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_view_invoice) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -2832,15 +349,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> ViewRefundOrdersAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_refund_orders(self):
-            // return {
-            //     'name': _('Refund Orders'),
-            //     'view_mode': 'list,form',
-            //     'res_model': 'pos.order',
-            //     'type': 'ir.actions.act_window',
-            //     'domain': [('id', 'in', self.mapped('lines.refund_orderline_ids.order_id').ids)],
-            // }
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_view_refund_orders) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -2850,16 +359,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> ViewRefundedOrderAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_refunded_order(self):
-            // return {
-            //     'name': _('Refunded Order'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('point_of_sale.view_pos_pos_form').id,
-            //     'res_model': 'pos.order',
-            //     'type': 'ir.actions.act_window',
-            //     'res_id': self.refunded_order_id.id,
-            // }
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: action_view_refunded_order) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -2869,17 +369,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosOrder> ViewSaleOrderAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def action_view_sale_order(self):
-            // self.ensure_one()
-            // linked_orders = self.lines.mapped('sale_order_origin_id')
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _('Linked Sale Orders'),
-            //     'res_model': 'sale.order',
-            //     'view_mode': 'list,form',
-            //     'domain': [('id', 'in', linked_orders.ids)],
-            // }
+            --- METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py, METHOD: action_view_sale_order) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -2889,76 +379,10 @@ namespace Bamboo.Core.Application.Services
         public override async Task<List<object>> WriteAsync(UpdateRequestDto<PosOrder> input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def write(self, vals):
-            // for order in self:
-            //     if vals.get('state') and vals['state'] == 'paid' and order.name == '/':
-            //         session = self.env['pos.session'].browse(vals['session_id']) if not self.session_id and vals.get('session_id') else False
-            //         vals['name'] = self._compute_order_name(session)
-            //     if vals.get('mobile'):
-            //         vals['mobile'] = order._phone_format(number=vals.get('mobile'),
-            //                 country=order.partner_id.country_id or self.env.company.country_id)
-            //     if vals.get('has_deleted_line') is not None and self.has_deleted_line:
-            //         del vals['has_deleted_line']
-            //     allowed_vals = ['paid', 'done', 'invoiced']
-            //     if vals.get('state') and vals['state'] not in allowed_vals and order.state in allowed_vals:
-            //         raise UserError(_('This order has already been paid. You cannot set it back to draft or edit it.'))
-            // 
-            // list_line = self._create_pm_change_log(vals)
-            // res = super().write(vals)
-            // for order in self:
-            //     if vals.get('payment_ids'):
-            //         order._compute_prices()
-            //         totally_paid_or_more = order.currency_id.compare_amounts(order.amount_paid, order.amount_total)
-            //         if totally_paid_or_more < 0 and order.state in ['paid', 'done']:
-            //             raise UserError(_('The paid amount is different from the total amount of the order.'))
-            //         elif totally_paid_or_more > 0 and order.state == 'paid':
-            //             list_line.append(_("Warning, the paid amount is higher than the total amount. (Difference: %s)", formatLang(self.env, order.amount_paid - order.amount_total, currency_obj=order.currency_id)))
-            //         if order.nb_print > 0 and any(command[0] in [0, 1] and command[2].get('payment_status') and command[2]['payment_status'] != 'cancelled' for command in vals.get('payment_ids')):
-            //             raise UserError(_('You cannot change the payment of a printed order.'))
-            // 
-            // if len(list_line) > 0:
-            //     body = _("Payment changes:")
-            //     body += self._markup_list_message(list_line)
-            //     for order in self:
-            //         if vals.get('payment_ids'):
-            //             order.message_post(body=body)
-            // 
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py) ---
-            // def write(self, vals):
-            // # Because use_self_order_online_payment is not intended to be changed manually,
-            // # avoid to raise an error.
-            // if 'use_self_order_online_payment' not in vals:
-            //     return super().write(vals)
-            // 
-            // can_change_self_order_domain = [('state', '=', 'draft')]
-            // if vals['use_self_order_online_payment']:
-            //     can_change_self_order_domain += [('config_id.self_order_online_payment_method_id', '!=', False)]
-            // 
-            // can_change_self_order_orders = self.filtered_domain(can_change_self_order_domain)
-            // cannot_change_self_order_orders = self - can_change_self_order_orders
-            // 
-            // res = True
-            // if can_change_self_order_orders:
-            //     res = super(PosOrder, can_change_self_order_orders).write(vals) and res
-            // if cannot_change_self_order_orders:
-            //     clean_vals = vals.copy()
-            //     clean_vals.pop('use_self_order_online_payment', None)
-            //     res = super(PosOrder, cannot_change_self_order_orders).write(clean_vals) and res
-            // 
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py) ---
-            // def write(self, vals):
-            // if 'crm_team_id' in vals:
-            //     vals['crm_team_id'] = vals['crm_team_id'] if vals.get('crm_team_id') else self.session_id.crm_team_id.id
-            // return super().write(vals)
-            --- ODOO METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py) ---
-            // def write(self, vals):
-            // if 'table_id' in vals and self.self_ordering_table_id:
-            //     # Clear stale self-order table link when the order is transferred to a new table.
-            //     vals['self_ordering_table_id'] = vals['table_id']
-            // return super().write(vals)
+            --- METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py, METHOD: write) ---
+            --- METHOD SOURCE (MODULE: pos_online_payment_self_order, FILE: pos_order.py, METHOD: write) ---
+            --- METHOD SOURCE (MODULE: pos_sale, FILE: pos_order.py, METHOD: write) ---
+            --- METHOD SOURCE (MODULE: pos_self_order, FILE: pos_order.py, METHOD: write) ---
             */
             return await base.WriteAsync(input);
         }

@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,104 +22,36 @@ namespace Bamboo.Core.Application.Services
     [Module("Account", Category = "Accounting", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
     public partial class AccountCashRoundingAppService : GenericAppService<AccountCashRounding>, IAccountCashRoundingAppService
     {
-        private readonly IPosLoadMixinAppService _posLoadMixinAppService;
-        public AccountCashRoundingAppService(IRepository<AccountCashRounding, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IPosLoadMixinAppService _posLoadMixinAppService;
+        public AccountCashRoundingAppService(IRepository<AccountCashRounding, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IPosLoadMixinAppService posLoadMixinAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _posLoadMixinAppService = posLoadMixinAppService;
-        }
-
-        protected async Task<AccountCashRounding> CheckSessionStateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _check_session_state(self):
-            // open_session = self.env['pos.session'].search([('config_id.rounding_method', 'in', self.ids), ('state', '!=', 'closed')], limit=1)
-            // if open_session:
-            //     raise ValidationError(
-            //         _("You are not allowed to change the cash rounding configuration while a pos session using it is already opened."))
-            */
-            return default;
         }
 
         public async Task<AccountCashRounding> ComputeDifferenceAsync(AccountCashRoundingComputeDifferenceRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py) ---
-            // def compute_difference(self, currency, amount):
-            // """Compute the difference between the base_amount and the amount after rounding.
-            // For example, base_amount=23.91, after rounding=24.00, the result will be 0.09.
-            // 
-            // :param currency: The currency.
-            // :param amount: The amount
-            // :return: round(difference)
-            // """
-            // amount = currency.round(amount)
-            // difference = self.round(amount) - amount
-            // return currency.round(difference)
+            --- METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py, METHOD: compute_difference) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<AccountCashRounding> LoadPosDataDomainInternalAsync(object data, object config)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _load_pos_data_domain(self, data, config):
-            // return [('id', '=', config.rounding_method.id)]
-            */
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<AccountCashRounding> LoadPosDataFieldsInternalAsync(object config)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def _load_pos_data_fields(self, config):
-            // return ['id', 'name', 'rounding', 'rounding_method', 'strategy']
-            */
             return default;
         }
 
         public async Task<AccountCashRounding> RoundAsync(AccountCashRoundingRoundRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py) ---
-            // def round(self, amount):
-            // """Compute the rounding on the amount passed as parameter.
-            // 
-            // :param amount: the amount to round
-            // :return: the rounded amount depending the rounding value and the rounding method
-            // """
-            // return float_round(amount, precision_rounding=self.rounding, rounding_method=self.rounding_method)
+            --- METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py, METHOD: round) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<AccountCashRounding> UnlinkExceptPosConfigInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: account_cash_rounding.py) ---
-            // def _unlink_except_pos_config(self):
-            // if self.env['pos.config'].search_count([('rounding_method', 'in', self.ids)], limit=1):
-            //     raise UserError(_('You cannot delete a rounding method that is used in a Point of Sale configuration.'))
-            */
-            return default;
-        }
-
         public async Task<AccountCashRounding> ValidateRoundingAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py) ---
-            // def validate_rounding(self):
-            // for record in self:
-            //     if record.rounding <= 0:
-            //         raise ValidationError(_("Please set a strictly positive rounding value."))
+            --- METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py, METHOD: validate_rounding) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

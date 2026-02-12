@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Productivity/Discuss, Module: mail
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/productivity/MailBlacklist")]
     public partial class MailBlacklistController : AbpController
     {
-        private readonly IMailBlacklistAppService _appService;
+        protected readonly IMailBlacklistAppService _appService;
         public MailBlacklistController(IMailBlacklistAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-add")]
+        public async Task<IActionResult> AddAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.AddAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("mail-action-blacklist-remove")]
+        public async Task<IActionResult> MailBlacklistRemoveAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.MailBlacklistRemoveAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

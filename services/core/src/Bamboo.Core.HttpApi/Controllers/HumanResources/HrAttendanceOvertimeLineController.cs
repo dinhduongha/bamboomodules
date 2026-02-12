@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Human Resources/Attendances, Module: hr_attendance
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/human-resources/HrAttendanceOvertimeLine")]
     public partial class HrAttendanceOvertimeLineController : AbpController
     {
-        private readonly IHrAttendanceOvertimeLineAppService _appService;
+        protected readonly IHrAttendanceOvertimeLineAppService _appService;
         public HrAttendanceOvertimeLineController(IHrAttendanceOvertimeLineAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-approve")]
+        public async Task<IActionResult> ApproveAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ApproveAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("action-refuse")]
+        public async Task<IActionResult> RefuseAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.RefuseAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

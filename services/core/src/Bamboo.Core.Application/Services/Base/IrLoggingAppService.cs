@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class IrLoggingAppService : GenericAppService<IrLogging>, IIrLoggingAppService
     {
 
-        public IrLoggingAppService(IRepository<IrLogging, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public IrLoggingAppService(IRepository<IrLogging, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,16 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<IrLogging> InitAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_logging.py) ---
-            // def init(self):
-            // super(IrLogging, self).init()
-            // self.env.cr.execute("select 1 from information_schema.constraint_column_usage where table_name = 'ir_logging' and constraint_name = 'ir_logging_write_uid_fkey'")
-            // if self.env.cr.rowcount:
-            //     # DROP CONSTRAINT unconditionally takes an ACCESS EXCLUSIVE lock
-            //     # on the table, even "IF EXISTS" is set and not matching; disabling
-            //     # the relevant trigger instead acquires SHARE ROW EXCLUSIVE, which
-            //     # still conflicts with the ROW EXCLUSIVE needed for an insert
-            //     self.env.cr.execute("ALTER TABLE ir_logging DROP CONSTRAINT ir_logging_write_uid_fkey")
+            --- METHOD SOURCE (MODULE: base, FILE: ir_logging.py, METHOD: init) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

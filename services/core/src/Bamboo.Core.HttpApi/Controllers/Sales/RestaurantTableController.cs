@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Sales/Point of Sale, Module: pos_restaurant
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/sales/RestaurantTable")]
     public partial class RestaurantTableController : AbpController
     {
-        private readonly IRestaurantTableAppService _appService;
+        protected readonly IRestaurantTableAppService _appService;
         public RestaurantTableController(IRestaurantTableAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("are-orders-still-in-draft")]
+        public async Task<IActionResult> AreOrdersStillInDraftAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.AreOrdersStillInDraftAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

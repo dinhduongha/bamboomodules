@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class ProjectRoleAppService : GenericAppService<ProjectRole>, IProjectRoleAppService
     {
 
-        public ProjectRoleAppService(IRepository<ProjectRole, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public ProjectRoleAppService(IRepository<ProjectRole, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,23 +30,10 @@ namespace Bamboo.Core.Application.Services
         public async Task<ProjectRole> CopyDataAsync(ProjectRoleCopyDataRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_role.py) ---
-            // def copy_data(self, default=None):
-            // vals_list = super().copy_data(default=default)
-            // return [dict(vals, name=self.env._('%s (copy)', role.name)) for role, vals in zip(self, vals_list)]
+            --- METHOD SOURCE (MODULE: project, FILE: project_role.py, METHOD: copy_data) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<ProjectRole> GetDefaultColorInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_role.py) ---
-            // def _get_default_color(self):
-            // return randint(1, 11)
-            */
             return default;
         }
     }

@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Productivity/Discuss, Module: mail
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/productivity/MailNotification")]
     public partial class MailNotificationController : AbpController
     {
-        private readonly IMailNotificationAppService _appService;
+        protected readonly IMailNotificationAppService _appService;
         public MailNotificationController(IMailNotificationAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("format-failure-reason")]
+        public async Task<IActionResult> FormatFailureReasonAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.FormatFailureReasonAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

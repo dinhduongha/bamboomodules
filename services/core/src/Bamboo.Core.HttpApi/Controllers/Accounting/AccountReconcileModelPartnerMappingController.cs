@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Accounting/Accounting, Module: account
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/accounting/AccountReconcileModelPartnerMapping")]
     public partial class AccountReconcileModelPartnerMappingController : AbpController
     {
-        private readonly IAccountReconcileModelPartnerMappingAppService _appService;
+        protected readonly IAccountReconcileModelPartnerMappingAppService _appService;
         public AccountReconcileModelPartnerMappingController(IAccountReconcileModelPartnerMappingAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("validate-regex")]
+        public async Task<IActionResult> ValidateRegexAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ValidateRegexAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

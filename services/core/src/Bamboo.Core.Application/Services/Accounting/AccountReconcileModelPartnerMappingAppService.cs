@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class AccountReconcileModelPartnerMappingAppService : GenericAppService<AccountReconcileModelPartnerMapping>, IAccountReconcileModelPartnerMappingAppService
     {
 
-        public AccountReconcileModelPartnerMappingAppService(IRepository<AccountReconcileModelPartnerMapping, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public AccountReconcileModelPartnerMappingAppService(IRepository<AccountReconcileModelPartnerMapping, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,21 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<AccountReconcileModelPartnerMapping> ValidateRegexAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---
-            // def validate_regex(self):
-            // for record in self:
-            //     if not (record.narration_regex or record.payment_ref_regex):
-            //         raise ValidationError(_("Please set at least one of the match texts to create a partner mapping."))
-            //     current_regex = None
-            //     try:
-            //         if record.payment_ref_regex:
-            //             current_regex = record.payment_ref_regex
-            //             re.compile(record.payment_ref_regex)
-            //         if record.narration_regex:
-            //             current_regex = record.narration_regex
-            //             re.compile(record.narration_regex)
-            //     except re.error:
-            //         raise ValidationError(_("The following regular expression is invalid to create a partner mapping: %s", current_regex))
+            --- METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py, METHOD: validate_regex) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

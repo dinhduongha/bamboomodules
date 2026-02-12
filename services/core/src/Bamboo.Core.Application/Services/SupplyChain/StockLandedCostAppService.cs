@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,9 +22,9 @@ namespace Bamboo.Core.Application.Services
     [Module("StockLandedCosts", Category = "SupplyChain", Depends = new[] { "stock_account", "purchase_stock" })]
     public partial class StockLandedCostAppService : GenericAppService<StockLandedCost>, IStockLandedCostAppService
     {
-        private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
-        private readonly IMailThreadAppService _mailThreadAppService;
-        public StockLandedCostAppService(IRepository<StockLandedCost, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IMailActivityMixinAppService _mailActivityMixinAppService;
+        protected readonly IMailThreadAppService _mailThreadAppService;
+        public StockLandedCostAppService(IRepository<StockLandedCost, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailThreadAppService = mailThreadAppService;
@@ -32,12 +33,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<StockLandedCost> ButtonCancelAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def button_cancel(self):
-            // if any(cost.state == 'done' for cost in self):
-            //     raise UserError(
-            //         _('Validated landed costs cannot be cancelled, but you could create negative landed costs to reverse them'))
-            // return self.write({'state': 'cancel'})
+            --- METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py, METHOD: button_cancel) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -47,275 +43,30 @@ namespace Bamboo.Core.Application.Services
         public async Task<StockLandedCost> ButtonValidateAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def button_validate(self):
-            // self._check_can_validate()
-            // cost_without_adjusment_lines = self.filtered(lambda c: not c.valuation_adjustment_lines)
-            // if cost_without_adjusment_lines:
-            //     cost_without_adjusment_lines.compute_landed_cost()
-            // if not self._check_sum():
-            //     raise UserError(_('Cost and adjustments lines do not match. You should maybe recompute the landed costs.'))
-            // 
-            // for cost in self:
-            //     cost = cost.with_company(cost.company_id)
-            //     move = self.env['account.move']
-            //     move_vals = {
-            //         'journal_id': cost.account_journal_id.id,
-            //         'date': cost.date,
-            //         'ref': cost.name,
-            //         'line_ids': [],
-            //         'move_type': 'entry',
-            //     }
-            //     for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
-            //         product = line.move_id.product_id
-            //         # Products with manual inventory valuation are ignored because they do not need to create journal entries.
-            //         if product.valuation != "real_time":
-            //             continue
-            //         # `remaining_qty` is negative if the move is out and delivered proudcts that were not
-            //         # in stock.
-            // 
-            //         remaining_qty = line.move_id.remaining_qty
-            //         move_vals['line_ids'] += line._create_accounting_entries(remaining_qty)
-            // 
-            //     # batch standard price computation avoid recompute quantity_svl at each iteration
-            // 
-            //     # products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys()).with_company(cost.company_id)
-            //     # for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
-            //     #     if not product.uom_id.is_zero(product.quantity_svl):
-            //     #         product.sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
-            //     #     if product.lot_valuated:
-            //     #         for lot, value in cost_to_add_bylot[product].items():
-            //     #             if product.uom_id.is_zero(lot.quantity_svl):
-            //     #                 continue
-            //     #             lot.sudo().with_context(disable_auto_svl=True).standard_price += value / lot.quantity_svl
-            // 
-            //     # We will only create the accounting entry when there are defined lines (the lines will be those linked to products of real_time valuation category).
-            //     cost_vals = {'state': 'done'}
-            //     if move_vals.get("line_ids"):
-            //         move = move.create(move_vals)
-            //         cost_vals.update({'account_move_id': move.id})
-            //     cost.write(cost_vals)
-            //     if cost.account_move_id:
-            //         move._post()
-            //     cost.valuation_adjustment_lines.move_id._set_value()
-            // return True
+            --- METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py, METHOD: button_validate) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<StockLandedCost> CheckCanValidateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _check_can_validate(self):
-            // if any(cost.state != 'draft' for cost in self):
-            //     raise UserError(_('Only draft landed costs can be validated'))
-            // for cost in self:
-            //     if not cost._get_targeted_move_ids():
-            //         target_model_descriptions = dict(self._fields['target_model']._description_selection(self.env))
-            //         raise UserError(_('Please define %s on which those additional costs should apply.', target_model_descriptions[cost.target_model]))
-            */
-            return default;
-        }
-
-        protected async Task<StockLandedCost> CheckSumInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _check_sum(self):
-            // """ Check if each cost line its valuation lines sum to the correct amount
-            // and if the overall total amount is correct also """
-            // for landed_cost in self:
-            //     total_amount = sum(landed_cost.valuation_adjustment_lines.mapped('additional_landed_cost'))
-            //     if not landed_cost.currency_id.is_zero(total_amount - landed_cost.amount_total):
-            //         return False
-            // 
-            //     val_to_cost_lines = defaultdict(lambda: 0.0)
-            //     for val_line in landed_cost.valuation_adjustment_lines:
-            //         val_to_cost_lines[val_line.cost_line_id] += val_line.additional_landed_cost
-            //     if any(not landed_cost.currency_id.is_zero(cost_line.price_unit - val_amount)
-            //            for cost_line, val_amount in val_to_cost_lines.items()):
-            //         return False
-            // return True
-            */
             return default;
         }
 
         public async Task<StockLandedCost> ComputeLandedCostAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def compute_landed_cost(self):
-            // AdjustementLines = self.env['stock.valuation.adjustment.lines']
-            // AdjustementLines.search([('cost_id', 'in', self.ids)]).unlink()
-            // 
-            // towrite_dict = {}
-            // for cost in self.filtered(lambda cost: cost._get_targeted_move_ids()):
-            //     cost = cost.with_company(cost.company_id)
-            //     rounding = cost.currency_id.rounding
-            //     total_qty = 0.0
-            //     total_cost = 0.0
-            //     total_weight = 0.0
-            //     total_volume = 0.0
-            //     total_line = 0.0
-            //     all_val_line_values = cost.get_valuation_lines()
-            //     for val_line_values in all_val_line_values:
-            //         for cost_line in cost.cost_lines:
-            //             val_line_values.update({'cost_id': cost.id, 'cost_line_id': cost_line.id})
-            //             self.env['stock.valuation.adjustment.lines'].create(val_line_values)
-            //         total_qty += val_line_values.get('quantity', 0.0)
-            //         total_weight += val_line_values.get('weight', 0.0)
-            //         total_volume += val_line_values.get('volume', 0.0)
-            // 
-            //         former_cost = val_line_values.get('former_cost', 0.0)
-            //         # round this because former_cost on the valuation lines is also rounded
-            //         total_cost += cost.currency_id.round(former_cost)
-            // 
-            //         total_line += 1
-            // 
-            //     for line in cost.cost_lines:
-            //         value_split = 0.0
-            //         for valuation in cost.valuation_adjustment_lines:
-            //             value = 0.0
-            //             if valuation.cost_line_id and valuation.cost_line_id.id == line.id:
-            //                 if line.split_method == 'by_quantity' and total_qty:
-            //                     per_unit = (line.price_unit / total_qty)
-            //                     value = valuation.quantity * per_unit
-            //                 elif line.split_method == 'by_weight' and total_weight:
-            //                     per_unit = (line.price_unit / total_weight)
-            //                     value = valuation.weight * per_unit
-            //                 elif line.split_method == 'by_volume' and total_volume:
-            //                     per_unit = (line.price_unit / total_volume)
-            //                     value = valuation.volume * per_unit
-            //                 elif line.split_method == 'equal':
-            //                     value = (line.price_unit / total_line)
-            //                 elif line.split_method == 'by_current_cost_price' and total_cost:
-            //                     per_unit = (line.price_unit / total_cost)
-            //                     value = valuation.former_cost * per_unit
-            //                 else:
-            //                     value = (line.price_unit / total_line)
-            // 
-            //                 if rounding:
-            //                     value = tools.float_round(value, precision_rounding=rounding, rounding_method='HALF-UP')
-            //                     value_split += value
-            // 
-            //                 if valuation.id not in towrite_dict:
-            //                     towrite_dict[valuation.id] = value
-            //                 else:
-            //                     towrite_dict[valuation.id] += value
-            //         rounding_diff = cost.currency_id.round(line.price_unit - value_split)
-            //         if not cost.currency_id.is_zero(rounding_diff):
-            //             towrite_dict[max(towrite_dict.keys())] += rounding_diff
-            // for key, value in towrite_dict.items():
-            //     AdjustementLines.browse(key).write({'additional_landed_cost': value})
-            // return True
+            --- METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py, METHOD: compute_landed_cost) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<StockLandedCost> ComputeTotalAmountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _compute_total_amount(self):
-            // for cost in self:
-            //     cost.amount_total = sum(line.price_unit for line in cost.cost_lines)
-            */
-            return default;
-        }
-
-        protected async Task<StockLandedCost> DefaultAccountJournalIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _default_account_journal_id(self):
-            // """Take the journal configured in the company, else fallback on the stock journal."""
-            // ProductCategory = self.env['product.category']
-            // return self.env.company.lc_journal_id or ProductCategory._fields['property_stock_journal'].get_company_dependent_fallback(ProductCategory)
-            */
-            return default;
-        }
-
-        protected async Task<StockLandedCost> GetTargetedMoveIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _get_targeted_move_ids(self):
-            // return (
-            //     super()._get_targeted_move_ids()
-            //     | self.mrp_production_ids.move_finished_ids
-            //     - self.mrp_production_ids.move_byproduct_ids.filtered(lambda move: not move.cost_share)
-            // )
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _get_targeted_move_ids(self):
-            // return self.picking_ids.move_ids
-            */
             return default;
         }
 
         public async Task<StockLandedCost> GetValuationLinesAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def get_valuation_lines(self):
-            // self.ensure_one()
-            // lines = []
-            // 
-            // for move in self._get_targeted_move_ids():
-            //     # it doesn't make sense to make a landed cost for a product that isn't set as being valuated in real time at real cost
-            //     if move.product_id.cost_method not in ('fifo', 'average') or move.state == 'cancel' or not move.quantity:
-            //         continue
-            //     qty = move.product_uom._compute_quantity(move.quantity, move.product_id.uom_id)
-            // 
-            //     vals = {
-            //         'product_id': move.product_id.id,
-            //         'move_id': move.id,
-            //         'quantity': qty,
-            //         'former_cost': move._get_value(),
-            //         'weight': move.product_id.weight * qty,
-            //         'volume': move.product_id.volume * qty
-            //     }
-            //     lines.append(vals)
-            // 
-            // if not lines:
-            //     target_model_descriptions = dict(self._fields['target_model']._description_selection(self.env))
-            //     raise UserError(_("You cannot apply landed costs on the chosen %s(s). Landed costs can only be applied for products with FIFO or average costing method.", target_model_descriptions[self.target_model]))
-            // return lines
+            --- METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py, METHOD: get_valuation_lines) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<StockLandedCost> OnchangeTargetModelInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _onchange_target_model(self):
-            // super()._onchange_target_model()
-            // if self.target_model != 'manufacturing':
-            //     self.mrp_production_ids = False
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _onchange_target_model(self):
-            // if self.target_model != 'picking':
-            //     self.picking_ids = False
-            */
-            return default;
-        }
-
-        protected async Task<StockLandedCost> TrackSubtypeInternalAsync(object init_values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: stock_landed_cost.py) ---
-            // def _track_subtype(self, init_values):
-            // if 'state' in init_values and self.state == 'done':
-            //     return self.env.ref('stock_landed_costs.mt_stock_landed_cost_open')
-            // return super()._track_subtype(init_values)
-            */
             return default;
         }
     }

@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Marketing/Events, Module: event_booth_sale
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/marketing/EventBoothRegistration")]
     public partial class EventBoothRegistrationController : AbpController
     {
-        private readonly IEventBoothRegistrationAppService _appService;
+        protected readonly IEventBoothRegistrationAppService _appService;
         public EventBoothRegistrationController(IEventBoothRegistrationAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-confirm")]
+        public async Task<IActionResult> ConfirmAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ConfirmAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

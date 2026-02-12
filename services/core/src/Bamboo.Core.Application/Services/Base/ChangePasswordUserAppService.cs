@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class ChangePasswordUserAppService : GenericAppService<ChangePasswordUser>, IChangePasswordUserAppService
     {
 
-        public ChangePasswordUserAppService(IRepository<ChangePasswordUser, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public ChangePasswordUserAppService(IRepository<ChangePasswordUser, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,13 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<ChangePasswordUser> ChangePasswordButtonAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def change_password_button(self):
-            // for line in self:
-            //     if line.new_passwd:
-            //         line.user_id._change_password(line.new_passwd)
-            // # don't keep temporary passwords in the database longer than necessary
-            // self.write({'new_passwd': False})
+            --- METHOD SOURCE (MODULE: base, FILE: res_users.py, METHOD: change_password_button) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

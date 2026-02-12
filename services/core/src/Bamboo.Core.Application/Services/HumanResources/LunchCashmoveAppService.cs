@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,33 +22,16 @@ namespace Bamboo.Core.Application.Services
     public partial class LunchCashmoveAppService : GenericAppService<LunchCashmove>, ILunchCashmoveAppService
     {
 
-        public LunchCashmoveAppService(IRepository<LunchCashmove, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public LunchCashmoveAppService(IRepository<LunchCashmove, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<LunchCashmove> ComputeDisplayNameInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_cashmove.py) ---
-            // def _compute_display_name(self):
-            // for cashmove in self:
-            //     cashmove.display_name = '{} {}'.format(_('Lunch Cashmove'), '#%s' % (cashmove.id or "_"))
-            */
-            return default;
         }
 
         [ApiModel]
         public async Task<LunchCashmove> GetWalletBalanceAsync(LunchCashmoveGetWalletBalanceRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_cashmove.py) ---
-            // def get_wallet_balance(self, user, include_config=True):
-            // result = float_round(sum(move['amount'] for move in self.env['lunch.cashmove.report'].search_read(
-            //     [('user_id', '=', user.id)], ['amount'])), precision_digits=2)
-            // if include_config:
-            //     result += user.company_id.lunch_minimum_threshold
-            // return result
+            --- METHOD SOURCE (MODULE: lunch, FILE: lunch_cashmove.py, METHOD: get_wallet_balance) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;

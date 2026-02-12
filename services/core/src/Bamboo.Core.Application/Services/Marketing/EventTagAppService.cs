@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,32 +22,17 @@ namespace Bamboo.Core.Application.Services
     [Module("Event", Category = "Marketing", Depends = new[] { "barcodes", "base_setup", "mail", "phone_validation", "portal", "utm" })]
     public partial class EventTagAppService : GenericAppService<EventTag>, IEventTagAppService
     {
-        private readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
-        public EventTagAppService(IRepository<EventTag, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IWebsitePublishedMultiMixinAppService _websitePublishedMultiMixinAppService;
+        public EventTagAppService(IRepository<EventTag, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsitePublishedMultiMixinAppService websitePublishedMultiMixinAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _websitePublishedMultiMixinAppService = websitePublishedMultiMixinAppService;
-        }
-
-        protected async Task<EventTag> DefaultColorInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_tag.py) ---
-            // def _default_color(self):
-            // return randint(1, 11)
-            */
-            return default;
         }
 
         [ApiModel]
         public override async Task<EventTag> DefaultGetAsync(DefaultGetRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_tag.py) ---
-            // def default_get(self, fields):
-            // result = super().default_get(fields)
-            // if self.env.context.get('default_website_id'):
-            //     result['website_id'] = self.env.context.get('default_website_id')
-            // return result
+            --- METHOD SOURCE (MODULE: website_event, FILE: event_tag.py, METHOD: default_get) ---
             */
             return await base.DefaultGetAsync(input);
         }

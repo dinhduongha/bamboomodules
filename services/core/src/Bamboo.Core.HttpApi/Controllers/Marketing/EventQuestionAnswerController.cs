@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Marketing/Events, Module: event
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/marketing/EventQuestionAnswer")]
     public partial class EventQuestionAnswerController : AbpController
     {
-        private readonly IEventQuestionAnswerAppService _appService;
+        protected readonly IEventQuestionAnswerAppService _appService;
         public EventQuestionAnswerController(IEventQuestionAnswerAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-add-rule-button")]
+        public async Task<IActionResult> AddRuleButtonAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.AddRuleButtonAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Human Resources/Fleet, Module: fleet
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/human-resources/FleetVehicleModel")]
     public partial class FleetVehicleModelController : AbpController
     {
-        private readonly IFleetVehicleModelAppService _appService;
+        protected readonly IFleetVehicleModelAppService _appService;
         public FleetVehicleModelController(IFleetVehicleModelAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-model-vehicle")]
+        public async Task<IActionResult> ModelVehicleAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ModelVehicleAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

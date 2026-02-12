@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,46 +22,15 @@ namespace Bamboo.Core.Application.Services
     public partial class HrAttendanceOvertimeRulesetAppService : GenericAppService<HrAttendanceOvertimeRuleset>, IHrAttendanceOvertimeRulesetAppService
     {
 
-        public HrAttendanceOvertimeRulesetAppService(IRepository<HrAttendanceOvertimeRuleset, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public HrAttendanceOvertimeRulesetAppService(IRepository<HrAttendanceOvertimeRuleset, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<HrAttendanceOvertimeRuleset> AttendancesToRegenerateForInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime_ruleset.py) ---
-            // def _attendances_to_regenerate_for(self):
-            // self.ensure_one()
-            // elligible_version = self.env['hr.version'].search([('ruleset_id', '=', self.id)])
-            // if not elligible_version:
-            //     return self.env['hr.attendance']
-            // elligible_attendances = self.env['hr.attendance'].search([
-            //     ('employee_id', 'in', elligible_version.employee_id.ids),
-            //     ('date', '>=', min(elligible_version.mapped('date_version'))),
-            // ])
-            // return elligible_attendances
-            */
-            return default;
-        }
-
-        protected async Task<HrAttendanceOvertimeRuleset> ComputeRulesCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime_ruleset.py) ---
-            // def _compute_rules_count(self):
-            // for ruleset in self:
-            //     ruleset.rules_count = len(ruleset.rule_ids)
-            */
-            return default;
         }
 
         public async Task<HrAttendanceOvertimeRuleset> RegenerateOvertimesAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime_ruleset.py) ---
-            // def action_regenerate_overtimes(self):
-            // self._attendances_to_regenerate_for()._update_overtime()
+            --- METHOD SOURCE (MODULE: hr_attendance, FILE: hr_attendance_overtime_ruleset.py, METHOD: action_regenerate_overtimes) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

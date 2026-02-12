@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Sales/Sales, Module: sale_pdf_quote_builder
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/sales/QuotationDocument")]
     public partial class QuotationDocumentController : AbpController
     {
-        private readonly IQuotationDocumentAppService _appService;
+        protected readonly IQuotationDocumentAppService _appService;
         public QuotationDocumentController(IQuotationDocumentAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-open-pdf-form-fields")]
+        public async Task<IActionResult> OpenPdfFormFieldsAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.OpenPdfFormFieldsAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

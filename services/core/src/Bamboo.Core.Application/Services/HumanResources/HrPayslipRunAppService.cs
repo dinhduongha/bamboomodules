@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
     public partial class HrPayslipRunAppService : GenericAppService<HrPayslipRun>, IHrPayslipRunAppService
     {
 
-        public HrPayslipRunAppService(IRepository<HrPayslipRun, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public HrPayslipRunAppService(IRepository<HrPayslipRun, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -30,9 +31,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<HrPayslipRun> ClosePayslipRunAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
-            // def close_payslip_run(self):
-            // return self.write({'state': 'close'})
+            --- METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py, METHOD: close_payslip_run) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -42,11 +41,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<HrPayslipRun> DonePayslipRunAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
-            // def done_payslip_run(self):
-            // for line in self.slip_ids:
-            //     line.action_payslip_done()
-            // return self.write({'state': 'done'})
+            --- METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py, METHOD: done_payslip_run) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -56,9 +51,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<HrPayslipRun> DraftPayslipRunAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py) ---
-            // def draft_payslip_run(self):
-            // return self.write({'state': 'draft'})
+            --- METHOD SOURCE (MODULE: om_hr_payroll, FILE: hr_payslip.py, METHOD: draft_payslip_run) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

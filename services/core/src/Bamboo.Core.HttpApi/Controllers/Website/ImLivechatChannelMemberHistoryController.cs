@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Website/Live Chat, Module: im_livechat
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/website/ImLivechatChannelMemberHistory")]
     public partial class ImLivechatChannelMemberHistoryController : AbpController
     {
-        private readonly IImLivechatChannelMemberHistoryAppService _appService;
+        protected readonly IImLivechatChannelMemberHistoryAppService _appService;
         public ImLivechatChannelMemberHistoryController(IImLivechatChannelMemberHistoryAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-open-discuss-channel-view")]
+        public async Task<IActionResult> OpenDiscussChannelViewAsync([FromBody] ImLivechatChannelMemberHistoryOpenDiscussChannelViewRequestDto input)
+        {
+            var result = await _appService.OpenDiscussChannelViewAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

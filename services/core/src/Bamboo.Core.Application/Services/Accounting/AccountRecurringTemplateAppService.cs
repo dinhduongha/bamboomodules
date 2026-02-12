@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,33 +22,15 @@ namespace Bamboo.Core.Application.Services
     public partial class AccountRecurringTemplateAppService : GenericAppService<AccountRecurringTemplate>, IAccountRecurringTemplateAppService
     {
 
-        public AccountRecurringTemplateAppService(IRepository<AccountRecurringTemplate, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public AccountRecurringTemplateAppService(IRepository<AccountRecurringTemplate, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<AccountRecurringTemplate> ComputeNextCallInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_template.py) ---
-            // def _compute_next_call(self):
-            // for rec in self:
-            //     exec_date = rec.date_begin + relativedelta(days=rec.recurring_interval)
-            //     if exec_date <= rec.date_end:
-            //         rec.next_call = exec_date
-            //     else:
-            //         rec.state = 'done'
-            */
-            return default;
         }
 
         public async Task<AccountRecurringTemplate> DoneAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_template.py) ---
-            // def action_done(self):
-            // for rec in self:
-            //     rec.state = 'done'
+            --- METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_template.py, METHOD: action_done) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -57,10 +40,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<AccountRecurringTemplate> DraftAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_template.py) ---
-            // def action_draft(self):
-            // for rec in self:
-            //     rec.state = 'draft'
+            --- METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_template.py, METHOD: action_draft) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

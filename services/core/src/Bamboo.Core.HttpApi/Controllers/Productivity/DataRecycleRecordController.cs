@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Productivity/Data Cleaning, Module: data_recycle
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/productivity/DataRecycleRecord")]
     public partial class DataRecycleRecordController : AbpController
     {
-        private readonly IDataRecycleRecordAppService _appService;
+        protected readonly IDataRecycleRecordAppService _appService;
         public DataRecycleRecordController(IDataRecycleRecordAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-discard")]
+        public async Task<IActionResult> DiscardAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.DiscardAsync(ids);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("action-validate")]
+        public async Task<IActionResult> ValidateAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ValidateAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

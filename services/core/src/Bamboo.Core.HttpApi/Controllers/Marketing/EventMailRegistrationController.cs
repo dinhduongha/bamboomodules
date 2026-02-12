@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Marketing/Events, Module: event
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/marketing/EventMailRegistration")]
     public partial class EventMailRegistrationController : AbpController
     {
-        private readonly IEventMailRegistrationAppService _appService;
+        protected readonly IEventMailRegistrationAppService _appService;
         public EventMailRegistrationController(IEventMailRegistrationAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("execute")]
+        public async Task<IActionResult> ExecuteAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.ExecuteAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

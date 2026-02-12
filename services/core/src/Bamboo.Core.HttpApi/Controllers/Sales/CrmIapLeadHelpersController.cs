@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Sales/CRM, Module: crm_iap_mine
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/sales/CrmIapLeadHelpers")]
     public partial class CrmIapLeadHelpersController : AbpController
     {
-        private readonly ICrmIapLeadHelpersAppService _appService;
+        protected readonly ICrmIapLeadHelpersAppService _appService;
         public CrmIapLeadHelpersController(ICrmIapLeadHelpersAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("lead-vals-from-response")]
+        public async Task<IActionResult> LeadValsFromResponseAsync([FromBody] CrmIapLeadHelpersLeadValsFromResponseRequestDto input)
+        {
+            var result = await _appService.LeadValsFromResponseAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

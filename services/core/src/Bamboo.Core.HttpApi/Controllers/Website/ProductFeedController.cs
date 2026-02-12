@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Website/Website, Module: website_sale
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/website/ProductFeed")]
     public partial class ProductFeedController : AbpController
     {
-        private readonly IProductFeedAppService _appService;
+        protected readonly IProductFeedAppService _appService;
         public ProductFeedController(IProductFeedAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("action-invalidate-cache")]
+        public async Task<IActionResult> InvalidateCacheAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.InvalidateCacheAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

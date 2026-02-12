@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Human Resources/Employees, Module: hr_skills
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/human-resources/HrSkillType")]
     public partial class HrSkillTypeController : AbpController
     {
-        private readonly IHrSkillTypeAppService _appService;
+        protected readonly IHrSkillTypeAppService _appService;
         public HrSkillTypeController(IHrSkillTypeAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync([FromBody] HrSkillTypeCopyDataRequestDto input)
+        {
+            var result = await _appService.CopyDataAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

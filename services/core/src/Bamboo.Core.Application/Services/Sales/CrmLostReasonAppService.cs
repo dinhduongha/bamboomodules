@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,41 +22,15 @@ namespace Bamboo.Core.Application.Services
     public partial class CrmLostReasonAppService : GenericAppService<CrmLostReason>, ICrmLostReasonAppService
     {
 
-        public CrmLostReasonAppService(IRepository<CrmLostReason, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public CrmLostReasonAppService(IRepository<CrmLostReason, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<CrmLostReason> ComputeLeadsCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lost_reason.py) ---
-            // def _compute_leads_count(self):
-            // lead_data = self.env['crm.lead'].with_context(active_test=False)._read_group(
-            //     [('lost_reason_id', 'in', self.ids)],
-            //     ['lost_reason_id'],
-            //     ['__count'],
-            // )
-            // mapped_data = {lost_reason.id: count for lost_reason, count in lead_data}
-            // for reason in self:
-            //     reason.leads_count = mapped_data.get(reason.id, 0)
-            */
-            return default;
         }
 
         public async Task<CrmLostReason> LostLeadsAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lost_reason.py) ---
-            // def action_lost_leads(self):
-            // return {
-            //     'name': _('Leads'),
-            //     'view_mode': 'list,form',
-            //     'domain': [('lost_reason_id', 'in', self.ids)],
-            //     'res_model': 'crm.lead',
-            //     'type': 'ir.actions.act_window',
-            //     'context': {'create': False, 'active_test': False},
-            // }
+            --- METHOD SOURCE (MODULE: crm, FILE: crm_lost_reason.py, METHOD: action_lost_leads) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

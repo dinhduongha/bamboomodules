@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,29 +22,15 @@ namespace Bamboo.Core.Application.Services
     public partial class IrDemoFailureWizardAppService : GenericAppService<IrDemoFailureWizard>, IIrDemoFailureWizardAppService
     {
 
-        public IrDemoFailureWizardAppService(IRepository<IrDemoFailureWizard, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public IrDemoFailureWizardAppService(IRepository<IrDemoFailureWizard, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<IrDemoFailureWizard> ComputeFailuresCountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_demo_failure.py) ---
-            // def _compute_failures_count(self):
-            // for r in self:
-            //     r.failures_count = len(r.failure_ids)
-            */
-            return default;
         }
 
         public async Task<IrDemoFailureWizard> DoneAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_demo_failure.py) ---
-            // def done(self):
-            // # pylint: disable=next-method-called
-            // return self.env['ir.module.module'].next()
+            --- METHOD SOURCE (MODULE: base, FILE: ir_demo_failure.py, METHOD: done) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Sales/Point of Sale, Module: point_of_sale
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/sales/PosCategory")]
     public partial class PosCategoryController : AbpController
     {
-        private readonly IPosCategoryAppService _appService;
+        protected readonly IPosCategoryAppService _appService;
         public PosCategoryController(IPosCategoryAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("get-default-color")]
+        public async Task<IActionResult> GetDefaultColorAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.GetDefaultColorAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

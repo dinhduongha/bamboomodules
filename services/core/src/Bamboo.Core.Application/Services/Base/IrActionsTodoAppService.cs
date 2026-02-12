@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class IrActionsTodoAppService : GenericAppService<IrActionsTodo>, IIrActionsTodoAppService
     {
 
-        public IrActionsTodoAppService(IRepository<IrActionsTodo, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public IrActionsTodoAppService(IRepository<IrActionsTodo, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -30,11 +31,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<IrActionsTodo> EnsureOneOpenTodoAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def ensure_one_open_todo(self):
-            // open_todo = self.search([('state', '=', 'open')], order='sequence asc, id desc', offset=1)
-            // if open_todo:
-            //     open_todo.write({'state': 'done'})
+            --- METHOD SOURCE (MODULE: base, FILE: ir_actions.py, METHOD: ensure_one_open_todo) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -44,33 +41,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<IrActionsTodo> LaunchAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def action_launch(self):
-            // """ Launch Action of Wizard"""
-            // self.ensure_one()
-            // 
-            // self.write({'state': 'done'})
-            // 
-            // # Load action
-            // action_type = self.action_id.type
-            // action = self.env[action_type].browse(self.action_id.id)
-            // 
-            // result = action.read()[0]
-            // if action_type != 'ir.actions.act_window':
-            //     return result
-            // result.setdefault('context', '{}')
-            // 
-            // # Open a specific record when res_id is provided in the context
-            // ctx = safe_eval(result['context'], {'user': self.env.user})
-            // if ctx.get('res_id'):
-            //     result['res_id'] = ctx.pop('res_id')
-            // 
-            // # disable log for automatic wizards
-            // ctx['disable_log'] = True
-            // 
-            // result['context'] = ctx
-            // 
-            // return result
+            --- METHOD SOURCE (MODULE: base, FILE: ir_actions.py, METHOD: action_launch) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -80,10 +51,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<IrActionsTodo> OpenAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
-            // def action_open(self):
-            // """ Sets configuration wizard in TODO state"""
-            // return self.write({'state': 'open'})
+            --- METHOD SOURCE (MODULE: base, FILE: ir_actions.py, METHOD: action_open) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

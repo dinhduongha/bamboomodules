@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,30 +22,17 @@ namespace Bamboo.Core.Application.Services
     [Module("WebsiteCustomer", Category = "Website", Depends = new[] { "website_crm_partner_assign", "website_partner", "website_google_map" })]
     public partial class ResPartnerTagAppService : GenericAppService<ResPartnerTag>, IResPartnerTagAppService
     {
-        private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
-        public ResPartnerTagAppService(IRepository<ResPartnerTag, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;
+        public ResPartnerTagAppService(IRepository<ResPartnerTag, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IWebsitePublishedMixinAppService websitePublishedMixinAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _websitePublishedMixinAppService = websitePublishedMixinAppService;
-        }
-
-        protected async Task<ResPartnerTag> DefaultIsPublishedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_customer, FILE: res_partner.py) ---
-            // def _default_is_published(self):
-            // return True
-            */
-            return default;
         }
 
         [ApiModel]
         public async Task<ResPartnerTag> GetSelectionClassAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_customer, FILE: res_partner.py) ---
-            // def get_selection_class(self):
-            // classname = ['info', 'primary', 'success', 'warning', 'danger']
-            // return [(x, str.title(x)) for x in classname]
+            --- METHOD SOURCE (MODULE: website_customer, FILE: res_partner.py, METHOD: get_selection_class) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

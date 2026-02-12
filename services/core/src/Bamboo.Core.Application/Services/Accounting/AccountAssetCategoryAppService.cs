@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,10 +22,10 @@ namespace Bamboo.Core.Application.Services
     [Module("OmAccountAsset", Category = "Accounting", Depends = new[] { "account" })]
     public partial class AccountAssetCategoryAppService : GenericAppService<AccountAssetCategory>, IAccountAssetCategoryAppService
     {
-        private readonly IAnalyticMixinAppService _analyticMixinAppService;
-        private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
-        private readonly IMailThreadAppService _mailThreadAppService;
-        public AccountAssetCategoryAppService(IRepository<AccountAssetCategory, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IAnalyticMixinAppService analyticMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IAnalyticMixinAppService _analyticMixinAppService;
+        protected readonly IMailActivityMixinAppService _mailActivityMixinAppService;
+        protected readonly IMailThreadAppService _mailThreadAppService;
+        public AccountAssetCategoryAppService(IRepository<AccountAssetCategory, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IAnalyticMixinAppService analyticMixinAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _analyticMixinAppService = analyticMixinAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;
@@ -34,39 +35,17 @@ namespace Bamboo.Core.Application.Services
         public async Task<AccountAssetCategory> OnchangeAccountAssetAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
-            // def onchange_account_asset(self):
-            // if self.type == "purchase":
-            //     self.account_depreciation_id = self.account_asset_id
-            // elif self.type == "sale":
-            //     self.account_depreciation_expense_id = self.account_asset_id
+            --- METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py, METHOD: onchange_account_asset) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<AccountAssetCategory> OnchangeMethodTimeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
-            // def _onchange_method_time(self):
-            // if self.method_time != 'number':
-            //     self.prorata = False
-            */
-            return default;
-        }
-
         public async Task<AccountAssetCategory> OnchangeTypeAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
-            // def onchange_type(self):
-            // if self.type == 'sale':
-            //     self.prorata = True
-            //     self.method_period = 1
-            // else:
-            //     self.method_period = 12
+            --- METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py, METHOD: onchange_type) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

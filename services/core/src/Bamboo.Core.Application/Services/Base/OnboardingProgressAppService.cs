@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class OnboardingProgressAppService : GenericAppService<OnboardingProgress>, IOnboardingProgressAppService
     {
 
-        public OnboardingProgressAppService(IRepository<OnboardingProgress, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public OnboardingProgressAppService(IRepository<OnboardingProgress, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,85 +30,17 @@ namespace Bamboo.Core.Application.Services
         public async Task<OnboardingProgress> CloseAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py) ---
-            // def action_close(self):
-            // self.is_onboarding_closed = True
+            --- METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py, METHOD: action_close) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
             return default;
         }
 
-        protected async Task<OnboardingProgress> ComputeOnboardingStateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py) ---
-            // def _compute_onboarding_state(self):
-            // for progress in self:
-            //     progress.onboarding_state = (
-            //         'not_done' if (
-            //             len(progress.progress_step_ids.filtered(lambda p: p.step_state in {'just_done', 'done'}))
-            //             != len(progress.onboarding_id.step_ids)
-            //         )
-            //         else 'done'
-            //     )
-            */
-            return default;
-        }
-
-        protected async Task<OnboardingProgress> GetAndUpdateOnboardingStateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py) ---
-            // def _get_and_update_onboarding_state(self):
-            // """Fetch the progress of an onboarding for rendering its panel.
-            // 
-            // This method is expected to only be called by the onboarding controller.
-            // It also has the responsibility of updating the 'just_done' state into
-            // 'done' so that the 'just_done' states are only rendered once.
-            // """
-            // self.ensure_one()
-            // onboarding_states_values = {}
-            // progress_steps_to_consolidate = self.env['onboarding.progress.step']
-            // 
-            // # Iterate over onboarding step_ids and not self.progress_step_ids because 'not_done' steps
-            // # may not have a progress_step record.
-            // for step in self.onboarding_id.step_ids:
-            //     step_state = step.current_step_state
-            //     if step_state == 'just_done':
-            //         progress_steps_to_consolidate |= step.current_progress_step_id
-            //     onboarding_states_values[step.id] = step_state
-            // 
-            // progress_steps_to_consolidate.action_consolidate_just_done()
-            // 
-            // if self.is_onboarding_closed:
-            //     onboarding_states_values['onboarding_state'] = 'closed'
-            // elif self.onboarding_state == 'done':
-            //     onboarding_states_values['onboarding_state'] = 'just_done' if progress_steps_to_consolidate else 'done'
-            // return onboarding_states_values
-            */
-            return default;
-        }
-
-        protected async Task<OnboardingProgress> RecomputeProgressStepIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py) ---
-            // def _recompute_progress_step_ids(self):
-            // """Update progress steps when a step (with existing progress) is added to an onboarding."""
-            // for progress in self:
-            //     progress.progress_step_ids = progress.onboarding_id.step_ids.current_progress_step_id
-            */
-            return default;
-        }
-
         public async Task<OnboardingProgress> ToggleVisibilityAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py) ---
-            // def action_toggle_visibility(self):
-            // for progress in self:
-            //     progress.is_onboarding_closed = not progress.is_onboarding_closed
+            --- METHOD SOURCE (MODULE: onboarding, FILE: onboarding_progress.py, METHOD: action_toggle_visibility) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

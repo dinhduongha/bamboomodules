@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,31 +22,15 @@ namespace Bamboo.Core.Application.Services
     public partial class SmsTwilioNumberAppService : GenericAppService<SmsTwilioNumber>, ISmsTwilioNumberAppService
     {
 
-        public SmsTwilioNumberAppService(IRepository<SmsTwilioNumber, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public SmsTwilioNumberAppService(IRepository<SmsTwilioNumber, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<SmsTwilioNumber> ComputeDisplayNameInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: sms_twilio_number.py) ---
-            // def _compute_display_name(self):
-            // for record in self:
-            //     record.display_name = f"{record.number} ({record.country_id.name})"
-            */
-            return default;
         }
 
         public async Task<SmsTwilioNumber> UnlinkAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sms_twilio, FILE: sms_twilio_number.py) ---
-            // def action_unlink(self):
-            // # First create the action while self exists as it's going to be unlink right after
-            // action = self.company_id._action_open_sms_twilio_account_manage()
-            // self.unlink()
-            // return action
+            --- METHOD SOURCE (MODULE: sms_twilio, FILE: sms_twilio_number.py, METHOD: action_unlink) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

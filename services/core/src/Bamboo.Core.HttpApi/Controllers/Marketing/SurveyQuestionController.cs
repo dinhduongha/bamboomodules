@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Marketing/Surveys, Module: survey
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/marketing/SurveyQuestion")]
     public partial class SurveyQuestionController : AbpController
     {
-        private readonly ISurveyQuestionAppService _appService;
+        protected readonly ISurveyQuestionAppService _appService;
         public SurveyQuestionController(ISurveyQuestionAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("validate-question")]
+        public async Task<IActionResult> ValidateQuestionAsync([FromBody] SurveyQuestionValidateQuestionRequestDto input)
+        {
+            var result = await _appService.ValidateQuestionAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

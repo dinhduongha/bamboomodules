@@ -6,16 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Hidden, Module: resource
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/resource/ResourceResource")]
     public partial class ResourceResourceController : AbpController
     {
-        private readonly IResourceResourceAppService _appService;
+        protected readonly IResourceResourceAppService _appService;
         public ResourceResourceController(IResourceResourceAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("copy-data")]
+        public async Task<IActionResult> CopyDataAsync([FromBody] ResourceResourceCopyDataRequestDto input)
+        {
+            var result = await _appService.CopyDataAsync(input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("get-avatar-card-data")]
+        public async Task<IActionResult> GetAvatarCardDataAsync([FromBody] ResourceResourceGetAvatarCardDataRequestDto input)
+        {
+            var result = await _appService.GetAvatarCardDataAsync(input);
+            return Ok(result);
+        }
     }
+    
 }

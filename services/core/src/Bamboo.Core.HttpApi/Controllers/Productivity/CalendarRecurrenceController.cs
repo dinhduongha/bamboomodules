@@ -6,16 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts.Interfaces;
+using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.HttpApi.Controllers
 {
-    // Category: Productivity/Calendar, Module: calendar
-    // Interface only, not yet implemented service layer
     [NonController]
     [Authorize]
     [Route("api/v1/productivity/CalendarRecurrence")]
     public partial class CalendarRecurrenceController : AbpController
     {
-        private readonly ICalendarRecurrenceAppService _appService;
+        protected readonly ICalendarRecurrenceAppService _appService;
         public CalendarRecurrenceController(ICalendarRecurrenceAppService appService) { _appService = appService; }
+        
+        
+        [HttpPost]
+        [Route("get-recurrence-name")]
+        public async Task<IActionResult> GetRecurrenceNameAsync([FromBody] Guid[] ids)
+        {
+            var result = await _appService.GetRecurrenceNameAsync(ids);
+            return Ok(result);
+        }
     }
+    
 }

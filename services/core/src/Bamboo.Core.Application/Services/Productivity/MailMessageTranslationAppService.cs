@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,30 +22,15 @@ namespace Bamboo.Core.Application.Services
     public partial class MailMessageTranslationAppService : GenericAppService<MailMessageTranslation>, IMailMessageTranslationAppService
     {
 
-        public MailMessageTranslationAppService(IRepository<MailMessageTranslation, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public MailMessageTranslationAppService(IRepository<MailMessageTranslation, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
-        }
-
-        protected async Task<MailMessageTranslation> GcTranslationsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message_translation.py) ---
-            // def _gc_translations(self):
-            // treshold = fields.Datetime().now() - relativedelta(weeks=2)
-            // self.search([("create_date", "<", treshold)]).unlink()
-            */
-            return default;
         }
 
         public async Task<MailMessageTranslation> InitAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message_translation.py) ---
-            // def init(self):
-            // self.env.cr.execute(
-            //     f"CREATE UNIQUE INDEX IF NOT EXISTS mail_message_translation_unique ON {self._table} (message_id, target_lang)"
-            // )
+            --- METHOD SOURCE (MODULE: mail, FILE: mail_message_translation.py, METHOD: init) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

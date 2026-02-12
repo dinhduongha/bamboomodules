@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,8 +22,8 @@ namespace Bamboo.Core.Application.Services
     [Module("OmAccountBudget", Category = "Accounting", Depends = new[] { "account" })]
     public partial class CrossoveredBudgetAppService : GenericAppService<CrossoveredBudget>, ICrossoveredBudgetAppService
     {
-        private readonly IMailThreadAppService _mailThreadAppService;
-        public CrossoveredBudgetAppService(IRepository<CrossoveredBudget, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly IMailThreadAppService _mailThreadAppService;
+        public CrossoveredBudgetAppService(IRepository<CrossoveredBudget, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IMailThreadAppService mailThreadAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _mailThreadAppService = mailThreadAppService;
         }
@@ -30,9 +31,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<CrossoveredBudget> BudgetCancelAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
-            // def action_budget_cancel(self):
-            // self.write({'state': 'cancel'})
+            --- METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py, METHOD: action_budget_cancel) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -42,9 +41,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<CrossoveredBudget> BudgetConfirmAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
-            // def action_budget_confirm(self):
-            // self.write({'state': 'confirm'})
+            --- METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py, METHOD: action_budget_confirm) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -54,9 +51,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<CrossoveredBudget> BudgetDoneAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
-            // def action_budget_done(self):
-            // self.write({'state': 'done'})
+            --- METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py, METHOD: action_budget_done) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -66,9 +61,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<CrossoveredBudget> BudgetDraftAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
-            // def action_budget_draft(self):
-            // self.write({'state': 'draft'})
+            --- METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py, METHOD: action_budget_draft) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;
@@ -78,9 +71,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<CrossoveredBudget> BudgetValidateAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py) ---
-            // def action_budget_validate(self):
-            // self.write({'state': 'validate'})
+            --- METHOD SOURCE (MODULE: om_account_budget, FILE: account_budget.py, METHOD: action_budget_validate) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

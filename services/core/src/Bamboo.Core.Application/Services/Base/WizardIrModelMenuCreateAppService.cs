@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class WizardIrModelMenuCreateAppService : GenericAppService<WizardIrModelMenuCreate>, IWizardIrModelMenuCreateAppService
     {
 
-        public WizardIrModelMenuCreateAppService(IRepository<WizardIrModelMenuCreate, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public WizardIrModelMenuCreateAppService(IRepository<WizardIrModelMenuCreate, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -29,22 +30,7 @@ namespace Bamboo.Core.Application.Services
         public async Task<WizardIrModelMenuCreate> MenuCreateAsync(Guid[] ids)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
-            // def menu_create(self):
-            // for menu in self:
-            //     model = self.env['ir.model'].browse(self._context.get('model_id'))
-            //     vals = {
-            //         'name': menu.name,
-            //         'res_model': model.model,
-            //         'view_mode': 'list,form',
-            //     }
-            //     action_id = self.env['ir.actions.act_window'].create(vals)
-            //     self.env['ir.ui.menu'].create({
-            //         'name': menu.name,
-            //         'parent_id': menu.menu_id.id,
-            //         'action': 'ir.actions.act_window,%d' % (action_id,)
-            //     })
-            // return {'type': 'ir.actions.act_window_close'}
+            --- METHOD SOURCE (MODULE: base, FILE: ir_model.py, METHOD: menu_create) ---
             */
             var entity = await Repository.GetAsync(ids[0]);
             await Task.CompletedTask;

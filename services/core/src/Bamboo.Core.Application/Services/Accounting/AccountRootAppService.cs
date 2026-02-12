@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,7 +22,7 @@ namespace Bamboo.Core.Application.Services
     public partial class AccountRootAppService : GenericAppService<AccountRoot>, IAccountRootAppService
     {
 
-        public AccountRootAppService(IRepository<AccountRoot, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        public AccountRootAppService(IRepository<AccountRoot, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
 
         }
@@ -30,52 +31,10 @@ namespace Bamboo.Core.Application.Services
         public async Task<AccountRoot> BrowseAsync(AccountRootBrowseRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_root.py) ---
-            // def browse(self, ids=()):
-            // if isinstance(ids, str):
-            //     ids = (ids,)
-            // return super().browse(ids)
+            --- METHOD SOURCE (MODULE: account, FILE: account_root.py, METHOD: browse) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
-            return default;
-        }
-
-        protected async Task<AccountRoot> ComputeRootInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_root.py) ---
-            // def _compute_root(self):
-            // for root in self:
-            //     root.name = root.id
-            //     root.parent_id = self.browse(root.id[:-1] if len(root.id) > 1 else False)
-            */
-            return default;
-        }
-
-        [ApiModel]
-        protected async Task<AccountRoot> FromAccountCodeInternalAsync(object code)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_root.py) ---
-            // def _from_account_code(self, code):
-            // return self.browse(code and code[:2])
-            */
-            return default;
-        }
-
-        protected async Task<object> SearchInternalAsync(object domain, object offset, object limit, object order)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_root.py) ---
-            // def _search(self, domain, offset=0, limit=None, order=None, **kw) -> Query:
-            // match list(domain):
-            //     case [('id', 'in', ids)]:
-            //         return self.browse(sorted(ids))._as_query()
-            //     case [('id', 'parent_of', ids)]:
-            //         return self.browse(sorted({s for _id in ids for s in accumulate(_id)}))._as_query()
-            // raise UserError(self.env._("Filter on the Account or its Display Name instead"))
-            */
             return default;
         }
     }

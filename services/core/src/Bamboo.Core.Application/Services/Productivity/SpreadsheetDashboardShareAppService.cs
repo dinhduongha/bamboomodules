@@ -1,4 +1,5 @@
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Data;
@@ -21,63 +22,17 @@ namespace Bamboo.Core.Application.Services
     [Module("SpreadsheetDashboardModule", Category = "Productivity", Depends = new[] { "spreadsheet" })]
     public partial class SpreadsheetDashboardShareAppService : GenericAppService<SpreadsheetDashboardShare>, ISpreadsheetDashboardShareAppService
     {
-        private readonly ISpreadsheetMixinAppService _spreadsheetMixinAppService;
-        public SpreadsheetDashboardShareAppService(IRepository<SpreadsheetDashboardShare, Guid> repository, IServiceProvider serviceProvider, IDataFilter dataFilter, IObjectMapper objectMapper, IDistributedCache cache, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, ISpreadsheetMixinAppService spreadsheetMixinAppService) : base(repository, serviceProvider, dataFilter, objectMapper, cache, authorizationService, domainParser, modelTypeRegistry)
+        protected readonly ISpreadsheetMixinAppService _spreadsheetMixinAppService;
+        public SpreadsheetDashboardShareAppService(IRepository<SpreadsheetDashboardShare, Guid> repository, ICurrentTenant currentTenant, IDistributedCache cache, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, ISpreadsheetMixinAppService spreadsheetMixinAppService) : base(repository, currentTenant, cache, domainParser, modelTypeRegistry)
         {
             _spreadsheetMixinAppService = spreadsheetMixinAppService;
-        }
-
-        protected async Task<SpreadsheetDashboardShare> CheckDashboardAccessInternalAsync(object access_token)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard_share.py) ---
-            // def _check_dashboard_access(self, access_token):
-            // self.ensure_one()
-            // token_access = self._check_token(access_token)
-            // dashboard = self.dashboard_id.with_user(self.create_uid)
-            // user_access = dashboard.has_access("read")
-            // if not (token_access and user_access):
-            //     raise Forbidden(_("You don't have access to this dashboard. "))
-            */
-            return default;
-        }
-
-        protected async Task<SpreadsheetDashboardShare> CheckTokenInternalAsync(object access_token)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard_share.py) ---
-            // def _check_token(self, access_token):
-            // if not access_token:
-            //     return False
-            // return consteq(access_token, self.access_token)
-            */
-            return default;
-        }
-
-        protected async Task<SpreadsheetDashboardShare> ComputeFullUrlInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard_share.py) ---
-            // def _compute_full_url(self):
-            // for share in self:
-            //     share.full_url = "%s/dashboard/share/%s/%s" % (share.get_base_url(), share.id, share.access_token)
-            */
-            return default;
         }
 
         [ApiModel]
         public async Task<SpreadsheetDashboardShare> GetShareUrlAsync(SpreadsheetDashboardShareGetShareUrlRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard_share.py) ---
-            // def action_get_share_url(self, vals):
-            // if "excel_files" in vals:
-            //     excel_zip = self._zip_xslx_files(
-            //         vals["excel_files"]
-            //     )
-            //     del vals["excel_files"]
-            //     vals["excel_export"] = base64.b64encode(excel_zip)
-            // return self.create(vals).full_url
+            --- METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard_share.py, METHOD: action_get_share_url) ---
             */
             var entity = await Repository.GetAsync(input.Ids[0]);
             await Task.CompletedTask;
