@@ -14,7 +14,8 @@ public class JsonRpcRequest
     public string? Method { get; set; }
 
     [JsonPropertyName("params")]
-    public JsonRpcParams? Params { get; set; }
+    public JsonRpcParams Params { get; set; }
+
     [JsonPropertyName("id")]
     public object? Id { get; set; }
 }

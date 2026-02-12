@@ -22,7 +22,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ComputeOutlookUriInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable;
         Task<TEntity> ComputeServerTypeInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable;
         Task<TEntity> ComputeSmtpAuthenticationInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable;
-        Task<TEntity> ConnectInternalAsync<TEntity>(IEnumerable<TEntity> entities, object host, object port, object user, object password, object encryption, object smtp_from, object ssl_certificate, object ssl_private_key, object smtp_debug, Guid mail_server_id, object allow_archived) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable;
+        Task<TEntity> ConnectInternalAsync<TEntity>(IEnumerable<TEntity> entities, object allow_archived) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable;
         Task<TEntity> CreateAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable;
         Task<TEntity> FetchMailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable;
         Task<TEntity> FetchMailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object batch_limit) where TEntity : IEntity<Guid>, IMicrosoftOutlookMixinable;

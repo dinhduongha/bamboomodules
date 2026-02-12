@@ -1,9 +1,9 @@
-// Auto-generated Marker Interface from Odoo Mixin format.address.mixin
+// Auto-generated Marker Interface from Mixin format.address.mixin
 namespace Bamboo.Core.Domain.Shared.Interfaces
 {
     public interface IFormatAddressMixinable
     {
-        // This interface is used to mark entities that inherit from the 'format.address.mixin' Odoo mixin.
+        // This interface is used to mark entities that inherit from the 'format.address.mixin' mixin.
         // It can be used for generic constraints in services.
     }
 }

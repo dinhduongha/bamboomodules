@@ -1,9 +1,9 @@
-// Auto-generated Marker Interface from Odoo Mixin ir.qweb.field.relative
+// Auto-generated Marker Interface from Mixin ir.qweb.field.relative
 namespace Bamboo.Core.Domain.Shared.Interfaces
 {
     public interface IIrQwebFieldRelativeable
     {
-        // This interface is used to mark entities that inherit from the 'ir.qweb.field.relative' Odoo mixin.
+        // This interface is used to mark entities that inherit from the 'ir.qweb.field.relative' mixin.
         // It can be used for generic constraints in services.
     }
 }

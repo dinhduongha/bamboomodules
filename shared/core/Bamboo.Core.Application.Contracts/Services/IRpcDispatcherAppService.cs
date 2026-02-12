@@ -17,7 +17,7 @@ namespace Bamboo.Core.Application
         Task<List<JsonElement>> ReadAsync(string modelName, ReadRequestDto input);
         Task<List<Guid>> SearchAsync(string modelName, SearchRequestDto input);
         Task<List<JsonElement>> SearchReadAsync(string modelName, SearchReadRequestDto input);
-        Task<object> SearchCountAsync(string modelName, SearchCountRequestDto input);
+        Task<long> SearchCountAsync(string modelName, SearchCountRequestDto input);
         Task<JsonElement> CreateAsync(string modelName, CreateRequestDto input);
         Task<List<JsonElement>> WriteAsync(string modelName, UpdateRequestDto input);
         Task<List<JsonElement>> UpdateJsonAsync(string modelName, UpdateJsonRequestDto input);
@@ -36,7 +36,6 @@ namespace Bamboo.Core.Application
 
         Task<JsonElement> DispatchJson2Async(string model, string rpcMethod, JsonElement body);
         Task<JsonElement> DispatchLegacyJsonRpcAsync(JsonRpcParams rpcParams);
-        Task<object> ProcessRequestAsync(string modelName, string method, List<object>? args, Dictionary<string, object>? kwargs, JsonElement? body);
 
     }
 

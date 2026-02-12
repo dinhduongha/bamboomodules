@@ -57,7 +57,7 @@ public class SearchReadRequestDto
     public long Offset { get; set; } = 0;
 
     [JsonPropertyName("limit")]
-    public int Limit { get; set; } = 10;
+    public int Limit { get; set; } = 100;
 
     [JsonPropertyName("order")]
     public string? Order { get; set; }
@@ -181,7 +181,6 @@ public class CopyRequestDto<TEntity>
     public List<string> Fields { get; set; }
 
     [JsonPropertyName("default_values")]
-    //public object DefaultValues { get; set; }
     public TEntity DefaultValues { get; set; }
 
     [JsonPropertyName("context")]
@@ -294,6 +293,121 @@ public class FieldsGetRequestDto
 
     [JsonPropertyName("info")]
     public Dictionary<string, List<string>> Attributes { get; set; }
+
+    [JsonPropertyName("context")]
+    public JsonElement? Context { get; set; } = null;
+}
+
+public class OnchangeResultDto
+{
+    public Dictionary<string, object> Value { get; set; }
+    public Dictionary<string, string> Warning { get; set; }
+}
+
+
+public class WebSearchReadRequestDto
+{
+
+    [JsonPropertyName("domain")]
+    public JsonElement? Domain { get; set; }
+
+    [JsonPropertyName("specification")]
+    public JsonElement? Specification { get; set; }
+
+    [JsonPropertyName("fields")]
+    public List<string>? Fields { get; set; }
+
+    [JsonPropertyName("offset")]
+    public long? Offset { get; set; }
+
+    [JsonPropertyName("limit")]
+    public int? Limit { get; set; }
+
+    [JsonPropertyName("order")]
+    public string? Order { get; set; }
+
+    [JsonPropertyName("context")]
+    public JsonElement? Context { get; set; } = null;
+}
+
+public class WebReadRequestDto
+{
+    [JsonPropertyName("ids")]
+    public List<Guid> Ids { get; set; }
+
+    [JsonPropertyName("specification")]
+    public JsonElement? Specification { get; set; }
+
+    [JsonPropertyName("fields")]
+    public List<string> Fields { get; set; }
+
+    [JsonPropertyName("context")]
+    public JsonElement? Context { get; set; } = null;
+}
+
+public class WebReadGroupRequestDto
+{
+
+    [JsonPropertyName("domain")]
+    public JsonElement? Domain { get; set; }
+
+    [JsonPropertyName("specification")]
+    public JsonElement? Specification { get; set; }
+
+    [JsonPropertyName("groupby")]
+    public JsonElement? GroupBy { get; set; }
+
+    [JsonPropertyName("fields")]
+    public List<string>? Fields { get; set; }
+
+    [JsonPropertyName("offset")]
+    public long? Offset { get; set; }
+
+    [JsonPropertyName("limit")]
+    public int? Limit { get; set; }
+
+    [JsonPropertyName("order")]
+    public string? Order { get; set; }
+
+    [JsonPropertyName("lazy")]
+    public string? Lazy { get; set; }
+
+    [JsonPropertyName("context")]
+    public JsonElement? Context { get; set; } = null;
+}
+
+public class WebSaveRequestDto<TEntity>
+    where TEntity : class, IEntity<Guid>
+{
+    [JsonPropertyName("ids")]
+    public List<Guid> Ids { get; set; }
+
+    [JsonPropertyName("entity")]
+    public TEntity Entity { get; set; }
+
+    [JsonPropertyName("specification")]
+    public JsonElement? Specification { get; set; }
+
+    [JsonPropertyName("fields")]
+    public List<string> Fields { get; set; }
+
+    [JsonPropertyName("context")]
+    public JsonElement? Context { get; set; } = null;
+}
+
+public class WebSaveRequestDto
+{
+    [JsonPropertyName("ids")]
+    public List<Guid> Ids { get; set; }
+
+    [JsonPropertyName("entity")]
+    public JsonElement Entity { get; set; }
+
+    [JsonPropertyName("specification")]
+    public JsonElement? Specification { get; set; }
+
+    [JsonPropertyName("fields")]
+    public List<string> Fields { get; set; }
 
     [JsonPropertyName("context")]
     public JsonElement? Context { get; set; } = null;

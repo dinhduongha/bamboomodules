@@ -1,9 +1,9 @@
-// Auto-generated Marker Interface from Odoo Mixin ir.qweb.field.time
+// Auto-generated Marker Interface from Mixin ir.qweb.field.time
 namespace Bamboo.Core.Domain.Shared.Interfaces
 {
     public interface IIrQwebFieldTimeable
     {
-        // This interface is used to mark entities that inherit from the 'ir.qweb.field.time' Odoo mixin.
+        // This interface is used to mark entities that inherit from the 'ir.qweb.field.time' mixin.
         // It can be used for generic constraints in services.
     }
 }

@@ -2,7 +2,7 @@ using System;
 namespace Bamboo.Core.Domain.Shared.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class OdooFieldAttribute : Attribute
+public class BambooFieldAttribute : Attribute
 {
     public string? String { get; set; }
     public string? Help { get; set; }

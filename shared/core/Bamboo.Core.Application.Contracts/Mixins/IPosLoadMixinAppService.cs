@@ -619,7 +619,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ComputeBankCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputeBankPartnerIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputeBarcodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> ComputeBasePriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product, object quantity, object uom, object date, object currency) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<TEntity> ComputeBasePriceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputeBaseUnitCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputeBaseUnitIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputeBaseUnitNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
@@ -1024,7 +1024,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ComputePriceBeforeDiscountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputePriceInclInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputePriceIncludeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> ComputePriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product, object quantity, object uom, object date, object currency) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<TEntity> ComputePriceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputePriceLabelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputePriceMarkupInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ComputePriceReduceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
@@ -1551,7 +1551,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ForceDefaultSaleTaxInternalAsync<TEntity>(IEnumerable<TEntity> entities, object companies) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ForceDefaultTaxInternalAsync<TEntity>(IEnumerable<TEntity> entities, object companies) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> ForceLinesToInvoicePolicyOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<string> FormatAsync<TEntity>(IEnumerable<TEntity> entities, string percent, object @value, bool grouping) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<TEntity> FormatAsync<TEntity>(IEnumerable<TEntity> entities, object amount) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> FormatCurrencyAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object amount) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> FormatDataCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities, object iap_data) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> FormatLockDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object lock_dates) where TEntity : IEntity<Guid>, IPosLoadMixinable;
@@ -2011,7 +2011,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> GetNonDeliveryLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetNotRewardedOrderLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetNoteUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetOnchangeServicePolicyUpdatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object service_tracking, object service_policy, Guid project_id, Guid project_template_id) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetOnlinePaymentErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetOnlyQtyAvailableInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
@@ -2287,7 +2287,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> GetViewPostprocessedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object view, object arch) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetViewsAsync<TEntity>(IEnumerable<TEntity> entities, object views, object options) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetViewsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> GetViolatedLockDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice_date, object has_tax) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<TEntity> GetViolatedLockDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object accounting_date, object has_tax, object journal) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetViolatedSoftLockDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object soft_lock_date_field, object date) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetVolumeUomIdFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> GetVolumeUomNameFromIrConfigParameterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
@@ -2475,11 +2475,11 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> IsVariantPossibleInternalAsync<TEntity>(IEnumerable<TEntity> entities, object parent_combination) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> IsWorkPeriodInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> IsWriteForbiddenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> IsZeroAsync<TEntity>(IEnumerable<TEntity> entities, object amount) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<bool> IsZeroAsync<TEntity>(IEnumerable<TEntity> entities, float @value) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> JsAssignOutstandingLineAsync<TEntity>(IEnumerable<TEntity> entities, Guid line_id) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> JsRemoveOutstandingPartialAsync<TEntity>(IEnumerable<TEntity> entities, Guid partial_id) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> KeepNewValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> LangGetInternalAsync<TEntity>(IEnumerable<TEntity> entities, string code) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<TEntity> LangGetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> LaunchStockRuleFromPosOrderLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> LegacySessionTokenHashComputeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sid) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> LinkBillOriginToPurchaseOrdersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object timeout) where TEntity : IEntity<Guid>, IPosLoadMixinable;
@@ -2510,7 +2510,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> LoadPrecommitUpdateOpeningMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> LoadProductFromPosAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id, object domain, object offset, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> LoadProductWithDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object domain, object load_archived, object offset, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> LoadRecordsCreateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<TEntity> LoadRecordsCreateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> LoadRecordsWriteInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> LoadSaleOrderFromPosAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> LoadScenarioInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
@@ -2874,7 +2874,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> RevokeAllDevicesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> RevokeAllDevicesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> RoundAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object amounts) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> RoundAsync<TEntity>(IEnumerable<TEntity> entities, object amount) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<float> RoundAsync<TEntity>(IEnumerable<TEntity> entities, float @value, object rounding_method) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> RoundBaseLinesTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object tax_lines) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> RoundRawTaxAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines_aggregated_values, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> RoundRawTotalExcludedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company, object precision_digits, object apply_strict_tolerance, object in_foreign_currency) where TEntity : IEntity<Guid>, IPosLoadMixinable;
@@ -3199,7 +3199,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> UnrelevantRecordsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object config) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> UnsubscribeFromNonPublicChannelsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> UnwrapAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object file_data, object recurse) where TEntity : IEntity<Guid>, IPosLoadMixinable;
-        Task<TEntity> UpdateAddressInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id, object fnames) where TEntity : IEntity<Guid>, IPosLoadMixinable;
+        Task<TEntity> UpdateAddressInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> UpdateAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object old_amounts, object amounts_to_add, object date, object round, object force_company_currency) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> UpdateAssetStyleInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
         Task<TEntity> UpdateAvailableSeatInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable;
