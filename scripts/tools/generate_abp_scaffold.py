@@ -226,6 +226,8 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
                 is_required = field_info.get('is_required', False)
                 # Enum nên để nullable (?) để tránh lỗi default value 0 nếu DB null
                 csharp_type = f"{enum_type_name}" if is_required else f"{enum_type_name}?"
+                # Default enum sẽ là string?
+                csharp_type = f"string?"
                 
                 # Metadata cho ghi chú
                 selection_source = field_info.get('selection')
@@ -375,7 +377,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
     content += "        }\n    }"
     return format_csharp_code(content)
 
-def create_enum_content(project_base_name, module_name, model_name, field_name, selection_list, flat_model_ns, module_namespace_map):
+def create_enum_content_old(project_base_name, module_name, model_name, field_name, selection_list, flat_model_ns, module_namespace_map):
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
 
     model_alias = to_pascal_case(model_name.split('.')[-1]); pascal_field = to_pascal_case(field_name)
@@ -390,7 +392,7 @@ def create_enum_content(project_base_name, module_name, model_name, field_name, 
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_enum_content2(project_base_name, module_grouping_name, model_name, field_name, selection_data, flat_model_ns, source_module="unknown", source_file="unknown", related_info=None, selection_add_data=None):
+def create_enum_content(project_base_name, module_grouping_name, model_name, field_name, selection_data, flat_model_ns, source_module="unknown", source_file="unknown", related_info=None, selection_add_data=None):
     pascal_model = to_pascal_case(model_name)
     pascal_field = to_pascal_case(field_name)
     enum_name = f"{pascal_model}{pascal_field}"
@@ -911,7 +913,7 @@ namespace {service_namespace}
     # Trả về 2 giá trị: (MainContent, PartialContent)
     return "\n".join(content_parts), partial_content
 
-def create_dtos_content(project_base_name, module_name, model_name, methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map):
+def create_dtos_content_old(project_base_name, module_name, model_name, methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     
@@ -960,7 +962,7 @@ def create_dtos_content(project_base_name, module_name, model_name, methods, fla
     """
     return format_csharp_code(content)
 
-def create_dtos_content2(project_base_name, module_name, model_name, methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map):
+def create_dtos_content(project_base_name, module_name, model_name, methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     
@@ -2272,7 +2274,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
 
                 source_module = field_data.get('module', base_module)
                 source_file = field_data.get('source_file', 'unknown')
-                enum_content = create_enum_content2(
+                enum_content = create_enum_content(
                     project_base_name=project_base_name,
                     module_grouping_name=grouping_key_pascal, # Dùng key đã xử lý (Category/SupplyChain/Base...)
                     model_name=model_name,
@@ -2328,7 +2330,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             dtos_dir.mkdir(parents=True, exist_ok=True)
 
             # TẠO FILE DTO
-            dtos_content = create_dtos_content2(project_base_name, base_module, model_name, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map)
+            dtos_content = create_dtos_content(project_base_name, base_module, model_name, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map)
             if dtos_content:
                 (dtos_dir / f"{pascal_model}Dtos.cs").write_text(dtos_content, encoding='utf-8')
         
