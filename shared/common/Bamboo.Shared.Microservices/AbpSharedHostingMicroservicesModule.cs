@@ -31,11 +31,17 @@ using Volo.Abp.MultiTenancy;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.PostgreSql;
 using Volo.Abp.Timing;
+using Volo.Abp.Account;
+using Volo.Abp.FeatureManagement;
+using Volo.Abp.SettingManagement;
+using Volo.Abp.PermissionManagement;
+using Volo.Abp.Identity;
+using Volo.Abp.TenantManagement;
 
 [DependsOn(
-	typeof(AbpAutofacModule),
+    typeof(AbpAutofacModule),
     typeof(AbpDataModule),
-	typeof(AbpCachingStackExchangeRedisModule),
+    typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpAspNetCoreMultiTenancyModule),
     typeof(AbpDistributedLockingModule),
@@ -44,7 +50,13 @@ using Volo.Abp.Timing;
     //typeof(AbpEventBusKafkaModule),
     //typeof(AbpEventBusRebusModule),
     //typeof(AbpEventBusRabbitMqModule),
-    //typeof(AbpBackgroundJobsRabbitMqModule),    
+    //typeof(AbpBackgroundJobsRabbitMqModule),
+    typeof(AbpAccountHttpApiClientModule),
+    typeof(AbpFeatureManagementHttpApiClientModule),
+    typeof(AbpPermissionManagementHttpApiClientModule),
+    typeof(AbpSettingManagementHttpApiClientModule),
+    typeof(AbpIdentityHttpApiClientModule),
+    typeof(AbpTenantManagementHttpApiClientModule),
     typeof(AbpEntityFrameworkCoreModule),
     typeof(AbpEntityFrameworkCorePostgreSqlModule)
 )]
@@ -52,7 +64,7 @@ public class AbpSharedHostingMicroservicesModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-    	// https://www.npgsql.org/efcore/release-notes/6.0.html#opting-out-of-the-new-timestamp-mapping-logic
+        // https://www.npgsql.org/efcore/release-notes/6.0.html#opting-out-of-the-new-timestamp-mapping-logic
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
@@ -96,18 +108,18 @@ public class AbpSharedHostingMicroservicesModule : AbpModule
         //    //configurationOptions.Password = configuration["Redis:Password"];
         //    options.ConfigurationOptions = redisOptions;
         //});
-        
+
         //var redis = ConnectionMultiplexer.Connect(redisOptions);
         //context.Services
         //    .AddDataProtection()
         //    .PersistKeysToStackExchangeRedis(redis, "Bamboo-Protection-Keys");
-            
+
         //context.Services.AddSingleton<IDistributedLockProvider>(sp =>
         //{
         //    var connection = ConnectionMultiplexer.Connect(redisOptions);
         //    return new RedisDistributedSynchronizationProvider(connection.GetDatabase());
         //});
-		
+
     }
 
     private void ConfigureRedis(ServiceConfigurationContext context, IConfiguration configuration)

@@ -233,6 +233,7 @@ public class AbpAdminExtensionsModule : AbpModule
     {
         var app = context.GetApplicationBuilder();
         var env = context.GetEnvironment();
+        var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
         //GlobalSettingManagementProvider settingManagementProvider = context.ServiceProvider.GetRequiredService<GlobalSettingManagementProvider>();
         //SettingDefinitionManager settingDefinitionManager = context.ServiceProvider.GetRequiredService<SettingDefinitionManager>();
         //await settingManagementProvider.SetAsync(
@@ -257,17 +258,22 @@ public class AbpAdminExtensionsModule : AbpModule
         app.UseForwardedHeaders();
         //app.UseHttpLogging();
 
-        ///// Always behind ssl proxy
-        app.Use((context, next) =>
-        {
-            var xproto = context.Request.Headers["X-Forwarded-Proto"].ToString();
-            if (xproto != null && xproto.StartsWith("https", StringComparison.OrdinalIgnoreCase))
-            {
-                context.Request.Scheme = "https";
-            }
-            return next();
-        });
+        var useSSL = configuration.GetValue("Auth:OpenIddict:UseSSL", true);
 
+        ///// Always behind ssl proxy
+        if (useSSL)
+        {
+            app.Use((context, next) =>
+            {
+                var xproto = context.Request.Headers["X-Forwarded-Proto"].ToString();
+                if (xproto != null && xproto.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Request.Scheme = "https";
+                }
+                context.Request.Scheme = "https";
+                return next();
+            });
+        }
         await base.OnApplicationInitializationAsync(context);
     }
 }

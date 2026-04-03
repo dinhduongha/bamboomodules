@@ -225,6 +225,31 @@ namespace Bamboo.Core.HttpApi
             var result = await _rpcDispatcher.CallServiceAsync(model, method, args);
             return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
         }
-    }
+
+        [HttpPost("{model}/web_read")]
+        public async Task<JsonElement> WebReadAsync(string model, [FromBody] WebReadRequestDto input)
+        {
+            var result = await _rpcDispatcher.WebReadAsync(model, input);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
+        [HttpPost("{model}/web_search_read")]
+        public async Task<JsonElement> WebSearchReadAsync(string model, [FromBody] WebSearchReadRequestDto input)
+        {
+            var result = await _rpcDispatcher.WebSearchReadAsync(model, input);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
+        [HttpPost("{model}/web_read_group")]
+        public async Task<JsonElement> WebReadGroupAsync(string model, [FromBody] WebReadGroupRequestDto input)
+        {
+            var result = await _rpcDispatcher.WebReadGroupAsync(model, input);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
+        [HttpPost("{model}/web_save")]
+        public async Task<JsonElement> WebSaveAsync(string model, [FromBody] WebSaveRequestDto input)
+        {
+            var result = await _rpcDispatcher.WebSaveAsync(model, input);
+            return JsonSerializer.SerializeToElement(result, _jsonSerializerOptions);
+        }
         #endregion
+    }
 }

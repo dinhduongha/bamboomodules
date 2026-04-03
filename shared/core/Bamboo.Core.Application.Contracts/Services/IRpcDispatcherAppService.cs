@@ -34,6 +34,11 @@ namespace Bamboo.Core.Application
         Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(string modelName, FieldsGetRequestDto input);
         Task<object> CallServiceAsync(string modelName, string methodName, params object[] args);
 
+        Task<JsonElement> WebReadAsync(string modelName, WebReadRequestDto input);
+        Task<JsonElement> WebSearchReadAsync(string modelName, WebSearchReadRequestDto input);
+        Task<JsonElement> WebReadGroupAsync(string modelName, WebReadGroupRequestDto input);
+        Task<JsonElement> WebSaveAsync(string modelName, WebSaveRequestDto input);
+
         Task<JsonElement> DispatchJson2Async(string model, string rpcMethod, JsonElement body);
         Task<JsonElement> DispatchLegacyJsonRpcAsync(JsonRpcParams rpcParams);
 

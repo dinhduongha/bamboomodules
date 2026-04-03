@@ -136,6 +136,10 @@ public class AbpLoginUiWebModule : AbpModule
         //     options.ConventionalControllers.Create(typeof(AbpLoginUiWebModule).Assembly);
         // });
 
+        Configure<AbpMultiTenancyOptions>(options =>
+        {
+            options.UserSharingStrategy = TenantUserSharingStrategy.Shared;
+        });
         Configure<AbpVirtualFileSystemOptions>(options =>
         {
             options.FileSets.AddEmbedded<AbpLoginUiWebModule>();

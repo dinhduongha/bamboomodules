@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -16,7 +18,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+//using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -41,16 +44,16 @@ using Volo.Abp.Swashbuckle;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.AntiForgery;
+using Volo.Abp.MultiTenancy;
 
 using Bamboo.Admin.EntityFrameworkCore;
 using Bamboo.Admin.MultiTenancy;
 using Bamboo.AdminExtensions;
+using System.Text.Json;
 
 // using OpenIddict.Validation;
 // using OpenIddict.Validation.AspNetCore;
 
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Bamboo.Admin;
 
@@ -91,10 +94,17 @@ public class AdminHttpApiHostModule : AbpModule
         // {
         //     options.IsEnabled = false; // Tắt toàn bộ Audit Logging
         // });
+
         Configure<AbpAntiForgeryOptions>(options =>
         {
             options.AutoValidate = false; // Tắt toàn bộ antiforgery cho API
         });
+
+        Configure<AbpMultiTenancyOptions>(options =>
+        {
+            options.UserSharingStrategy = TenantUserSharingStrategy.Shared;
+        });
+
         Configure<AbpAspNetCoreMvcOptions>(options =>
         {
             // options.ConventionalControllers.Create(typeof(AdminHttpApiHostModule).Assembly, opts =>
@@ -102,7 +112,6 @@ public class AdminHttpApiHostModule : AbpModule
             //     opts.RootPath = "admin";
             // });
         });
-
         ConfigureConventionalControllers();
         ConfigureAuthentication(context, configuration);
         ConfigureRedis(context, configuration);
@@ -158,6 +167,11 @@ public class AdminHttpApiHostModule : AbpModule
             .AddJwtBearer(options =>
             {
                 options.Authority = configuration["AuthServer:Authority"];
+                var MetadataAddress = configuration["AuthServer:MetadataAddress"];
+                if (!string.IsNullOrEmpty(MetadataAddress))
+                {
+                    options.MetadataAddress = MetadataAddress;
+                }
                 options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
                 options.Audience = "Bamboo";
                 options.BackchannelHttpHandler = new HttpClientHandler
@@ -296,6 +310,7 @@ public class AdminHttpApiHostModule : AbpModule
 
     private static void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
     {
+        var enableAbpEndPoint = configuration.GetValue("Swagger:EnableAbpEndPoint", false);
         context.Services.AddAbpSwaggerGenWithOAuth(
             configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
@@ -306,7 +321,32 @@ public class AdminHttpApiHostModule : AbpModule
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Bamboo API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
-                options.CustomSchemaIds(type => type.FullName);
+                options.MapType<JsonElement>(() => new OpenApiSchema
+                {
+                    Type = JsonSchemaType.Object,
+                    AdditionalPropertiesAllowed = true
+                });
+                //options.CustomSchemaIds(type => type.FullName);
+                options.CustomSchemaIds(type =>
+                {
+                    if (type.IsGenericType)
+                    {
+                        // Get the full name of the generic type definition (e.g., "Volo.Abp.Application.Dtos.PagedResultDto`1")
+                        // and remove the generic arity part (`1)
+                        var baseTypeName = type.GetGenericTypeDefinition().FullName.Split('`')[0];
+
+                        // Get the simple names of the generic arguments (e.g., "CategoryDto")
+                        var genericArgumentNames = type.GetGenericArguments()
+                                                    .Select(arg => arg.Name)
+                                                    .ToArray();
+                        return $"{baseTypeName}_{string.Join("_", genericArgumentNames)}";
+                    }
+                    return type.FullName; // For non-generic types, use the full name
+                });
+                if (!enableAbpEndPoint)
+                {
+                    options.HideAbpEndpoints();
+                }
             });
     }
 
@@ -433,24 +473,27 @@ public class AdminHttpApiHostModule : AbpModule
         app.UseUnitOfWork();
         app.UseDynamicClaims();
         app.UseAuthorization();
-        app.UseSwagger();
-        app.UseAbpSwaggerUI(options =>
+        var enableSwagger = configuration.GetValue("Swagger:Enable", true);
+        if (enableSwagger)
         {
-            if (useSubpath)
+            app.UseSwagger();
+            app.UseAbpSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/admin/swagger/v1/swagger.json", "Bamboo API");
-            }
-            else
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
-            }
-            options.RoutePrefix = "swagger";
+                if (useSubpath)
+                {
+                    options.SwaggerEndpoint("/admin/swagger/v1/swagger.json", "Bamboo API");
+                }
+                else
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
+                }
+                options.RoutePrefix = "swagger";
 
-            var configuration = context.GetConfiguration();
-            options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-            options.OAuthScopes("Bamboo");
-        });
-
+                var configuration = context.GetConfiguration();
+                options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
+                options.OAuthScopes("Bamboo");
+            });
+        }
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();

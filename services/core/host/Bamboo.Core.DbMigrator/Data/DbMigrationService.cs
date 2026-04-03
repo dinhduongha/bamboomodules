@@ -184,17 +184,17 @@ public class DbMigrationService(
             _logger.LogInformation("Seeding tenant data: {Name} ({Id})", tenant.Name, tenant.Id);
         }
 
-        await _dataSeeder.SeedAsync(
-            new DataSeedContext(tenant?.Id)
-                .WithProperty(
-                    IdentityDataSeedContributor.AdminEmailPropertyName,
-                    IdentityDataSeedContributor.AdminEmailDefaultValue
-                )
-                .WithProperty(
-                    IdentityDataSeedContributor.AdminPasswordPropertyName,
-                    IdentityDataSeedContributor.AdminPasswordDefaultValue
-                )
-        );
+        // await _dataSeeder.SeedAsync(
+        //     new DataSeedContext(tenant?.Id)
+        //         .WithProperty(
+        //             IdentityDataSeedContributor.AdminEmailPropertyName,
+        //             IdentityDataSeedContributor.AdminEmailDefaultValue
+        //         )
+        //         .WithProperty(
+        //             IdentityDataSeedContributor.AdminPasswordPropertyName,
+        //             IdentityDataSeedContributor.AdminPasswordDefaultValue
+        //         )
+        // );
     }
 }
 

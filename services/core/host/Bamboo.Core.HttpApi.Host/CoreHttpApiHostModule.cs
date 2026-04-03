@@ -14,9 +14,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-
 using StackExchange.Redis;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
+using Npgsql;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
@@ -41,18 +43,20 @@ using Volo.Abp.Json;
 using Volo.Abp.Json.SystemTextJson;
 
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
-using Volo.Abp.PermissionManagement.EntityFrameworkCore;
-using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using Volo.Abp.TenantManagement.EntityFrameworkCore;
+
+using Volo.Abp.Account;
+using Volo.Abp.FeatureManagement;
+using Volo.Abp.PermissionManagement;
+using Volo.Abp.SettingManagement;
+using Volo.Abp.Identity;
+using Volo.Abp.TenantManagement;
 
 using Bamboo.Core.EntityFrameworkCore;
 using Bamboo.MultiTenancy;
-
-using Npgsql;
 using Bamboo.Core.Application;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Bamboo.Core;
+
 [DependsOn(
     typeof(CoreApplicationModule),
     typeof(CoreEntityFrameworkCoreModule),
@@ -62,9 +66,12 @@ namespace Bamboo.Core;
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpEntityFrameworkCorePostgreSqlModule),
     typeof(AbpAuditLoggingEntityFrameworkCoreModule),
-    typeof(AbpPermissionManagementEntityFrameworkCoreModule),
-    typeof(AbpSettingManagementEntityFrameworkCoreModule),
-    typeof(AbpTenantManagementEntityFrameworkCoreModule),
+    typeof(AbpAccountHttpApiClientModule),
+    typeof(AbpFeatureManagementHttpApiClientModule),
+    typeof(AbpPermissionManagementHttpApiClientModule),
+    typeof(AbpSettingManagementHttpApiClientModule),
+    typeof(AbpIdentityHttpApiClientModule),
+    typeof(AbpTenantManagementHttpApiClientModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSharedHostingMicroservicesModule),
     typeof(AbpSwashbuckleModule)
@@ -87,7 +94,12 @@ public class CoreHttpApiHostModule : AbpModule
         {
             options.AutoValidate = false; // Tắt toàn bộ antiforgery cho API
         });
-        
+
+        Configure<AbpMultiTenancyOptions>(options =>
+        {
+            options.UserSharingStrategy = TenantUserSharingStrategy.Shared;
+        });
+
         NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
         Configure<AbpDbContextOptions>(options =>
         {
@@ -128,13 +140,36 @@ public class CoreHttpApiHostModule : AbpModule
             configuration["AuthServer:Authority"],
             new Dictionary<string, string>
             {
-                {"Core", "Core API"}
+                //{"Core", "Core API"}
+                {"Bamboo", "Bamboo API"}
             },
             options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Core API", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Bamboo API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
-                options.CustomSchemaIds(type => type.FullName);
+                options.SchemaFilter<JsonElementSchemaFilter>();
+                // options.MapType<JsonElement>(() => new OpenApiSchema
+                // {
+                //     Type = JsonSchemaType.Object,
+                //     AdditionalPropertiesAllowed = true
+                // });
+                //options.CustomSchemaIds(type => type.FullName);
+                options.CustomSchemaIds(type =>
+                {
+                    if (type.IsGenericType)
+                    {
+                        // Get the full name of the generic type definition (e.g., "Volo.Abp.Application.Dtos.PagedResultDto`1")
+                        // and remove the generic arity part (`1)
+                        var baseTypeName = type.GetGenericTypeDefinition().FullName.Split('`')[0];
+
+                        // Get the simple names of the generic arguments (e.g., "CategoryDto")
+                        var genericArgumentNames = type.GetGenericArguments()
+                                                    .Select(arg => arg.Name)
+                                                    .ToArray();
+                        return $"{baseTypeName}_{string.Join("_", genericArgumentNames)}";
+                    }
+                    return type.FullName; // For non-generic types, use the full name
+                });
                 options.DocumentFilter<ControllerOrderDocumentFilter>();
             });
 
@@ -206,7 +241,8 @@ public class CoreHttpApiHostModule : AbpModule
     {
         var app = context.GetApplicationBuilder();
         var env = context.GetEnvironment();
-
+        var config = context.ServiceProvider.GetRequiredService<IConfiguration>();
+        bool isSelfHosted = config.GetValue("App:IsSelfHosted", false);
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -222,6 +258,11 @@ public class CoreHttpApiHostModule : AbpModule
         app.UseRouting();
         app.UseCors();
         app.UseAuthentication();
+        if (isSelfHosted)
+        {
+            app.UseMiddleware<TenantTokenGuardMiddleware>();
+        }
+
         if (MultiTenancyConsts.IsEnabled)
         {
             app.UseMultiTenancy();
@@ -231,7 +272,7 @@ public class CoreHttpApiHostModule : AbpModule
         app.UseSwagger(options =>
         {
             //options.RouteTemplate = "/core/api/v1/swagger/{documentName}/swagger.json";
-            
+
         });
         app.UseAbpSwaggerUI(options =>
         {
@@ -247,8 +288,9 @@ public class CoreHttpApiHostModule : AbpModule
             options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
             options.OAuthScopes("openid", "profile", "email", "phone", "roles", "address", "Bamboo");
 
-            
+
         });
+
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();
@@ -260,7 +302,7 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
         //Apply4(swaggerDoc, context);
-        Apply6(swaggerDoc, context);
+        // Apply6(swaggerDoc, context); // WORK
         // swaggerDoc.Tags = swaggerDoc.Tags
         //     .OrderBy(t => priority.IndexOf(t.Name) < 0 ? int.MaxValue : priority.IndexOf(t.Name))
         //     .ThenBy(t => t.Name)
@@ -268,227 +310,227 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
         // map path -> controller
 
     }
-    public void Apply1(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-    {
-        var priority = new List<string> { "GenericModel", "JsonRpc" };
+    // public void Apply1(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    // {
+    //     var priority = new List<string> { "GenericModel", "JsonRpc" };
 
-        var pathToController = context.ApiDescriptions
-            .GroupBy(d => "/" + d.RelativePath.TrimEnd('/'))
-            .ToDictionary(
-                g => g.Key,
-                g => g.First().ActionDescriptor.RouteValues["controller"] ?? ""
-            );
+    //     var pathToController = context.ApiDescriptions
+    //         .GroupBy(d => "/" + d.RelativePath.TrimEnd('/'))
+    //         .ToDictionary(
+    //             g => g.Key,
+    //             g => g.First().ActionDescriptor.RouteValues["controller"] ?? ""
+    //         );
 
-        // sort lại swaggerDoc.Paths
-        var sortedPaths = swaggerDoc.Paths
-            .OrderBy(kvp =>
-            {
-                var controller = pathToController.TryGetValue(kvp.Key, out var c) ? c : "";
-                var idx = priority.IndexOf(controller);
-                return idx == -1 ? int.MaxValue : idx;   // ưu tiên controller trong list
-            })
-            .ThenBy(kvp =>
-            {
-                var controller = pathToController.TryGetValue(kvp.Key, out var c) ? c : "";
-                return controller;                      // sau đó sort theo tên controller
-            })
-            .ThenBy(kvp => kvp.Key)                    // phụ: sort theo URL nếu cùng controller
-            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+    //     // sort lại swaggerDoc.Paths
+    //     var sortedPaths = swaggerDoc.Paths
+    //         .OrderBy(kvp =>
+    //         {
+    //             var controller = pathToController.TryGetValue(kvp.Key, out var c) ? c : "";
+    //             var idx = priority.IndexOf(controller);
+    //             return idx == -1 ? int.MaxValue : idx;   // ưu tiên controller trong list
+    //         })
+    //         .ThenBy(kvp =>
+    //         {
+    //             var controller = pathToController.TryGetValue(kvp.Key, out var c) ? c : "";
+    //             return controller;                      // sau đó sort theo tên controller
+    //         })
+    //         .ThenBy(kvp => kvp.Key)                    // phụ: sort theo URL nếu cùng controller
+    //         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-        // gán lại
-        swaggerDoc.Paths = new OpenApiPaths();
-        foreach (var kvp in sortedPaths)
-        {
-            swaggerDoc.Paths.Add(kvp.Key, kvp.Value);
-        }
-    }
+    //     // gán lại
+    //     swaggerDoc.Paths = new OpenApiPaths();
+    //     foreach (var kvp in sortedPaths)
+    //     {
+    //         swaggerDoc.Paths.Add(kvp.Key, kvp.Value);
+    //     }
+    // }
 
-    public void Apply2(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-    {
-        var priority = new List<string> { "GenericModel", "JsonRpc" };
+    // public void Apply2(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    // {
+    //     var priority = new List<string> { "GenericModel", "JsonRpc" };
 
-        //Map Controller -> entry point đầu tiên (để xác định module)
-        var controllerToPath = context.ApiDescriptions
-            .GroupBy(desc => desc.ActionDescriptor.RouteValues["controller"])
-            .ToDictionary(
-                g => g.Key!,
-                g => g.Select(d => "/" + d.RelativePath.TrimEnd('/'))
-                      .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
-                      .FirstOrDefault() ?? ""
-            );
+    //     //Map Controller -> entry point đầu tiên (để xác định module)
+    //     var controllerToPath = context.ApiDescriptions
+    //         .GroupBy(desc => desc.ActionDescriptor.RouteValues["controller"])
+    //         .ToDictionary(
+    //             g => g.Key!,
+    //             g => g.Select(d => "/" + d.RelativePath.TrimEnd('/'))
+    //                   .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
+    //                   .FirstOrDefault() ?? ""
+    //         );
 
-        // Hàm lấy module name từ path (/api/app/{module}/...)
-        string ExtractModule(string? path)
-        {
-            if (string.IsNullOrEmpty(path)) return "~";
-            var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-            return parts.Length >= 3 ? parts[2] : path;
-        }
+    //     // Hàm lấy module name từ path (/api/app/{module}/...)
+    //     string ExtractModule(string? path)
+    //     {
+    //         if (string.IsNullOrEmpty(path)) return "~";
+    //         var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+    //         return parts.Length >= 3 ? parts[2] : path;
+    //     }
 
-        // Controllers có trong priority list -> giữ nguyên thứ tự đó
-        var priorityTags = priority
-            .Select(p => swaggerDoc.Tags.FirstOrDefault(t => t.Name == p))
-            .Where(t => t != null)
-            .ToList();
+    //     // Controllers có trong priority list -> giữ nguyên thứ tự đó
+    //     var priorityTags = priority
+    //         .Select(p => swaggerDoc.Tags.FirstOrDefault(t => t.Name == p))
+    //         .Where(t => t != null)
+    //         .ToList();
 
-        // Controllers còn lại -> sort theo module name
-        var otherTags = swaggerDoc.Tags
-            .Where(t => !priority.Contains(t.Name))
-            .OrderBy(t =>
-            {
-                if (controllerToPath.TryGetValue(t.Name, out var path))
-                {
-                    return ExtractModule(path);
-                }
-                return "~";
-            }, StringComparer.OrdinalIgnoreCase)
-            .ToList();
+    //     // Controllers còn lại -> sort theo module name
+    //     var otherTags = swaggerDoc.Tags
+    //         .Where(t => !priority.Contains(t.Name))
+    //         .OrderBy(t =>
+    //         {
+    //             if (controllerToPath.TryGetValue(t.Name, out var path))
+    //             {
+    //                 return ExtractModule(path);
+    //             }
+    //             return "~";
+    //         }, StringComparer.OrdinalIgnoreCase)
+    //         .ToList();
 
-        // Gộp lại thành list cuối cùng
-        swaggerDoc.Tags = priorityTags.Concat(otherTags).ToList();
-    }
-    public void Apply3(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-    {
-        var priority = new List<string> { "GenericModel", "JsonRpc" };
+    //     // Gộp lại thành list cuối cùng
+    //     swaggerDoc.Tags = priorityTags.Concat(otherTags).ToList();
+    // }
+    // public void Apply3(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    // {
+    //     var priority = new List<string> { "GenericModel", "JsonRpc" };
 
-        var ci = StringComparer.OrdinalIgnoreCase;
+    //     var ci = StringComparer.OrdinalIgnoreCase;
 
-        // 2) Lấy ra danh sách controller & route values liên quan (area, controller)
-        var controllerInfos = context.ApiDescriptions
-            .Select(d =>
-            {
-                var rv = d.ActionDescriptor.RouteValues;
-                rv.TryGetValue("controller", out var controller);
-                rv.TryGetValue("area", out var area);
-                return new { Controller = controller ?? string.Empty, Area = area ?? string.Empty };
-            })
-            .Where(x => !string.IsNullOrEmpty(x.Controller))
-            .GroupBy(x => x.Controller, ci)
-            .Select(g => new
-            {
-                Controller = g.Key,
-                // Nếu 1 controller xuất hiện ở nhiều area, lấy area “nhỏ nhất” theo chữ cái để làm key sắp xếp ổn định
-                Area = g.Select(x => x.Area ?? string.Empty).OrderBy(a => a, ci).FirstOrDefault() ?? string.Empty
-            })
-            .ToList();
+    //     // 2) Lấy ra danh sách controller & route values liên quan (area, controller)
+    //     var controllerInfos = context.ApiDescriptions
+    //         .Select(d =>
+    //         {
+    //             var rv = d.ActionDescriptor.RouteValues;
+    //             rv.TryGetValue("controller", out var controller);
+    //             rv.TryGetValue("area", out var area);
+    //             return new { Controller = controller ?? string.Empty, Area = area ?? string.Empty };
+    //         })
+    //         .Where(x => !string.IsNullOrEmpty(x.Controller))
+    //         .GroupBy(x => x.Controller, ci)
+    //         .Select(g => new
+    //         {
+    //             Controller = g.Key,
+    //             // Nếu 1 controller xuất hiện ở nhiều area, lấy area “nhỏ nhất” theo chữ cái để làm key sắp xếp ổn định
+    //             Area = g.Select(x => x.Area ?? string.Empty).OrderBy(a => a, ci).FirstOrDefault() ?? string.Empty
+    //         })
+    //         .ToList();
 
-        // 3) Danh sách tag (controller) hiện có trong doc; nếu trống, build từ controllerInfos
-        var existingTagNames = (swaggerDoc.Tags?.Select(t => t.Name).ToList() ?? new List<string>());
-        if (existingTagNames.Count == 0)
-            existingTagNames = controllerInfos.Select(x => x.Controller).Distinct(ci).ToList();
+    //     // 3) Danh sách tag (controller) hiện có trong doc; nếu trống, build từ controllerInfos
+    //     var existingTagNames = (swaggerDoc.Tags?.Select(t => t.Name).ToList() ?? new List<string>());
+    //     if (existingTagNames.Count == 0)
+    //         existingTagNames = controllerInfos.Select(x => x.Controller).Distinct(ci).ToList();
 
-        // 4) Map controller -> sortKey theo RouteValues (vd: "area|controller")
-        var sortKeyByController = controllerInfos.ToDictionary(
-            x => x.Controller,
-            x => $"{x.Area}|{x.Controller}",
-            ci
-        );
+    //     // 4) Map controller -> sortKey theo RouteValues (vd: "area|controller")
+    //     var sortKeyByController = controllerInfos.ToDictionary(
+    //         x => x.Controller,
+    //         x => $"{x.Area}|{x.Controller}",
+    //         ci
+    //     );
 
-        // 5) Chia 2 nhóm: priority và các controller còn lại
-        var priorityOrdered = priority
-            .Where(p => existingTagNames.Contains(p, ci))
-            .ToList(); // giữ đúng thứ tự trong 'priority'
+    //     // 5) Chia 2 nhóm: priority và các controller còn lại
+    //     var priorityOrdered = priority
+    //         .Where(p => existingTagNames.Contains(p, ci))
+    //         .ToList(); // giữ đúng thứ tự trong 'priority'
 
-        var others = existingTagNames
-            .Where(n => !priorityOrdered.Contains(n, ci))
-            .OrderBy(n => sortKeyByController.TryGetValue(n, out var key) ? key : $"~|{n}", ci)
-            .ToList();
+    //     var others = existingTagNames
+    //         .Where(n => !priorityOrdered.Contains(n, ci))
+    //         .OrderBy(n => sortKeyByController.TryGetValue(n, out var key) ? key : $"~|{n}", ci)
+    //         .ToList();
 
-        // 6) Gộp và ghi đè swaggerDoc.Tags theo thứ tự mới (chỉ ảnh hưởng danh sách controller; endpoints giữ nguyên)
-        var finalTagNames = priorityOrdered.Concat(others).ToList();
-        swaggerDoc.Tags = finalTagNames.Select(n => new OpenApiTag { Name = n }).ToList();
-    }
-    public void Apply4(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-    {
-        var priority = new List<string> { "GenericModel", "JsonRpc" };
-        var ci = StringComparer.OrdinalIgnoreCase;
+    //     // 6) Gộp và ghi đè swaggerDoc.Tags theo thứ tự mới (chỉ ảnh hưởng danh sách controller; endpoints giữ nguyên)
+    //     var finalTagNames = priorityOrdered.Concat(others).ToList();
+    //     swaggerDoc.Tags = finalTagNames.Select(n => new OpenApiTag { Name = n }).ToList();
+    // }
+    // public void Apply4(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    // {
+    //     var priority = new List<string> { "GenericModel", "JsonRpc" };
+    //     var ci = StringComparer.OrdinalIgnoreCase;
 
-        // 1. Lấy mapping Controller -> entry point đầu tiên (path nhỏ nhất theo chữ cái)
-        var controllerToFirstPath = context.ApiDescriptions
-            .GroupBy(d => d.ActionDescriptor.RouteValues["controller"])
-            .Where(g => g.Key != null)
-            .ToDictionary(
-                g => g.Key!,
-                g => g.Select(d => "/" + d.RelativePath.TrimEnd('/'))
-                      .OrderBy(p => p, ci)
-                      .FirstOrDefault() ?? string.Empty,
-                ci
-            );
+    //     // 1. Lấy mapping Controller -> entry point đầu tiên (path nhỏ nhất theo chữ cái)
+    //     var controllerToFirstPath = context.ApiDescriptions
+    //         .GroupBy(d => d.ActionDescriptor.RouteValues["controller"])
+    //         .Where(g => g.Key != null)
+    //         .ToDictionary(
+    //             g => g.Key!,
+    //             g => g.Select(d => "/" + d.RelativePath.TrimEnd('/'))
+    //                   .OrderBy(p => p, ci)
+    //                   .FirstOrDefault() ?? string.Empty,
+    //             ci
+    //         );
 
-        // 2. Nếu swaggerDoc.Tags rỗng thì tự build từ controller
-        if (swaggerDoc.Tags == null || swaggerDoc.Tags.Count == 0)
-        {
-            swaggerDoc.Tags = controllerToFirstPath.Keys
-                .Select(c => new OpenApiTag { Name = c })
-                .ToList();
-        }
+    //     // 2. Nếu swaggerDoc.Tags rỗng thì tự build từ controller
+    //     if (swaggerDoc.Tags == null || swaggerDoc.Tags.Count == 0)
+    //     {
+    //         swaggerDoc.Tags = controllerToFirstPath.Keys
+    //             .Select(c => new OpenApiTag { Name = c })
+    //             .ToList();
+    //     }
 
-        // 3. Sắp xếp Tags:
-        //   - Trước tiên theo priority list
-        //   - Sau đó theo path đầu tiên của controller
-        swaggerDoc.Tags = swaggerDoc.Tags
-            .OrderBy(t =>
-            {
-                var idx = priority.IndexOf(t.Name);
-                return idx == -1 ? int.MaxValue : idx; // priority trước
-            })
-            .ThenBy(t =>
-            {
-                return controllerToFirstPath.TryGetValue(t.Name, out var path) ? path : "~";
-            }, ci)
-            .ToList();
-    }
-    public void Apply5(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-    {
-        // Danh sách ưu tiên
-        var priorities = new List<string> { "GenericModel", "JsonRpc" };
+    //     // 3. Sắp xếp Tags:
+    //     //   - Trước tiên theo priority list
+    //     //   - Sau đó theo path đầu tiên của controller
+    //     swaggerDoc.Tags = swaggerDoc.Tags
+    //         .OrderBy(t =>
+    //         {
+    //             var idx = priority.IndexOf(t.Name);
+    //             return idx == -1 ? int.MaxValue : idx; // priority trước
+    //         })
+    //         .ThenBy(t =>
+    //         {
+    //             return controllerToFirstPath.TryGetValue(t.Name, out var path) ? path : "~";
+    //         }, ci)
+    //         .ToList();
+    // }
+    // public void Apply5(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    // {
+    //     // Danh sách ưu tiên
+    //     var priorities = new List<string> { "GenericModel", "JsonRpc" };
 
-        // Map controller -> entry point đầu tiên (path nhỏ nhất theo alphabet)
-        var controllerToPath = context.ApiDescriptions
-            .GroupBy(desc => desc.ActionDescriptor.RouteValues["controller"])
-            .ToDictionary(
-                g => g.Key!,
-                g => g.Select(d => "/" + d.RelativePath.TrimEnd('/'))
-                      .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
-                      .FirstOrDefault() ?? ""
-            );
+    //     // Map controller -> entry point đầu tiên (path nhỏ nhất theo alphabet)
+    //     var controllerToPath = context.ApiDescriptions
+    //         .GroupBy(desc => desc.ActionDescriptor.RouteValues["controller"])
+    //         .ToDictionary(
+    //             g => g.Key!,
+    //             g => g.Select(d => "/" + d.RelativePath.TrimEnd('/'))
+    //                   .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
+    //                   .FirstOrDefault() ?? ""
+    //         );
 
-        swaggerDoc.Tags = swaggerDoc.Tags
-            .OrderBy(t =>
-            {
-                var controller = t.Name;
+    //     swaggerDoc.Tags = swaggerDoc.Tags
+    //         .OrderBy(t =>
+    //         {
+    //             var controller = t.Name;
 
-                // Ưu tiên 1: trong danh sách priorities
-                if (priorities.Contains(controller))
-                    return 1;
+    //             // Ưu tiên 1: trong danh sách priorities
+    //             if (priorities.Contains(controller))
+    //                 return 1;
 
-                // Ưu tiên 2: bất kỳ path nào chứa "/abp/"
-                if (controllerToPath.TryGetValue(controller, out var path) &&
-                    context.ApiDescriptions.Where(d => d.ActionDescriptor.RouteValues["controller"] == controller)
-                                           .Any(d => d.RelativePath.Contains("/abp/", StringComparison.OrdinalIgnoreCase)))
-                {
-                    return 2;
-                }
+    //             // Ưu tiên 2: bất kỳ path nào chứa "/abp/"
+    //             if (controllerToPath.TryGetValue(controller, out var path) &&
+    //                 context.ApiDescriptions.Where(d => d.ActionDescriptor.RouteValues["controller"] == controller)
+    //                                        .Any(d => d.RelativePath.Contains("/abp/", StringComparison.OrdinalIgnoreCase)))
+    //             {
+    //                 return 2;
+    //             }
 
-                // Ưu tiên 3: bất kỳ path nào chứa "/base/"
-                if (controllerToPath.TryGetValue(controller, out path) &&
-                    context.ApiDescriptions.Where(d => d.ActionDescriptor.RouteValues["controller"] == controller)
-                                           .Any(d => d.RelativePath.Contains("/base/", StringComparison.OrdinalIgnoreCase)))
-                {
-                    return 3;
-                }
+    //             // Ưu tiên 3: bất kỳ path nào chứa "/base/"
+    //             if (controllerToPath.TryGetValue(controller, out path) &&
+    //                 context.ApiDescriptions.Where(d => d.ActionDescriptor.RouteValues["controller"] == controller)
+    //                                        .Any(d => d.RelativePath.Contains("/base/", StringComparison.OrdinalIgnoreCase)))
+    //             {
+    //                 return 3;
+    //             }
 
-                // Nhóm còn lại
-                return 4;
-            })
-            .ThenBy(t =>
-            {
-                // Trong cùng một nhóm, sort theo path đầu tiên của controller
-                return controllerToPath.TryGetValue(t.Name, out var path) ? path : "~";
-            }, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-    }
-    
+    //             // Nhóm còn lại
+    //             return 4;
+    //         })
+    //         .ThenBy(t =>
+    //         {
+    //             // Trong cùng một nhóm, sort theo path đầu tiên của controller
+    //             return controllerToPath.TryGetValue(t.Name, out var path) ? path : "~";
+    //         }, StringComparer.OrdinalIgnoreCase)
+    //         .ToList();
+    // }
+
     public void Apply6(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
         var priorities = new List<string> { "GenericModel", "JsonRpc", "DataSeed" };
@@ -595,7 +637,7 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
             .Concat(otherTags)
             .ToList();
         // Nếu swaggerDoc.Tags rỗng hoặc bạn muốn ghi đè, set lại theo finalTagNames
-        swaggerDoc.Tags = finalTagNames.Select(n => new OpenApiTag { Name = n }).ToList();
+        swaggerDoc.Tags = (ISet<OpenApiTag>?)finalTagNames.Select(n => new OpenApiTag { Name = n }).ToList();
 
         // --- optional debug (uncomment if cần debug)
         // System.Diagnostics.Debug.WriteLine("Controller -> Tag -> FirstPath -> hasAbp/hasBase:");
@@ -603,4 +645,31 @@ public class ControllerOrderDocumentFilter : IDocumentFilter
         //     System.Diagnostics.Debug.WriteLine($"{c.Controller} => {c.TagName} => {c.FirstPath} => abp:{c.HasAbp} base:{c.HasBase}");
         // System.Diagnostics.Debug.WriteLine("Final tag order: " + string.Join(", ", finalTagNames));
     }
+}
+
+public class JsonElementSchemaFilter : ISchemaFilter
+{
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+    {
+        if (context.Type == typeof(JsonElement) ||
+            context.Type == typeof(JsonElement?))
+        {
+            if (schema is OpenApiSchema s)
+            {
+                s.Type = JsonSchemaType.Object;
+                s.Properties?.Clear();
+                s.AdditionalPropertiesAllowed = true;
+                //s.Reference = null;
+            }
+        }
+    }
+    // public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+    // {
+    //     if (context.Type == typeof(JsonElement) || context.Type == typeof(JsonElement?))
+    //     {
+    //         schema.SetType(JsonSchemaType.Object);
+    //         schema.SetProperties(new Dictionary<string, IOpenApiSchema>());
+    //         schema.SetAdditionalProperties(true);
+    //     }
+    // }
 }

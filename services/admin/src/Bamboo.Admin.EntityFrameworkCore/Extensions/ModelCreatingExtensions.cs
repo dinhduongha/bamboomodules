@@ -84,6 +84,15 @@ public static class DbContextModelCreatingExtensions
 
         Check.NotNull(builder, nameof(builder));
 
+        builder.Entity<IdentityUser>(b =>
+        {
+            b.HasIndex(u => u.NormalizedUserName).IsUnique()
+                .HasDatabaseName("IX_IdentityUser_NormalizedUserName_Unique");
+            b.HasIndex(u => u.NormalizedEmail).IsUnique()
+                .HasDatabaseName("IX_IdentityUser_NormalizedEmail_Unique");
+        });
+
+
         /* Configure your own tables/entities inside here */
 
         //builder.Entity<YourEntity>(b =>

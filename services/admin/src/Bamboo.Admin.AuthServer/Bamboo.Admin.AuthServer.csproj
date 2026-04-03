@@ -47,17 +47,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Account.Application" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Account.Application" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.2.0" />
     <ProjectReference Include="..\Bamboo.Admin.EntityFrameworkCore\Bamboo.Admin.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
@@ -65,6 +65,6 @@
     <ProjectReference Include="..\Bamboo.LoginUi.Web\Bamboo.LoginUi.Web.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2" PrivateAssets="All" />
   </ItemGroup>
 </Project>

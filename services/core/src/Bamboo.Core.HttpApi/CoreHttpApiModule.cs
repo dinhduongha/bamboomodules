@@ -5,6 +5,8 @@ using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Microsoft.Extensions.DependencyInjection;
 
+using Bamboo.Core.HttpApi;
+
 namespace Bamboo.Core;
 
 [DependsOn(
@@ -28,5 +30,10 @@ public class CoreHttpApiModule : AbpModule
                 .Get<CoreResource>()
                 .AddBaseTypes(typeof(AbpUiResource));
         });
+        // context.Services.AddTransient<IGenericEntityAppService<SaleOrder>, GenericAppService<SaleOrder>>();
+        // context.Services.AddTransient<IGenericEntityAppService<ResPartner>, GenericAppService<ResPartner>>();
+        // context.Services.AddTransient<IGenericEntityAppService<SaleOrderLine>, GenericAppService<SaleOrderLine>>();
+        // context.Services.AddTransient<IGenericEntityAppService<ProductTag>, GenericAppService<ProductTag>>();
+        context.Services.AddTransient<DynamicGenericController>();
     }
 }

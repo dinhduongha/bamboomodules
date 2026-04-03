@@ -13,39 +13,39 @@
     <PackageReference Include="DistributedLock.FileSystem" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0" /> 
+    <!-- <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0" />  -->
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
     <PackageReference Include="Rebus.ServiceProvider" Version="10.7.0" />
     <PackageReference Include="Rebus.PostgreSql" Version="9.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Sms" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Account.Application" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.AspNetCore" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.Application" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.HttpApi" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.OpenIddict.Domain" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.EventBus.Rebus" Version="10.0.0" />
-    <ProjectReference Include="..\Bamboo.Admin.Domain\Bamboo.Admin.Domain.csproj" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Sms" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Account.Application" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Identity.AspNetCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Identity.Application" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.OpenIddict.Domain" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.EventBus.Rebus" Version="10.2.0" />
   </ItemGroup>
 
-  <!-- <ItemGroup>
-    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
-  </ItemGroup> -->
 
   <ItemGroup>
+  <!--
+    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
+  -->
+
     <ProjectReference Include="..\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
+    <ProjectReference Include="..\Bamboo.Admin.Domain\Bamboo.Admin.Domain.csproj" />
   </ItemGroup>
   
   <ItemGroup>  <None Remove="Filters\" />

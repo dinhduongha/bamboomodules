@@ -12,66 +12,67 @@
     <ProjectGuid>{CAE0185A-CEDC-4584-B98B-866DF78488BA}</ProjectGuid>
   </PropertyGroup>
 
-<ItemGroup>	
-  <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" Aliases="BouncyCastleV2" />
-  <PackageReference Include="Nethereum.Web3" Version="5.0.0" />
-  <PackageReference Include="Nethereum.Siwe" Version="5.0.0"/>
-  <PackageReference Include="Nethereum.Signer" Version="5.0.0" />
-  <PackageReference Include="NaCl.Net" Version="0.1.13" />
-  <PackageReference Include="stellar-dotnet-sdk" Version="14.0.1" />
-  <PackageReference Include="Polkadot.NetApi" Version="0.1.9" />
-  <PackageReference Include="Substrate.NET.Schnorrkel" Version="1.2.2" />
-  <PackageReference Include="NBitcoin" Version="9.0.3" />
-  <PackageReference Include="TonSdk.Core" Version="0.3.9" />  
-  <PackageReference Include="MessagePack" Version="3.1.4" />
-  <PackageReference Include="Solnet.Wallet" Version="6.1.0" />
-  <PackageReference Include="Solnet.Rpc" Version="6.1.0" />
-  <PackageReference Include="SimpleBase" Version="5.6.0" />
-</ItemGroup>
-  
-  <!-- <ItemGroup>
-    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
-  </ItemGroup> -->
-<ItemGroup>
-    <ProjectReference Include="..\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
-  </ItemGroup>
-
   <ItemGroup>
+  <!-- 
+    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
+  -->
+    <ProjectReference Include="..\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
     <ProjectReference Include="..\AspNet.Security.OAuth.Zalo\AspNet.Security.OAuth.Zalo.csproj" />
     <ProjectReference Include="..\Bamboo.Admin.Domain\Bamboo.Admin.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>	
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" Aliases="BouncyCastleV2" />
+    <PackageReference Include="NaCl.Net" Version="0.1.13" />
+    <PackageReference Include="MessagePack" Version="3.1.4" />
+    <PackageReference Include="SimpleBase" Version="5.6.0" />
+    <PackageReference Include="Nethereum.Web3" Version="5.0.0" />
+    <PackageReference Include="Nethereum.Siwe" Version="5.0.0" />
+    <PackageReference Include="Nethereum.Signer" Version="5.0.0" />
+    <PackageReference Include="stellar-dotnet-sdk" Version="14.0.1" />
+    <PackageReference Include="Polkadot.NetApi" Version="0.1.9" />
+    <PackageReference Include="Substrate.NET.Schnorrkel" Version="1.2.2" />
+    <PackageReference Include="NBitcoin" Version="9.0.3" />
+    <PackageReference Include="TonSdk.Core" Version="0.3.9" />  
+    <PackageReference Include="Solnet.Wallet" Version="6.1.0" />
+    <PackageReference Include="Solnet.Rpc" Version="6.1.0" />
+  </ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="10.0.0" />
     <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
     <PackageReference Include="Twilio.AspNet.Core" Version="8.1.2" />
     <PackageReference Include="Telegram.Bot.Extensions.LoginWidget" Version="1.2.0" />
     <!-- <PackageReference Include="Telegram.Bot" Version="22.7.5" /> -->
     <PackageReference Include="DistributedLock.Redis" Version="1.1.1" />
     <PackageReference Include="DistributedLock.FileSystem" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0" />
+    <!-- <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0" /> -->
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="10.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" />
+    <!-- <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" /> -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.2.0" />
     <PackageReference Include="AspNet.Security.OAuth.Apple" Version="10.0.0" />
     <PackageReference Include="AspNet.Security.OAuth.Instagram" Version="10.0.0" />
     <PackageReference Include="AspNet.Security.OAuth.Line" Version="10.0.0" />
-    <!-- <PackageReference Include="AspNet.Security.OAuth.Zalo" Version="10.0.0" /> -->
     <PackageReference Include="AspNet.Security.OAuth.LinkedIn" Version="10.0.0" />
     <PackageReference Include="AspNet.Security.OAuth.Keycloak" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.Web" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Sms" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.0.0" />
+    <!-- <PackageReference Include="AspNet.Security.OAuth.Zalo" Version="10.0.0" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Sms" Version="10.2.0" />    
+    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Identity.Web" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.2.0" />
   </ItemGroup>
 
   <ItemGroup>
