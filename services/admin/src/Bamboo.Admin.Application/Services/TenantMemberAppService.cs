@@ -17,7 +17,7 @@ using Volo.Abp.Users;
 using Bamboo.Admin.Domain.Shared.Enums;
 using Bamboo.Admin.Application.Dtos;
 using Volo.Abp.TenantManagement;
-using AutoMapper;
+using System.Runtime.Serialization;
 
 namespace Bamboo.Admin.Application.Services;
 
@@ -37,10 +37,8 @@ public class TenantMemberAppService :
     private readonly IReadOnlyRepository<IdentityUser, Guid> _userRepository;
     private readonly IReadOnlyRepository<Tenant, Guid> _tenantRepository;
     private readonly IReadOnlyRepository<IdentityRole, Guid> _roleRepository;
-    private readonly IMapper _mapper;
     public TenantMemberAppService(
         IDataFilter dataFilter,
-        IMapper mapper,
         ICurrentTenant currentTenant,
         IRepository<TenantMember, Guid> repository,
         IReadOnlyRepository<Tenant, Guid> tenantRepository,
@@ -53,7 +51,6 @@ public class TenantMemberAppService :
         _dataFilter = dataFilter;
         _tenantRepository = tenantRepository;
         _roleRepository = roleRepository;
-        _mapper = mapper;
         if (!_currentTenant.IsAvailable)
         {
             _dataFilter.Disable<IMultiTenant>();
@@ -304,7 +301,7 @@ public class TenantMemberAppService :
         // Tùy chọn: Gửi email thông báo cho người dùng
         // await _emailSender.SendAsync(...)
 
-        return _mapper.Map<TenantMember, TenantMemberDto>(invitation);
+        return ObjectMapper.Map<TenantMember, TenantMemberDto>(invitation);
     }
 
     public async Task<PagedResultDto<TenantMemberDto>> GetMyWorkspacesAsync()
@@ -338,7 +335,7 @@ public class TenantMemberAppService :
 
             var dtos = result.Select(x =>
             {
-                var dto = _mapper.Map<TenantMember, TenantMemberDto>(x.Member);
+                var dto = ObjectMapper.Map<TenantMember, TenantMemberDto>(x.Member);
                 dto.TenantName = x.Tenant.Name;
                 dto.Roles = x.Roles;
                 dto.UserName = CurrentUser.UserName;

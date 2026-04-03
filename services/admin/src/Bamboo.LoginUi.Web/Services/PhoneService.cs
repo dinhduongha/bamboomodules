@@ -37,7 +37,7 @@ public class PhoneService : ApplicationService
 {
     IConfiguration _configuration;
     protected IDistributedEventBus _distributedEventBus;
-    protected IdentityUserManager _userManager;    
+    protected IdentityUserManager _userManager;
     protected IdentitySecurityLogManager _identitySecurityLogManager { get; }
     private readonly IVerificationCodeManager _verificationCodeManager;
     private readonly IVerificationCodeGenerator _verificationCodeGenerator;
@@ -59,7 +59,7 @@ public class PhoneService : ApplicationService
     }
 
 
-    public async Task<string> smsToken(string phone)
+    public async Task<string> SmsTokenAsync(string phone)
     {
         if (!Regex.Match(phone, @"^([+]|[00])([0-9]){5,13}$").Success)
         {
@@ -81,7 +81,7 @@ public class PhoneService : ApplicationService
         return code;
     }
 
-    public async Task<string> TokenReceived(string phone)
+    public async Task<string> TokenReceivedAsync(string phone)
     {
         if (!Regex.Match(phone, @"^([+]|[00])([0-9]){5,13}$").Success)
         {
@@ -95,7 +95,7 @@ public class PhoneService : ApplicationService
         return code;
     }
 
-    public async Task<TwiMLResult> TwilioIncomming(SmsRequest incomingMessage)
+    public async Task<TwiMLResult> TwilioIncommingAsync(SmsRequest incomingMessage)
     {
         var messagingResponse = new MessagingResponse();
         messagingResponse.Message(incomingMessage.Body);
@@ -149,46 +149,46 @@ public class PhoneService : ApplicationService
     }
 
 
-    public async Task<IdentityUserDto> Register(ExternalRegisterOrUpdateDto account, string provider = "")
+    public async Task<IdentityUserDto> RegisterAsync(ExternalRegisterOrUpdateDto account, string provider = "")
     {
         IdentityUser? user = null;
         if (provider == "sms")
         {
-            user = await RegisterByToken(account);
+            user = await RegisterByTokenAsync(account);
         }
         else if (provider == "firebase")
         {
-            user = await RegisterFirebase(account);
+            user = await RegisterFirebaseAsync(account);
         }
         else
         {
-            user = await RegisterByToken(account);
+            user = await RegisterByTokenAsync(account);
         }
         await Task.CompletedTask;
         return ObjectMapper.Map<IdentityUser, IdentityUserDto>(user);
     }
-        
-    public async Task<IdentityUserDto> ChangePassword(ExternalRegisterOrUpdateDto account, string provider = "")
+
+    public async Task<IdentityUserDto> ChangePasswordAsync(ExternalRegisterOrUpdateDto account, string provider = "")
     {
         IdentityUser? user = null;
         if (provider == "sms")
         {
-            user = await ChangePasswordByToken(account);
+            user = await ChangePasswordByTokenAsync(account);
         }
         else if (provider == "firebase")
         {
-            user = await ChangePasswordFirebase(account);
+            user = await ChangePasswordFirebaseAsync(account);
         }
         else
         {
-            user = await ChangePasswordFirebase(account);
+            user = await ChangePasswordFirebaseAsync(account);
         }
         await Task.CompletedTask;
         return ObjectMapper.Map<IdentityUser, IdentityUserDto>(user);
     }
 
 
-    protected async Task<IdentityUser?> RegisterByToken(ExternalRegisterOrUpdateDto account)
+    protected async Task<IdentityUser?> RegisterByTokenAsync(ExternalRegisterOrUpdateDto account)
     {
         if (!Regex.Match(account.Phone, @"^([+]|[00])([0-9]){5,13}$").Success)
         {
@@ -205,10 +205,10 @@ public class PhoneService : ApplicationService
             if (account.Token != "952733")
                 throw new Exception("Invalid phone or code");
         }
-        return await CreateOrUpdate(account);
+        return await CreateOrUpdateAsync(account);
     }
 
-    protected async Task<IdentityUser?> ChangePasswordByToken(ExternalRegisterOrUpdateDto account)
+    protected async Task<IdentityUser?> ChangePasswordByTokenAsync(ExternalRegisterOrUpdateDto account)
     {
         if (!Regex.Match(account.Phone, @"^([+]|[00])([0-9]){5,13}$").Success)
         {
@@ -224,10 +224,10 @@ public class PhoneService : ApplicationService
             if (account.Token != "952733")
                 throw new Exception("Invalid phone or code");
         }
-        return await CreateOrUpdate(account);
+        return await CreateOrUpdateAsync(account);
     }
 
-    protected async Task<IdentityUser> RegisterFirebase(ExternalRegisterOrUpdateDto account)
+    protected async Task<IdentityUser> RegisterFirebaseAsync(ExternalRegisterOrUpdateDto account)
     {
         try
         {
@@ -254,7 +254,7 @@ public class PhoneService : ApplicationService
             {
                 throw new UserFriendlyException("Invalid phone number");
             }
-            return await CreateOrUpdate(account);
+            return await CreateOrUpdateAsync(account);
         }
         catch (Exception e)
         {
@@ -263,7 +263,7 @@ public class PhoneService : ApplicationService
     }
 
 
-    protected async Task<IdentityUser> ChangePasswordFirebase(ExternalRegisterOrUpdateDto account)
+    protected async Task<IdentityUser> ChangePasswordFirebaseAsync(ExternalRegisterOrUpdateDto account)
     {
         try
         {
@@ -290,7 +290,7 @@ public class PhoneService : ApplicationService
             {
                 throw new UserFriendlyException("Invalid phone number");
             }
-            return await CreateOrUpdate(account);
+            return await CreateOrUpdateAsync(account);
         }
         catch (Exception e)
         {
@@ -298,7 +298,7 @@ public class PhoneService : ApplicationService
         }
     }
 
-    protected async Task<IdentityUser> CreateOrUpdate(ExternalRegisterOrUpdateDto account)
+    protected async Task<IdentityUser> CreateOrUpdateAsync(ExternalRegisterOrUpdateDto account)
     {
         using (_dataFilter.Disable<IMultiTenant>())
         {
@@ -351,7 +351,7 @@ public class PhoneService : ApplicationService
                         var str = result.ToString();
                         throw new UserFriendlyException(result.ToString());
                     }
-                    await _userManager.SetLockoutEndDateAsync(user, null);                
+                    await _userManager.SetLockoutEndDateAsync(user, null);
                     await _distributedEventBus.PublishAsync(
                     new EntityUpdatedEto<UserEto>(
                        new UserEto
@@ -394,7 +394,7 @@ public class PhoneService : ApplicationService
     //            {
     //                throw new UserFriendlyException(result.ToString());
     //            }
-                
+
     //        }
     //        else
     //        {

@@ -40,7 +40,7 @@ public class PhoneController : AbpControllerBase
     [IgnoreAntiforgeryToken]
     public async Task<string> RegisterAsync([FromBody] ExternalRegisterOrUpdateDto account, string provider = "")
     {
-        var user = await _phoneService.Register(account, provider);
+        var user = await _phoneService.RegisterAsync(account, provider);
         await Task.CompletedTask;
         return user.PhoneNumber;
     }
@@ -51,7 +51,7 @@ public class PhoneController : AbpControllerBase
     [IgnoreAntiforgeryToken]
     public async Task<string> ChangePasswordAsync([FromBody] ExternalRegisterOrUpdateDto account, string provider = "")
     {
-        var user = await _phoneService.ChangePassword(account, provider);
+        var user = await _phoneService.ChangePasswordAsync(account, provider);
         await Task.CompletedTask;
         return user.PhoneNumber;
     }
@@ -67,7 +67,7 @@ public class PhoneController : AbpControllerBase
     [IgnoreAntiforgeryToken]
     public async Task<string> TokenAsync(string phone)
     {
-        var token = await _phoneService.smsToken(phone);
+        var token = await _phoneService.SmsTokenAsync(phone);
         return phone;
     }
 
