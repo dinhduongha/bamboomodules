@@ -28,14 +28,14 @@
     <PackageReference Include="Volo.Abp.AuditLogging.EntityFrameworkCore" Version="10.2.0" />
     <PackageReference Include="Volo.Abp.BackgroundJobs.EntityFrameworkCore" Version="10.2.0" />
     <!-- 
-    <PackageReference Include="Volo.Abp.BlobStoring.Database.EntityFrameworkCore" Version="10.2.0-rc.1" />    
-    <PackageReference Include="Volo.Abp.FeatureManagement.EntityFrameworkCore" Version="10.2.0-rc.1" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" Version="10.2.0-rc.1" />
-    <PackageReference Include="Volo.Abp.SettingManagement.EntityFrameworkCore" Version="10.2.0-rc.1" />
-    <PackageReference Include="Volo.Abp.Users.EntityFrameworkCore" Version="10.2.0-rc.1" />
-    <PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" Version="10.2.0-rc.1" />
-    <PackageReference Include="Volo.Abp.TenantManagement.EntityFrameworkCore" Version="10.2.0-rc.1" />
-    <PackageReference Include="Volo.Abp.OpenIddict.EntityFrameworkCore" Version="10.2.0-rc.1" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Database.EntityFrameworkCore" Version="10.2.0" />    
+    <PackageReference Include="Volo.Abp.FeatureManagement.EntityFrameworkCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.EntityFrameworkCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Users.EntityFrameworkCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Identity.EntityFrameworkCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.EntityFrameworkCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.OpenIddict.EntityFrameworkCore" Version="10.2.0" />
     -->
   </ItemGroup>
   <ItemGroup>
