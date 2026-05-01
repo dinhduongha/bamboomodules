@@ -1,180 +1,127 @@
-﻿@page "/"
-@using Volo.Abp.MultiTenancy
+@page "/"
 @inherits BambooComponentBase
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<div class="container">
-    <div class="p-5 text-center">
-        <Badge Color="Color.Success" class="mb-4">
-            <h5 class="m-1"> <i class="fas fa-rocket"></i> Congratulations, <strong>Bamboo</strong> is successfully running!</h5>
-        </Badge>
+<MudGrid Class="mb-3">
+    <MudItem xs="12" md="6">
+        <MudCard Style="height: 100%;">
+            <MudCardContent>
+                @if (!CurrentUser.IsAuthenticated)
+                {
+                    <MudText Typo="Typo.h5" Class="mb-2">@L["Welcome"]</MudText>
+                    <MudText Typo="Typo.body1" Class="mud-text-secondary mb-2">@L["LongWelcomeMessage"]</MudText>
+                    <MudButton Href="authentication/login" Variant="Variant.Filled" Color="Color.Primary" Class="mb-4"
+                               StartIcon="@Icons.Material.Filled.Login">@L["Login"]</MudButton>
+                }
 
-        <h1>Welcome to the Application</h1>
+                <MudText Typo="Typo.h6">Getting Started</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">Learn how to create and run a new web application using the application startup template.</MudText>
+                <MudButton Href="https://docs.abp.io/en/abp/latest/getting-started" Target="_blank"
+                           Variant="Variant.Filled" Color="Color.Primary" Class="mb-3">Getting Started</MudButton>
 
-        <p class="lead px-lg-5 mx-lg-5">@L["LongWelcomeMessage"]</p>
+                <MudText Typo="Typo.h6">Web Application Development Tutorial</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">Learn how to build an ABP based web application named Acme.BookStore.</MudText>
+                <MudButton Href="https://docs.abp.io/en/abp/latest/tutorials/book-store/part-1?UI=Blazor&DB=EF" Target="_blank"
+                           Variant="Variant.Outlined" Color="Color.Primary">Explore Tutorial</MudButton>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudCard Style="height: 100%;">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">
+                    <MudIcon Icon="@Icons.Material.Filled.Groups" Class="me-1" /> Community
+                </MudText>
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">A unique community platform for <strong>ABP Lovers!</strong></MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">Explore all ABP users' experiences with the ABP Framework, discover articles and videos on how to use ABP, and join raffles for a chance to win surprise gifts!</MudText>
+                <MudButton Href="https://community.abp.io/" Target="_blank"
+                           Variant="Variant.Outlined" Color="Color.Primary" Class="mb-3">Join ABP Community</MudButton>
 
-        @if ( !CurrentUser.IsAuthenticated )
-        {
-            <a class="btn btn-primary" href="/authentication/login">
-                <i class="fa fa-sign-in-alt"></i> @L["Login"]
-            </a>
-        }
-    </div>
+                <MudDivider Class="my-3" />
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-auto text-center">
-                    <img src="https://abp.io/assets/png/mastering-abp-framework.webp" style="max-width: 400px;" class="w-100 mb-5 my-md-3">
-                </div>
-                <div class="col-md d-flex align-items-center">
-                    <div class="pe-0 pe-md-4">
-                        <small class="text-uppercase text-muted">THE OFFICIAL GUIDE</small>
-                        <h2 class="mb-4">Mastering ABP Framework</h2>
-                        <p class="mb-4">Written by the creator of the ABP Framework, this book will help you gain a complete understanding of the framework and modern web application development techniques.</p>
-                        <div class="mb-4">
-                            <a href="https://www.amazon.com/gp/product/B097Z2DM8Q/ref=dbs_a_def_rwt_hsch_vapi_tkin_p1_i0" class="btn btn-success mb-1">
-                                Buy on Amazon US
-                            </a>
-                            <a href="https://www.packtpub.com/product/mastering-abp-framework/9781801079242" class="btn btn-primary mb-1">
-                                Buy on PACKT
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                <MudText Typo="Typo.h6" Color="Color.Primary" Class="mb-2">
+                    <MudIcon Icon="@Icons.Material.Filled.RssFeed" Class="me-1" /> Blog
+                </MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">Find content on .NET development, cross-platform, ASP.NET application templates, ABP-related news, and more.</MudText>
+                <MudButton Href="https://blog.abp.io/abp" Target="_blank"
+                           Variant="Variant.Outlined" Color="Color.Primary">Visit Blog</MudButton>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
 
-    <div class="my-3 text-center">
-        <h3>Let's improve your application!</h3>
-        <p>Here are some links to help you get started:</p>
-    </div>
-
-    <div class="card mt-4 mb-5">
-        <div class="card-body">
-            <div class="row text-center justify-content-md-center">
-                <div class="col-lg-4">
-                    <div class="p-4">
-                        <h5 class="mb-3"><i class="fas fa-book text-secondary d-block my-3 fa-2x"></i> Learn the ABP Framework</h5>
-                        <p>Explore the compherensive documentation to learn how to build a modern web application.</p>
-                        <a href="https://docs.abp.io/en/abp/latest?ref=tmpl" target="_blank" class="btn btn-link px-1">See Documents <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-4 border-start">
-                    <div class="p-4">
-                        <h5 class="mb-3"><i class="fas fa-cubes text-secondary d-block my-3 fa-2x"></i> Samples</h5>
-                        <p>See the example projects built with the ABP Framework.</p>
-                        <a href="https://docs.abp.io/en/abp/latest/Samples/Index?ref=tmpl" target="_blank" class="btn btn-link px-1">All samples <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-4 border-start">
-                    <div class="p-4">
-                        <h5 class="mb-3"><i class="fas fa-users text-secondary d-block my-3 fa-2x"></i> ABP Community</h5>
-                        <p>Get involved with a vibrant community and become a contributor.</p>
-                        <a href="https://community.abp.io/" target="_blank" class="btn btn-link px-1">Community <i class="fas fa-chevron-right"></i></a>
-                        <a href="https://docs.abp.io/en/abp/latest/Contribution/Index?ref=tmpl" target="_blank" class="btn btn-link px-1">Contribute <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="row text-center mt-lg-3 justify-content-md-center">
-                <div class="col-lg-4">
-                    <div class="p-4">
-                        <h5 class="mb-3"><i class="fas fa-pen-nib text-secondary d-block my-3 fa-2x"></i> ABP Blog</h5>
-                        <p>Take a look at our recently published articles.</p>
-                        <a href="https://blog.abp.io/abp?ref=tmpl" target="_blank" class="btn btn-link px-1">See Blog <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-4 border-start">
-                    <div class="p-4">
-                        <h5 class="mb-3"><i class="fab fa-github text-secondary d-block my-3 fa-2x"></i> Github</h5>
-                        <p>Do you love the ABP Framework? Please <strong>give a star</strong> to support it!</p>
-
-                        <a href="https://github.com/abpframework/abp/" target="_blank" class="btn btn-link px-1">See Open Source Framework <i class="fas fa-chevron-right"></i></a>
-
-                    </div>
-                </div>
-                <div class="col-lg-4 border-start">
-                    <div class="p-4">
-                        <h5 class="mb-3"><i class="fab fa-stack-overflow text-secondary d-block my-3 fa-2x"></i> Stackoverflow</h5>
-                        <p>See answers to previously asked questions or ask a new one.</p>
-                        <a href="https://stackoverflow.com/questions/tagged/abp" target="_blank" class="btn btn-link px-1">Questions <i class="fas fa-chevron-right"></i></a>
-                        <a href="https://stackoverflow.com/questions/ask" target="_blank" class="btn btn-link px-1">Ask a Question <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mt-5 my-3 text-center">
-        <h3>Meet the ABP Commercial</h3>
-        <p>A Complete Web Application Platform Built on the ABP Framework</p>
-    </div>
-
-    <div class="card mt-4 mb-5">
-        <div class="card-body">
-            <p class="px-lg-5 mx-lg-5 py-3 text-center">
-                <a href="https://commercial.abp.io/" target="_blank">ABP Commercial</a> is a platform based on the open source ABP framework. It provides pre-built application modules,
-                rapid application development tooling, professional UI themes, premium support and more.
-            </p>
-
-            <div class="row text-center justify-content-md-center">
-                <div class="col-lg-2">
-                    <div class="p-3">
-                        <h6>
-                            <i class="fas fa-plus d-block mb-3 fa- 2x text-secondary"></i> Startup Templates
-                            <a href="https://commercial.abp.io/startup-templates?ref=tmpl" target="_blank" class="d-block mt-2 btn btn-sm btn-link">Details <i class="fas fa-chevron-right"></i></a>
-                        </h6>
-                    </div>
-                </div>
-                <div class="col-lg-2 border-start">
-                    <div class="p-3">
-                        <h6>
-                            <i class="fas fa-plus d-block mb-3 fa- 2x text-secondary"></i> Application Modules
-                            <a href="https://commercial.abp.io/modules?ref=tmpl" target="_blank" class="d-block mt-2 btn btn-sm btn-link">Details <i class="fas fa-chevron-right"></i></a>
-                        </h6>
-                    </div>
-                </div>
-                <div class="col-lg-2 border-start">
-                    <div class="p-3">
-                        <h6>
-                            <i class="fas fa-plus d-block mb-3 fa- 2x text-secondary"></i> Developer<br />Tools
-                            <a href="https://commercial.abp.io/tools?ref=tmpl" target="_blank" class="d-block mt-2 btn btn-sm btn-link">Details <i class="fas fa-chevron-right"></i></a>
-                        </h6>
-                    </div>
-                </div>
-                <div class="col-lg-2 border-start">
-                    <div class="p-3">
-                        <h6>
-                            <i class="fas fa-plus d-block mb-3 fa- 2x text-secondary"></i> UI<br /> Themes
-                            <a href="https://commercial.abp.io/themes?ref=tmpl" target="_blank" class="d-block mt-2 btn btn-sm btn-link">Details <i class="fas fa-chevron-right"></i></a>
-                        </h6>
-                    </div>
-                </div>
-                <div class="col-lg-2 border-start">
-                    <div class="p-3">
-                        <h6>
-                            <i class="fas fa-plus d-block mb-3 fa- 2x text-secondary"></i> Premium Support
-                            <a href="https://support.abp.io/QA/Questions?ref=tmpl" target="_blank" class="d-block mt-2 btn btn-sm btn-link">Details <i class="fas fa-chevron-right"></i></a>
-                        </h6>
-                    </div>
-                </div>
-                <div class="col-lg-2 border-start">
-                    <div class="p-3">
-                        <h6>
-                            <i class="fas fa-plus d-block mb-3 fa- 2x text-secondary"></i> Additional Services
-                            <a href="https://commercial.abp.io/additional-services?ref=tmpl" target="_blank" class="d-block mt-2 btn btn-sm btn-link">Details <i class="fas fa-chevron-right"></i></a>
-                        </h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="mb-5 text-center">
-        <p class="align-middle">
-            <a href="https://twitter.com/abpframework" target="_blank" class="mx-2"><i class="fab fa-twitter"></i><span class="text-secondary"> Abp Framework</span></a>
-            <a href="https://twitter.com/abpcommercial" target="_blank" class="mx-2"><i class="fab fa-twitter"></i><span class="text-secondary"> Abp Commercial</span></a>
-            <a href="https://github.com/abpframework/abp" target="_blank" class="mx-2"><i class="fab fa-github"></i><span class="text-secondary"> abpframework</span></a>
-        </p>
-    </div>
-</div>
+<MudGrid>
+    <MudItem xs="12" lg="4">
+        <MudCard Style="height: 100%;">
+            <MudCardHeader>
+                <MudText Typo="Typo.h6">More from ABP.IO</MudText>
+            </MudCardHeader>
+            <MudCardContent Class="pt-0">
+                <MudList T="string" Dense="true">
+                    <MudListItem Icon="@Icons.Material.Filled.Check" IconColor="Color.Primary"
+                                 Href="https://github.com/abpframework/abp/releases" Target="_blank">
+                        Latest Release Logs
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Check" IconColor="Color.Primary"
+                                 Href="https://abp.io/video-courses/essentials" Target="_blank">
+                        Video Courses
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Check" IconColor="Color.Primary"
+                                 Href="https://docs.abp.io/en/abp/latest/Samples/Index" Target="_blank">
+                        Samples
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Check" IconColor="Color.Primary"
+                                 Href="https://abp.io/books" Target="_blank">
+                        Books
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Check" IconColor="Color.Primary"
+                                 Href="https://abp.io/faq" Target="_blank">
+                        FAQ
+                    </MudListItem>
+                </MudList>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" lg="8">
+        <MudCard Style="height: 100%;">
+            <MudCardHeader>
+                <MudText Typo="Typo.h6">Follow us on Social Media</MudText>
+            </MudCardHeader>
+            <MudCardContent Class="pt-0">
+                <MudGrid Spacing="0">
+                    <MudItem xs="12" sm="6">
+                        <MudList T="string" Dense="true">
+                            <MudListItem Href="https://twitter.com/abpframework" Target="_blank"
+                                         Icon="@Icons.Custom.Brands.Twitter" IconColor="Color.Primary">
+                                X.com (Twitter)
+                            </MudListItem>
+                            <MudListItem Href="https://community.abp.io/discord" Target="_blank"
+                                         Icon="@Icons.Custom.Brands.Discord" IconColor="Color.Primary">
+                                Discord
+                            </MudListItem>
+                            <MudListItem Href="https://stackoverflow.com/questions/tagged/abp" Target="_blank"
+                                         Icon="@Icons.Custom.Brands.StackOverflow" IconColor="Color.Primary">
+                                Stack Overflow
+                            </MudListItem>
+                        </MudList>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudList T="string" Dense="true">
+                            <MudListItem Href="@("https://www.youtube.com/@Volosoft")" Target="_blank"
+                                         Icon="@Icons.Custom.Brands.YouTube" IconColor="Color.Error">
+                                YouTube
+                            </MudListItem>
+                            <MudListItem Href="https://www.instagram.com/abpframework/" Target="_blank"
+                                         Icon="@Icons.Custom.Brands.Instagram" IconColor="Color.Secondary">
+                                Instagram
+                            </MudListItem>
+                            <MudListItem Href="https://github.com/abpframework/abp" Target="_blank"
+                                         Icon="@Icons.Custom.Brands.GitHub" IconColor="Color.Dark">
+                                GitHub
+                            </MudListItem>
+                        </MudList>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>

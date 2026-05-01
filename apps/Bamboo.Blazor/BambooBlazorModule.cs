@@ -1,110 +1,63 @@
-﻿using System;
-using System.Net.Http;
-using Blazorise.Bootstrap5;
-using Blazorise.Icons.FontAwesome;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-
-using OpenIddict.Abstractions;
-using Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXLiteTheme;
-using Volo.Abp.AspNetCore.Components.Web.LeptonXLiteTheme.Themes.LeptonXLite;
-using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
-using Volo.Abp.Autofac.WebAssembly;
-using Volo.Abp.AutoMapper;
+using Microsoft.Extensions.Hosting;
+using Bamboo.Blazor.Client;
+using Volo.Abp;
+using Volo.Abp.AspNetCore.Components.WebAssembly.MudBlazorBasicTheme.Bundling;
+using Volo.Abp.AspNetCore.Components.WebAssembly.WebApp;
+using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
+using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;
-using Volo.Abp.UI.Navigation;
-using Volo.Abp.Identity.Blazor.WebAssembly;
-using Volo.Abp.Security.Claims;
-using Volo.Abp.SettingManagement.Blazor.WebAssembly;
-using Volo.Abp.TenantManagement.Blazor.WebAssembly;
-using Bamboo.Admin;
-using Bamboo.Blazor.Menus;
+
 namespace Bamboo.Blazor;
 
 [DependsOn(
-    typeof(AbpAutofacWebAssemblyModule),
-    typeof(AdminHttpApiClientModule),
-    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonXLiteThemeModule),
-    typeof(AbpIdentityBlazorWebAssemblyModule),
-    typeof(AbpTenantManagementBlazorWebAssemblyModule),
-    typeof(AbpSettingManagementBlazorWebAssemblyModule)
+    typeof(AbpAutofacModule),
+    typeof(AbpAspNetCoreMvcUiBundlingModule),
+    typeof(AbpAspNetCoreComponentsWebAssemblyMudBlazorBasicThemeBundlingModule)
 )]
 public class BambooBlazorModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        var environment = context.Services.GetSingletonInstance<IWebAssemblyHostEnvironment>();
-        var builder = context.Services.GetSingletonInstance<WebAssemblyHostBuilder>();
-
-        ConfigureAuthentication(builder);
-        ConfigureHttpClient(context, environment);
-        ConfigureBlazorise(context);
-        ConfigureRouter(context);
-        ConfigureUI(builder);
-        ConfigureMenu(context);
-        ConfigureAutoMapper(context);
-    }
-
-    private void ConfigureRouter(ServiceConfigurationContext context)
-    {
-        Configure<AbpRouterOptions>(options =>
+        //https://github.com/dotnet/aspnetcore/issues/52530
+        Configure<RouteOptions>(options =>
         {
-            options.AppAssembly = typeof(BambooBlazorModule).Assembly;
+            options.SuppressCheckForUnhandledSecurityMetadata = true;
         });
+
+        // Add services to the container.
+        context.Services.AddRazorComponents()
+            .AddInteractiveWebAssemblyComponents();
     }
 
-    private void ConfigureMenu(ServiceConfigurationContext context)
+    public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
-        // TODO: Check here
-        //Configure<AbpNavigationOptions>(options =>
-        //{
-        //    options.MenuContributors.Add(new BambooMenuContributor(context.Services.GetConfiguration()));
-        //});
-    }
+        var env = context.GetEnvironment();
+        var app = context.GetApplicationBuilder();
 
-    private void ConfigureBlazorise(ServiceConfigurationContext context)
-    {
-        context.Services
-            .AddBootstrap5Providers()
-            .AddFontAwesomeIcons();
-    }
-
-    private static void ConfigureAuthentication(WebAssemblyHostBuilder builder)
-    {
-        builder.Services.AddOidcAuthentication(options =>
+        // Configure the HTTP request pipeline.
+        if (env.IsDevelopment())
         {
-            builder.Configuration.Bind("AuthServer", options.ProviderOptions);
-            options.UserOptions.NameClaim = OpenIddictConstants.Claims.Name;
-            options.UserOptions.RoleClaim = OpenIddictConstants.Claims.Role;
-
-            options.ProviderOptions.DefaultScopes.Add("Bamboo");
-            options.ProviderOptions.DefaultScopes.Add("roles");
-            options.ProviderOptions.DefaultScopes.Add("email");
-            options.ProviderOptions.DefaultScopes.Add("phone");
-        });
-    }
-
-    private static void ConfigureUI(WebAssemblyHostBuilder builder)
-    {
-        builder.RootComponents.Add<App>("#ApplicationContainer");
-        builder.RootComponents.Add<HeadOutlet>("head::after");
-    }
-
-    private static void ConfigureHttpClient(ServiceConfigurationContext context, IWebAssemblyHostEnvironment environment)
-    {
-        context.Services.AddTransient(sp => new HttpClient
+            app.UseWebAssemblyDebugging();
+        }
+        else
         {
-            BaseAddress = new Uri(environment.BaseAddress)
-        });
-    }
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
 
-    private void ConfigureAutoMapper(ServiceConfigurationContext context)
-    {
-        Configure<AbpAutoMapperOptions>(options =>
+        app.UseHttpsRedirection();
+        app.MapAbpStaticAssets();
+        app.UseRouting();
+        app.UseAntiforgery();
+
+        app.UseConfiguredEndpoints(builder =>
         {
-            options.AddMaps<BambooBlazorModule>();
+            builder.MapRazorComponents<App>()
+                .AddInteractiveWebAssemblyRenderMode()
+                .AddAdditionalAssemblies(WebAppAdditionalAssembliesHelper.GetAssemblies<BambooBlazorClientModule>());
         });
     }
 }

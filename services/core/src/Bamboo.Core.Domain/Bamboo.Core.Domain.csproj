@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="10.4.0-rc.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,6 @@
-﻿using Volo.Abp.Ui.Branding;
+﻿using Microsoft.Extensions.Localization;
+using Bamboo.Admin.Localization;
+using Volo.Abp.Ui.Branding;
 using Volo.Abp.DependencyInjection;
 
 namespace Bamboo.Web;
@@ -6,5 +8,12 @@ namespace Bamboo.Web;
 [Dependency(ReplaceServices = true)]
 public class BambooBrandingProvider : DefaultBrandingProvider
 {
-    public override string AppName => "Bamboo";
+    private IStringLocalizer<AdminResource> _localizer;
+
+    public BambooBrandingProvider(IStringLocalizer<AdminResource> localizer)
+    {
+        _localizer = localizer;
+    }
+
+    public override string AppName => _localizer["AppName"];
 }

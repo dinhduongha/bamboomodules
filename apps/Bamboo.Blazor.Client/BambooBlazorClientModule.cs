@@ -1,21 +1,18 @@
-﻿using System;
+using System;
 using System.Net.Http;
-using Blazorise.Bootstrap5;
-using Blazorise.Icons.FontAwesome;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Bamboo.Blazor.Client.Menus;
 using OpenIddict.Abstractions;
-using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
-using Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXLiteTheme;
+using Volo.Abp.AspNetCore.Components.Web.Theming.MudBlazor.Routing;
+using Volo.Abp.AspNetCore.Components.WebAssembly.MudBlazorBasicTheme;
 using Volo.Abp.Autofac.WebAssembly;
-using Volo.Abp.AutoMapper;
-using Volo.Abp.Identity.Blazor.WebAssembly;
+using Volo.Abp.Mapperly;
+using Volo.Abp.Identity.Blazor.MudBlazor.WebAssembly;
 using Volo.Abp.Modularity;
-using Volo.Abp.SettingManagement.Blazor.WebAssembly;
-using Volo.Abp.TenantManagement.Blazor.WebAssembly;
+using Volo.Abp.SettingManagement.Blazor.MudBlazor.WebAssembly;
+using Volo.Abp.TenantManagement.Blazor.MudBlazor.WebAssembly;
 using Volo.Abp.UI.Navigation;
 using Bamboo.Admin;
 
@@ -24,10 +21,10 @@ namespace Bamboo.Blazor.Client;
 [DependsOn(
     typeof(AbpAutofacWebAssemblyModule),
     typeof(AdminHttpApiClientModule),
-    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonXLiteThemeModule),
-    typeof(AbpIdentityBlazorWebAssemblyModule),
-    typeof(AbpTenantManagementBlazorWebAssemblyModule),
-    typeof(AbpSettingManagementBlazorWebAssemblyModule)
+    typeof(AbpAspNetCoreComponentsWebAssemblyMudBlazorBasicThemeModule),
+    typeof(AbpIdentityBlazorMudBlazorWebAssemblyModule),
+    typeof(AbpTenantManagementBlazorMudBlazorWebAssemblyModule),
+    typeof(AbpSettingManagementBlazorMudBlazorWebAssemblyModule)
 )]
 public class BambooBlazorClientModule : AbpModule
 {
@@ -38,10 +35,10 @@ public class BambooBlazorClientModule : AbpModule
 
         ConfigureAuthentication(builder);
         ConfigureHttpClient(context, environment);
-        ConfigureBlazorise(context);
         ConfigureRouter(context);
         ConfigureMenu(context);
-        ConfigureAutoMapper(context);
+
+        context.Services.AddMapperlyObjectMapper<BambooBlazorClientModule>();
     }
 
     private void ConfigureRouter(ServiceConfigurationContext context)
@@ -60,12 +57,6 @@ public class BambooBlazorClientModule : AbpModule
         });
     }
 
-    private void ConfigureBlazorise(ServiceConfigurationContext context)
-    {
-        context.Services
-            .AddBootstrap5Providers()
-            .AddFontAwesomeIcons();
-    }
 
     private static void ConfigureAuthentication(WebAssemblyHostBuilder builder)
     {
@@ -75,7 +66,8 @@ public class BambooBlazorClientModule : AbpModule
             options.UserOptions.NameClaim = OpenIddictConstants.Claims.Name;
             options.UserOptions.RoleClaim = OpenIddictConstants.Claims.Role;
 
-            options.ProviderOptions.DefaultScopes.Add("Bamboo");
+            //options.ProviderOptions.DefaultScopes.Add("Bamboo");
+            options.ProviderOptions.DefaultScopes.Add("Hano");
             options.ProviderOptions.DefaultScopes.Add("roles");
             options.ProviderOptions.DefaultScopes.Add("email");
             options.ProviderOptions.DefaultScopes.Add("phone");
@@ -87,14 +79,6 @@ public class BambooBlazorClientModule : AbpModule
         context.Services.AddTransient(sp => new HttpClient
         {
             BaseAddress = new Uri(environment.BaseAddress)
-        });
-    }
-
-    private void ConfigureAutoMapper(ServiceConfigurationContext context)
-    {
-        Configure<AbpAutoMapperOptions>(options =>
-        {
-            options.AddMaps<BambooBlazorClientModule>();
         });
     }
 }

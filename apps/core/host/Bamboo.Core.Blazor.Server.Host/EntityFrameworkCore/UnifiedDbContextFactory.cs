@@ -12,7 +12,7 @@ public class UnifiedDbContextFactory : IDesignTimeDbContextFactory<UnifiedDbCont
         var configuration = BuildConfiguration();
 
         var builder = new DbContextOptionsBuilder<UnifiedDbContext>()
-            .UseSqlServer(configuration.GetConnectionString("Default"));
+            .UseNpgsql(configuration.GetConnectionString("Default"));
 
         return new UnifiedDbContext(builder.Options);
     }

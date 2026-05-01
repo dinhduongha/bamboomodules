@@ -4,7 +4,7 @@ using Bamboo.Core.Localization;
 using Bamboo.Core.Web.Menus;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
-using Volo.Abp.AutoMapper;
+using Volo.Abp.Mapperly;
 using Volo.Abp.Modularity;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
@@ -15,7 +15,7 @@ namespace Bamboo.Core.Web;
 [DependsOn(
     typeof(CoreApplicationContractsModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule),
-    typeof(AbpAutoMapperModule)
+    typeof(AbpMapperlyModule)
     )]
 public class CoreWebModule : AbpModule
 {
@@ -44,11 +44,7 @@ public class CoreWebModule : AbpModule
             options.FileSets.AddEmbedded<CoreWebModule>();
         });
 
-        context.Services.AddAutoMapperObjectMapper<CoreWebModule>();
-        Configure<AbpAutoMapperOptions>(options =>
-        {
-            options.AddMaps<CoreWebModule>(validate: true);
-        });
+        context.Services.AddMapperlyObjectMapper<CoreWebModule>();
 
         Configure<RazorPagesOptions>(options =>
         {

@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bamboo.Core.Blazor</title>
+    <base href="/" />
+
+    <link href="global.css" rel="stylesheet"/>
+    <link href="main.css" rel="stylesheet"/>
+
+    <link href="Bamboo.Core.Blazor.Host.Client.styles.css" rel="stylesheet"/>
+
+    <HeadOutlet @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
+</head>
+
+<body class="abp-application-layout bg-light">
+
+    <script src="_framework/blazor.web.js"></script>
+
+    <div id="ApplicationContainer">
+
+        <Routes @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)"/>
+    </div>
+
+    <script src="global.js"></script>
+</body>
+</html>

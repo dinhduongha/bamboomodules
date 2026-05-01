@@ -3,8 +3,8 @@
     "windowsAuthentication": false, 
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "https://localhost:44323",
-      "sslPort": 44323
+      "applicationUrl": "https://localhost:44302",
+      "sslPort": 44302
     }
   },
   "profiles": {
@@ -18,7 +18,7 @@
     "Bamboo.Core.Web.Host": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:44323",
+      "applicationUrl": "https://localhost:44302",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

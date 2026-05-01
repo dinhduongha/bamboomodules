@@ -183,6 +183,7 @@ public class AdminAuthServerModule : AbpModule
             {
                 options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
                 options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Admin.Domain"));
+                options.FileSets.ReplaceEmbeddedByPhysical<AbpLoginUiWebModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.LoginUi.Web"));
             });
         }
 

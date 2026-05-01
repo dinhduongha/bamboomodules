@@ -11,7 +11,7 @@ abp.modals.createTenantModal = function () {
 
     if (!form.valid()) {
       // nếu dùng jquery.validate
-      return false; // chặn submit
+      // return false; // chặn submit
     }
 
     return true; // ABP tự submit AJAX

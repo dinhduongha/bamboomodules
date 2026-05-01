@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Bamboo.Core.MultiTenancy;
-using Volo.Abp.Identity.Blazor;
-using Volo.Abp.SettingManagement.Blazor.Menus;
-using Volo.Abp.TenantManagement.Blazor.Navigation;
+using Volo.Abp.Identity.Blazor.MudBlazor;
+using Volo.Abp.SettingManagement.Blazor.MudBlazor.Menus;
+using Volo.Abp.TenantManagement.Blazor.MudBlazor.Navigation;
 using Volo.Abp.UI.Navigation;
 
 namespace Bamboo.Core.Blazor.Server.Host.Menus;

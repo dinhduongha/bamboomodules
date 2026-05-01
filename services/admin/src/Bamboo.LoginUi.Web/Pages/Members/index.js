@@ -5,6 +5,8 @@ $(function () {
   var createTenantModal = new abp.ModalManager({
     viewUrl: abp.appPath + "Members/CreateTenantModal",
     formId: "createTenantForm",
+    scriptUrl: "/Pages/Members/createTenantModal.js",
+    modalClass: "createTenantModal",
   });
   $("#CreateTenantButton").on("click", function (e) {
     e.preventDefault();

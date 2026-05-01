@@ -13,9 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.OpenApi.Models;
-
 using StackExchange.Redis;
+using Microsoft.OpenApi;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.OpenIdConnect;
 using Volo.Abp.AspNetCore.Mvc.Client;
@@ -29,7 +28,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
-using Volo.Abp.AutoMapper;
+using Volo.Abp.Mapperly;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.DistributedLocking;
@@ -57,6 +56,7 @@ namespace Bamboo.Web;
 
 [DependsOn(
     typeof(AdminHttpApiClientModule),
+    //typeof(BambooHttpApiModule),
     typeof(AbpAspNetCoreAuthenticationOpenIdConnectModule),
     typeof(AbpAspNetCoreMvcClientModule),
     typeof(AbpHttpClientWebModule),
@@ -78,7 +78,7 @@ public class BambooWebModule : AbpModule
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
             options.AddAssemblyResource(
-		        //typeof(BambooResource),
+                //typeof(BambooResource),
                 //typeof(BambooDomainSharedModule).Assembly,
                 //typeof(BambooApplicationContractsModule).Assembly,
                 typeof(AdminResource),
@@ -102,11 +102,12 @@ public class BambooWebModule : AbpModule
         ConfigureDistributedLocking(context, configuration);
         ConfigureUrls(configuration);
         ConfigureAuthentication(context, configuration);
-        ConfigureAutoMapper();
         ConfigureVirtualFileSystem(hostingEnvironment);
         ConfigureNavigationServices(configuration);
         ConfigureMultiTenancy();
         ConfigureSwaggerServices(context.Services);
+
+        context.Services.AddMapperlyObjectMapper<BambooWebModule>();
     }
 
     private void ConfigureBundles()
@@ -164,74 +165,67 @@ public class BambooWebModule : AbpModule
                 options.Authority = configuration["AuthServer:Authority"];
                 options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
                 options.ResponseType = OpenIdConnectResponseType.CodeIdToken;
-                
+
                 options.ClientId = configuration["AuthServer:ClientId"];
                 options.ClientSecret = configuration["AuthServer:ClientSecret"];
 
                 options.UsePkce = true;
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
-
+                options.Prompt = "login";
                 options.Scope.Add("roles");
                 options.Scope.Add("email");
                 options.Scope.Add("phone");
-                options.Scope.Add("Bamboo");
+                //options.Scope.Add("Bamboo");
+                options.Scope.Add("Hano");
             });
-            /*
-            * This configuration is used when the AuthServer is running on the internal network such as docker or k8s.
-            * Configuring the redirecting URLs for internal network and the web
-            * The login and the logout URLs are configured to redirect to the AuthServer real DNS for browser.
-            * The token acquired and validated from the the internal network AuthServer URL.
-            */
-            if (configuration.GetValue<bool>("AuthServer:IsContainerized"))
+        /*
+        * This configuration is used when the AuthServer is running on the internal network such as docker or k8s.
+        * Configuring the redirecting URLs for internal network and the web
+        * The login and the logout URLs are configured to redirect to the AuthServer real DNS for browser.
+        * The token acquired and validated from the the internal network AuthServer URL.
+        */
+        if (configuration.GetValue<bool>("AuthServer:IsContainerized"))
+        {
+            context.Services.Configure<OpenIdConnectOptions>("oidc", options =>
             {
-                context.Services.Configure<OpenIdConnectOptions>("oidc", options =>
+                options.TokenValidationParameters.ValidIssuers = new[]
                 {
-                    options.TokenValidationParameters.ValidIssuers = new[]
-                    {
                         configuration["AuthServer:MetaAddress"]!.EnsureEndsWith('/'),
                         configuration["AuthServer:Authority"]!.EnsureEndsWith('/')
-                    };
+                };
 
-                    options.MetadataAddress = configuration["AuthServer:MetaAddress"]!.EnsureEndsWith('/') +
-                                            ".well-known/openid-configuration";
+                options.MetadataAddress = configuration["AuthServer:MetaAddress"]!.EnsureEndsWith('/') +
+                                        ".well-known/openid-configuration";
 
-                    var previousOnRedirectToIdentityProvider = options.Events.OnRedirectToIdentityProvider;
-                    options.Events.OnRedirectToIdentityProvider = async ctx =>
+                var previousOnRedirectToIdentityProvider = options.Events.OnRedirectToIdentityProvider;
+                options.Events.OnRedirectToIdentityProvider = async ctx =>
+                {
+                    // Intercept the redirection so the browser navigates to the right URL in your host
+                    ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/authorize";
+
+                    if (previousOnRedirectToIdentityProvider != null)
                     {
-                        // Intercept the redirection so the browser navigates to the right URL in your host
-                        ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/authorize";
+                        await previousOnRedirectToIdentityProvider(ctx);
+                    }
+                };
+                var previousOnRedirectToIdentityProviderForSignOut = options.Events.OnRedirectToIdentityProviderForSignOut;
+                options.Events.OnRedirectToIdentityProviderForSignOut = async ctx =>
+                {
+                    // Intercept the redirection for signout so the browser navigates to the right URL in your host
+                    ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/logout";
 
-                        if (previousOnRedirectToIdentityProvider != null)
-                        {
-                            await previousOnRedirectToIdentityProvider(ctx);
-                        }
-                    };
-                    var previousOnRedirectToIdentityProviderForSignOut = options.Events.OnRedirectToIdentityProviderForSignOut;
-                    options.Events.OnRedirectToIdentityProviderForSignOut = async ctx =>
+                    if (previousOnRedirectToIdentityProviderForSignOut != null)
                     {
-                        // Intercept the redirection for signout so the browser navigates to the right URL in your host
-                        ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/logout";
-
-                        if (previousOnRedirectToIdentityProviderForSignOut != null)
-                        {
-                            await previousOnRedirectToIdentityProviderForSignOut(ctx);
-                        }
-                    };
-                });
-            }
+                        await previousOnRedirectToIdentityProviderForSignOut(ctx);
+                    }
+                };
+            });
+        }
 
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
             options.IsDynamicClaimsEnabled = true;
-        });
-    }
-
-    private void ConfigureAutoMapper()
-    {
-        Configure<AbpAutoMapperOptions>(options =>
-        {
-            options.AddMaps<BambooWebModule>();
         });
     }
 
@@ -241,9 +235,9 @@ public class BambooWebModule : AbpModule
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
-		        //options.FileSets.ReplaceEmbeddedByPhysical<BambooDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Domain.Shared"));
+                //options.FileSets.ReplaceEmbeddedByPhysical<BambooDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Domain.Shared"));
                 //options.FileSets.ReplaceEmbeddedByPhysical<BambooApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Application.Contracts"));
-                
+
                 var str = Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared");
                 options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
                 options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Application.Contracts"));
@@ -389,7 +383,8 @@ public class BambooWebModule : AbpModule
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor
                                        | ForwardedHeaders.XForwardedProto
                                        | ForwardedHeaders.XForwardedHost;
-            options.KnownNetworks.Clear();
+            //options.KnownNetworks.Clear();
+            options.KnownIPNetworks.Clear();
             options.KnownProxies.Clear();
             options.RequireHeaderSymmetry = false;
         });
@@ -418,6 +413,17 @@ public class BambooWebModule : AbpModule
             app.UseDeveloperExceptionPage();
         }
 
+        ///// Always behind ssl proxy
+        app.Use((context, next) =>
+        {
+            var xproto = context.Request.Headers["X-Forwarded-Proto"].ToString();
+            if (xproto != null && xproto.StartsWith("https", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Request.Scheme = "https";
+            }
+            return next();
+        });
+
         app.UseAbpRequestLocalization();
 
         if (!env.IsDevelopment())
@@ -426,7 +432,7 @@ public class BambooWebModule : AbpModule
         }
 
         app.UseCorrelationId();
-        app.UseStaticFiles();
+        app.MapAbpStaticAssets();
         app.UseRouting();
         app.UseAuthentication();
         app.UseForwardedHeaders();
@@ -445,16 +451,5 @@ public class BambooWebModule : AbpModule
         });
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();
-
-        ///// Always behind ssl proxy
-        app.Use((context, next) =>
-        {
-            var xproto = context.Request.Headers["X-Forwarded-Proto"].ToString();
-            if (xproto != null && xproto.StartsWith("https", StringComparison.OrdinalIgnoreCase))
-            {
-                context.Request.Scheme = "https";
-            }
-            return next();
-        });
     }
 }

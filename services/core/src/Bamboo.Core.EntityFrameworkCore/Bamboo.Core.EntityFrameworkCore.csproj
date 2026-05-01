@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="10.2.0" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="10.4.0-rc.1" />
     <ProjectReference Include="..\Bamboo.Core.Domain\Bamboo.Core.Domain.csproj" />
   </ItemGroup>
 

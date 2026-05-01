@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <Import Project="..\..\common.props" />
 
@@ -13,33 +13,31 @@
     <UserSecretsId>Bamboo-4681b4fd-151f-4221-84a4-929d86723e4c</UserSecretsId>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Bamboo.Blazor' " />
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.5.2" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.5.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.2" />
-    <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.7" />
+    <PackageReference Include="DistributedLock.Redis" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme" Version="5.2.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.2.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Components.Server.MudBlazorBasicTheme" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.4.0-preview" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.Client" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.OpenIdConnect" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel.Web" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.Swashbuckle" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.Identity.Blazor.Server" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Blazor.Server" Version="10.2.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Blazor.Server" Version="10.2.0" />
+    <!-- <ProjectReference Include="..\Bamboo.HttpApi.Client\Bamboo.HttpApi.Client.csproj" /> -->
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.Client" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.OpenIdConnect" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel.Web" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Swashbuckle" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Identity.Blazor.MudBlazor.Server" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Blazor.MudBlazor.Server" Version="10.4.0-rc.1" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Blazor.MudBlazor.Server" Version="10.4.0-rc.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,10 +55,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\admin\Bamboo.Admin.HttpApi.Client\Bamboo.Admin.HttpApi.Client.csproj" />
+    <!-- <ProjectReference Include="..\..\shared\admin\Bamboo.Admin.HttpApi.Client\Bamboo.Admin.HttpApi.Client.csproj" /> -->
+    <ProjectReference Include="..\..\services\admin\src\Bamboo.Admin.HttpApi.Client\Bamboo.Admin.HttpApi.Client.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\shared\common\Bamboo.Shared.Common\Bamboo.Shared.Common.csproj" />
   </ItemGroup>
+  <!-- <ItemGroup>
+    <ProjectReference Include="..\..\shared\admin\Bamboo.Admin.HttpApi.Client\Bamboo.Admin.HttpApi.Client.csproj" />
+    <ProjectReference Include="..\..\shared\common\Bamboo.Shared.Common\Bamboo.Shared.Common.csproj" />
+  </ItemGroup> -->
 
 </Project>

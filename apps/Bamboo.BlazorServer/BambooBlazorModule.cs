@@ -1,7 +1,5 @@
-﻿using System;
+using System;
 using System.IO;
-using Blazorise.Bootstrap5;
-using Blazorise.Icons.FontAwesome;
 using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -14,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Bamboo.Blazor.Components;
 using Bamboo.Blazor.Menus;
 using Bamboo.Admin.Localization;
@@ -23,11 +21,11 @@ using StackExchange.Redis;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.OpenIdConnect;
 using Volo.Abp.AspNetCore.Components.Web;
-using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme;
-using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme.Bundling;
+using Volo.Abp.AspNetCore.Components.Server.MudBlazorBasicTheme;
+using Volo.Abp.AspNetCore.Components.Server.MudBlazorBasicTheme.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
-using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
+using Volo.Abp.AspNetCore.Components.Web.Theming.MudBlazor.Routing;
 using Volo.Abp.AspNetCore.Mvc.Client;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI;
@@ -38,19 +36,19 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
-using Volo.Abp.AutoMapper;
+using Volo.Abp.Mapperly;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.DistributedLocking;
 using Volo.Abp.Http.Client.IdentityModel.Web;
-using Volo.Abp.Identity.Blazor.Server;
+using Volo.Abp.Identity.Blazor.MudBlazor.Server;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Security.Claims;
-using Volo.Abp.SettingManagement.Blazor.Server;
+using Volo.Abp.SettingManagement.Blazor.MudBlazor.Server;
 using Volo.Abp.Swashbuckle;
-using Volo.Abp.TenantManagement.Blazor.Server;
+using Volo.Abp.TenantManagement.Blazor.MudBlazor.Server;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
@@ -67,14 +65,14 @@ namespace Bamboo.Blazor;
     typeof(AbpAspNetCoreMvcClientModule),
     typeof(AbpAspNetCoreAuthenticationOpenIdConnectModule),
     typeof(AbpHttpClientIdentityModelWebModule),
-    typeof(AbpAspNetCoreComponentsServerLeptonXLiteThemeModule),
+    typeof(AbpAspNetCoreComponentsServerMudBlazorBasicThemeModule),
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAutofacModule),
     typeof(AbpSwashbuckleModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpIdentityBlazorServerModule),
-    typeof(AbpTenantManagementBlazorServerModule),
-    typeof(AbpSettingManagementBlazorServerModule)
+    typeof(AbpIdentityBlazorMudBlazorServerModule),
+    typeof(AbpTenantManagementBlazorMudBlazorServerModule),
+    typeof(AbpSettingManagementBlazorMudBlazorServerModule)
    )]
 public class BambooBlazorModule : AbpModule
 {
@@ -110,14 +108,14 @@ public class BambooBlazorModule : AbpModule
         ConfigureBundles();
         ConfigureMultiTenancy();
         ConfigureAuthentication(context, configuration);
-        ConfigureAutoMapper();
         ConfigureVirtualFileSystem(hostingEnvironment);
-        ConfigureBlazorise(context);
         ConfigureRouter(context);
         ConfigureMenu(configuration);
         ConfigureDataProtection(context, configuration, hostingEnvironment);
         ConfigureDistributedLocking(context, configuration);
         ConfigureSwaggerServices(context.Services);
+
+        context.Services.AddMapperlyObjectMapper<BambooBlazorModule>();
     }
 
     private void ConfigureUrls(IConfiguration configuration)
@@ -151,7 +149,7 @@ public class BambooBlazorModule : AbpModule
 
             //BLAZOR UI
             options.StyleBundles.Configure(
-                BlazorLeptonXLiteThemeBundles.Styles.Global,
+                BlazorMudBlazorBasicThemeBundles.Styles.Global,
                 bundle =>
                 {
                     bundle.AddFiles("/blazor-global-styles.css");
@@ -193,55 +191,56 @@ public class BambooBlazorModule : AbpModule
 
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
-
+                options.Prompt = "login";
                 options.Scope.Add("roles");
                 options.Scope.Add("email");
                 options.Scope.Add("phone");
-                options.Scope.Add("Bamboo");
+                options.Scope.Add("Hano");
+                //options.Scope.Add("Bamboo");
             });
-            /*
-            * This configuration is used when the AuthServer is running on the internal network such as docker or k8s.
-            * Configuring the redirecting URLs for internal network and the web
-            * The login and the logout URLs are configured to redirect to the AuthServer real DNS for browser.
-            * The token acquired and validated from the the internal network AuthServer URL.
-            */
-            if (configuration.GetValue<bool>("AuthServer:IsContainerized"))
+        /*
+        * This configuration is used when the AuthServer is running on the internal network such as docker or k8s.
+        * Configuring the redirecting URLs for internal network and the web
+        * The login and the logout URLs are configured to redirect to the AuthServer real DNS for browser.
+        * The token acquired and validated from the the internal network AuthServer URL.
+        */
+        if (configuration.GetValue<bool>("AuthServer:IsContainerized"))
+        {
+            context.Services.Configure<OpenIdConnectOptions>("oidc", options =>
             {
-                context.Services.Configure<OpenIdConnectOptions>("oidc", options =>
+                options.TokenValidationParameters.ValidIssuers = new[]
                 {
-                    options.TokenValidationParameters.ValidIssuers = new[]
-                    {
                         configuration["AuthServer:MetaAddress"]!.EnsureEndsWith('/'),
                         configuration["AuthServer:Authority"]!.EnsureEndsWith('/')
-                    };
+                };
 
-                    options.MetadataAddress = configuration["AuthServer:MetaAddress"]!.EnsureEndsWith('/') +
-                                            ".well-known/openid-configuration";
+                options.MetadataAddress = configuration["AuthServer:MetaAddress"]!.EnsureEndsWith('/') +
+                                        ".well-known/openid-configuration";
 
-                    var previousOnRedirectToIdentityProvider = options.Events.OnRedirectToIdentityProvider;
-                    options.Events.OnRedirectToIdentityProvider = async ctx =>
+                var previousOnRedirectToIdentityProvider = options.Events.OnRedirectToIdentityProvider;
+                options.Events.OnRedirectToIdentityProvider = async ctx =>
+                {
+                    // Intercept the redirection so the browser navigates to the right URL in your host
+                    ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/authorize";
+
+                    if (previousOnRedirectToIdentityProvider != null)
                     {
-                        // Intercept the redirection so the browser navigates to the right URL in your host
-                        ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/authorize";
+                        await previousOnRedirectToIdentityProvider(ctx);
+                    }
+                };
+                var previousOnRedirectToIdentityProviderForSignOut = options.Events.OnRedirectToIdentityProviderForSignOut;
+                options.Events.OnRedirectToIdentityProviderForSignOut = async ctx =>
+                {
+                    // Intercept the redirection for signout so the browser navigates to the right URL in your host
+                    ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/logout";
 
-                        if (previousOnRedirectToIdentityProvider != null)
-                        {
-                            await previousOnRedirectToIdentityProvider(ctx);
-                        }
-                    };
-                    var previousOnRedirectToIdentityProviderForSignOut = options.Events.OnRedirectToIdentityProviderForSignOut;
-                    options.Events.OnRedirectToIdentityProviderForSignOut = async ctx =>
+                    if (previousOnRedirectToIdentityProviderForSignOut != null)
                     {
-                        // Intercept the redirection for signout so the browser navigates to the right URL in your host
-                        ctx.ProtocolMessage.IssuerAddress = configuration["AuthServer:Authority"]!.EnsureEndsWith('/') + "connect/logout";
-
-                        if (previousOnRedirectToIdentityProviderForSignOut != null)
-                        {
-                            await previousOnRedirectToIdentityProviderForSignOut(ctx);
-                        }
-                    };
-                });
-            }
+                        await previousOnRedirectToIdentityProviderForSignOut(ctx);
+                    }
+                };
+            });
+        }
 
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
@@ -255,20 +254,19 @@ public class BambooBlazorModule : AbpModule
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
-                //options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
-                options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
-                options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Admin.Application.Contracts"));
+                options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}services{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}src{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
+                options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}services{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}src{Path.DirectorySeparatorChar}Bamboo.Admin.Application.Contracts"));
+
+                //options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}shared{Path.DirectorySeparatorChar}admin{Path.DirectorySeparatorChar}Bamboo.Admin.Domain.Shared"));
+                //options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Admin.Application.Contracts"));
+
+                //options.FileSets.ReplaceEmbeddedByPhysical<AdminDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Domain.Shared"));
+                //options.FileSets.ReplaceEmbeddedByPhysical<AdminApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Bamboo.Application.Contracts"));
                 options.FileSets.ReplaceEmbeddedByPhysical<BambooBlazorModule>(hostingEnvironment.ContentRootPath);
             });
         }
     }
 
-    private void ConfigureBlazorise(ServiceConfigurationContext context)
-    {
-        context.Services
-            .AddBootstrap5Providers()
-            .AddFontAwesomeIcons();
-    }
 
     private void ConfigureMenu(IConfiguration configuration)
     {
@@ -290,15 +288,6 @@ public class BambooBlazorModule : AbpModule
             options.AppAssembly = typeof(BambooBlazorModule).Assembly;
         });
     }
-
-    private void ConfigureAutoMapper()
-    {
-        Configure<AbpAutoMapperOptions>(options =>
-        {
-            options.AddMaps<BambooBlazorModule>();
-        });
-    }
-
     private void ConfigureSwaggerServices(IServiceCollection services)
     {
         services.AddAbpSwaggerGen(
@@ -353,7 +342,7 @@ public class BambooBlazorModule : AbpModule
         }
 
         app.UseCorrelationId();
-        app.UseStaticFiles();
+        app.MapAbpStaticAssets();
         app.UseRouting();
         app.UseAuthentication();
 

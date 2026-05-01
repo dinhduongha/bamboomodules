@@ -21,6 +21,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+[Ll]ogs/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -252,10 +253,12 @@ paket-files/
 *.sln.iml
 appsettings.secrets.json
 appsettings.*.secrets.json
+./data/
 # Bamboo
 Logs/*
 www/libs/*
 wwwroot/libs/*
+wwwroot/libs
 src/Bamboo.Web/Logs/*
 src/Bamboo.Web.Host/Logs/*
 src/Bamboo.IdentityServer/Logs/*

@@ -17,12 +17,12 @@
     },
     "Bamboo.Blazor": {
       "commandName": "Project",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "https://localhost:44309/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "dotnetRunMessages": "true"
+      }
     }
   }
 }
