@@ -19,7 +19,7 @@
     <Project Path="src/Bamboo.Admin.HttpApi.Host/Bamboo.Admin.HttpApi.Host.csproj" />
     <Project Path="src/Bamboo.Admin.HttpApi/Bamboo.Admin.HttpApi.csproj" />
     <Project Path="src/Bamboo.AdminExtensions/Bamboo.AdminExtensions.csproj" />
-    <Project Path="src/Bamboo.LoginUi.Web/Bamboo.LoginUi.Web.csproj" />
+    <Project Path="src/Bamboo.AuthExtensions/Bamboo.AuthExtensions.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/Bamboo.Admin.Application.Tests/Bamboo.Admin.Application.Tests.csproj" />

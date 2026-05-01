@@ -62,6 +62,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bamboo.LoginUi.Web\Bamboo.LoginUi.Web.csproj" />
+    <ProjectReference Include="..\Bamboo.AuthExtensions/Bamboo.AuthExtensions.csproj" />
   </ItemGroup>
 </Project>

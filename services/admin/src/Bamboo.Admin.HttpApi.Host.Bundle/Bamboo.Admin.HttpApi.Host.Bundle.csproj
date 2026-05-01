@@ -31,7 +31,7 @@
     <ProjectReference Include="..\Bamboo.Admin.EntityFrameworkCore\Bamboo.Admin.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Bamboo.Admin.HttpApi\Bamboo.Admin.HttpApi.csproj" />
     <ProjectReference Include="..\Bamboo.AdminExtensions\Bamboo.AdminExtensions.csproj" />
-    <ProjectReference Include="..\Bamboo.LoginUi.Web\Bamboo.LoginUi.Web.csproj" />
+    <ProjectReference Include="..\Bamboo.AuthExtensions/Bamboo.AuthExtensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
